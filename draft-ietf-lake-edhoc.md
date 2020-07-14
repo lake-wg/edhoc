@@ -522,7 +522,7 @@ In the first two examples, ID_CRED_I and ID_CRED_R contain the actual credential
 The authentication key MUST be a signature key or static Diffie-Hellman key. The Initiator and the Responder
  MAY use different types of authentication keys, e.g. one uses a signature key and the other uses a static Diffie-Hellman key. When using a signature key, the authentication is provided by a signature. When using a static Diffie-Hellman key the authentication is provided by a Message Authentication Code (MAC) computed from an ephemeral-static ECDH shared secret which enables significant reductions in message sizes. The MAC is implemented with an AEAD algorithm. When using a static Diffie-Hellman keys the Initiator's and Responder's private authentication keys are called I and R, respectively, and the public authentication keys are called G_I and G_R, respectively.
 
-The actual credentials CRED_I and CRED_R are signed or MAC:ed by the Initiator and the Responder respectively, see {{asym-msg3-form}} and {{asym-msg2-form}}. The Initiator and the Responder MAY use different types of credentials, e.g. one uses RPK and the other uses certificate. When the credential is a certificate, CRED_x is end-entity certificate (i.e. not the certificate chain) encoded as a CBOR bstr. When the credential is a COSE_Key, CREX_x is a CBOR map only contains specific fields from the COSE_Key. For COSE_Keys of type OKP the CBOR map SHALL only include the parameters 1 (kty), -1 (crv), and -2 (x-coordinate). For COSE_Keys of type EC2 the CBOR map SHALL only include the parameters 1 (kty), -1 (crv), -2 (x-coordinate), and -3 (y-coordinate). If the parties have agreed on an identity besides the public key, the indentity is included in the CBOR map with the label "subject name", otherwise the subject name is the empty text string. The parameters SHALL be encoded in decreasing order with int labels first and text string labels last. An example of CRED_x when the RPK contains a X25519 static Diffie-Hellman key and the parties have agreed on an EUI-64 identity is shown below:
+The actual credentials CRED_I and CRED_R are signed or MAC:ed by the Initiator and the Responder respectively, see {{asym-msg3-form}} and {{asym-msg2-form}}. The Initiator and the Responder MAY use different types of credentials, e.g. one uses RPK and the other uses certificate. When the credential is a certificate, CRED_x is end-entity certificate (i.e. not the certificate chain) encoded as a CBOR bstr. When the credential is a COSE_Key, CRED_x is a CBOR map only contains specific fields from the COSE_Key. For COSE_Keys of type OKP the CBOR map SHALL only include the parameters 1 (kty), -1 (crv), and -2 (x-coordinate). For COSE_Keys of type EC2 the CBOR map SHALL only include the parameters 1 (kty), -1 (crv), -2 (x-coordinate), and -3 (y-coordinate). If the parties have agreed on an identity besides the public key, the indentity is included in the CBOR map with the label "subject name", otherwise the subject name is the empty text string. The parameters SHALL be encoded in decreasing order with int labels first and text string labels last. An example of CRED_x when the RPK contains an X25519 static Diffie-Hellman key and the parties have agreed on an EUI-64 identity is shown below:
 
 ~~~~~~~~~~~
 CRED_x = {
@@ -1323,7 +1323,7 @@ method (Signature Authentication)
 0
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-CoaP is used as transport and the Initiator acts as CoAP client:
+CoAP is used as transport and the Initiator acts as CoAP client:
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 corr (the Initiator can correlate message_1 and message_2)
@@ -1459,7 +1459,7 @@ df 69 27 4d 71 32 96 e2 46 30 63 65 37 2b 46 83 ce d5 38 1b fc ad cd 44
 0a 24 c3 91 d2 fe db 94
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-Since neither the Initiator nor the Responder authanticates with a static Diffie-Hellman key, PRK_3e2m = PRK_2e
+Since neither the Initiator nor the Responder authenticates with a static Diffie-Hellman key, PRK_3e2m = PRK_2e
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 PRK_3e2m (32 bytes)
@@ -1794,7 +1794,7 @@ data_3 (CBOR Sequence) (1 bytes)
 13 
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-From data_3, CIPHERTEXT_2, and TH_2, compute the input to the transcript hash TH_2 = H(TH_2 , CIPHERTEXT_2, data_3), as a CBOR Sequence of these 3 data items.
+From data_3, CIPHERTEXT_2, and TH_2, compute the input to the transcript hash TH_3 = H(TH_2 , CIPHERTEXT_2, data_3), as a CBOR Sequence of these 3 data items.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 Input to calculate TH_3 (CBOR Sequence) (117 bytes)
