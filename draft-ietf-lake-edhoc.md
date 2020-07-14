@@ -447,7 +447,7 @@ where
   
   + transcript_hash is a bstr set to one of the transcript hashes TH_2, TH_3, or TH_4 as defined in Sections {{asym-msg2-form}}{: format="counter"}, {{asym-msg3-form}}{: format="counter"}, and {{exporter}}{: format="counter"}.
 
-  + label is a tstr set to the name of the derived key or IV, i.e. "K_2m", "IV_2m", "K_2e", "K_2ae", "IV_2ae", "K_3m", "IV_3m", "K_3ae", or "IV_2ae".
+  + label is a tstr set to the name of the derived key or IV, i.e. "K_2m", "IV_2m", "K_2e", "K_2ae", "IV_2ae", "K_3m", "IV_3m", "K_3ae", or "IV_3ae".
 
   + length is the length of output keying material (OKM) in bytes
 
