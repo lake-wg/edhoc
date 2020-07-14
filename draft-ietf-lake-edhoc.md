@@ -567,7 +567,7 @@ message_1 = (
 )
 
 suite = int
-bstr_identifier = bsrt / int
+bstr_identifier = bstr / int
 ~~~~~~~~~~~
 
 where:
