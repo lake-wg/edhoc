@@ -1617,7 +1617,7 @@ info for K_2m =
 [
   10,
   h'B0DC6C1BA0BAE6E2888610FA0B27BFC52E311A47B9CAFB609DE4F6A1760D6CF7', 
-  " "IV_2m",
+  "IV_2m",
   13
 ]
 ~~~~~~~~~~~~~~~~~~~~~~~
