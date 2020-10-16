@@ -1985,7 +1985,7 @@ e4 62 f5 f5 7a 3d b6 d2 b5 0c 32 31 9f 34 0f 4a c5 af 9a
 EDHOC with static Diffie-Hellman keys is used. 
 
 ~~~~~~~~~~~~~~~~~~~~~~~
-method (Signature Authentication)
+method (Static DH Based Authentication)
 3
 ~~~~~~~~~~~~~~~~~~~~~~~
 
