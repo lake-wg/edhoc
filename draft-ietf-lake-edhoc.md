@@ -1358,7 +1358,7 @@ Connection identifier chosen by Responder (1 byte)
 2b
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-Note that since C_R is a byte strings of length one, it is encoded as the corresponding integer - 24 (see bstr_identifier in {{asym-msg1-form}}), i.e. 0x2b = 43, 43 - 24 = 19, and 19 in CBOR encoding is equal to 0x13.
+Note that since C_R is a byte string of length one, it is encoded as the corresponding integer subtracted by 24 (see bstr_identifier in {{asym-msg1-form}}). Thus 0x2b = 43, 43 - 24 = 19, and 19 in CBOR encoding is equal to 0x13.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 C_R (1 byte)
