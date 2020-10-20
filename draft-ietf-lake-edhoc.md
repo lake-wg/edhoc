@@ -1413,9 +1413,30 @@ Responders's subject name (text string)
 ""
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-And because 'x5t' is used, ID_CRED_R = { 34 : COSE_CertHash }.
 
-The digest in COSE_CertHash is computed by CBOR decoding CRED_R and hashing with SHA-256/64 (value -15 in COSE Algorithms), i.e. hashing the certificate bytes with SHA-2 256-bit hash and truncating to 64-bits.
+CRED_R is the certificate (X509_R) encoded as a CBOR byte string:
+
+~~~~~~~~~~~~~~~~~~~~~~~
+X509_R (110 bytes)
+47 62 4d c9 cd c6 82 4b 2a 4c 52 e9 5e c9 d6 b0 53 4b 71 c2 b4 9e 4b f9
+03 15 00 ce e6 86 99 79 c2 97 bb 5a 8b 38 1e 98 db 71 41 08 41 5e 5c 50
+db 78 97 4c 27 15 79 b0 16 33 a3 ef 62 71 be 5c 22 5e b2 8f 9c f6 18 0b
+5a 6a f3 1e 80 20 9a 08 5c fb f9 5f 3f dc f9 b1 8b 69 3d 6c 0e 0d 0f fb 
+8e 3f 9a 32 a5 08 59 ec d0 bf cf f2 c2 18
+~~~~~~~~~~~~~~~~~~~~~~~
+
+~~~~~~~~~~~~~~~~~~~~~~~
+CRED_R (112 bytes)
+58 6e 47 62 4d c9 cd c6 82 4b 2a 4c 52 e9 5e c9 d6 b0 53 4b 71 c2 b4 9e 
+4b f9 03 15 00 ce e6 86 99 79 c2 97 bb 5a 8b 38 1e 98 db 71 41 08 41 5e 
+5c 50 db 78 97 4c 27 15 79 b0 16 33 a3 ef 62 71 be 5c 22 5e b2 8f 9c f6 
+18 0b 5a 6a f3 1e 80 20 9a 08 5c fb f9 5f 3f dc f9 b1 8b 69 3d 6c 0e 0d 
+0f fb 8e 3f 9a 32 a5 08 59 ec d0 bf cf f2 c2 18
+~~~~~~~~~~~~~~~~~~~~~~~
+
+And because certificates are identified by a hash value with the 'x5t' parameter, ID_CRED_R is the following:
+
+ID_CRED_R = { 34 : COSE_CertHash }. In this example, the hash algorithm used is SHA-2 256-bit with hash truncated to 64-bits (value -15). The hash value is calculated over the certificate X509_R.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 ID_CRED_R =
@@ -1428,18 +1449,6 @@ ID_CRED_R =
 ID_CRED_R (14 bytes)
 a1 18 22 82 2e 48 fc 79 99 0f 24 31 a3 f5 
 ~~~~~~~~~~~~~~~~~~~~~~~
-
-CRED_R is the certificate encoded as a byte string:
-
-~~~~~~~~~~~~~~~~~~~~~~~
-CRED_R (112 bytes)
-58 6e 47 62 4d c9 cd c6 82 4b 2a 4c 52 e9 5e c9 d6 b0 53 4b 71 c2 b4 9e 
-4b f9 03 15 00 ce e6 86 99 79 c2 97 bb 5a 8b 38 1e 98 db 71 41 08 41 5e 
-5c 50 db 78 97 4c 27 15 79 b0 16 33 a3 ef 62 71 be 5c 22 5e b2 8f 9c f6 
-18 0b 5a 6a f3 1e 80 20 9a 08 5c fb f9 5f 3f dc f9 b1 8b 69 3d 6c 0e 0d 
-0f fb 8e 3f 9a 32 a5 08 59 ec d0 bf cf f2 c2 18
-~~~~~~~~~~~~~~~~~~~~~~~
-
 
 Since no unprotected opaque auxiliary data is sent in the message exchanges:
 
@@ -1719,7 +1728,29 @@ Initiator's subject name (text string)
 ""
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-And its credential is a certificate identified by its 'x5t' hash:
+CRED_I is the certificate (X509_I) encoded as a CBOR byte string:
+
+~~~~~~~~~~~~~~~~~~~~~~~
+X509_I (101 bytes)
+fa 34 b2 2a 9c a4 a1 e1 29 24 ea e1 d1 76 60 88 09 84 49 cb 84 8f fc 79 
+5f 88 af c4 9c be 8a fd d1 ba 00 9f 21 67 5e 8f 6c 77 a4 a2 c3 01 95 60 
+1f 6f 0a 08 52 97 8b d4 3d 28 20 7d 44 48 65 02 ff 7b dd a6 32 c7 88 37 
+00 16 b8 96 5b db 20 74 bf f8 2e 5a 20 e0 9b ec 21 f8 40 6e 86 44 2b 87 
+ec 3f f2 45 b7
+~~~~~~~~~~~~~~~~~~~~~~~
+
+~~~~~~~~~~~~~~~~~~~~~~~
+CRED_I (103 bytes)
+58 65 fa 34 b2 2a 9c a4 a1 e1 29 24 ea e1 d1 76 60 88 09 84 49 cb 84 8f 
+fc 79 5f 88 af c4 9c be 8a fd d1 ba 00 9f 21 67 5e 8f 6c 77 a4 a2 c3 01 
+95 60 1f 6f 0a 08 52 97 8b d4 3d 28 20 7d 44 48 65 02 ff 7b dd a6 32 c7 
+88 37 00 16 b8 96 5b db 20 74 bf f8 2e 5a 20 e0 9b ec 21 f8 40 6e 86 44 
+2b 87 ec 3f f2 45 b7 
+~~~~~~~~~~~~~~~~~~~~~~~
+
+And because certificates are identified by a hash value with the 'x5t' parameter, ID_CRED_I is the following:
+
+ID_CRED_I = { 34 : COSE_CertHash }. In this example, the hash algorithm used is SHA-2 256-bit with hash truncated to 64-bits (value -15). The hash value is calculated over the certificate X509_I.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 ID_CRED_I =
@@ -1731,17 +1762,6 @@ ID_CRED_I =
 ~~~~~~~~~~~~~~~~~~~~~~~
 ID_CRED_I (14 bytes)
 a1 18 22 82 2e 48 5b 78 69 88 43 9e bc f2
-~~~~~~~~~~~~~~~~~~~~~~~
-
-CRED_I is the certificate encoded as a byte string:
-
-~~~~~~~~~~~~~~~~~~~~~~~
-CRED_I (103 bytes)
-58 65 fa 34 b2 2a 9c a4 a1 e1 29 24 ea e1 d1 76 60 88 09 84 49 cb 84 8f 
-fc 79 5f 88 af c4 9c be 8a fd d1 ba 00 9f 21 67 5e 8f 6c 77 a4 a2 c3 01 
-95 60 1f 6f 0a 08 52 97 8b d4 3d 28 20 7d 44 48 65 02 ff 7b dd a6 32 c7 
-88 37 00 16 b8 96 5b db 20 74 bf f8 2e 5a 20 e0 9b ec 21 f8 40 6e 86 44 
-2b 87 ec 3f f2 45 b7 
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 Since no opaque auxiliary data is exchanged:
