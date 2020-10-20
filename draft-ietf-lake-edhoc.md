@@ -382,7 +382,7 @@ EDHOC allows the communication or negotiation of various protocol features durin
 
 * The Initiator decides on the method parameter, see {{method-types}}. The Responder either accepts or rejects.
 
-* The Initiator and the Responder decide on the representation of the identifier of their respective credentials, ID_CRED_I and ID_CRED_R. The decision is reflected by the label used in the CBOR map, see for example {{asym-overview}}.
+* The Initiator and the Responder decide on the representation of the identifier of their respective credentials, ID_CRED_I and ID_CRED_R. The decision is reflected by the label used in the CBOR map, see for example {{id_cred}}.
 
 ## Auxiliary Data {#AD}
 
@@ -494,7 +494,28 @@ This section specifies authentication method = 0, 1, 2, and 3, see {{method-type
 
 * The Responder is able to retrieve the Initiator's public authentication key using ID_CRED_I,
 
-where the identifiers ID_CRED_I and ID_CRED_R are COSE header_maps, i.e. CBOR maps containing COSE Common Header Parameters, see Section 3.1 of {{RFC8152}}). ID_CRED_I and ID_CRED_R need to contain parameters that can identify a public authentication key. In the following paragraph we give some examples of possible COSE header parameters used.
+where ID_CRED_I and ID_CRED_R are the identifiers of the public authentication keys. Their encoding is specified in {{id_cred}}.
+
+~~~~~~~~~~~
+Initiator                                                   Responder
+|               METHOD_CORR, SUITES_I, G_X, C_I, AD_1               |
++------------------------------------------------------------------>|
+|                             message_1                             |
+|                                                                   |
+|   C_I, G_Y, C_R, Enc(K_2e; ID_CRED_R, Signature_or_MAC_2, AD_2)   |
+|<------------------------------------------------------------------+
+|                             message_2                             |
+|                                                                   |
+|       C_R, AEAD(K_3ae; ID_CRED_I, Signature_or_MAC_3, AD_3)       |
++------------------------------------------------------------------>|
+|                             message_3                             |
+~~~~~~~~~~~
+{: #fig-asym title="Overview of EDHOC with asymmetric key authentication."}
+{: artwork-align="center"}
+
+## Encoding of Public Authentication Key Identifiers {#id_cred}
+
+The identifiers ID_CRED_I and ID_CRED_R are COSE header_maps, i.e. CBOR maps containing COSE Common Header Parameters, see Section 3.1 of {{RFC8152}}). ID_CRED_I and ID_CRED_R need to contain parameters that can identify a public authentication key. In the following paragraph we give some examples of possible COSE header parameters used.
 
 Raw public keys are most optimally stored as COSE_Key objects and identified with a 'kid' parameter:
 
@@ -527,22 +548,22 @@ CRED_x = {
 }
 ~~~~~~~~~~~
 
+## Encoding of bstr_identifier {#bstr_id}
+
+A bstr_identifier is a special encoding for byte strings, used throughout the protocol.
+
+Byte strings of length greater than one are encoded as CBOR byte strings.
+Byte strings of length one are encoded as the corresponding integer - 24.
+
+For example, the byte string h'59e9' encoded as a bstr_identifier is equal to h'59e9', while the byte string h'2a' is encoded as the integer 18.
+
+The CDDL definition of the bstr_identifier is given below:
+
+~~~~~~~~~~~ CDDL
+bstr_identifier = bstr / int
 ~~~~~~~~~~~
-Initiator                                                   Responder
-|               METHOD_CORR, SUITES_I, G_X, C_I, AD_1               |
-+------------------------------------------------------------------>|
-|                             message_1                             |
-|                                                                   |
-|   C_I, G_Y, C_R, Enc(K_2e; ID_CRED_R, Signature_or_MAC_2, AD_2)   |
-|<------------------------------------------------------------------+
-|                             message_2                             |
-|                                                                   |
-|       C_R, AEAD(K_3ae; ID_CRED_I, Signature_or_MAC_3, AD_3)       |
-+------------------------------------------------------------------>|
-|                             message_3                             |
-~~~~~~~~~~~
-{: #fig-asym title="Overview of EDHOC with asymmetric key authentication."}
-{: artwork-align="center"}
+
+Note that, despite what could be interpreted by the CDDL definition only, bstr_identifier once decoded are always byte strings.
 
 ## EDHOC Message 1
 
@@ -560,7 +581,6 @@ message_1 = (
 )
 
 suite = int
-bstr_identifier = bstr / int
 ~~~~~~~~~~~
 
 where:
@@ -568,7 +588,7 @@ where:
 * METHOD_CORR = 4 * method + corr, where method = 0, 1, 2, or 3 (see {{method-types}}) and the correlation parameter corr is chosen based on the transport and determines which connection identifiers that are omitted (see {{transport}}).
 * SUITES_I - cipher suites which the Initiator supports in order of (decreasing) preference. The list of supported cipher suites can be truncated at the end, as is detailed in the processing steps below. One of the supported cipher suites is selected. If a single supported cipher suite is conveyed then that cipher suite is selected and the selected cipher suite is encoded as an int instead of an array.
 * G_X - the ephemeral public key of the Initiator
-* C_I - variable length connection identifier. An bstr_identifier is a byte string with special encoding. Byte strings of length one is encoded as the corresponding integer - 24, i.e. h'2a' is encoded as 18.
+* C_I - variable length connection identifier, encoded as a bstr_identifier (see {{bstr_id}}).
 * AD_1 - bstr containing unprotected opaque auxiliary data
 
 ### Initiator Processing of Message 1
@@ -622,6 +642,7 @@ where:
 
 * G_Y - the ephemeral public key of the Responder
 * C_R - variable length connection identifier
+* bstr_identifier is defined in {{bstr_id}}
 
 ### Responder Processing of Message 2 {#asym-msg2-proc}
 
@@ -639,11 +660,11 @@ The Responder SHALL compose message_2 as follows:
 
    * protected =  << ID_CRED_R >>
 
-      * ID_CRED_R - identifier to facilitate retrieval of CRED_R, see {{asym-overview}}
+      * ID_CRED_R - identifier to facilitate retrieval of CRED_R, see {{id_cred}}
 
    * external_aad = << TH_2, CRED_R, ? AD_2 >>
 
-      * CRED_R - bstr containing the credential of the Responder, see {{asym-overview}}. 
+      * CRED_R - bstr containing the credential of the Responder, see {{id_cred}}. 
 
       * AD_2 = bstr containing opaque unprotected auxiliary data
 
@@ -680,7 +701,7 @@ The Responder SHALL compose message_2 as follows:
 
    * plaintext = ( ID_CRED_R / bstr_identifier, Signature_or_MAC_2, ? AD_2 )
 
-      * Note that if ID_CRED_R contains a single 'kid' parameter, i.e., ID_CRED_R = { 4 : kid_R }, only the byte string kid_R is conveyed in the plaintext encoded as an bstr_identifier, see {{asym-overview}}.
+      * Note that if ID_CRED_R contains a single 'kid' parameter, i.e., ID_CRED_R = { 4 : kid_R }, only the byte string kid_R is conveyed in the plaintext encoded as a bstr_identifier, see {{id_cred}} and {{bstr_id}}.
 
    * CIPHERTEXT_2 = plaintext XOR K_2e
 
@@ -725,6 +746,8 @@ data_3 = (
 )
 ~~~~~~~~~~~
 
+where bstr_identifier is defined in {{bstr_id}}.
+
 ### Initiator Processing of Message 3 {#asym-msg3-proc}
 
 The Initiator  SHALL compose message_3 as follows:
@@ -737,11 +760,11 @@ The Initiator  SHALL compose message_3 as follows:
 
    * protected =  << ID_CRED_I >>
 
-      * ID_CRED_I - identifier to facilitate retrieval of CRED_I, see {{asym-overview}}
+      * ID_CRED_I - identifier to facilitate retrieval of CRED_I, see {{id_cred}}
 
    * external_aad = << TH_3, CRED_I, ? AD_3 >>
 
-      * CRED_I - bstr containing the credential of the Initiator, see {{asym-overview}}. 
+      * CRED_I - bstr containing the credential of the Initiator, see {{id_cred}}. 
 
       * AD_3 = bstr containing opaque protected auxiliary data
 
@@ -780,7 +803,7 @@ The Initiator  SHALL compose message_3 as follows:
 
    * plaintext = ( ID_CRED_I / bstr_identifier, Signature_or_MAC_3, ? AD_3 )
 
-      * Note that if ID_CRED_I contains a single 'kid' parameter, i.e., ID_CRED_I = { 4 : kid_I }, only the byte string kid_I is conveyed in the plaintext encoded as an bstr_identifier, see {{asym-overview}}.
+      * Note that if ID_CRED_I contains a single 'kid' parameter, i.e., ID_CRED_I = { 4 : kid_I }, only the byte string kid_I is conveyed in the plaintext encoded as a bstr_identifier, see {{id_cred}} and {{bstr_id}}.
 
    COSE constructs the input to the AEAD {{RFC5116}} as follows: 
 
@@ -835,6 +858,7 @@ where:
 * C_x - if error is sent by the Responder and corr (METHOD_CORR mod 4) equals 0 or 2 then C_x is set to C_I, else if error is sent by the Initiator and corr (METHOD_CORR mod 4) equals 0 or 1 then C_x is set to C_R, else C_x is omitted.
 * ERR_MSG - text string containing the diagnostic payload, defined in the same way as in Section 5.5.2 of {{RFC7252}}. ERR_MSG MAY be a 0-length text string.
 * SUITES_R - cipher suites from SUITES_I or the EDHOC cipher suites registry that the Responder supports. SUITES_R MUST only be included in replies to message_1. If a single supported cipher suite is conveyed then the supported cipher suite is encoded as an int instead of an array.
+* bstr_identifier is specified in {{bstr_id}}.
 
 ### Example Use of EDHOC Error Message with SUITES_R
 
@@ -1366,7 +1390,7 @@ Connection identifier chosen by Responder (1 byte)
 2b
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-Note that since C_R is a byte string of length one, it is encoded as the corresponding integer subtracted by 24 (see bstr_identifier in {{asym-msg1-form}}). Thus 0x2b = 43, 43 - 24 = 19, and 19 in CBOR encoding is equal to 0x13.
+Note that since C_R is a byte string of length one, it is encoded as the corresponding integer subtracted by 24 (see bstr_identifier in {{bstr_id}}). Thus 0x2b = 43, 43 - 24 = 19, and 19 in CBOR encoding is equal to 0x13.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 C_R (1 byte)
@@ -2070,7 +2094,7 @@ Connection identifier chosen by Initiator (1 bytes)
 16
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-Note that since C_I is a byte strings of length one, it is encoded as the corresponding integer - 24 (see bstr_identifier in {{asym-msg1-form}}), i.e. 0x16 = 22, 22 - 24 = -2, and -2 in CBOR encoding is equal to 0x21.
+Note that since C_I is a byte strings of length one, it is encoded as the corresponding integer - 24 (see bstr_identifier in {{bstr_id}}), i.e. 0x16 = 22, 22 - 24 = -2, and -2 in CBOR encoding is equal to 0x21.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 C_I (1 byte)
@@ -2195,7 +2219,7 @@ Connection identifier chosen by Responder (1 byte)
 20
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-Note that since C_R is a byte strings of length one, it is encoded as the corresponding integer - 24 (see bstr_identifier in {{asym-msg1-form}}), i.e. 0x20 = 32, 32 - 24 = 8, and 8 in CBOR encoding is equal to 0x08.
+Note that since C_R is a byte strings of length one, it is encoded as the corresponding integer - 24 (see bstr_identifier in {{bstr_id}}), i.e. 0x20 = 32, 32 - 24 = 8, and 8 in CBOR encoding is equal to 0x08.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 C_R (1 byte)
@@ -2386,7 +2410,7 @@ Signature_or_MAC_2 (8 bytes)
 
 CIPHERTEXT_2 is the ciphertext resulting from XOR encrypting a plaintext constructed from the following parameters and the key K_2e.
 
-* plaintext = CBOR Sequence of the items ID_CRED_R and the CBOR encoded Signature_or_MAC_2, in this order. Note that since ID_CRED_R contains a single 'kid' parameter, i.e., ID_CRED_R = { 4 : kid_R }, only the byte string kid_R is conveyed in the plaintext encoded as a bstr_identifier. kid_R is encoded as the corresponding integer - 24 (see bstr_identifier in {{asym-msg1-form}}), i.e. 0x07 = 7, 7 - 24 = -17, and -17 in CBOR encoding is equal to 0x30.
+* plaintext = CBOR Sequence of the items ID_CRED_R and the CBOR encoded Signature_or_MAC_2, in this order. Note that since ID_CRED_R contains a single 'kid' parameter, i.e., ID_CRED_R = { 4 : kid_R }, only the byte string kid_R is conveyed in the plaintext encoded as a bstr_identifier. kid_R is encoded as the corresponding integer - 24 (see bstr_identifier in {{bstr_id}}), i.e. 0x07 = 7, 7 - 24 = -17, and -17 in CBOR encoding is equal to 0x30.
 
 The plaintext is the following:
 
@@ -2641,7 +2665,7 @@ Signature_or_MAC_3 (8 bytes)
 Finally, the outer COSE_Encrypt0 is computed.
 
 The Plaintext is the following CBOR Sequence: 
-plaintext = ( ID_CRED_I , Signature_or_MAC_3 ).  Note that since ID_CRED_I contains a single 'kid' parameter, i.e., ID_CRED_I = { 4 : kid_I }, only the byte string kid_I is conveyed in the plaintext encoded as a bstr_identifier. kid_I is encoded as the corresponding integer - 24 (see bstr_identifier in {{asym-msg1-form}}), i.e. 0x24 = 36, 36 - 24 = 12, and 12 in CBOR encoding is equal to 0x0c.
+plaintext = ( ID_CRED_I , Signature_or_MAC_3 ).  Note that since ID_CRED_I contains a single 'kid' parameter, i.e., ID_CRED_I = { 4 : kid_I }, only the byte string kid_I is conveyed in the plaintext encoded as a bstr_identifier. kid_I is encoded as the corresponding integer - 24 (see bstr_identifier in {{bstr_id}}), i.e. 0x24 = 36, 36 - 24 = 12, and 12 in CBOR encoding is equal to 0x0c.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 P_3ae (CBOR Sequence) (10 bytes)
