@@ -311,7 +311,7 @@ Initiator                                             Responder
 
 Cryptographically, EDHOC does not put requirements on the lower layers. EDHOC is not bound to a particular transport layer, and can be used in environments without IP. The transport is responsible to handle message loss, reordering, message duplication, fragmentation, and denial of service protection, where necessary. The Initiator and the Responder need to have agreed on a transport to be used for EDHOC. It is recommended to transport EDHOC in CoAP payloads, see {{transfer}}.
 
-EDHOC includes connection identifiers (C_I, C_R) to correlate messages. The connection identifiers C_I and C_R do not have any cryptographic purpose in EDHOC. They contain information facilitating retrieval of the protocol state and may therefore be very short. The connection identifier MAY be used with an application protocol (e.g. OSCORE) for which EDHOC establishes keys, in which case the connection identifiers SHALL adhere to the requirements for that protocol. Each party choses a connection identifier it desires the other party to use in outgoing messages. (For OSCORE this results in the endpoint selecting its Recipient ID, see Section 3.1 of {{RFC8613}}.)
+EDHOC includes connection identifiers (C_I, C_R) to correlate messages. The connection identifiers C_I and C_R do not have any cryptographic purpose in EDHOC. They contain information facilitating retrieval of the protocol state and may therefore be very short. The connection identifier MAY be used with an application protocol (e.g. OSCORE) for which EDHOC establishes keys, in which case the connection identifiers SHALL adhere to the requirements for that protocol. Each party choses a connection identifier it desires the other party to use in outgoing messages. (For OSCORE this results in the endpoint selecting its Recipient ID, see Section 3.1 of {{RFC8613}}).
 
 If the transport provides a mechanism for correlating messages, some of the connection identifiers may be omitted. There are four cases:
 
@@ -325,14 +325,17 @@ If the transport provides a mechanism for correlating messages, some of the conn
 
 For example, if the key exchange is transported over CoAP, the CoAP Token can be used to correlate messages, see {{coap}}.
 
-## Authentication Keys and Identities
+## Authentication Keys and Identities {#auth-key-id}
 
 The EDHOC message exchange may be authenticated using raw public keys (RPK) or public key certificates. The certificates and RPKs can contain signature keys or static Diffie-Hellman keys. In X.509 certificates, signature keys typically have key usage "digitalSignature" and Diffie-Hellman keys typically have key usage "keyAgreement".
- EDHOC assumes the existence of mechanisms (certification authority, trusted third party, manual distribution, etc.) for distributing authentication keys and identities. Policies are set based on the identity of the other party, and parties typically only allow connections from a small restricted set of identities.
 
-* When a Public Key Infrastructure (PKI) is used, the trust anchor is a Certification Authority (CA) certificate, and the identity is the subject whose unique name (e.g. a domain name, NAI, or EUI) is included in the other party's certificate. Before running EDHOC each party needs at least one CA public key certificate, or just the public key, and a set of identities it is allowed to communicate with. Any validated public-key certificate with an allowed subject name is accepted. EDHOC provides proof that the other party possesses the private authentication key corresponding to the public authentication key in its certificate. The certification path provides proof that the subject of the certificate owns the public key in the certificate.
+EDHOC assumes the existence of mechanisms (certification authority, trusted third party, manual distribution, etc.) for specifying and distributing authentication keys and identities. Policies are set based on the identity of the other party, and parties typically only allow connections from a specific identity or a small restricted set of identities. For example, in the case of a device connecting to a network, the network may only allow connections from devices which authenticate with certificates having a particular range of serial numbers in the subject field and signed by a particular CA. On the other side, the device may only be allowed to connect to a network which authenticate with a particular public key (information of which may be provisioned, e.g., out of band or in the Auxiliary Data, see {{AD}}).
+ 
+The EDHOC implementation must be able to receive and enforce information from the application about what is the intended peer endpoint, and in particular whether it is a specific identity or a set of identities.
 
-* When public keys are used but not with a PKI (RPK, self-signed certificate), the trust anchor is the public authentication key of the other party. In this case, the identity is typically directly associated to the public authentication key of the other party. For example, the name of the subject may be a canonical representation of the public key. Alternatively, if identities can be expressed in the form of unique subject names assigned to public keys, then a binding to identity can be achieved by including both public key and associated subject name in the protocol message computation: CRED_I or CRED_R may be a self-signed certificate or COSE_Key containing the public authentication key and the subject name, see {{fig-sigma}}. Before running EDHOC, each party need a set of public authentication keys/unique associated subject names it is allowed to communicate with.  EDHOC provides proof that the other party possesses the private authentication key corresponding to the public authentication key. 
+* When a Public Key Infrastructure (PKI) is used, the trust anchor is a Certification Authority (CA) certificate, and the identity is the subject whose unique name (e.g. a domain name, NAI, or EUI) is included in the endpoint's certificate. Before running EDHOC each party needs at least one CA public key certificate, or just the public key, and a specific identity or set of identities it is allowed to communicate with. Only validated public-key certificates with an allowed subject name, as specified by the application, are to be accepted. EDHOC provides proof that the other party possesses the private authentication key corresponding to the public authentication key in its certificate. The certification path provides proof that the subject of the certificate owns the public key in the certificate.
+
+* When public keys are used but not with a PKI (RPK, self-signed certificate), the trust anchor is the public authentication key of the other party. In this case, the identity is typically directly associated to the public authentication key of the other party. For example, the name of the subject may be a canonical representation of the public key. Alternatively, if identities can be expressed in the form of unique subject names assigned to public keys, then a binding to identity can be achieved by including both public key and associated subject name in the protocol message computation: CRED_I or CRED_R may be a self-signed certificate or COSE_Key containing the public authentication key and the subject name, see {{fig-sigma}}. Before running EDHOC, each endpoint needs a specific public authentication key/unique associated subject name, or a set of public authentication keys/unique associated subject names, which it is allowed to communicate with. EDHOC provides proof that the other party possesses the private authentication key corresponding to the public authentication key.
 
 ## Identifiers
 
@@ -376,7 +379,7 @@ EDHOC allows the communication or negotiation of various protocol features durin
 
 * The Initiator and the Responder decide on the representation of the identifier of their respective credentials, ID_CRED_I and ID_CRED_R. The decision is reflected by the label used in the CBOR map, see for example {{asym-overview}}.
 
-## Auxiliary Data
+## Auxiliary Data {#AD}
 
 In order to reduce round trips and number of messages, and in some cases also streamline processing, certain security applications may be integrated into EDHOC by transporting auxiliary data together with the messages. One example is the transport of third-party authorization information protected outside of EDHOC {{I-D.selander-ace-ake-authz}}. Another example is the embedding of a certificate enrolment request or a newly issued certificate.
 
@@ -690,7 +693,7 @@ The Initiator SHALL process message_2 as follows:
 
 * Decrypt CIPHERTEXT_2. The decryption process depends on the method, see {{asym-msg2-proc}}.
 
-* Verify that the identity of the Responder is among the allowed identities for this connection.
+* Verify that the identity of the Responder is an allowed identity for this connection, see {{auth-key-id}}.
 
 * Verify Signature_or_MAC_2 using the algorithm in the selected cipher suite. The verification process depends on the method, see {{asym-msg2-proc}}.
 
@@ -797,7 +800,7 @@ The Responder SHALL process message_3 as follows:
 
 * Decrypt and verify the outer COSE_Encrypt0 as defined in Section 5.3 of {{RFC8152}}, with the EDHOC AEAD algorithm in the selected cipher suite, K_3ae, and IV_3ae.
 
-* Verify that the identity of the Initiator is among the allowed identities for this connection.
+* Verify that the identity of the Initiator is an allowed identity for this connection, see {{auth-key-id}}.
 
 * Verify Signature_or_MAC_3 using the algorithm in the selected cipher suite. The verification process depends on the method, see {{asym-msg3-proc}}.
 
