@@ -2414,7 +2414,7 @@ message_2 =
 Which as a CBOR encoded data item is:
 
 ~~~~~~~~~~~~~~~~~~~~~~~
-message_2 (CBOR Sequence) (117 bytes)
+message_2 (CBOR Sequence) (46 bytes)
 58 20 52 fb a0 bd c8 d9 53 dd 86 ce 1a b2 fd 7c 05 a4 65 8c 7c 30 af db 
 fc 33 01 04 70 69 45 1b af 35 08 4a dc f6 fe 9c 52 4c 22 45 4d eb 
 ~~~~~~~~~~~~~~~~~~~~~~~
