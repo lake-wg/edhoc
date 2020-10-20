@@ -1408,9 +1408,9 @@ Responders's subject name (text string)
 ""
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-And because 'x5t' has value certificate are used, ID_CRED_R is the following:
+And because 'x5t' is used, ID_CRED_R = { 34 : COSE_CertHash }.
 
-ID_CRED_x = { 34 : COSE_CertHash }, for x = I or R, and since the SHA-2 256-bit Hash truncated to 64-bits is used (value -15):
+The digest in COSE_CertHash is computed by CBOR decoding CRED_R and hashing with SHA-256/64 (value -15 in COSE Algorithms), i.e. hashing the certificate bytes with SHA-2 256-bit hash and truncating to 64-bits.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 ID_CRED_R =
