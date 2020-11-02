@@ -641,8 +641,7 @@ data_2 = (
 where:
 
 * G_Y - the ephemeral public key of the Responder
-* C_R - variable length connection identifier
-* bstr_identifier is defined in {{bstr_id}}
+* C_R - variable length connection identifier, encoded as a bstr_identifier (see {{bstr_id}}).
 
 ### Responder Processing of Message 2 {#asym-msg2-proc}
 
@@ -745,8 +744,6 @@ data_3 = (
   ? C_R : bstr_identifier,
 )
 ~~~~~~~~~~~
-
-where bstr_identifier is defined in {{bstr_id}}.
 
 ### Initiator Processing of Message 3 {#asym-msg3-proc}
 
@@ -855,10 +852,9 @@ error = (
 
 where:
 
-* C_x - if error is sent by the Responder and corr (METHOD_CORR mod 4) equals 0 or 2 then C_x is set to C_I, else if error is sent by the Initiator and corr (METHOD_CORR mod 4) equals 0 or 1 then C_x is set to C_R, else C_x is omitted.
+* C_x - variable length connection identifier, encoded as a bstr_identifier (see {{bstr_id}}). If error is sent by the Responder and corr (METHOD_CORR mod 4) equals 0 or 2 then C_x is set to C_I, else if error is sent by the Initiator and corr (METHOD_CORR mod 4) equals 0 or 1 then C_x is set to C_R, else C_x is omitted.
 * ERR_MSG - text string containing the diagnostic payload, defined in the same way as in Section 5.5.2 of {{RFC7252}}. ERR_MSG MAY be a 0-length text string.
 * SUITES_R - cipher suites from SUITES_I or the EDHOC cipher suites registry that the Responder supports. SUITES_R MUST only be included in replies to message_1. If a single supported cipher suite is conveyed then the supported cipher suite is encoded as an int instead of an array.
-* bstr_identifier is specified in {{bstr_id}}.
 
 ### Example Use of EDHOC Error Message with SUITES_R
 
