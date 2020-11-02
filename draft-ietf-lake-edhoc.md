@@ -815,6 +815,8 @@ The Initiator  SHALL compose message_3 as follows:
 
 Pass the connection identifiers (C_I, C_R) and the application algorithms in the selected cipher suite to the application. The application can now derive application keys using the EDHOC-Exporter interface.
 
+After sending message_3, the Initiator is assured that no other party than the Responder can compute the key PRK_4x3m (implicit key authentication). The Initiator does however not know that the Responder has actually computed the key PRK_4x3m. While the Initiator can securely send protected application data, the Initiator SHOULD NOT store the keying material PRK_4x3m and TH_4 until the Initiator is assured that the Responder has actually computed the key PRK_4x3m (explicit key confirmation). Explicit key confirmation is e.g. assured when the Initiator has verified an OSCORE message from the Responder.
+
 ### Responder Processing of Message 3
 
 The Responder SHALL process message_3 as follows:
@@ -833,6 +835,7 @@ The Responder SHALL process message_3 as follows:
 
 If any verification step fails, the Responder MUST send an EDHOC error message back, formatted as defined in {{error}}, and the protocol MUST be discontinued.
 
+After verifying message_3, the Responder is assured that the Initiated has calculated the key PRK_4x3m (explicit key confirmation) and that no other party than the Responder can compute the key. The Responder can securely send protected application data and store the keying material PRK_4x3m and TH_4.
 
 # Error Handling {#error}
 
