@@ -550,7 +550,7 @@ CRED_x = {
 
 ## Encoding of bstr_identifier {#bstr_id}
 
-A bstr_identifier is a special encoding for byte strings, used throughout the protocol.
+A bstr_identifier is a special encoding for byte strings, used throughout the protocol to encode short byte strings as int to save overhead, since CBOR ints in the interval -24 to 23 can be encoded as one byte.
 
 Byte strings of length greater than one are encoded as CBOR byte strings.
 Byte strings of length one are encoded as the corresponding integer - 24.
@@ -591,7 +591,7 @@ where:
 * C_I - variable length connection identifier, encoded as a bstr_identifier (see {{bstr_id}}).
 * AD_1 - bstr containing unprotected opaque auxiliary data
 
-### Initiator Processing of Message 1
+### Initiator Processing of Message 1 {#init-proc-msg1}
 
 The Initiator SHALL compose message_1 as follows:
 
@@ -605,13 +605,13 @@ The Initiator SHALL compose message_1 as follows:
 
 * Encode message_1 as a sequence of CBOR encoded data items as specified in {{asym-msg1-form}}
 
-### Responder Processing of Message 1
+### Responder Processing of Message 1 {#resp-proc-msg1}
 
 The Responder SHALL process message_1 as follows:
 
 * Decode message_1 (see {{CBOR}}).
 
-* Verify that the selected cipher suite is supported and that no prior cipher suites in SUITES_I are supported.
+* Verify that the selected cipher suite is supported and that no prior cipher suite in SUITES_I is supported.
 
 * Pass AD_1 to the security application.
 
@@ -863,7 +863,7 @@ After receiving SUITES_R, the Initiator can determine which selected cipher suit
 
 ### Example Use of EDHOC Error Message with SUITES_R
 
-Assuming that the Initiator supports the five cipher suites 5, 6, 7, 8, and 9 in decreasing order of preference, Figures {{fig-error1}}{: format="counter"} and {{fig-error2}}{: format="counter"} show examples of how the Responder can truncate SUITES_I and how SUITES_R is used by the Responder to give the Initiator information about the cipher suites that the Responder supports. In {{fig-error1}}, the Responder supports cipher suite 6 but not the selected cipher suite 5. 
+Assuming that the Initiator supports the five cipher suites 5, 6, 7, 8, and 9 in decreasing order of preference, Figures {{fig-error1}}{: format="counter"} and {{fig-error2}}{: format="counter"} show examples of how the Initiator can truncate SUITES_I and how SUITES_R is used by the Responder to give the Initiator information about the cipher suites that the Responder supports. In {{fig-error1}}, the Responder supports cipher suite 6 but not the selected cipher suite 5. 
 
 ~~~~~~~~~~~
 Initiator                                                   Responder
@@ -901,7 +901,7 @@ Initiator                                                   Responder
 {: #fig-error2 title="Example use of error message with SUITES_R."}
 {: artwork-align="center"}
 
-As the Initiator's list of supported cipher suites and order of preference is fixed, and the Responder only accepts message_1 if the selected cipher suite is the first cipher suite in SUITES_I that the Responder supports, the parties can verify that the selected cipher suite is the most preferred (by the Initiator) cipher suite supported by both parties. If the selected cipher suite is not the first cipher suite in SUITES_I that the Responder supports, the Responder will discontinue the protocol. 
+Note that the Initiator's list of supported cipher suites and order of preference is fixed (see {{asym-msg1-form}} and {{init-proc-msg1}}). Furthermore, the Responder shall only accept message_1 if the selected cipher suite is the first cipher suite in SUITES_I that the Responder supports (see {{resp-proc-msg1}}). Following this procedure ensures that the selected cipher suite is the most preferred (by the Initiator) cipher suite supported by both parties. If the selected cipher suite is not the first cipher suite which the Responder supports in SUITES_I, then Responder will discontinue the protocol. If SUITES_I in message_1 is manipulated then the integrity verification of message_2 containing the transcript hash TH_2 = H( message_1, data_2 ) will fail and the Initiator will discontinue the protocol.
 
 # Transferring EDHOC and Deriving an OSCORE Context {#transfer}
 
@@ -936,7 +936,7 @@ Client    Server
   |   2.04   | 
   |          |
 ~~~~~~~~~~~~~~~~~~~~~~~
-{: #fig-coap1 title="Transferring EDHOC in CoAP"}
+{: #fig-coap1 title="Transferring EDHOC in CoAP when the Initiator is CoAP Client"}
 {: artwork-align="center"}
 
 The exchange in {{fig-coap1}} protects the client identity against active attackers and the server identity against passive attackers. An alternative exchange that protects the server identity against active attackers and the client identity against passive attackers is shown in {{fig-coap2}}. In this case the CoAP Token enables the Responder to correlate message_2 and message_3 so the correlation parameter corr = 2.
@@ -961,7 +961,7 @@ Client    Server
   |          | Payload: EDHOC message_3
   |          |
 ~~~~~~~~~~~~~~~~~~~~~~~
-{: #fig-coap2 title="Transferring EDHOC in CoAP"}
+{: #fig-coap2 title="Transferring EDHOC in CoAP when the Initiator is CoAP Server"}
 {: artwork-align="center"}
 
 To protect against denial-of-service attacks, the CoAP server MAY respond to the first POST request with a 4.01 (Unauthorized) containing an Echo option {{I-D.ietf-core-echo-request-tag}}. This forces the initiator to demonstrate its reachability at its apparent network address. If message fragmentation is needed, the EDHOC messages may be fragmented using the CoAP Block-Wise Transfer mechanism {{RFC7959}}.
