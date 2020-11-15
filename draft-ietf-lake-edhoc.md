@@ -550,7 +550,7 @@ CRED_x = {
 
 ## Encoding of bstr_identifier {#bstr_id}
 
-A bstr_identifier is a special encoding for byte strings, used throughout the protocol to encode short byte strings as int to save overhead, since CBOR ints in the interval -24 to 23 can be encoded as one byte.
+A bstr_identifier is a special encoding for byte strings, used throughout the protocol to encode those short byte strings that can as CBOR ints in the interval -24 to 23, which only require one byte.
 
 Byte strings of length greater than one are encoded as CBOR byte strings.
 Byte strings of length one are encoded as the corresponding integer - 24.
