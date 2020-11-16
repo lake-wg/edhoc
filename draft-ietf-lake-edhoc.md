@@ -1193,6 +1193,32 @@ Expert reviewers should take into consideration the following points:
 
 --- back
 
+# Template Applicability Statement for uses of EDHOC
+
+EDHOC requires that a number of paramters be agreed upon before hand.
+They are not negotiated by the protocol and there are no opportunities to offer more than one, so must be agreed upon by users of the protocol.
+
+The list is:
+
+1. Agreed Method (see {{method-types}})
+2. Transport and Correlation (see {{transport}})
+3. Use and format of AD_1, AD_2, AD_3 (see {{AD}})
+
+An example template might look like this next section.
+The Wylie Coyote Protocol is just an example.
+
+## Use of EDHOC in the Wylie Coyote Protocol
+
+Users of the Wylie Coyote Protocol are expected to implement Agreement Methods
+where the sender uses a Signature Key, and the responder uses a Static DH Key.
+The Static DH key must be provisioned in the sender by the USPS Instant Delivery Protocol  (mythical).
+
+The Wylie Coyote Protocol runs over IPv6 over Barbed-Wire, and thus can use IPv6-Link-Local addresses.  The C\_I and C\_R should be the 16-byte source and destination IPv6 addresses.
+
+The Wylie Coyote Protocol includes the word "parasol", which should be translated into the local language and sent as part of the localization.  So when run in Germany, the string "Sonnenschrim"
+should be sent in AD_3 as a CBOR string.
+
+
 # Use of CBOR, CDDL and COSE in EDHOC {#CBORandCOSE}
 
 This Appendix is intended to simplify for implementors not familiar with CBOR {{RFC7049}}, CDDL {{RFC8610}}, COSE {{RFC8152}}, and HKDF {{RFC5869}}.
