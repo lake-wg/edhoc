@@ -209,7 +209,7 @@ Total               103       245
 ~~~~~~~~~~~~~~~~~~~~~~~
 {: #fig-sizes title="Example of message sizes in bytes." artwork-align="center"}
 
-The ECDH exchange and the key derivation follow known protocol constructions such as {{SIGMA}}, NIST SP-800-56A {{SP-800-56A}}, and HKDF {{RFC5869}}. CBOR {{RFC7049}} and COSE {{RFC8152}} are used to implement these standards. The use of COSE provides crypto agility and enables use of future algorithms and headers designed for constrained IoT.
+The ECDH exchange and the key derivation follow known protocol constructions such as {{SIGMA}}, NIST SP-800-56A {{SP-800-56A}}, and Extract-and-Expand {{RFC5869}}. CBOR {{RFC7049}} and COSE {{RFC8152}} are used to implement these standards. The use of COSE provides crypto agility and enables use of future algorithms and headers designed for constrained IoT.
 
 This document is organized as follows: {{background}} describes how EDHOC authenticated with digital signatures builds on SIGMA-I, {{overview}} specifies general properties of EDHOC, including message flow, formatting of the ephemeral public keys, and key derivation, {{asym}} specifies EDHOC with signature key and static Diffie-Hellman key authentication, {{error}} specifies the EDHOC error message, and {{transfer}} describes how EDHOC can be transferred in CoAP and used to establish an OSCORE security context.
 
@@ -398,11 +398,13 @@ The ECDH ephemeral public keys are formatted as a COSE_Key of type EC2 or OKP ac
 
 ## Key Derivation {#key-der}
 
-EDHOC uses HKDF {{RFC5869}} with the EDHOC hash algorithm in the selected cipher suite to derive keys. HKDF-Extract is used to derive fixed-length uniformly pseudorandom keys (PRK) from ECDH shared secrets. HKDF-Expand is used to derive additional output keying material (OKM) from the PRKs. The PRKs are derived using HKDF-Extract {{RFC5869}}.
+EDHOC uses Extract-and-Expand {{RFC5869}} with the EDHOC hash algorithm in the selected cipher suite to derive keys. Extract is used to derive fixed-length uniformly pseudorandom keys (PRK) from ECDH shared secrets. Expand is used to derive additional output keying material (OKM) from the PRKs. The PRKs are derived using Extract.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
-   PRK = HKDF-Extract( salt, IKM )
+   PRK = Extract( salt, IKM )
 ~~~~~~~~~~~~~~~~~~~~~~~
+
+If the EDHOC hash algorithm is SHA-2, then Extract( salt, IKM ) = HKDF-Extract( salt, IKM ) {{RFC5869}}. If the EDHOC hash algorithm is SHAKE128, then Extract( salt, IKM ) = KMAC128( salt, IKM, 256, "" ). If the EDHOC hash algorithm is SHAKE256, then Extract( salt, IKM ) = KMAC256( salt, IKM, 512, "" ).
 
 PRK_2e is used to derive key and IV to encrypt message_2. PRK_3e2m is used to derive keys and IVs produce a MAC in message_2 and to encrypt message_3. PRK_4x3m is used to derive keys and IVs produce a MAC in message_3 and to derive application specific data.
 
@@ -422,9 +424,9 @@ where salt = 0x (the empty byte string).
 
 The pseudorandom keys PRK_3e2m and PRK_4x3m are defined as follow:
 
-* If the Reponder authenticates with a static Diffie-Hellman key, then PRK_3e2m = HKDF-Extract( PRK_2e, G_RX ), where G_RX is the ECDH shared secret calculated from G_R and X, or G_X and R, else PRK_3e2m = PRK_2e.
+* If the Reponder authenticates with a static Diffie-Hellman key, then PRK_3e2m = Extract( PRK_2e, G_RX ), where G_RX is the ECDH shared secret calculated from G_R and X, or G_X and R, else PRK_3e2m = PRK_2e.
 
-* If the Initiator authenticates with a static Diffie-Hellman key, then PRK_4x3m = HKDF-Extract( PRK_3e2m, G_IY ), where G_IY is the ECDH shared secret calculated from G_I and Y, or G_Y and I, else PRK_4x3m = PRK_3e2m.
+* If the Initiator authenticates with a static Diffie-Hellman key, then PRK_4x3m = Extract( PRK_3e2m, G_IY ), where G_IY is the ECDH shared secret calculated from G_I and Y, or G_Y and I, else PRK_4x3m = PRK_3e2m.
 
 Example: Assuming the use of curve25519, the ECDH shared secrets G_XY, G_RX, and G_IY are the outputs of the X25519 function {{RFC7748}}:
 
@@ -432,11 +434,11 @@ Example: Assuming the use of curve25519, the ECDH shared secrets G_XY, G_RX, and
    G_XY = X25519( Y, G_X ) = X25519( X, G_Y )
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-The keys and IVs used in EDHOC are derived from PRK using HKDF-Expand {{RFC5869}} where the EDHOC-KDF is instantiated with the EDHOC AEAD algorithm in the selected cipher suite.
+The keys and IVs used in EDHOC are derived from PRK using Expand {{RFC5869}} where the EDHOC-KDF is instantiated with the EDHOC AEAD algorithm in the selected cipher suite.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
    OKM = EDHOC-KDF( PRK, transcript_hash, label, length )
-       = HKDF-Expand( PRK, info, length )
+       = Expand( PRK, info, length )
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 where info is the CBOR encoding of
@@ -459,6 +461,8 @@ where
   + label is a tstr set to the name of the derived key or IV, i.e. "K_2m", "IV_2m", "K_2e", "K_3m", "IV_3m", "K_3ae", or "IV_3ae".
 
   + length is the length of output keying material (OKM) in bytes
+
+If the EDHOC hash algorithm is SHA-2, then Expand( PRK, info, length ) = HKDF-Expand( PRK, info, length ) {{RFC5869}}. If the EDHOC hash algorithm is SHAKE128, then Expand( PRK, info, length ) = KMAC128( PRK, info, L, "" ). If the EDHOC hash algorithm is SHAKE256, then Expand( PRK, info, length ) = KMAC256( PRK, info, L, "" ).
 
 K_2m and IV_2m are derived using the transcript hash TH_2 and the pseudorandom key PRK_3e2m. K_3ae and IV_3ae are derived using the transcript hash TH_3 and the pseudorandom key PRK_3e2m. K_3m and IV_3m are derived using the transcript hash TH_3 and the pseudorandom key PRK_4x3m. IVs are only used if the EDHOC AEAD algorithm uses IVs.
 
