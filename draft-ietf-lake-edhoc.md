@@ -700,19 +700,20 @@ The Responder SHALL compose message_2 as follows:
 
      \[ "Signature1", << ID_CRED_R >>, << TH_2, CRED_R, ? AD_2 >>, MAC_2 \]
 
-* CIPHERTEXT_2 is the ciphertext resulting from encrypting a plaintext with a non-authenticated encryption algorithm given by the EDHOC AEAD algorithm in the selected cipher suite, K_2e, IV_2e, and the following parameters.
+* Compute an outer COSE_Encrypt0 as defined in Section 5.3 of {{RFC8152}}, with the EDHOC AEAD algorithm in the selected cipher suite, K_2e, IV_2e, and the following parameters. The protected header SHALL be empty.
 
    * plaintext = ( ID_CRED_R / bstr_identifier, Signature_or_MAC_2, ? AD_2 )
 
       * Note that if ID_CRED_R contains a single 'kid' parameter, i.e., ID_CRED_R = { 4 : kid_R }, only the byte string kid_R is conveyed in the plaintext encoded as a bstr_identifier, see {{id_cred}} and {{bstr_id}}.
 
-   When the AEAD is based on AES, AES-CTR is used:
+   COSE constructs the input to the AEAD {{RFC5116}} as follows: 
 
-   * CIPHERTEXT_2 = AES-CTR( K_2e, IV_2e, plaintext )
+   * Key K = EDHOC-KDF( PRK_2e, TH_2, "K_2e", length ) 
+   * Nonce N = EDHOC-KDF( PRK_2e, TH_2, "IV_2e", length )
+   * Plaintext P = ( ID_CRED_R / bstr_identifier, Signature_or_MAC_2, ? AD_2 )
+   * Associated data A = \[ "Encrypt0", h'', TH_2 \]
 
-   When the AEAD is based on ChaCha20, the ChaCha20 stream cipher is used:
-
-   * CIPHERTEXT_2 = ChaCha20( K_2e, 1, IV_2e, plaintext )
+   CIPHERTEXT_2 is the 'ciphertext' of the outer COSE_Encrypt0 with the tag removed.
 
 * Encode message_2 as a sequence of CBOR encoded data items as specified in {{asym-msg2-form}}.
 
@@ -724,7 +725,7 @@ The Initiator SHALL process message_2 as follows:
 
 * Retrieve the protocol state using the connection identifier C_I and/or other external information such as the CoAP Token and the 5-tuple.
 
-* Decrypt CIPHERTEXT_2. The decryption process depends on the method, see {{asym-msg2-proc}}.
+* Decrypt CIPHERTEXT_2 by coputing an outer COSE_Encrypt0 as defined in see {{asym-msg2-proc}} and XORing CIPHERTEXT_2 with the 'ciphertext' of the outer COSE_Encrypt0 with the tag removed. 
 
 * Verify that the identity of the Responder is an allowed identity for this connection, see {{auth-key-id}}.
 
