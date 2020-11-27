@@ -700,11 +700,19 @@ The Responder SHALL compose message_2 as follows:
 
      \[ "Signature1", << ID_CRED_R >>, << TH_2, CRED_R, ? AD_2 >>, MAC_2 \]
 
-* CIPHERTEXT_2 is the ciphertext resulting from encrypting a plaintext with a non-authenticated encryption algorithm given by the EDHOC AEAD algorithm in the selected cipher suite (see TBD), K_2e, IV_2e, and the following parameters.
+* CIPHERTEXT_2 is the ciphertext resulting from encrypting a plaintext with a non-authenticated encryption algorithm given by the EDHOC AEAD algorithm in the selected cipher suite, K_2e, IV_2e, and the following parameters.
 
    * plaintext = ( ID_CRED_R / bstr_identifier, Signature_or_MAC_2, ? AD_2 )
 
       * Note that if ID_CRED_R contains a single 'kid' parameter, i.e., ID_CRED_R = { 4 : kid_R }, only the byte string kid_R is conveyed in the plaintext encoded as a bstr_identifier, see {{id_cred}} and {{bstr_id}}.
+
+   When the AEAD is based on AES, AES-CTR is used:
+
+   * CIPHERTEXT_2 = AES-CTR( K_2e, IV_2e, plaintext )
+
+   When the AEAD is based on ChaCha20, the ChaCha20 stream cipher is used:
+
+   * CIPHERTEXT_2 = ChaCha20( K_2e, 1, IV_2e, plaintext )
 
 * Encode message_2 as a sequence of CBOR encoded data items as specified in {{asym-msg2-form}}.
 
