@@ -483,7 +483,7 @@ where label is a tstr defined by the application and length is a uint defined by
 
 where H() is the hash function in the selected cipher suite. Example use of the EDHOC-Exporter is given in Sections {{oscore}}{: format="counter"}.
 
-To provide forward secrecy in a even more efficient way than re-running EDHOC, EHDOC provides the function EHDOC-Exporter-FS. When EHDOC-Exporter-FS is called the old PRK_4x3m is deleted and the new PRk_4x3m is calculated as a "hash" of the old key using the Extract function as illustrated by the following pseudocode:
+To provide forward secrecy in an even more efficient way than re-running EDHOC, EDHOC provides the function EDHOC-Exporter-FS. When EHDOC-Exporter-FS is called the old PRK_4x3m is deleted and the new PRk_4x3m is calculated as a "hash" of the old key using the Extract function as illustrated by the following pseudocode:
 
 ~~~~~~~~~~~
    EHDOC-Exporter-FS( nonce ):
