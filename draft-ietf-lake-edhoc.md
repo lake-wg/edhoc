@@ -2431,7 +2431,7 @@ P_2e (CBOR Sequence) (10 bytes)
 30 48 64 21 0d 2e 18 b9 28 cd 
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-K_2e = HKDF-Expand( PRK, info, length ), where length is the length of the plaintext, so 80.
+K_2e = HKDF-Expand( PRK, info, length ), where length is the length of the plaintext, so 10.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 info for K_2e =
