@@ -417,16 +417,16 @@ PRK_2e is derived with the following input:
 Example: Assuming the use of SHA-256 the extract phase of HKDF produces PRK_2e as follows:
 
 ~~~~~~~~~~~~~~~~~~~~~~~
-   PRK_2e = HMAC-SHA-256( salt, G_XY )
+   PRK_2e = HMAC-SHA-256( salt, ss_pkEI )
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-where salt = 0x (the empty byte string).
+where salt = 0x (the empty byte string) and ss_pkEI is the shared secret from Encaps( pkEI ).
 
 The pseudorandom keys PRK_3e2m and PRK_4x3m are defined as follow:
 
-* If the Reponder authenticates with a static Diffie-Hellman key, then PRK_3e2m = Extract( PRK_2e, G_RX ), where G_RX is the ECDH shared secret calculated from G_R and X, or G_X and R, else PRK_3e2m = PRK_2e.
+* If the Reponder authenticates with a static Diffie-Hellman key, then PRK_3e2m = Extract( PRK_2e, ss_pkEI_skSR), where ss_pkEI_skSR is the shared secret from AuthEncap( pkEI, skSR ), else PRK_3e2m = PRK_2e.
 
-* If the Initiator authenticates with a static Diffie-Hellman key, then PRK_4x3m = Extract( PRK_3e2m, G_IY ), where G_IY is the ECDH shared secret calculated from G_I and Y, or G_Y and I, else PRK_4x3m = PRK_3e2m.
+* If the Reponder authenticates with a static Diffie-Hellman key, then PRK_4x3m = Extract( PRK_2e, ss_pkER_skSI), where ss_pkER_skSI is the shared secret from AuthEncap( pkER, skSI ), else PRK_4x3m = PRK_3e2m.
 
 Example: Assuming the use of curve25519, the ECDH shared secrets G_XY, G_RX, and G_IY are the outputs of the X25519 function {{RFC7748}}:
 
@@ -502,15 +502,15 @@ where ID_CRED_I and ID_CRED_R are the identifiers of the public authentication k
 
 ~~~~~~~~~~~
 Initiator                                                   Responder
-|              METHOD_CORR, SUITES_I, EPK_X, C_I, AD_1              |
+|              METHOD_CORR, SUITES_I, KEM_1, C_I, AD_1              |
 +------------------------------------------------------------------>|
 |                             message_1                             |
 |                                                                   |
-|  C_I, ENC_Y, C_R, Enc(K_2e; ID_CRED_R, Signature_or_MAC_2, AD_2)  |
+|  C_I, KEM_2, C_R, Enc(K_2e; ID_CRED_R, Signature_or_MAC_2, AD_2)  |
 |<------------------------------------------------------------------+
 |                             message_2                             |
 |                                                                   |
-|       C_R, AEAD(K_3ae; ID_CRED_I, Signature_or_MAC_3, AD_3)       |
+|    C_R, KEM_3, AEAD(K_3ae; ID_CRED_I, Signature_or_MAC_3, AD_3)   |
 +------------------------------------------------------------------>|
 |                             message_3                             |
 ~~~~~~~~~~~
@@ -579,12 +579,14 @@ message_1 SHALL be a CBOR Sequence (see {{CBOR}}) as defined below
 message_1 = (
   METHOD_CORR : int,
   SUITES_I : [ selected : suite, supported : 2* suite ] / suite,
-  EPK_X : bsrt / [ epk_x_encap : bstr, epk_x_authencap : bstr ],
+  KEM_1 : pkEI / [ pkEI, pkEI_auth ], ; array only used for non-DH KEMs
   C_I : bstr_identifier,  
   ? AD_1 : bstr,
 )
 
 suite = int
+epk_x_encap bstr,
+epk_x_authencap bstr,
 ~~~~~~~~~~~
 
 where:
@@ -637,9 +639,11 @@ message_2 = (
 ~~~~~~~~~~~ CDDL
 data_2 = (
   ? C_I : bstr_identifier,
-  EPK_Y : bsrt / [ epk_y_authencap : bstr, enc_x_encap : bstr, enc_x_authencap : bstr ],
+  KEM_2 : enc_pkEI / [ enc_pkEI, authenc_pkEI_skSR, pkER ],
   C_R : bstr_identifier,
 )
+
+enc = bstr
 ~~~~~~~~~~~
 
 where:
@@ -751,7 +755,8 @@ message_3 = (
 ~~~~~~~~~~~ CDDL
 data_3 = (
   ? C_R : bstr_identifier,
-  ? enc_y_authencap : bstr,
+  ? KEM_3 : authenc_pkER_skSI,
+  ? enc_y_authencap : enc,
 )
 ~~~~~~~~~~~
 
