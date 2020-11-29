@@ -579,7 +579,7 @@ message_1 SHALL be a CBOR Sequence (see {{CBOR}}) as defined below
 message_1 = (
   METHOD_CORR : int,
   SUITES_I : [ selected : suite, supported : 2* suite ] / suite,
-  EPK_X : bstr,
+  EPK_X : bsrt / [ epk_x_encap : bstr, epk_x_authencap : bstr ],
   C_I : bstr_identifier,  
   ? AD_1 : bstr,
 )
@@ -637,8 +637,7 @@ message_2 = (
 ~~~~~~~~~~~ CDDL
 data_2 = (
   ? C_I : bstr_identifier,
-  ENC_X : bstr,
-  ? EPK_Y : bstr,
+  EPK_Y : bsrt / [ epk_y_authencap : bstr, enc_x_encap : bstr, enc_x_authencap : bstr ],
   C_R : bstr_identifier,
 )
 ~~~~~~~~~~~
@@ -752,7 +751,7 @@ message_3 = (
 ~~~~~~~~~~~ CDDL
 data_3 = (
   ? C_R : bstr_identifier,
-  ? ENC_Y : bstr,
+  ? enc_y_authencap : bstr,
 )
 ~~~~~~~~~~~
 
