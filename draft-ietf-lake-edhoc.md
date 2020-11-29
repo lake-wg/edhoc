@@ -502,11 +502,11 @@ where ID_CRED_I and ID_CRED_R are the identifiers of the public authentication k
 
 ~~~~~~~~~~~
 Initiator                                                   Responder
-|               METHOD_CORR, SUITES_I, G_X, C_I, AD_1               |
+|              METHOD_CORR, SUITES_I, EPK_X, C_I, AD_1              |
 +------------------------------------------------------------------>|
 |                             message_1                             |
 |                                                                   |
-|   C_I, G_Y, C_R, Enc(K_2e; ID_CRED_R, Signature_or_MAC_2, AD_2)   |
+|  C_I, ENC_Y, C_R, Enc(K_2e; ID_CRED_R, Signature_or_MAC_2, AD_2)  |
 |<------------------------------------------------------------------+
 |                             message_2                             |
 |                                                                   |
@@ -579,7 +579,7 @@ message_1 SHALL be a CBOR Sequence (see {{CBOR}}) as defined below
 message_1 = (
   METHOD_CORR : int,
   SUITES_I : [ selected : suite, supported : 2* suite ] / suite,
-  G_X : bstr,
+  EPK_X : bstr,
   C_I : bstr_identifier,  
   ? AD_1 : bstr,
 )
@@ -637,7 +637,8 @@ message_2 = (
 ~~~~~~~~~~~ CDDL
 data_2 = (
   ? C_I : bstr_identifier,
-  G_Y : bstr,
+  ENC_X : bstr,
+  ? EPK_Y : bstr,
   C_R : bstr_identifier,
 )
 ~~~~~~~~~~~
@@ -751,6 +752,7 @@ message_3 = (
 ~~~~~~~~~~~ CDDL
 data_3 = (
   ? C_R : bstr_identifier,
+  ? ENC_Y : bstr,
 )
 ~~~~~~~~~~~
 
