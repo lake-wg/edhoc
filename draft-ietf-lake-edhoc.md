@@ -424,7 +424,7 @@ where salt = 0x (the empty byte string).
 
 The pseudorandom keys PRK_3e2m and PRK_4x3m are defined as follow:
 
-* If the Reponder authenticates with a static Diffie-Hellman key, then PRK_3e2m = Extract( PRK_2e, G_RX ), where G_RX is the ECDH shared secret calculated from G_R and X, or G_X and R, else PRK_3e2m = PRK_2e.
+* If the Responder authenticates with a static Diffie-Hellman key, then PRK_3e2m = Extract( PRK_2e, G_RX ), where G_RX is the ECDH shared secret calculated from G_R and X, or G_X and R, else PRK_3e2m = PRK_2e.
 
 * If the Initiator authenticates with a static Diffie-Hellman key, then PRK_4x3m = Extract( PRK_3e2m, G_IY ), where G_IY is the ECDH shared secret calculated from G_I and Y, or G_Y and I, else PRK_4x3m = PRK_3e2m.
 
@@ -685,7 +685,7 @@ The Responder SHALL compose message_2 as follows:
 
    MAC_2 is the 'ciphertext' of the inner COSE_Encrypt0.
 
-* If the Reponder authenticates with a static Diffie-Hellman key (method equals 1 or 3), then Signature_or_MAC_2 is MAC_2. If the Reponder authenticates with a signature key (method equals 0 or 2), then Signature_or_MAC_2 is the 'signature' of a COSE_Sign1 object as defined in Section 4.4 of {{RFC8152}} using the signature algorithm in the selected cipher suite, the private authentication key of the Responder, and the following parameters:
+* If the Responder authenticates with a static Diffie-Hellman key (method equals 1 or 3), then Signature_or_MAC_2 is MAC_2. If the Responder authenticates with a signature key (method equals 0 or 2), then Signature_or_MAC_2 is the 'signature' of a COSE_Sign1 object as defined in Section 4.4 of {{RFC8152}} using the signature algorithm in the selected cipher suite, the private authentication key of the Responder, and the following parameters:
 
    * protected =  << ID_CRED_R >>
 
