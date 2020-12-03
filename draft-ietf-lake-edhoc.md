@@ -348,7 +348,11 @@ One byte connection and credential identifiers are realistic in many scenarios a
 
 ## Cipher Suites {#cs}
 
-EDHOC cipher suites consist of an ordered set of COSE algorithms: an EDHOC AEAD algorithm, an EDHOC hash algorithm, an EDHOC ECDH curve, an EDHOC signature algorithm, an EDHOC signature algorithm curve, an application AEAD algorithm, and an application hash algorithm from the COSE Algorithms and Elliptic Curves registries. Each cipher suite is identified with a pre-defined int label. This document specifies four pre-defined cipher suites.
+EDHOC cipher suites consist of an ordered set of COSE algorithms: an EDHOC AEAD algorithm, an EDHOC hash algorithm, an EDHOC ECDH curve, an EDHOC signature algorithm, an EDHOC signature algorithm curve, an application AEAD algorithm, and an application hash algorithm from the COSE Algorithms and Elliptic Curves registries. Each cipher suite is identified with a pre-defined int label.
+
+EDHOC can be used with all algorithms defined for COSE. Implementation can either use one of the pre-defined cipher suites below or use any combination of COSE algorithms to define their own private cipher suite. Private cipher suites can be used with any of the four values -24, -23, -22, -21.
+
+The following cipher suites are for constrained IoT where message overhead is an very important factor.
 
 ~~~~~~~~~~~
    0. ( 10, -16, 4, -8, 6, 10, -16 )
@@ -366,6 +370,22 @@ EDHOC cipher suites consist of an ordered set of COSE algorithms: an EDHOC AEAD 
    3. ( 30, -16, 1, -7, 1, 10, -16 )
       (AES-CCM-16-128-128, SHA-256, P-256, ES256, P-256,
        AES-CCM-16-64-128, SHA-256)
+~~~~~~~~~~~
+
+The following cipher suite is for general non constrained applications. It uses very high performance algorithms that also is widely supported.
+
+~~~~~~~~~~~
+   4. ( 1, -16, 4, -7, 1, 1, -16 )
+      (A128GCM, SHA-256, X25519, ES256, P-256,
+       A128GCM, SHA-256)
+~~~~~~~~~~~
+
+The following cipher suite is for high security application such as government use and financial applications. It is compatible with the CSNA suite.
+
+~~~~~~~~~~~
+   5. ( 3, -43, 2, -35, 2, 3, -43 )
+      (A256GCM, SHA-384, P-384, ES384, P-384,
+       A256GCM, SHA-384)
 ~~~~~~~~~~~
 
 The different methods use the same cipher suites, but some algorithms are not used in some methods. The EDHOC signature algorithm and the EDHOC signature algorithm curve are not used is methods without signature authentication.
@@ -1081,6 +1101,20 @@ Reference: [[this document]]
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 Value: -23
+Algorithms: N/A
+Desc: Reserved for Private Use
+Reference: [[this document]]
+~~~~~~~~~~~~~~~~~~~~~~~
+
+~~~~~~~~~~~~~~~~~~~~~~~
+Value: -22
+Algorithms: N/A
+Desc: Reserved for Private Use
+Reference: [[this document]]
+~~~~~~~~~~~~~~~~~~~~~~~
+
+~~~~~~~~~~~~~~~~~~~~~~~
+Value: -21
 Algorithms: N/A
 Desc: Reserved for Private Use
 Reference: [[this document]]
