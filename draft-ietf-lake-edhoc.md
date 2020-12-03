@@ -879,11 +879,13 @@ After receiving SUITES_R, the Initiator can determine which selected cipher suit
 
 ### Example Use of EDHOC Error Message with SUITES_R
 
-Assuming that the Initiator supports the five cipher suites 5, 6, 7, 8, and 9 in decreasing order of preference, Figures {{fig-error1}}{: format="counter"} and {{fig-error2}}{: format="counter"} show examples of how the Initiator can truncate SUITES_I and how SUITES_R is used by the Responder to give the Initiator information about the cipher suites that the Responder supports. In {{fig-error1}}, the Responder supports cipher suite 6 but not the selected cipher suite 5. 
+Assuming that the Initiator supports the five cipher suites 5, 6, 7, 8, and 9 in decreasing order of preference, Figures {{fig-error1}}{: format="counter"} and {{fig-error2}}{: format="counter"} show examples of how the Initiator can truncate SUITES_I and how SUITES_R is used by the Responder to give the Initiator information about the cipher suites that the Responder supports.
+
+In {{fig-error1}}, the Responder supports cipher suite 6 but not the initially selected cipher suite 5.
 
 ~~~~~~~~~~~
 Initiator                                                   Responder
-|        METHOD_CORR, SUITES_I = [5, 5, 6, 7], G_X, C_I, AD_1       |
+|            METHOD_CORR, SUITES_I = 5, G_X, C_I, AD_1             |
 +------------------------------------------------------------------>|
 |                             message_1                             |
 |                                                                   |
@@ -898,15 +900,15 @@ Initiator                                                   Responder
 {: #fig-error1 title="Example use of error message with SUITES_R."}
 {: artwork-align="center"}
 
-In {{fig-error2}}, the Responder supports cipher suite 7 but not cipher suites 5 and 6.
+In {{fig-error2}}, the Responder supports cipher suite 7 and 9 but not the more preferred (by the Initiator) cipher suites 5 and 6. The order of cipher suites in SUITES_R does not matter.
 
 ~~~~~~~~~~~
 Initiator                                                   Responder
-|         METHOD_CORR, SUITES_I = [5, 5, 6], G_X, C_I, AD_1         |
+|            METHOD_CORR, SUITES_I = 5, G_X, C_I, AD_1              |
 +------------------------------------------------------------------>|
 |                             message_1                             |
 |                                                                   |
-|                  C_I, ERR_MSG, SUITES_R = [7, 9]                  |
+|                  C_I, ERR_MSG, SUITES_R = [9, 7]                  |
 |<------------------------------------------------------------------+
 |                               error                               |
 |                                                                   |
@@ -917,7 +919,9 @@ Initiator                                                   Responder
 {: #fig-error2 title="Example use of error message with SUITES_R."}
 {: artwork-align="center"}
 
-Note that the Initiator's list of supported cipher suites and order of preference is fixed (see {{asym-msg1-form}} and {{init-proc-msg1}}). Furthermore, the Responder shall only accept message_1 if the selected cipher suite is the first cipher suite in SUITES_I that the Responder supports (see {{resp-proc-msg1}}). Following this procedure ensures that the selected cipher suite is the most preferred (by the Initiator) cipher suite supported by both parties. If the selected cipher suite is not the first cipher suite which the Responder supports in SUITES_I, then Responder will discontinue the protocol. If SUITES_I in message_1 is manipulated then the integrity verification of message_2 containing the transcript hash TH_2 = H( message_1, data_2 ) will fail and the Initiator will discontinue the protocol.
+Note that the Initiator's list of supported cipher suites and order of preference is fixed (see {{asym-msg1-form}} and {{init-proc-msg1}}). Furthermore, the Responder shall only accept message_1 if the selected cipher suite is the first cipher suite in SUITES_I that the Responder supports (see {{resp-proc-msg1}}). Following this procedure ensures that the selected cipher suite is the most preferred (by the Initiator) cipher suite supported by both parties.
+
+If the selected cipher suite is not the first cipher suite which the Responder supports in SUITES_I received in message_1, then Responder MUST discontinue the protocol, see {{resp-proc-msg1}}. If SUITES_I in message_1 is manipulated then the integrity verification of message_2 containing the transcript hash TH_2 = H( message_1, data_2 ) will fail and the Initiator will discontinue the protocol.
 
 # Transferring EDHOC and Deriving an OSCORE Context {#transfer}
 
