@@ -1241,7 +1241,7 @@ CBOR Object Signing and Encryption (COSE) {{RFC8152}} describes how to create an
 
 This appendix provides detailed test vectors to ease implementation and ensure interoperability. In addition to hexadecimal, all CBOR data items and sequences are given in CBOR diagnostic notation. The test vectors use the default mapping to CoAP where the Initiator acts as CoAP client (this means that corr = 1). 
 
-A more extensive test vector suite covering more combinations of authentication method used between Initiator and Responder and related code to generate them can be found at https://github.com/EricssonResearch/EDHOC/tree/master/Test%20Vectors .
+A more extensive test vector suite covering more combinations of authentication method used between Initiator and Responder and related code to generate them can be found at https://github.com/lake-wg/edhoc/tree/master/test-vectors .
 
 ## Test Vectors for EDHOC Authenticated with Signature Keys (x5t)
 
