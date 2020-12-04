@@ -79,7 +79,15 @@ informative:
       -
         ins: H. Krawczyk
     date: June 2003
-
+    
+  CNSA:
+    target: https://apps.nsa.gov/iaarchive/programs/iad-initiatives/cnsa-suite.cfm
+    title: Commercial National Security Algorithm Suite
+    author:
+      -
+        ins: (Placeholder)
+    date: August 2015
+    
   I-D.ietf-6tisch-dtsecurity-zerotouch-join:
   I-D.ietf-ace-oauth-authz:
   I-D.ietf-core-resource-directory:
@@ -348,11 +356,21 @@ One byte connection and credential identifiers are realistic in many scenarios a
 
 ## Cipher Suites {#cs}
 
-EDHOC cipher suites consist of an ordered set of COSE algorithms: an EDHOC AEAD algorithm, an EDHOC hash algorithm, an EDHOC ECDH curve, an EDHOC signature algorithm, an EDHOC signature algorithm curve, an application AEAD algorithm, and an application hash algorithm from the COSE Algorithms and Elliptic Curves registries. Each cipher suite is identified with a pre-defined int label.
+An EDHOC cipher suite consists of an ordered set of COSE code points from the "COSE Algorithms" and "COSE Elliptic Curves" registries: 
 
-EDHOC can be used with all algorithms defined for COSE. Implementation can either use one of the pre-defined cipher suites below or use any combination of COSE algorithms to define their own private cipher suite. Private cipher suites can be used with any of the four values -24, -23, -22, -21.
+* EDHOC AEAD algorithm
+* EDHOC hash algorithm
+* EDHOC ECDH curve
+* EDHOC signature algorithm 
+* EDHOC signature algorithm curve
+* Application AEAD algorithm 
+* Application hash algorithm 
 
-The following cipher suites are for constrained IoT where message overhead is an very important factor.
+Each cipher suite is identified with a pre-defined int label.
+
+EDHOC can be used with all algorithms and curves defined for COSE. Implementation can either use one of the pre-defined cipher suites ({{suites-registry}}) or use any combination of COSE algorithms to define their own private cipher suite. Private cipher suites can be identified with any of the four values -24, -23, -22, -21.
+
+The following cipher suites are for constrained IoT where message overhead is a very important factor:
 
 ~~~~~~~~~~~
    0. ( 10, -16, 4, -8, 6, 10, -16 )
@@ -372,7 +390,7 @@ The following cipher suites are for constrained IoT where message overhead is an
        AES-CCM-16-64-128, SHA-256)
 ~~~~~~~~~~~
 
-The following cipher suite is for general non constrained applications. It uses very high performance algorithms that also is widely supported.
+The following cipher suite is for general non-constrained applications. It uses very high performance algorithms that also are widely supported:
 
 ~~~~~~~~~~~
    4. ( 1, -16, 4, -7, 1, 1, -16 )
@@ -380,7 +398,7 @@ The following cipher suite is for general non constrained applications. It uses 
        A128GCM, SHA-256)
 ~~~~~~~~~~~
 
-The following cipher suite is for high security application such as government use and financial applications. It is compatible with the CSNA suite.
+The following cipher suite is for high security application such as government use and financial applications. It is compatible with the CNSA suite {{CNSA}}.
 
 ~~~~~~~~~~~
    5. ( 3, -43, 2, -35, 2, 3, -43 )
@@ -388,9 +406,9 @@ The following cipher suite is for high security application such as government u
        A256GCM, SHA-384)
 ~~~~~~~~~~~
 
-The different methods use the same cipher suites, but some algorithms are not used in some methods. The EDHOC signature algorithm and the EDHOC signature algorithm curve are not used is methods without signature authentication.
+The different methods use the same cipher suites, but some algorithms are not used in some methods. The EDHOC signature algorithm and the EDHOC signature algorithm curve are not used in methods without signature authentication.
 
-The Initiator need to have a list of cipher suites it supports in order of preference. The Responder need to have a list of cipher suites it supports.
+The Initiator needs to have a list of cipher suites it supports in order of preference. The Responder needs to have a list of cipher suites it supports.
 
 ## Communication/Negotiation of Protocol Features
 
@@ -1088,7 +1106,7 @@ EDHOC has been analyzed in several other documents. A formal verification of EDH
 
 # IANA Considerations {#iana}
 
-## EDHOC Cipher Suites Registry
+## EDHOC Cipher Suites Registry {#suites-registry}
 
 IANA has created a new registry titled "EDHOC Cipher Suites" under the new heading "EDHOC". The registration procedure is "Expert Review". The columns of the registry are Value, Array, Description, and Reference, where Value is an integer and the other columns are text strings. The initial contents of the registry are:
 
@@ -1151,6 +1169,23 @@ Desc: AES-CCM-16-128-128, SHA-256, P-256, ES256, P-256,
       AES-CCM-16-64-128, SHA-256
 Reference: [[this document]]
 ~~~~~~~~~~~~~~~~~~~~~~~
+
+~~~~~~~~~~~~~~~~~~~~~~~
+Value: 4
+Array: 1, -16, 4, -7, 1, 1, -16
+Desc: A128GCM, SHA-256, X25519, ES256, P-256,
+      A128GCM, SHA-256
+Reference: [[this document]]
+~~~~~~~~~~~~~~~~~~~~~~~
+
+~~~~~~~~~~~~~~~~~~~~~~~
+Value: 5
+Array: 3, -43, 2, -35, 2, 3, -43 
+Desc: A256GCM, SHA-384, P-384, ES384, P-384,
+      A256GCM, SHA-384
+Reference: [[this document]]
+~~~~~~~~~~~~~~~~~~~~~~~
+
 
 ## EDHOC Method Type Registry {#method-types}
 
