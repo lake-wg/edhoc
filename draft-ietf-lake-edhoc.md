@@ -1193,30 +1193,46 @@ Expert reviewers should take into consideration the following points:
 
 --- back
 
-# Template Applicability Statement for uses of EDHOC
+# Applicability Statement Template
 
-EDHOC requires that a number of paramters be agreed upon before hand.
-They are not negotiated by the protocol and there are no opportunities to offer more than one, so must be agreed upon by users of the protocol.
+EDHOC requires certain parameters to be agreed upon between Initiator and Responder. A cipher suite is negotiated with the protocol, but certain other parameters need to be agreed beforehand:
 
-The list is:
+1. Method and correlation of underlying transport messages (METHOD_CORR, see {{method-types}} and {{transport}}).
+3. Type of authentication credentials (CRED_I, CRED_R, see {{id_cred}}).
+4. Type for identifying authentication credentials (ID_CRED_I, ID_CRED_R, see {{id_cred}}).
+6. Type and use of Auxiliary Data AD_1, AD_2, AD_3 (see {{AD}}).
+7. Identifier used as identity of endpoint (see {{auth-key-id}}).
 
-1. Agreed Method (see {{method-types}})
-2. Transport and Correlation (see {{transport}})
-3. Use and format of AD_1, AD_2, AD_3 (see {{AD}})
+An example of an applicability statement is shown in the next section.
 
-An example template might look like this next section.
-The Wylie Coyote Protocol is just an example.
+Note that for some of the parameters, like METHOD_CORR, ID_CRED_x, type of AD_x, the receiver may be able to assert whether it supports the parameter or not and thus to infer why it fails. For other parameters, like type of authentication credential, it may be more difficult to detect if the receiver got the wrong type since the resulting failed integrity of the received message may be caused by other circumstances.
 
-## Use of EDHOC in the Wylie Coyote Protocol
+Note also that it is not always necessary for the endpoints to agree on the transport for the EDHOC messages. For example, a mix of CoAP and HTTP may be used along the path and still allow correlation between message_1 and message_2.
 
-Users of the Wylie Coyote Protocol are expected to implement Agreement Methods
-where the sender uses a Signature Key, and the responder uses a Static DH Key.
-The Static DH key must be provisioned in the sender by the USPS Instant Delivery Protocol  (mythical).
 
-The Wylie Coyote Protocol runs over IPv6 over Barbed-Wire, and thus can use IPv6-Link-Local addresses.  The C\_I and C\_R should be the 16-byte source and destination IPv6 addresses.
+## Use of EDHOC in the XX Protocol
 
-The Wylie Coyote Protocol includes the word "parasol", which should be translated into the local language and sent as part of the localization.  So when run in Germany, the string "Sonnenschrim"
-should be sent in AD_3 as a CBOR string.
+For use of EDHOC in the XX protocol, the following assumptions are made on the parameters.
+
+* METHOD_CORR = 5
+   * method = 1 (I uses signature key, R uses static DH key.)
+   * corr = 1 (CoAP Token or other transport data enables correlation between message_1 and message_2.)
+
+* CRED_I is an 802.1AR IDevID encoded as a CBOR Certificate of type 0
+    * R acquires CRED_I out-of-band, indicated in AD_1
+    * ID_CRED_I = {4: h''} is a kid with value empty byte string
+
+* CRED_R is a COSE_Key of type OKP as specified in {{id_cred}}.
+   * The CBOR map has parameters 1 (kty), -1 (crv), and -2 (x-coordinate).
+* ID_CRED_R = CRED_R
+
+* AD_1 contains Auxiliary Data of type A (TBD)
+* AD_2 contains Auxiliary Data of type B (TBD)
+
+Auxiliary Data is processed as specified in {{I-D.ietf-ace-oauth-authz}}.
+
+* Need to specify use of C\_I/C\_R ? (TBD)
+
 
 
 # Use of CBOR, CDDL and COSE in EDHOC {#CBORandCOSE}
