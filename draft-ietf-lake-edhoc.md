@@ -2872,7 +2872,9 @@ EDHOC requires certain parameters to be agreed upon between Initiator and Respon
 
 An example of an applicability statement is shown in the next section.
 
-Note that for some of the parameters, like METHOD_CORR, ID_CRED_x, type of AD_x, the receiver may be able to assert whether it supports the parameter or not and thus to infer why it fails. For other parameters, like type of authentication credential, it may be more difficult to detect if the receiver got the wrong type since the resulting failed integrity of the received message may be caused by other circumstances.
+Note that for some of the parameters, like METHOD_CORR, ID_CRED_x, type of AD_x, the receiver is able to assert whether it supports the parameter or not and thus, if it fails, to infer why. 
+
+For other parameters, like type of authentication credential, it may be more difficult to detect if the receiver got the wrong type since the credential is not necessarily transported, and a failed integrity of the received message may be caused by other circumstances. For example in the case of public key certificates there is a large variety of profiles and alternative encodings, which the applicability statement needs to nail down.
 
 Note also that it is not always necessary for the endpoints to agree on the transport for the EDHOC messages. For example, a mix of CoAP and HTTP may be used along the path and still allow correlation between message_1 and message_2.
 
