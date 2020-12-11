@@ -332,9 +332,11 @@ Initiator                                                   Responder
 
 ## Method
 
-The first data item (METHOD_CORR) of message_1 is an int specifying the method and the correlation properties of the transport used, see {{transport}}. The method specifies the authentication methods used (signature, static DH), see {{method-types}}. An implementation may support only a single method. The Initiator and the Responder need to have agreed on a single method to be used for EDHOC.
+EDHOC supports authentication with signature or static Diffie-Hellman keys, as defined in the four authentication methods: 0, 1, 2, and 3, see {{method-types}}. (Method 0 corresponds to the case outlined in {{background}} where both Initiator and Responder authenticate with signature keys.)
 
-While EDHOC uses the COSE_Key, COSE_Sign1, and COSE_Encrypt0 structures, only a subset of the parameters is included in the EDHOC messages. The unprotected COSE header in COSE_Sign1, and COSE_Encrypt0 (not included in the EDHOC message) MAY contain parameters (e.g. 'alg'). 
+The first data item of message_1, METHOD_CORR (see {{asym-msg1-form}}), is an integer specifying the method and the correlation properties of the transport used, see {{transport}}. 
+
+An implementation may support only a single method. The Initiator and the Responder need to have agreed on a single method to be used for EDHOC, see {{applicability}}.
 
 ## Transport and Message Correlation {#transport}
 
@@ -548,7 +550,7 @@ To provide forward secrecy in an even more efficient way than re-running EDHOC, 
 
 ## Overview {#asym-overview}
 
-This section specifies authentication method = 0, 1, 2, and 3, see {{method-types}}. EDHOC supports authentication with signature or static Diffie-Hellman keys in the form of raw public keys (RPK) and public key certificates with the requirements that:
+EDHOC supports authentication with signature or static Diffie-Hellman keys in the form of raw public keys (RPK) and public key certificates with the requirements that:
 
 * Only the Responder SHALL have access to the Responder's private authentication key,
 
@@ -560,6 +562,8 @@ This section specifies authentication method = 0, 1, 2, and 3, see {{method-type
 
 where ID_CRED_I and ID_CRED_R are the identifiers of the public authentication keys. Their encoding is specified in {{id_cred}}.
 
+
+While EDHOC uses the COSE_Key, COSE_Sign1, and COSE_Encrypt0 structures, only a subset of the parameters is included in the EDHOC messages. The unprotected COSE header in COSE_Sign1, and COSE_Encrypt0 (not included in the EDHOC message) MAY contain parameters (e.g. 'alg'). 
 
 
 ## Encoding of Public Authentication Key Identifiers {#id_cred}
@@ -2861,7 +2865,7 @@ message_3 (CBOR Sequence) (20 bytes)
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 
-# Applicability Statement Template
+# Applicability Statement Template {#applicability}
 
 EDHOC requires certain parameters to be agreed upon between Initiator and Responder. A cipher suite is negotiated with the protocol, but certain other parameters need to be agreed beforehand:
 
