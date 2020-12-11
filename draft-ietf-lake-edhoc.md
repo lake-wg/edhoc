@@ -365,6 +365,16 @@ If the transport provides a mechanism for correlating messages, some of the conn
 
 For example, if the key exchange is transported over CoAP, the CoAP Token can be used to correlate messages, see {{coap}}.
 
+## Authentication Keys
+
+The authentication key MUST be a signature key or static Diffie-Hellman key. The Initiator and the Responder
+ MAY use different types of authentication keys, e.g. one uses a signature key and the other uses a static Diffie-Hellman key. When using a signature key, the authentication is provided by a signature. When using a static Diffie-Hellman key the authentication is provided by a Message Authentication Code (MAC) computed from an ephemeral-static ECDH shared secret which enables significant reductions in message sizes. The MAC is implemented with an AEAD algorithm. When using a static Diffie-Hellman keys the Initiator's and Responder's private authentication keys are called I and R, respectively, and the public authentication keys are called G_I and G_R, respectively.
+
+* Only the Responder SHALL have access to the Responder's private authentication key.
+
+* Only the Initiator SHALL have access to the Initiator's private authentication key.
+
+
 ## Authentication Keys and Identities {#auth-key-id}
 
 The EDHOC message exchange may be authenticated using raw public keys (RPK) or public key certificates. The certificates and RPKs can contain signature keys or static Diffie-Hellman keys. In X.509 certificates, signature keys typically have key usage "digitalSignature" and Diffie-Hellman keys typically have key usage "keyAgreement".
@@ -561,10 +571,6 @@ To provide forward secrecy in an even more efficient way than re-running EDHOC, 
 
 EDHOC supports authentication with signature or static Diffie-Hellman keys in the form of raw public keys (RPK) and public key certificates with the requirements that:
 
-* Only the Responder SHALL have access to the Responder's private authentication key,
-
-* Only the Initiator SHALL have access to the Initiator's private authentication key,
-
 * The Initiator is able to retrieve the Responder's public authentication key using ID_CRED_R,
 
 * The Responder is able to retrieve the Initiator's public authentication key using ID_CRED_I,
@@ -594,9 +600,6 @@ Public key certificates can be identified in different ways. Header parameters f
    * ID_CRED_x = { 35 : uri }, for x = I or R,
 
 The purpose of ID_CRED_I and ID_CRED_R is to facilitate retrieval of a public authentication key and when they do not contain the actual credential, they may be very short. ID_CRED_I and ID_CRED_R MAY contain the actual credential used for authentication. It is RECOMMENDED that they uniquely identify the public authentication key as the recipient may otherwise have to try several keys. ID_CRED_I and ID_CRED_R are transported in the ciphertext, see {{asym-msg2-proc}} and {{asym-msg3-proc}}.
-
-The authentication key MUST be a signature key or static Diffie-Hellman key. The Initiator and the Responder
- MAY use different types of authentication keys, e.g. one uses a signature key and the other uses a static Diffie-Hellman key. When using a signature key, the authentication is provided by a signature. When using a static Diffie-Hellman key the authentication is provided by a Message Authentication Code (MAC) computed from an ephemeral-static ECDH shared secret which enables significant reductions in message sizes. The MAC is implemented with an AEAD algorithm. When using a static Diffie-Hellman keys the Initiator's and Responder's private authentication keys are called I and R, respectively, and the public authentication keys are called G_I and G_R, respectively.
 
 The actual credentials CRED_I and CRED_R are signed or MAC:ed by the Initiator and the Responder respectively, see {{asym-msg3-form}} and {{asym-msg2-form}}. The Initiator and the Responder MAY use different types of credentials, e.g. one uses RPK and the other uses certificate. When the credential is a certificate, CRED_x is end-entity certificate (i.e. not the certificate chain) encoded as a CBOR bstr. When the credential is a COSE_Key, CRED_x is a CBOR map only contains specific fields from the COSE_Key. For COSE_Keys of type OKP the CBOR map SHALL only include the parameters 1 (kty), -1 (crv), and -2 (x-coordinate). For COSE_Keys of type EC2 the CBOR map SHALL only include the parameters 1 (kty), -1 (crv), -2 (x-coordinate), and -3 (y-coordinate). If the parties have agreed on an identity besides the public key, the indentity is included in the CBOR map with the label "subject name", otherwise the subject name is the empty text string. The parameters SHALL be encoded in decreasing order with int labels first and text string labels last. An example of CRED_x when the RPK contains an X25519 static Diffie-Hellman key and the parties have agreed on an EUI-64 identity is shown below:
 
