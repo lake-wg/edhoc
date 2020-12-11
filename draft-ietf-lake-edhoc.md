@@ -374,7 +374,7 @@ The authentication key MUST be a signature key or static Diffie-Hellman key. The
 
 * Only the Initiator SHALL have access to the Initiator's private authentication key.
 
-## Authentication Credentials
+## Authentication Credentials {#auth-cred}
 
 The authentication credentials, CRED_I and CRED_R, contain the public authentication key of the Initiator and the Responder, respectively.
 The Initiator and the Responder MAY use different types of credentials, e.g. one uses an RPK and the other uses a public key certificate.
@@ -438,7 +438,7 @@ When ID_CRED_x does not contain the actual credential it may be very short.
 One byte credential identifiers are realistic in many scenarios as most constrained devices only have a few keys. In cases where a node only has one key, the identifier may even be the empty byte string.
 
 
-## Authentication Keys and Identities {#auth-key-id}
+## Identities {#auth-key-id}
 
 
 EDHOC assumes the existence of mechanisms (certification authority, trusted third party, manual distribution, etc.) for specifying and distributing authentication keys and identities. Policies are set based on the identity of the other party, and parties typically only allow connections from a specific identity or a small restricted set of identities. For example, in the case of a device connecting to a network, the network may only allow connections from devices which authenticate with certificates having a particular range of serial numbers in the subject field and signed by a particular CA. On the other side, the device may only be allowed to connect to a network which authenticate with a particular public key (information of which may be provisioned, e.g., out of band or in the Auxiliary Data, see {{AD}}).
@@ -447,7 +447,7 @@ The EDHOC implementation must be able to receive and enforce information from th
 
 * When a Public Key Infrastructure (PKI) is used, the trust anchor is a Certification Authority (CA) certificate, and the identity is the subject whose unique name (e.g. a domain name, NAI, or EUI) is included in the endpoint's certificate. Before running EDHOC each party needs at least one CA public key certificate, or just the public key, and a specific identity or set of identities it is allowed to communicate with. Only validated public-key certificates with an allowed subject name, as specified by the application, are to be accepted. EDHOC provides proof that the other party possesses the private authentication key corresponding to the public authentication key in its certificate. The certification path provides proof that the subject of the certificate owns the public key in the certificate.
 
-* When public keys are used but not with a PKI (RPK, self-signed certificate), the trust anchor is the public authentication key of the other party. In this case, the identity is typically directly associated to the public authentication key of the other party. For example, the name of the subject may be a canonical representation of the public key. Alternatively, if identities can be expressed in the form of unique subject names assigned to public keys, then a binding to identity can be achieved by including both public key and associated subject name in the protocol message computation: CRED_I or CRED_R may be a self-signed certificate or COSE_Key containing the public authentication key and the subject name, see {{fig-sigma}}. Before running EDHOC, each endpoint needs a specific public authentication key/unique associated subject name, or a set of public authentication keys/unique associated subject names, which it is allowed to communicate with. EDHOC provides proof that the other party possesses the private authentication key corresponding to the public authentication key.
+* When public keys are used but not with a PKI (RPK, self-signed certificate), the trust anchor is the public authentication key of the other party. In this case, the identity is typically directly associated to the public authentication key of the other party. For example, the name of the subject may be a canonical representation of the public key. Alternatively, if identities can be expressed in the form of unique subject names assigned to public keys, then a binding to identity can be achieved by including both public key and associated subject name in the protocol message computation: CRED_I or CRED_R may be a self-signed certificate or COSE_Key containing the public authentication key and the subject name, see {{auth-cred}}. Before running EDHOC, each endpoint needs a specific public authentication key/unique associated subject name, or a set of public authentication keys/unique associated subject names, which it is allowed to communicate with. EDHOC provides proof that the other party possesses the private authentication key corresponding to the public authentication key.
 
 ## Cipher Suites {#cs}
 
@@ -516,6 +516,8 @@ EDHOC allows the communication or negotiation of various protocol features durin
 * The Initiator decides on the method parameter, see {{method-types}}. The Responder either accepts or rejects.
 
 * The Initiator and the Responder decide on the representation of the identifier of their respective credentials, ID_CRED_I and ID_CRED_R. The decision is reflected by the label used in the CBOR map, see for example {{id_cred}}.
+
+Editor's note: This section needs to be aligned with {{applicability}}.
 
 ## Auxiliary Data {#AD}
 
@@ -623,14 +625,14 @@ To provide forward secrecy in an even more efficient way than re-running EDHOC, 
       PRK_4x3m = Extract( [ "TH_4", nonce ], PRK_4x3m )
 ~~~~~~~~~~~
 
-# EDHOC Authenticated with Asymmetric Keys {#asym}
+# Message Formatting and Processing {#asym}
 
-## Overview {#asym-overview}
+This section specifies formatting of the messages and processing steps. Error messages are specified in {{error}}. 
 
+An EDHOC message is encoded as a sequence of CBOR data (CBOR Sequence, {{RFC8742}}).
+Additional optimizations are made to reduce message overhead.
 
 While EDHOC uses the COSE_Key, COSE_Sign1, and COSE_Encrypt0 structures, only a subset of the parameters is included in the EDHOC messages. The unprotected COSE header in COSE_Sign1, and COSE_Encrypt0 (not included in the EDHOC message) MAY contain parameters (e.g. 'alg'). 
-
-
 
 ## Encoding of bstr_identifier {#bstr_id}
 
