@@ -374,10 +374,40 @@ The authentication key MUST be a signature key or static Diffie-Hellman key. The
 
 * Only the Initiator SHALL have access to the Initiator's private authentication key.
 
+## Authentication Credentials
+
+The authentication credentials, CRED_I and CRED_R, contain the public authentication key of the Initiator and the Responder, respectively.
+The Initiator and the Responder MAY use different types of credentials, e.g. one uses an RPK and the other uses a public key certificate.
+
+The credentials CRED_I and CRED_R are signed or MAC:ed (depending on method) by the Initiator and the Responder, respectively, see {{m3}} and {{m2}}.
+
+When the credential is a certificate, CRED_x is an end-entity certificate (i.e. not the certificate chain) encoded as a CBOR bstr.
+In X.509 certificates, signature keys typically have key usage "digitalSignature" and Diffie-Hellman keys typically have key usage "keyAgreement"
+
+When the credential is a COSE_Key, CRED_x is a CBOR map only containing specific fields from the COSE_Key:
+
+* For COSE_Keys of type OKP the CBOR map SHALL only include the parameters 1 (kty), -1 (crv), and -2 (x-coordinate).
+* For COSE_Keys of type EC2 the CBOR map SHALL only include the parameters 1 (kty), -1 (crv), -2 (x-coordinate), and -3 (y-coordinate).
+
+If the parties have agreed on an identity besides the public key, the identity is included in the CBOR map with the label "subject name", otherwise the subject name is the empty text string.
+The parameters SHALL be encoded in decreasing order with int labels first and text string labels last.
+An example of CRED_x when the RPK contains an X25519 static Diffie-Hellman key and the parties have agreed on an EUI-64 identity is shown below:
+
+~~~~~~~~~~~
+CRED_x = {
+  1:  1,
+ -1:  4,
+ -2:  h'b1a3e89460e88d3a8d54211dc95f0b90
+        3ff205eb71912d6db8f4af980d2db83a',
+ "subject name" : "42-50-31-FF-EF-37-32-39"
+}
+~~~~~~~~~~~
+
+
+
 
 ## Authentication Keys and Identities {#auth-key-id}
 
-The EDHOC message exchange may be authenticated using raw public keys (RPK) or public key certificates. The certificates and RPKs can contain signature keys or static Diffie-Hellman keys. In X.509 certificates, signature keys typically have key usage "digitalSignature" and Diffie-Hellman keys typically have key usage "keyAgreement".
 
 EDHOC assumes the existence of mechanisms (certification authority, trusted third party, manual distribution, etc.) for specifying and distributing authentication keys and identities. Policies are set based on the identity of the other party, and parties typically only allow connections from a specific identity or a small restricted set of identities. For example, in the case of a device connecting to a network, the network may only allow connections from devices which authenticate with certificates having a particular range of serial numbers in the subject field and signed by a particular CA. On the other side, the device may only be allowed to connect to a network which authenticate with a particular public key (information of which may be provisioned, e.g., out of band or in the Auxiliary Data, see {{AD}}).
  
@@ -601,18 +631,6 @@ Public key certificates can be identified in different ways. Header parameters f
 
 The purpose of ID_CRED_I and ID_CRED_R is to facilitate retrieval of a public authentication key and when they do not contain the actual credential, they may be very short. ID_CRED_I and ID_CRED_R MAY contain the actual credential used for authentication. It is RECOMMENDED that they uniquely identify the public authentication key as the recipient may otherwise have to try several keys. ID_CRED_I and ID_CRED_R are transported in the ciphertext, see {{asym-msg2-proc}} and {{asym-msg3-proc}}.
 
-The actual credentials CRED_I and CRED_R are signed or MAC:ed by the Initiator and the Responder respectively, see {{asym-msg3-form}} and {{asym-msg2-form}}. The Initiator and the Responder MAY use different types of credentials, e.g. one uses RPK and the other uses certificate. When the credential is a certificate, CRED_x is end-entity certificate (i.e. not the certificate chain) encoded as a CBOR bstr. When the credential is a COSE_Key, CRED_x is a CBOR map only contains specific fields from the COSE_Key. For COSE_Keys of type OKP the CBOR map SHALL only include the parameters 1 (kty), -1 (crv), and -2 (x-coordinate). For COSE_Keys of type EC2 the CBOR map SHALL only include the parameters 1 (kty), -1 (crv), -2 (x-coordinate), and -3 (y-coordinate). If the parties have agreed on an identity besides the public key, the indentity is included in the CBOR map with the label "subject name", otherwise the subject name is the empty text string. The parameters SHALL be encoded in decreasing order with int labels first and text string labels last. An example of CRED_x when the RPK contains an X25519 static Diffie-Hellman key and the parties have agreed on an EUI-64 identity is shown below:
-
-~~~~~~~~~~~
-CRED_x = {
-  1:  1,
- -1:  4,
- -2:  h'b1a3e89460e88d3a8d54211dc95f0b90
-        3ff205eb71912d6db8f4af980d2db83a',
- "subject name" : "42-50-31-FF-EF-37-32-39"
-}
-~~~~~~~~~~~
-
 ## Encoding of bstr_identifier {#bstr_id}
 
 Byte strings are encoded in CBOR as two or more bytes, whereas integers in the interval -24 to 23 are encoded in CBOR as one byte.
@@ -683,7 +701,7 @@ The Responder SHALL process message_1 as follows:
 
 If any verification step fails, the Initiator MUST send an EDHOC error message back, formatted as defined in {{error}}, and the protocol MUST be discontinued. If the Responder does not support the selected cipher suite, then SUITES_R MUST include one or more supported cipher suites. If the Responder does not support the selected cipher suite, but supports another cipher suite in SUITES_I, then SUITES_R MUST include the first supported cipher suite in SUITES_I.
 
-## EDHOC Message 2
+## EDHOC Message 2 {#m2}
 
 ### Formatting of Message 2 {#asym-msg2-form}
 
@@ -797,7 +815,7 @@ The Initiator SHALL process message_2 as follows:
 
 If any verification step fails, the Responder MUST send an EDHOC error message back, formatted as defined in {{error}}, and the protocol MUST be discontinued.
 
-## EDHOC Message 3
+## EDHOC Message 3 {#m3}
 
 ### Formatting of Message 3 {#asym-msg3-form}
 
