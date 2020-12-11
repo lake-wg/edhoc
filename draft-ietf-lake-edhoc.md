@@ -403,7 +403,39 @@ CRED_x = {
 }
 ~~~~~~~~~~~
 
+## Encoding of Public Authentication Key Identifiers {#id_cred}
 
+ID_CRED_I and ID_CRED_R are identifiers of the public authentication keys of the Initiator and the Responder, respectively. 
+ID_CRED_I and ID_CRED_R do not have any cryptographic purpose in EDHOC.
+
+* ID_CRED_R is intended to facilitate for the Initiator to retrieve the Responder's public authentication key.
+
+* ID_CRED_I is intended to facilitate for the Responder to retrieve the Initiator's public authentication key.
+
+The identifiers ID_CRED_I and ID_CRED_R are COSE header_maps, i.e. CBOR maps containing COSE Common Header Parameters, see Section 3.1 of {{RFC8152}}).
+In the following we give some examples of COSE header_maps.
+
+Raw public keys are most optimally stored as COSE_Key objects and identified with a 'kid' parameter:
+
+* ID_CRED_x = { 4 : kid_x }, where kid_x : bstr, for x = I or R.
+
+Public key certificates can be identified in different ways. Header parameters for identifying X.509 certificates are defined in {{I-D.ietf-cose-x509}}, for example:
+
+* by a hash value with the 'x5t' parameter;
+
+   * ID_CRED_x = { 34 : COSE_CertHash }, for x = I or R,
+
+* by a URL with the 'x5u' parameter;
+
+   * ID_CRED_x = { 35 : uri }, for x = I or R,
+
+
+ID_CRED_x MAY contain the actual credential used for authentication, CRED_x.
+It is RECOMMENDED that they uniquely identify the public authentication key as the recipient may otherwise have to try several keys.
+ID_CRED_I and ID_CRED_R are transported in the ciphertext, see {{m3}} and {{m2}}.
+
+When ID_CRED_x does not contain the actual credential it may be very short.
+One byte credential identifiers are realistic in many scenarios as most constrained devices only have a few keys. In cases where a node only has one key, the identifier may even be the empty byte string.
 
 
 ## Authentication Keys and Identities {#auth-key-id}
@@ -416,10 +448,6 @@ The EDHOC implementation must be able to receive and enforce information from th
 * When a Public Key Infrastructure (PKI) is used, the trust anchor is a Certification Authority (CA) certificate, and the identity is the subject whose unique name (e.g. a domain name, NAI, or EUI) is included in the endpoint's certificate. Before running EDHOC each party needs at least one CA public key certificate, or just the public key, and a specific identity or set of identities it is allowed to communicate with. Only validated public-key certificates with an allowed subject name, as specified by the application, are to be accepted. EDHOC provides proof that the other party possesses the private authentication key corresponding to the public authentication key in its certificate. The certification path provides proof that the subject of the certificate owns the public key in the certificate.
 
 * When public keys are used but not with a PKI (RPK, self-signed certificate), the trust anchor is the public authentication key of the other party. In this case, the identity is typically directly associated to the public authentication key of the other party. For example, the name of the subject may be a canonical representation of the public key. Alternatively, if identities can be expressed in the form of unique subject names assigned to public keys, then a binding to identity can be achieved by including both public key and associated subject name in the protocol message computation: CRED_I or CRED_R may be a self-signed certificate or COSE_Key containing the public authentication key and the subject name, see {{fig-sigma}}. Before running EDHOC, each endpoint needs a specific public authentication key/unique associated subject name, or a set of public authentication keys/unique associated subject names, which it is allowed to communicate with. EDHOC provides proof that the other party possesses the private authentication key corresponding to the public authentication key.
-
-## Identifiers
-
-One byte credential identifiers are realistic in many scenarios as most constrained devices only have a few keys. In cases where a node only has one key, the identifiers may even be the empty byte string. 
 
 ## Cipher Suites {#cs}
 
@@ -599,37 +627,10 @@ To provide forward secrecy in an even more efficient way than re-running EDHOC, 
 
 ## Overview {#asym-overview}
 
-EDHOC supports authentication with signature or static Diffie-Hellman keys in the form of raw public keys (RPK) and public key certificates with the requirements that:
-
-* The Initiator is able to retrieve the Responder's public authentication key using ID_CRED_R,
-
-* The Responder is able to retrieve the Initiator's public authentication key using ID_CRED_I,
-
-where ID_CRED_I and ID_CRED_R are the identifiers of the public authentication keys. Their encoding is specified in {{id_cred}}.
-
 
 While EDHOC uses the COSE_Key, COSE_Sign1, and COSE_Encrypt0 structures, only a subset of the parameters is included in the EDHOC messages. The unprotected COSE header in COSE_Sign1, and COSE_Encrypt0 (not included in the EDHOC message) MAY contain parameters (e.g. 'alg'). 
 
 
-## Encoding of Public Authentication Key Identifiers {#id_cred}
-
-The identifiers ID_CRED_I and ID_CRED_R are COSE header_maps, i.e. CBOR maps containing COSE Common Header Parameters, see Section 3.1 of {{RFC8152}}). ID_CRED_I and ID_CRED_R need to contain parameters that can identify a public authentication key. In the following paragraph we give some examples of possible COSE header parameters used.
-
-Raw public keys are most optimally stored as COSE_Key objects and identified with a 'kid' parameter:
-
-* ID_CRED_x = { 4 : kid_x }, where kid_x : bstr, for x = I or R.
-
-Public key certificates can be identified in different ways. Header parameters for identifying X.509 certificates are defined in {{I-D.ietf-cose-x509}}, for example:
-
-* by a hash value with the 'x5t' parameter;
-
-   * ID_CRED_x = { 34 : COSE_CertHash }, for x = I or R,
-
-* by a URL with the 'x5u' parameter;
-
-   * ID_CRED_x = { 35 : uri }, for x = I or R,
-
-The purpose of ID_CRED_I and ID_CRED_R is to facilitate retrieval of a public authentication key and when they do not contain the actual credential, they may be very short. ID_CRED_I and ID_CRED_R MAY contain the actual credential used for authentication. It is RECOMMENDED that they uniquely identify the public authentication key as the recipient may otherwise have to try several keys. ID_CRED_I and ID_CRED_R are transported in the ciphertext, see {{asym-msg2-proc}} and {{asym-msg3-proc}}.
 
 ## Encoding of bstr_identifier {#bstr_id}
 
