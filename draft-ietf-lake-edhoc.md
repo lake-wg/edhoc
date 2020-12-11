@@ -94,6 +94,7 @@ informative:
   I-D.ietf-lwig-security-protocol-comparison:
   I-D.ietf-tls-dtls13:
   I-D.selander-ace-ake-authz:
+  I-D.palombini-core-oscore-edhoc:
 
   RFC7228:
   RFC7258:
@@ -299,26 +300,41 @@ EDHOC is designed to encrypt and integrity protect as much information as possib
 
 To simplify for implementors, the use of CBOR and COSE in EDHOC is summarized in {{CBORandCOSE}} and test vectors including CBOR diagnostic notation are given in {{vectors}}.
 
-# EDHOC Overview {#overview}
+# Protocol Elements {#overview}
 
-EDHOC consists of three messages (message_1, message_2, message_3) that maps directly to the three messages in SIGMA-I, plus an EDHOC error message. EDHOC messages are CBOR Sequences {{RFC8742}}, where the first data item (METHOD_CORR) of message_1 is an int specifying the method and the correlation properties of the transport used, see {{transport}}. The method specifies the authentication methods used (signature, static DH), see {{method-types}}. An implementation may support only Initiator or Responder. An implementation may support only a single method. The Initiator and the Responder need to have agreed on a single method to be used for EDHOC.
+## General 
 
-While EDHOC uses the COSE_Key, COSE_Sign1, and COSE_Encrypt0 structures, only a subset of the parameters is included in the EDHOC messages. The unprotected COSE header in COSE_Sign1, and COSE_Encrypt0 (not included in the EDHOC message) MAY contain parameters (e.g. 'alg'). After creating EDHOC message_3, the Initiator can derive symmetric application keys, and application protected data can therefore be sent in parallel with EDHOC message_3. The application may protect data using the algorithms (AEAD, hash, etc.) in the selected cipher suite  and the connection identifiers (C_I, C_R). EDHOC may be used with the media type application/edhoc defined in {{iana}}.
+EDHOC consists of three messages (message_1, message_2, message_3) between Initiator and Responder, plus an EDHOC error message. 
+EDHOC messages are CBOR Sequences {{RFC8742}}, see {{fig-flow}}.
+Message formatting and processing is specified in {{asym}} and {{error}}. An implementation may support only Initiator or only Responder. 
+
+Application data is protected using the agreed application algorithms (AEAD, hash) in the selected cipher suite (see {{cs}}) and the application can make use of the established connection identifiers C_I and C_R (see {{transport}}). EDHOC may be used with the media type application/edhoc defined in {{iana}}.
+
+The Initiator can derive symmetric application keys after creating EDHOC message_3, see {{exporter}}. Application protected data can therefore be sent in parallel with EDHOC message_3, optionally in the same CoAP message {{I-D.palombini-core-oscore-edhoc}}.
 
 ~~~~~~~~~~~
-Initiator                                             Responder
-   |                                                       |
-   | ------------------ EDHOC message_1 -----------------> |
-   |                                                       |
-   | <----------------- EDHOC message_2 ------------------ |
-   |                                                       |
-   | ------------------ EDHOC message_3 -----------------> |
-   |                                                       |
-   | <----------- Application Protected Data ------------> |
-   |                                                       |
+Initiator                                                   Responder
+|               METHOD_CORR, SUITES_I, G_X, C_I, AD_1               |
++------------------------------------------------------------------>|
+|                             message_1                             |
+|                                                                   |
+|   C_I, G_Y, C_R, Enc(K_2e; ID_CRED_R, Signature_or_MAC_2, AD_2)   |
+|<------------------------------------------------------------------+
+|                             message_2                             |
+|                                                                   |
+|       C_R, AEAD(K_3ae; ID_CRED_I, Signature_or_MAC_3, AD_3)       |
++------------------------------------------------------------------>|
+|                             message_3                             |
 ~~~~~~~~~~~
-{: #fig-flow title="EDHOC message flow"}
+{: #fig-flow title="EDHOC Message Flow"}
 {: artwork-align="center"}
+
+
+## Method
+
+The first data item (METHOD_CORR) of message_1 is an int specifying the method and the correlation properties of the transport used, see {{transport}}. The method specifies the authentication methods used (signature, static DH), see {{method-types}}. An implementation may support only a single method. The Initiator and the Responder need to have agreed on a single method to be used for EDHOC.
+
+While EDHOC uses the COSE_Key, COSE_Sign1, and COSE_Encrypt0 structures, only a subset of the parameters is included in the EDHOC messages. The unprotected COSE header in COSE_Sign1, and COSE_Encrypt0 (not included in the EDHOC message) MAY contain parameters (e.g. 'alg'). 
 
 ## Transport and Message Correlation {#transport}
 
@@ -544,22 +560,7 @@ This section specifies authentication method = 0, 1, 2, and 3, see {{method-type
 
 where ID_CRED_I and ID_CRED_R are the identifiers of the public authentication keys. Their encoding is specified in {{id_cred}}.
 
-~~~~~~~~~~~
-Initiator                                                   Responder
-|               METHOD_CORR, SUITES_I, G_X, C_I, AD_1               |
-+------------------------------------------------------------------>|
-|                             message_1                             |
-|                                                                   |
-|   C_I, G_Y, C_R, Enc(K_2e; ID_CRED_R, Signature_or_MAC_2, AD_2)   |
-|<------------------------------------------------------------------+
-|                             message_2                             |
-|                                                                   |
-|       C_R, AEAD(K_3ae; ID_CRED_I, Signature_or_MAC_3, AD_3)       |
-+------------------------------------------------------------------>|
-|                             message_3                             |
-~~~~~~~~~~~
-{: #fig-asym title="Overview of EDHOC with asymmetric key authentication."}
-{: artwork-align="center"}
+
 
 ## Encoding of Public Authentication Key Identifiers {#id_cred}
 
