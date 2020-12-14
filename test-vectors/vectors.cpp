@@ -510,7 +510,7 @@ void test_vectors( EDHOCKeyType type_I, EDHOCKeyType type_R, EDHOCCorrelation co
         print( "salt", salt );
         print( "PRK_2e", PRK_2e );   
     }
-    if ( type_I == sig )
+    if ( type_R == sig )
         print( "SK_R (Responders's private authentication key)", SK_R );
     if ( type_R == sdh ) {
         print( "R (Responder's private authentication key)", R );
