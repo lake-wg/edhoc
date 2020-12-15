@@ -99,6 +99,7 @@ informative:
   RFC7258:
   RFC7296:
   RFC8446:
+  RFC8724:
 
   LoRa1:
     target: https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6021899/pdf/sensors-18-01833.pdf
