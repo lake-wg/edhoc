@@ -207,6 +207,8 @@ This document specifies Ephemeral Diffie-Hellman Over COSE (EDHOC), a lightweigh
 
 After successful completion of the EDHOC protocol, application keys and other application specific data can be derived using the EDHOC-Exporter interface. A main use case for EDHOC is to establish an OSCORE security context. EDHOC is built on the same lightweight primitives as OSCORE - CBOR for encoding, COSE for cryptography, and CoAP for transport - and by reusing existing libraries the additional code size can be kept very low. (EDHOC is not bound to a particular transport layer, but it is recommended to transport the EDHOC message in CoAP payloads.)¶
 
+The ECDH exchange and the key derivation makes use of known protocol constructions, such as {{SIGMA}}, NIST SP-800-56A {{SP-800-56A}}, and Extract-and-Expand {{RFC5869}}, implemented in terms of CBOR and COSE. COSE also provides crypto agility and enables use of future algorithms and headers designed for constrained IoT.
+
 EDHOC is designed for highly constrained settings making it especially suitable for low-power wide area networks {{RFC8376}} such as Cellular IoT, 6TiSCH, and LoRaWAN. Compared to the DTLS 1.3 handshake {{I-D.ietf-tls-dtls13}} with ECDH and connection ID, the number of bytes in EDHOC + CoAP can be less than 1/6 when RPK authentication is used, see {{I-D.ietf-lwig-security-protocol-comparison}}. {{fig-sizes}} shows two examples of message sizes for EDHOC with different kinds of authentication keys and different COSE header parameters for identification: static Diffie-Hellman keys identified by 'kid' {{RFC8152}}, and X.509 signature certificates identified by a hash value using 'x5t' {{I-D.ietf-cose-x509}}. Further reductions of message sizes are possible, for example by eliding redundant length indications.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -221,8 +223,6 @@ Total               103       245
 =================================
 ~~~~~~~~~~~~~~~~~~~~~~~
 {: #fig-sizes title="Example of message sizes in bytes." artwork-align="center"}
-
-The ECDH exchange and the key derivation follow known protocol constructions such as {{SIGMA}}, NIST SP-800-56A {{SP-800-56A}}, and Extract-and-Expand {{RFC5869}}. CBOR {{RFC7049}} and COSE {{RFC8152}} are used to implement these standards. The use of COSE provides crypto agility and enables use of future algorithms and headers designed for constrained IoT.
 
 This document is organized as follows: {{background}} describes how EDHOC authenticated with digital signatures builds on SIGMA-I, {{overview}} specifies general properties of EDHOC, including message flow, formatting of the ephemeral public keys, and key derivation, {{asym}} specifies EDHOC with signature key and static Diffie-Hellman key authentication, {{error}} specifies the EDHOC error message, and {{transfer}} describes how EDHOC can be transferred in CoAP and used to establish an OSCORE security context.
 
