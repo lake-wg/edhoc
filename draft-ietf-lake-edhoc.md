@@ -94,6 +94,7 @@ informative:
   I-D.ietf-lwig-security-protocol-comparison:
   I-D.ietf-tls-dtls13:
   I-D.selander-ace-ake-authz:
+  I-D.palombini-core-oscore-edhoc:
 
   RFC7228:
   RFC7258:
@@ -244,11 +245,11 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "S
 
 Readers are expected to be familiar with the terms and concepts described in CBOR {{RFC7049}}, CBOR Sequences {{RFC8742}}, COSE {{RFC8152}}, and CDDL {{RFC8610}}. The Concise Data Definition Language (CDDL) is used to express CBOR data structures {{RFC7049}}. Examples of CBOR and CDDL are provided in {{CBOR}}.
 
-# Background {#background}
+# EDHOC Outline {#background}
 
-EDHOC specifies different authentication methods of the Diffie-Hellman key exchange: digital signatures and static Diffie-Hellman keys. This section outlines the digital signature based method.
+EDHOC specifies different authentication methods of the Diffie-Hellman key exchange: digital signatures and static Diffie-Hellman keys. This section outlines the digital signature based method. Further details of protocol elements and other authentication methods are provided in the remainder of this document.
 
-SIGMA (SIGn-and-MAc) is a family of theoretical protocols with a large number of variants {{SIGMA}}. Like IKEv2 {{RFC7296}} and (D)TLS 1.3 {{RFC8446}}, EDHOC authenticated with digital signatures is built on a variant of the SIGMA protocol which provide identity protection of the initiator (SIGMA-I), and like IKEv2 {{RFC7296}}, EDHOC implements the SIGMA-I variant as Mac-then-Sign. The SIGMA-I protocol using an authenticated encryption algorithm is shown in {{fig-sigma}}.
+SIGMA (SIGn-and-MAc) is a family of theoretical protocols with a large number of variants {{SIGMA}}. Like IKEv2 {{RFC7296}} and (D)TLS 1.3 {{RFC8446}}, EDHOC authenticated with digital signatures is built on a variant of the SIGMA protocol which provide identity protection of the initiator (SIGMA-I), and like IKEv2 {{RFC7296}}, EDHOC implements the SIGMA-I variant as MAC-then-Sign. The SIGMA-I protocol using an authenticated encryption algorithm is shown in {{fig-sigma}}.
 
 ~~~~~~~~~~~
 Initiator                                               Responder
@@ -297,34 +298,73 @@ In order to create a "full-fledged" protocol some additional protocol elements a
 
 EDHOC is designed to encrypt and integrity protect as much information as possible, and all symmetric keys are derived using as much previous information as possible. EDHOC is furthermore designed to be as compact and lightweight as possible, in terms of message sizes, processing, and the ability to reuse already existing CBOR, COSE, and CoAP libraries.
 
-To simplify for implementors, the use of CBOR in EDHOC is summarized in {{CBORandCOSE}} and test vectors including CBOR diagnostic notation are given in {{vectors}}.
+To simplify for implementors, the use of CBOR and COSE in EDHOC is summarized in {{CBORandCOSE}} and test vectors including CBOR diagnostic notation are given in {{vectors}}.
 
-# EDHOC Overview {#overview}
+# Protocol Elements {#overview}
 
-EDHOC consists of three messages (message_1, message_2, message_3) that maps directly to the three messages in SIGMA-I, plus an EDHOC error message. EDHOC messages are CBOR Sequences {{RFC8742}}, where the first data item (METHOD_CORR) of message_1 is an int specifying the method and the correlation properties of the transport used, see {{transport}}. The method specifies the authentication methods used (signature, static DH), see {{method-types}}. An implementation may support only Initiator or Responder. An implementation may support only a single method. The Initiator and the Responder need to have agreed on a single method to be used for EDHOC.
+## General 
 
-While EDHOC uses the COSE_Key, COSE_Sign1, and COSE_Encrypt0 structures, only a subset of the parameters is included in the EDHOC messages. The unprotected COSE header in COSE_Sign1, and COSE_Encrypt0 (not included in the EDHOC message) MAY contain parameters (e.g. 'alg'). After creating EDHOC message_3, the Initiator can derive symmetric application keys, and application protected data can therefore be sent in parallel with EDHOC message_3. The application may protect data using the algorithms (AEAD, hash, etc.) in the selected cipher suite  and the connection identifiers (C_I, C_R). EDHOC may be used with the media type application/edhoc defined in {{iana}}.
+EDHOC consists of three messages (message_1, message_2, message_3) between Initiator and Responder, plus an EDHOC error message. EDHOC messages are CBOR Sequences {{RFC8742}}, see {{fig-flow}}. The protocol elements in the figure are introduced in the following sections. Message formatting and processing is specified in {{asym}} and {{error}}. An implementation may support only Initiator or only Responder. 
+
+Application data is protected using the agreed application algorithms (AEAD, hash) in the selected cipher suite (see {{cs}}) and the application can make use of the established connection identifiers C_I and C_R (see {{corr}}). EDHOC may be used with the media type application/edhoc defined in {{iana}}.
+
+The Initiator can derive symmetric application keys after creating EDHOC message_3, see {{exporter}}. Application protected data can therefore be sent in parallel with EDHOC message_3, optionally in the same CoAP message {{I-D.palombini-core-oscore-edhoc}}.
 
 ~~~~~~~~~~~
-Initiator                                             Responder
-   |                                                       |
-   | ------------------ EDHOC message_1 -----------------> |
-   |                                                       |
-   | <----------------- EDHOC message_2 ------------------ |
-   |                                                       |
-   | ------------------ EDHOC message_3 -----------------> |
-   |                                                       |
-   | <----------- Application Protected Data ------------> |
-   |                                                       |
+Initiator                                                   Responder
+|               METHOD_CORR, SUITES_I, G_X, C_I, AD_1               |
++------------------------------------------------------------------>|
+|                             message_1                             |
+|                                                                   |
+|   C_I, G_Y, C_R, Enc(K_2e; ID_CRED_R, Signature_or_MAC_2, AD_2)   |
+|<------------------------------------------------------------------+
+|                             message_2                             |
+|                                                                   |
+|       C_R, AEAD(K_3ae; ID_CRED_I, Signature_or_MAC_3, AD_3)       |
++------------------------------------------------------------------>|
+|                             message_3                             |
 ~~~~~~~~~~~
-{: #fig-flow title="EDHOC message flow"}
+{: #fig-flow title="EDHOC Message Flow"}
 {: artwork-align="center"}
 
-## Transport and Message Correlation {#transport}
 
-Cryptographically, EDHOC does not put requirements on the lower layers. EDHOC is not bound to a particular transport layer, and can be used in environments without IP. The transport is responsible to handle message loss, reordering, message duplication, fragmentation, and denial of service protection, where necessary. The Initiator and the Responder need to have agreed on a transport to be used for EDHOC. It is recommended to transport EDHOC in CoAP payloads, see {{transfer}}.
+## Method and Correlation
 
-EDHOC includes connection identifiers (C_I, C_R) to correlate messages. The connection identifiers C_I and C_R do not have any cryptographic purpose in EDHOC. They contain information facilitating retrieval of the protocol state and may therefore be very short. The connection identifier MAY be used with an application protocol (e.g. OSCORE) for which EDHOC establishes keys, in which case the connection identifiers SHALL adhere to the requirements for that protocol. Each party choses a connection identifier it desires the other party to use in outgoing messages. (For OSCORE this results in the endpoint selecting its Recipient ID, see Section 3.1 of {{RFC8613}}).
+The first data item of message_1, METHOD_CORR (see {{asym-msg1-form}}), is an integer specifying the method and the correlation properties of the transport, which are described in this section.
+
+
+### Method {#method}
+
+EDHOC supports authentication with signature or static Diffie-Hellman keys, as defined in the four authentication methods: 0, 1, 2, and 3, see {{fig-method-types}}. (Method 0 corresponds to the case outlined in {{background}} where both Initiator and Responder authenticate with signature keys.)
+
+An implementation may support only a single method. The Initiator and the Responder need to have agreed on a single method to be used for EDHOC, see {{applicability}}.
+
+~~~~~~~~~~~
++-------+-------------------+-------------------+-------------------+
+| Value | Initiator         | Responder         | Reference         |
++-------+-------------------+-------------------+-------------------+
+|     0 | Signature Key     | Signature Key     | [[this document]] |
+|     1 | Signature Key     | Static DH Key     | [[this document]] |
+|     2 | Static DH Key     | Signature Key     | [[this document]] |
+|     3 | Static DH Key     | Static DH Key     | [[this document]] |
++-------+-------------------+-------------------+-------------------+
+~~~~~~~~~~~
+{: #fig-method-types title="Method Types"}
+{: artwork-align="center"}
+
+### Connection Identifiers {#ci}
+
+EDHOC includes connection identifiers (C_I, C_R) to correlate messages. The connection identifiers C_I and C_R do not have any cryptographic purpose in EDHOC. They contain information facilitating retrieval of the protocol state and may therefore be very short. One byte connection identifiers are realistic in many scenarios as most constrained devices only have a few connections. In cases where a node only has one connection, the identifiers may even be the empty byte string. 
+
+The connection identifier MAY be used with an application protocol (e.g. OSCORE) for which EDHOC establishes keys, in which case the connection identifiers SHALL adhere to the requirements for that protocol. Each party choses a connection identifier it desires the other party to use in outgoing messages. (For OSCORE this results in the endpoint selecting its Recipient ID, see Section 3.1 of {{RFC8613}}).
+
+### Transport {#transport}
+
+Cryptographically, EDHOC does not put requirements on the lower layers. EDHOC is not bound to a particular transport layer, and can be used in environments without IP. The transport is responsible to handle message loss, reordering, message duplication, fragmentation, and denial of service protection, where necessary.
+
+The Initiator and the Responder need to have agreed on a transport to be used for EDHOC, see {{applicability}}. It is recommended to transport EDHOC in CoAP payloads, see {{transfer}}.
+
+### Message Correlation {#corr}
 
 If the transport provides a mechanism for correlating messages, some of the connection identifiers may be omitted. There are four cases:
 
@@ -338,9 +378,20 @@ If the transport provides a mechanism for correlating messages, some of the conn
 
 For example, if the key exchange is transported over CoAP, the CoAP Token can be used to correlate messages, see {{coap}}.
 
-## Authentication Keys and Identities {#auth-key-id}
 
-The EDHOC message exchange may be authenticated using raw public keys (RPK) or public key certificates. The certificates and RPKs can contain signature keys or static Diffie-Hellman keys. In X.509 certificates, signature keys typically have key usage "digitalSignature" and Diffie-Hellman keys typically have key usage "keyAgreement".
+## Authentication Parameters {#auth-key-id}
+
+### Authentication Keys
+
+The authentication key MUST be a signature key or static Diffie-Hellman key. The Initiator and the Responder
+ MAY use different types of authentication keys, e.g. one uses a signature key and the other uses a static Diffie-Hellman key. When using a signature key, the authentication is provided by a signature. When using a static Diffie-Hellman key the authentication is provided by a Message Authentication Code (MAC) computed from an ephemeral-static ECDH shared secret which enables significant reductions in message sizes. The MAC is implemented with an AEAD algorithm. When using a static Diffie-Hellman keys the Initiator's and Responder's private authentication keys are called I and R, respectively, and the public authentication keys are called G_I and G_R, respectively.
+
+* Only the Responder SHALL have access to the Responder's private authentication key.
+
+* Only the Initiator SHALL have access to the Initiator's private authentication key.
+
+
+### Identities
 
 EDHOC assumes the existence of mechanisms (certification authority, trusted third party, manual distribution, etc.) for specifying and distributing authentication keys and identities. Policies are set based on the identity of the other party, and parties typically only allow connections from a specific identity or a small restricted set of identities. For example, in the case of a device connecting to a network, the network may only allow connections from devices which authenticate with certificates having a particular range of serial numbers in the subject field and signed by a particular CA. On the other side, the device may only be allowed to connect to a network which authenticate with a particular public key (information of which may be provisioned, e.g., out of band or in the Auxiliary Data, see {{AD}}).
  
@@ -348,11 +399,72 @@ The EDHOC implementation must be able to receive and enforce information from th
 
 * When a Public Key Infrastructure (PKI) is used, the trust anchor is a Certification Authority (CA) certificate, and the identity is the subject whose unique name (e.g. a domain name, NAI, or EUI) is included in the endpoint's certificate. Before running EDHOC each party needs at least one CA public key certificate, or just the public key, and a specific identity or set of identities it is allowed to communicate with. Only validated public-key certificates with an allowed subject name, as specified by the application, are to be accepted. EDHOC provides proof that the other party possesses the private authentication key corresponding to the public authentication key in its certificate. The certification path provides proof that the subject of the certificate owns the public key in the certificate.
 
-* When public keys are used but not with a PKI (RPK, self-signed certificate), the trust anchor is the public authentication key of the other party. In this case, the identity is typically directly associated to the public authentication key of the other party. For example, the name of the subject may be a canonical representation of the public key. Alternatively, if identities can be expressed in the form of unique subject names assigned to public keys, then a binding to identity can be achieved by including both public key and associated subject name in the protocol message computation: CRED_I or CRED_R may be a self-signed certificate or COSE_Key containing the public authentication key and the subject name, see {{fig-sigma}}. Before running EDHOC, each endpoint needs a specific public authentication key/unique associated subject name, or a set of public authentication keys/unique associated subject names, which it is allowed to communicate with. EDHOC provides proof that the other party possesses the private authentication key corresponding to the public authentication key.
+* When public keys are used but not with a PKI (RPK, self-signed certificate), the trust anchor is the public authentication key of the other party. In this case, the identity is typically directly associated to the public authentication key of the other party. For example, the name of the subject may be a canonical representation of the public key. Alternatively, if identities can be expressed in the form of unique subject names assigned to public keys, then a binding to identity can be achieved by including both public key and associated subject name in the protocol message computation: CRED_I or CRED_R may be a self-signed certificate or COSE_Key containing the public authentication key and the subject name, see {{auth-cred}}. Before running EDHOC, each endpoint needs a specific public authentication key/unique associated subject name, or a set of public authentication keys/unique associated subject names, which it is allowed to communicate with. EDHOC provides proof that the other party possesses the private authentication key corresponding to the public authentication key.
 
-## Identifiers
 
-One byte connection and credential identifiers are realistic in many scenarios as most constrained devices only have a few keys and connections. In cases where a node only has one connection or key, the identifiers may even be the empty byte string. 
+
+### Authentication Credentials {#auth-cred}
+
+The authentication credentials, CRED_I and CRED_R, contain the public authentication key of the Initiator and the Responder, respectively.
+The Initiator and the Responder MAY use different types of credentials, e.g. one uses an RPK and the other uses a public key certificate.
+
+The credentials CRED_I and CRED_R are signed or MAC:ed (depending on method) by the Initiator and the Responder, respectively, see {{m3}} and {{m2}}.
+
+When the credential is a certificate, CRED_x is an end-entity certificate (i.e. not the certificate chain) encoded as a CBOR bstr.
+In X.509 certificates, signature keys typically have key usage "digitalSignature" and Diffie-Hellman keys typically have key usage "keyAgreement"
+
+When the credential is a COSE_Key, CRED_x is a CBOR map only containing specific fields from the COSE_Key:
+
+* For COSE_Keys of type OKP the CBOR map SHALL only include the parameters 1 (kty), -1 (crv), and -2 (x-coordinate).
+* For COSE_Keys of type EC2 the CBOR map SHALL only include the parameters 1 (kty), -1 (crv), -2 (x-coordinate), and -3 (y-coordinate).
+
+If the parties have agreed on an identity besides the public key, the identity is included in the CBOR map with the label "subject name", otherwise the subject name is the empty text string.
+The parameters SHALL be encoded in decreasing order with int labels first and text string labels last.
+An example of CRED_x when the RPK contains an X25519 static Diffie-Hellman key and the parties have agreed on an EUI-64 identity is shown below:
+
+~~~~~~~~~~~
+CRED_x = {
+  1:  1,
+ -1:  4,
+ -2:  h'b1a3e89460e88d3a8d54211dc95f0b90
+        3ff205eb71912d6db8f4af980d2db83a',
+ "subject name" : "42-50-31-FF-EF-37-32-39"
+}
+~~~~~~~~~~~
+
+### Identification of Public Authentication Keys {#id_cred}
+
+ID_CRED_I and ID_CRED_R are identifiers of the public authentication keys of the Initiator and the Responder, respectively. 
+ID_CRED_I and ID_CRED_R do not have any cryptographic purpose in EDHOC.
+
+* ID_CRED_R is intended to facilitate for the Initiator to retrieve the Responder's public authentication key.
+
+* ID_CRED_I is intended to facilitate for the Responder to retrieve the Initiator's public authentication key.
+
+The identifiers ID_CRED_I and ID_CRED_R are COSE header_maps, i.e. CBOR maps containing COSE Common Header Parameters, see Section 3.1 of {{RFC8152}}).
+In the following we give some examples of COSE header_maps.
+
+Raw public keys are most optimally stored as COSE_Key objects and identified with a 'kid' parameter:
+
+* ID_CRED_x = { 4 : kid_x }, where kid_x : bstr, for x = I or R.
+
+Public key certificates can be identified in different ways. Header parameters for identifying X.509 certificates are defined in {{I-D.ietf-cose-x509}}, for example:
+
+* by a hash value with the 'x5t' parameter;
+
+   * ID_CRED_x = { 34 : COSE_CertHash }, for x = I or R,
+
+* by a URL with the 'x5u' parameter;
+
+   * ID_CRED_x = { 35 : uri }, for x = I or R,
+
+
+ID_CRED_x MAY contain the actual credential used for authentication, CRED_x.
+It is RECOMMENDED that they uniquely identify the public authentication key as the recipient may otherwise have to try several keys.
+ID_CRED_I and ID_CRED_R are transported in the ciphertext, see {{m3}} and {{m2}}.
+
+When ID_CRED_x does not contain the actual credential it may be very short.
+One byte credential identifiers are realistic in many scenarios as most constrained devices only have a few keys. In cases where a node only has one key, the identifier may even be the empty byte string.
 
 ## Cipher Suites {#cs}
 
@@ -408,19 +520,13 @@ The following cipher suite is for high security application such as government u
 
 The different methods use the same cipher suites, but some algorithms are not used in some methods. The EDHOC signature algorithm and the EDHOC signature algorithm curve are not used in methods without signature authentication.
 
-The Initiator needs to have a list of cipher suites it supports in order of preference. The Responder needs to have a list of cipher suites it supports.
+The Initiator needs to have a list of cipher suites it supports in order of preference. The Responder needs to have a list of cipher suites it supports. SUITES_I is a CBOR array containing cipher suites that the Initiator supports. SUITES_I is formatted and processed as detailed in {{asym-msg1-form}} to secure the cipher suite negotation.
 
-## Communication/Negotiation of Protocol Features
 
-EDHOC allows the communication or negotiation of various protocol features during the execution of the protocol.
+## Ephemeral Public Keys {#cose_key}
 
-* The Initiator proposes a cipher suite (see {{cs}}), and the Responder either accepts or rejects, and may make a counter proposal. 
+The ECDH ephemeral public keys are formatted as a COSE_Key of type EC2 or OKP according to Sections 13.1 and 13.2 of {{RFC8152}}, but only the 'x' parameter is included G_X and G_Y. For Elliptic Curve Keys of type EC2, compact representation as per {{RFC6090}} MAY be used also in the COSE_Key. If the COSE implementation requires an 'y' parameter, any of the possible values of the y-coordinate can be used, see Appendix C of {{RFC6090}}. COSE {{RFC8152}} always use compact output for Elliptic Curve Keys of type EC2.
 
-* The Initiator decides on the correlation parameter corr (see {{transport}}). This is typically given by the transport which the Initiator and the Responder have agreed on beforehand. The Responder either accepts or rejects.
-
-* The Initiator decides on the method parameter, see {{method-types}}. The Responder either accepts or rejects.
-
-* The Initiator and the Responder decide on the representation of the identifier of their respective credentials, ID_CRED_I and ID_CRED_R. The decision is reflected by the label used in the CBOR map, see for example {{id_cred}}.
 
 ## Auxiliary Data {#AD}
 
@@ -430,11 +536,23 @@ EDHOC allows opaque auxiliary data (AD) to be sent in the EDHOC messages. Unprot
 
 Since data carried in AD_1 and AD_2 may not be protected, and the content of AD_3 is available to both the Initiator and the Responder, special considerations need to be made such that the availability of the data a) does not violate security and privacy requirements of the service which uses this data, and b) does not violate the security properties of EDHOC.
 
-## Ephemeral Public Keys {#cose_key}
-   
-The ECDH ephemeral public keys are formatted as a COSE_Key of type EC2 or OKP according to Sections 13.1 and 13.2 of {{RFC8152}}, but only the 'x' parameter is included in the EDHOC messages. For Elliptic Curve Keys of type EC2, compact representation as per {{RFC6090}} MAY be used also in the COSE_Key. If the COSE implementation requires an 'y' parameter, any of the possible values of the y-coordinate can be used, see Appendix C of {{RFC6090}}. COSE {{RFC8152}} always use compact output for Elliptic Curve Keys of type EC2.
 
-## Key Derivation {#key-der}
+## Communication/Negotiation of Protocol Features
+
+EDHOC allows the communication or negotiation of various protocol features during the execution of the protocol.
+
+* The Initiator proposes a cipher suite (see {{cs}}), and the Responder either accepts or rejects, and may make a counter proposal. 
+
+* The Initiator decides on the correlation parameter corr (see {{corr}}). This is typically given by the transport which the Initiator and the Responder have agreed on beforehand. The Responder either accepts or rejects.
+
+* The Initiator decides on the method parameter, see {{fig-method-types}}. The Responder either accepts or rejects.
+
+* The Initiator and the Responder decide on the representation of the identifier of their respective credentials, ID_CRED_I and ID_CRED_R. The decision is reflected by the label used in the CBOR map, see for example {{id_cred}}.
+
+Editor's note: This section needs to be aligned with {{applicability}}.
+
+
+# Key Derivation {#key-der}
 
 EDHOC uses Extract-and-Expand {{RFC5869}} with the EDHOC hash algorithm in the selected cipher suite to derive keys. Extract is used to derive fixed-length uniformly pseudorandom keys (PRK) from ECDH shared secrets. Expand is used to derive additional output keying material (OKM) from the PRKs. The PRKs are derived using Extract.
 
@@ -504,7 +622,7 @@ If the EDHOC hash algorithm is SHA-2, then Expand( PRK, info, length ) = HKDF-Ex
 
 K_2e and IV_2e are derived using the transcript hash TH_2 and the pseudorandom key PRK_2e. K_2m and IV_2m are derived using the transcript hash TH_2 and the pseudorandom key PRK_3e2m. K_3ae and IV_3ae are derived using the transcript hash TH_3 and the pseudorandom key PRK_3e2m. K_3m and IV_3m are derived using the transcript hash TH_3 and the pseudorandom key PRK_4x3m. IVs are only used if the EDHOC AEAD algorithm uses IVs.
 
-### EDHOC-Exporter Interface {#exporter}
+## EDHOC-Exporter Interface {#exporter}
 
 Application keys and other application specific data can be derived using the EDHOC-Exporter interface defined as:
 
@@ -528,73 +646,14 @@ To provide forward secrecy in an even more efficient way than re-running EDHOC, 
       PRK_4x3m = Extract( [ "TH_4", nonce ], PRK_4x3m )
 ~~~~~~~~~~~
 
-# EDHOC Authenticated with Asymmetric Keys {#asym}
+# Message Formatting and Processing {#asym}
 
-## Overview {#asym-overview}
+This section specifies formatting of the messages and processing steps. Error messages are specified in {{error}}. 
 
-This section specifies authentication method = 0, 1, 2, and 3, see {{method-types}}. EDHOC supports authentication with signature or static Diffie-Hellman keys in the form of raw public keys (RPK) and public key certificates with the requirements that:
+An EDHOC message is encoded as a sequence of CBOR data (CBOR Sequence, {{RFC8742}}).
+Additional optimizations are made to reduce message overhead.
 
-* Only the Responder SHALL have access to the Responder's private authentication key,
-
-* Only the Initiator SHALL have access to the Initiator's private authentication key,
-
-* The Initiator is able to retrieve the Responder's public authentication key using ID_CRED_R,
-
-* The Responder is able to retrieve the Initiator's public authentication key using ID_CRED_I,
-
-where ID_CRED_I and ID_CRED_R are the identifiers of the public authentication keys. Their encoding is specified in {{id_cred}}.
-
-~~~~~~~~~~~
-Initiator                                                   Responder
-|               METHOD_CORR, SUITES_I, G_X, C_I, AD_1               |
-+------------------------------------------------------------------>|
-|                             message_1                             |
-|                                                                   |
-|   C_I, G_Y, C_R, Enc(K_2e; ID_CRED_R, Signature_or_MAC_2, AD_2)   |
-|<------------------------------------------------------------------+
-|                             message_2                             |
-|                                                                   |
-|       C_R, AEAD(K_3ae; ID_CRED_I, Signature_or_MAC_3, AD_3)       |
-+------------------------------------------------------------------>|
-|                             message_3                             |
-~~~~~~~~~~~
-{: #fig-asym title="Overview of EDHOC with asymmetric key authentication."}
-{: artwork-align="center"}
-
-## Encoding of Public Authentication Key Identifiers {#id_cred}
-
-The identifiers ID_CRED_I and ID_CRED_R are COSE header_maps, i.e. CBOR maps containing COSE Common Header Parameters, see Section 3.1 of {{RFC8152}}). ID_CRED_I and ID_CRED_R need to contain parameters that can identify a public authentication key. In the following paragraph we give some examples of possible COSE header parameters used.
-
-Raw public keys are most optimally stored as COSE_Key objects and identified with a 'kid' parameter:
-
-* ID_CRED_x = { 4 : kid_x }, where kid_x : bstr, for x = I or R.
-
-Public key certificates can be identified in different ways. Header parameters for identifying X.509 certificates are defined in {{I-D.ietf-cose-x509}}, for example:
-
-* by a hash value with the 'x5t' parameter;
-
-   * ID_CRED_x = { 34 : COSE_CertHash }, for x = I or R,
-
-* by a URL with the 'x5u' parameter;
-
-   * ID_CRED_x = { 35 : uri }, for x = I or R,
-
-The purpose of ID_CRED_I and ID_CRED_R is to facilitate retrieval of a public authentication key and when they do not contain the actual credential, they may be very short. ID_CRED_I and ID_CRED_R MAY contain the actual credential used for authentication. It is RECOMMENDED that they uniquely identify the public authentication key as the recipient may otherwise have to try several keys. ID_CRED_I and ID_CRED_R are transported in the ciphertext, see {{asym-msg2-proc}} and {{asym-msg3-proc}}.
-
-The authentication key MUST be a signature key or static Diffie-Hellman key. The Initiator and the Responder
- MAY use different types of authentication keys, e.g. one uses a signature key and the other uses a static Diffie-Hellman key. When using a signature key, the authentication is provided by a signature. When using a static Diffie-Hellman key the authentication is provided by a Message Authentication Code (MAC) computed from an ephemeral-static ECDH shared secret which enables significant reductions in message sizes. The MAC is implemented with an AEAD algorithm. When using a static Diffie-Hellman keys the Initiator's and Responder's private authentication keys are called I and R, respectively, and the public authentication keys are called G_I and G_R, respectively.
-
-The actual credentials CRED_I and CRED_R are signed or MAC:ed by the Initiator and the Responder respectively, see {{asym-msg3-form}} and {{asym-msg2-form}}. The Initiator and the Responder MAY use different types of credentials, e.g. one uses RPK and the other uses certificate. When the credential is a certificate, CRED_x is end-entity certificate (i.e. not the certificate chain) encoded as a CBOR bstr. When the credential is a COSE_Key, CRED_x is a CBOR map only contains specific fields from the COSE_Key. For COSE_Keys of type OKP the CBOR map SHALL only include the parameters 1 (kty), -1 (crv), and -2 (x-coordinate). For COSE_Keys of type EC2 the CBOR map SHALL only include the parameters 1 (kty), -1 (crv), -2 (x-coordinate), and -3 (y-coordinate). If the parties have agreed on an identity besides the public key, the indentity is included in the CBOR map with the label "subject name", otherwise the subject name is the empty text string. The parameters SHALL be encoded in decreasing order with int labels first and text string labels last. An example of CRED_x when the RPK contains an X25519 static Diffie-Hellman key and the parties have agreed on an EUI-64 identity is shown below:
-
-~~~~~~~~~~~
-CRED_x = {
-  1:  1,
- -1:  4,
- -2:  h'b1a3e89460e88d3a8d54211dc95f0b90
-        3ff205eb71912d6db8f4af980d2db83a',
- "subject name" : "42-50-31-FF-EF-37-32-39"
-}
-~~~~~~~~~~~
+While EDHOC uses the COSE_Key, COSE_Sign1, and COSE_Encrypt0 structures, only a subset of the parameters is included in the EDHOC messages. The unprotected COSE header in COSE_Sign1, and COSE_Encrypt0 (not included in the EDHOC message) MAY contain parameters (e.g. 'alg'). 
 
 ## Encoding of bstr_identifier {#bstr_id}
 
@@ -634,7 +693,7 @@ suite = int
 
 where:
 
-* METHOD_CORR = 4 * method + corr, where method = 0, 1, 2, or 3 (see {{method-types}}) and the correlation parameter corr is chosen based on the transport and determines which connection identifiers that are omitted (see {{transport}}).
+* METHOD_CORR = 4 * method + corr, where method = 0, 1, 2, or 3 (see {{fig-method-types}}) and the correlation parameter corr is chosen based on the transport and determines which connection identifiers that are omitted (see {{corr}}).
 * SUITES_I - cipher suites which the Initiator supports in order of (decreasing) preference. The list of supported cipher suites can be truncated at the end, as is detailed in the processing steps below. One of the supported cipher suites is selected. The selected suite is the first suite in the SUITES_I CBOR array. If a single supported cipher suite is conveyed then that cipher suite is selected and the selected cipher suite is encoded as an int instead of an array.
 * G_X - the ephemeral public key of the Initiator
 * C_I - variable length connection identifier, encoded as a bstr_identifier (see {{bstr_id}}).
@@ -666,7 +725,7 @@ The Responder SHALL process message_1 as follows:
 
 If any verification step fails, the Responder MUST send an EDHOC error message back, formatted as defined in {{error}}, and the protocol MUST be discontinued. If the Responder does not support the selected cipher suite, then SUITES_R MUST include one or more supported cipher suites. If the Responder does not support the selected cipher suite, but supports another cipher suite in SUITES_I, then SUITES_R MUST include the first supported cipher suite in SUITES_I.
 
-## EDHOC Message 2
+## EDHOC Message 2 {#m2}
 
 ### Formatting of Message 2 {#asym-msg2-form}
 
@@ -780,7 +839,7 @@ The Initiator SHALL process message_2 as follows:
 
 If any verification step fails, the Responder MUST send an EDHOC error message back, formatted as defined in {{error}}, and the protocol MUST be discontinued.
 
-## EDHOC Message 3
+## EDHOC Message 3 {#m3}
 
 ### Formatting of Message 3 {#asym-msg3-form}
 
@@ -1189,20 +1248,8 @@ Reference: [[this document]]
 
 ## EDHOC Method Type Registry {#method-types}
 
-IANA has created a new registry titled "EDHOC Method Type" under the new heading "EDHOC". The registration procedure is "Expert Review". The columns of the registry are Value, Description, and Reference, where Value is an integer and the other columns are text strings. The initial contents of the registry are:
+IANA has created a new registry titled "EDHOC Method Type" under the new heading "EDHOC". The registration procedure is "Expert Review". The columns of the registry are Value, Description, and Reference, where Value is an integer and the other columns are text strings. The initial contents of the registry is shown in {{fig-method-types}}.
 
-~~~~~~~~~~~
-+-------+-------------------+-------------------+-------------------+
-| Value | Initiator         | Responder         | Reference         |
-+-------+-------------------+-------------------+-------------------+
-|     0 | Signature Key     | Signature Key     | [[this document]] |
-|     1 | Signature Key     | Static DH Key     | [[this document]] |
-|     2 | Static DH Key     | Signature Key     | [[this document]] |
-|     3 | Static DH Key     | Static DH Key     | [[this document]] |
-+-------+-------------------+-------------------+-------------------+
-~~~~~~~~~~~
-{: #fig-method-types title="Method Types"}
-{: artwork-align="center"}
 
 ## The Well-Known URI Registry
 
@@ -2854,11 +2901,11 @@ message_3 (CBOR Sequence) (20 bytes)
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 
-# Applicability Statement Template
+# Applicability Statement Template {#applicability}
 
 EDHOC requires certain parameters to be agreed upon between Initiator and Responder. A cipher suite is negotiated with the protocol, but certain other parameters need to be agreed beforehand:
 
-1. Method and correlation of underlying transport messages (METHOD_CORR, see {{method-types}} and {{transport}}).
+1. Method and correlation of underlying transport messages (METHOD_CORR, see {{method}} and {{corr}}).
 3. Type of authentication credentials (CRED_I, CRED_R, see {{id_cred}}).
 4. Type for identifying authentication credentials (ID_CRED_I, ID_CRED_R, see {{id_cred}}).
 6. Type and use of Auxiliary Data AD_1, AD_2, AD_3 (see {{AD}}).
