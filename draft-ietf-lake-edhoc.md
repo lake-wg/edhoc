@@ -379,7 +379,7 @@ If the transport provides a mechanism for correlating messages, some of the conn
 For example, if the key exchange is transported over CoAP, the CoAP Token can be used to correlate messages, see {{coap}}.
 
 
-## Authentication Keys and Identities {#auth-key-id}
+## Authentication Parameters {#auth-key-id}
 
 ### Authentication Keys
 
@@ -432,7 +432,7 @@ CRED_x = {
 }
 ~~~~~~~~~~~
 
-## Identification of Public Authentication Keys {#id_cred}
+### Identification of Public Authentication Keys {#id_cred}
 
 ID_CRED_I and ID_CRED_R are identifiers of the public authentication keys of the Initiator and the Responder, respectively. 
 ID_CRED_I and ID_CRED_R do not have any cryptographic purpose in EDHOC.
