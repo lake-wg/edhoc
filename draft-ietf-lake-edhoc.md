@@ -328,14 +328,26 @@ Initiator                                                   Responder
 {: artwork-align="center"}
 
 
-## Method
+## Method {#method}
 
-EDHOC supports authentication with signature or static Diffie-Hellman keys, as defined in the four authentication methods: 0, 1, 2, and 3, see {{method-types}}. (Method 0 corresponds to the case outlined in {{background}} where both Initiator and Responder authenticate with signature keys.)
+EDHOC supports authentication with signature or static Diffie-Hellman keys, as defined in the four authentication methods: 0, 1, 2, and 3, see {{fig-method-types}}. (Method 0 corresponds to the case outlined in {{background}} where both Initiator and Responder authenticate with signature keys.)
 
-The first data item of message_1, METHOD_CORR (see {{asym-msg1-form}}), is an integer specifying the method and the correlation properties of the transport used, see Sections {{transport}}{: format="counter"}-{{corr}}{: format="counter"}.
-
+The first data item of message_1, METHOD_CORR (see {{asym-msg1-form}}), is an integer specifying the method and the correlation properties of the transport used (see Sections {{transport}}{: format="counter"}-{{corr}}{: format="counter"}).
 
 An implementation may support only a single method. The Initiator and the Responder need to have agreed on a single method to be used for EDHOC, see {{applicability}}.
+
+~~~~~~~~~~~
++-------+-------------------+-------------------+-------------------+
+| Value | Initiator         | Responder         | Reference         |
++-------+-------------------+-------------------+-------------------+
+|     0 | Signature Key     | Signature Key     | [[this document]] |
+|     1 | Signature Key     | Static DH Key     | [[this document]] |
+|     2 | Static DH Key     | Signature Key     | [[this document]] |
+|     3 | Static DH Key     | Static DH Key     | [[this document]] |
++-------+-------------------+-------------------+-------------------+
+~~~~~~~~~~~
+{: #fig-method-types title="Method Types"}
+{: artwork-align="center"}
 
 ## Transport {#transport}
 
@@ -512,7 +524,7 @@ EDHOC allows the communication or negotiation of various protocol features durin
 
 * The Initiator decides on the correlation parameter corr (see {{corr}}). This is typically given by the transport which the Initiator and the Responder have agreed on beforehand. The Responder either accepts or rejects.
 
-* The Initiator decides on the method parameter, see {{method-types}}. The Responder either accepts or rejects.
+* The Initiator decides on the method parameter, see {{fig-method-types}}. The Responder either accepts or rejects.
 
 * The Initiator and the Responder decide on the representation of the identifier of their respective credentials, ID_CRED_I and ID_CRED_R. The decision is reflected by the label used in the CBOR map, see for example {{id_cred}}.
 
@@ -671,7 +683,7 @@ suite = int
 
 where:
 
-* METHOD_CORR = 4 * method + corr, where method = 0, 1, 2, or 3 (see {{method-types}}) and the correlation parameter corr is chosen based on the transport and determines which connection identifiers that are omitted (see {{corr}}).
+* METHOD_CORR = 4 * method + corr, where method = 0, 1, 2, or 3 (see {{fig-method-types}}) and the correlation parameter corr is chosen based on the transport and determines which connection identifiers that are omitted (see {{corr}}).
 * SUITES_I - cipher suites which the Initiator supports in order of (decreasing) preference. The list of supported cipher suites can be truncated at the end, as is detailed in the processing steps below. One of the supported cipher suites is selected. The selected suite is the first suite in the SUITES_I CBOR array. If a single supported cipher suite is conveyed then that cipher suite is selected and the selected cipher suite is encoded as an int instead of an array.
 * G_X - the ephemeral public key of the Initiator
 * C_I - variable length connection identifier, encoded as a bstr_identifier (see {{bstr_id}}).
@@ -1226,20 +1238,8 @@ Reference: [[this document]]
 
 ## EDHOC Method Type Registry {#method-types}
 
-IANA has created a new registry titled "EDHOC Method Type" under the new heading "EDHOC". The registration procedure is "Expert Review". The columns of the registry are Value, Description, and Reference, where Value is an integer and the other columns are text strings. The initial contents of the registry are:
+IANA has created a new registry titled "EDHOC Method Type" under the new heading "EDHOC". The registration procedure is "Expert Review". The columns of the registry are Value, Description, and Reference, where Value is an integer and the other columns are text strings. The initial contents of the registry is shown in {{fig-method-types}}.
 
-~~~~~~~~~~~
-+-------+-------------------+-------------------+-------------------+
-| Value | Initiator         | Responder         | Reference         |
-+-------+-------------------+-------------------+-------------------+
-|     0 | Signature Key     | Signature Key     | [[this document]] |
-|     1 | Signature Key     | Static DH Key     | [[this document]] |
-|     2 | Static DH Key     | Signature Key     | [[this document]] |
-|     3 | Static DH Key     | Static DH Key     | [[this document]] |
-+-------+-------------------+-------------------+-------------------+
-~~~~~~~~~~~
-{: #fig-method-types title="Method Types"}
-{: artwork-align="center"}
 
 ## The Well-Known URI Registry
 
@@ -2901,7 +2901,7 @@ message_3 (CBOR Sequence) (20 bytes)
 
 EDHOC requires certain parameters to be agreed upon between Initiator and Responder. A cipher suite is negotiated with the protocol, but certain other parameters need to be agreed beforehand:
 
-1. Method and correlation of underlying transport messages (METHOD_CORR, see {{method-types}} and {{corr}}).
+1. Method and correlation of underlying transport messages (METHOD_CORR, see {{method}} and {{corr}}).
 3. Type of authentication credentials (CRED_I, CRED_R, see {{id_cred}}).
 4. Type for identifying authentication credentials (ID_CRED_I, ID_CRED_R, see {{id_cred}}).
 6. Type and use of Auxiliary Data AD_1, AD_2, AD_3 (see {{AD}}).
