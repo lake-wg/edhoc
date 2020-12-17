@@ -2270,12 +2270,6 @@ PRK_2e (32 bytes)
 71 fa 13 4e 0d c5 a0 4d 
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-~~~~~~~~~~~~~~~~~~~~~~~
-SK_R (Responders's private authentication key) (32 bytes)
-bb 50 1a ac 67 b9 a9 5f 97 e0 ed ed 6b 82 a6 62 93 4f bb fc 7a d1 b7 4c 
-1f ca d6 6a 07 94 22 d0 
-~~~~~~~~~~~~~~~~~~~~~~~
-
 Since the Responder authenticates with a static Diffie-Hellman key, PRK_3e2m = HKDF-Extract( PRK_2e, G_RX ), where G_RX is the ECDH shared secret calculated from G_R and X, or G_X and R.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
