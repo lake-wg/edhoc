@@ -550,7 +550,7 @@ Since data carried in AD_1 and AD_2 may not be protected, and the content of AD_
    
 The ECDH ephemeral public keys are formatted as a COSE_Key of type EC2 or OKP according to Sections 13.1 and 13.2 of {{RFC8152}}, but only the 'x' parameter is included in the EDHOC messages. For Elliptic Curve Keys of type EC2, compact representation as per {{RFC6090}} MAY be used also in the COSE_Key. If the COSE implementation requires an 'y' parameter, any of the possible values of the y-coordinate can be used, see Appendix C of {{RFC6090}}. COSE {{RFC8152}} always use compact output for Elliptic Curve Keys of type EC2.
 
-## Key Derivation {#key-der}
+# Key Derivation {#key-der}
 
 EDHOC uses Extract-and-Expand {{RFC5869}} with the EDHOC hash algorithm in the selected cipher suite to derive keys. Extract is used to derive fixed-length uniformly pseudorandom keys (PRK) from ECDH shared secrets. Expand is used to derive additional output keying material (OKM) from the PRKs. The PRKs are derived using Extract.
 
@@ -620,7 +620,7 @@ If the EDHOC hash algorithm is SHA-2, then Expand( PRK, info, length ) = HKDF-Ex
 
 K_2e and IV_2e are derived using the transcript hash TH_2 and the pseudorandom key PRK_2e. K_2m and IV_2m are derived using the transcript hash TH_2 and the pseudorandom key PRK_3e2m. K_3ae and IV_3ae are derived using the transcript hash TH_3 and the pseudorandom key PRK_3e2m. K_3m and IV_3m are derived using the transcript hash TH_3 and the pseudorandom key PRK_4x3m. IVs are only used if the EDHOC AEAD algorithm uses IVs.
 
-### EDHOC-Exporter Interface {#exporter}
+## EDHOC-Exporter Interface {#exporter}
 
 Application keys and other application specific data can be derived using the EDHOC-Exporter interface defined as:
 
