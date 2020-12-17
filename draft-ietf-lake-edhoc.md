@@ -304,7 +304,7 @@ To simplify for implementors, the use of CBOR and COSE in EDHOC is summarized in
 
 ## General 
 
-EDHOC consists of three messages (message_1, message_2, message_3) between Initiator and Responder, plus an EDHOC error message. Each EDHOC message is encoded as a sequence of CBOR objects {{RFC8742}}, see {{fig-flow}}. The protocol elements are introduced in this section. Message formatting and processing is specified in {{asym}} and {{error}}. An implementation may support only Initiator or only Responder. 
+EDHOC consists of three messages (message_1, message_2, message_3) between Initiator and Responder, plus an EDHOC error message. Each EDHOC messages are CBOR Sequences {{RFC8742}}, see {{fig-flow}}. The protocol elements are introduced in this section. Message formatting and processing is specified in {{asym}} and {{error}}. An implementation may support only Initiator or only Responder. 
 
 Application data is protected using the agreed application algorithms (AEAD, hash) in the selected cipher suite (see {{cs}}) and the application can make use of the established connection identifiers C_I and C_R (see {{corr}}). EDHOC may be used with the media type application/edhoc defined in {{iana}}.
 
