@@ -328,12 +328,6 @@ Initiator                                                   Responder
 {: artwork-align="center"}
 
 
-## Connection Identifiers {#ci}
-
-EDHOC includes connection identifiers (C_I, C_R) to correlate messages. The connection identifiers C_I and C_R do not have any cryptographic purpose in EDHOC. They contain information facilitating retrieval of the protocol state and may therefore be very short. One byte connection identifiers are realistic in many scenarios as most constrained devices only have a few connections. In cases where a node only has one connection, the identifiers may even be the empty byte string. 
-
-The connection identifier MAY be used with an application protocol (e.g. OSCORE) for which EDHOC establishes keys, in which case the connection identifiers SHALL adhere to the requirements for that protocol. Each party choses a connection identifier it desires the other party to use in outgoing messages. (For OSCORE this results in the endpoint selecting its Recipient ID, see Section 3.1 of {{RFC8613}}).
-
 ## Method and Correlation
 
 The first data item of message_1, METHOD_CORR (see {{asym-msg1-form}}), is an integer specifying the method and the correlation properties of the transport, which are described in this section.
@@ -358,6 +352,11 @@ An implementation may support only a single method. The Initiator and the Respon
 {: #fig-method-types title="Method Types"}
 {: artwork-align="center"}
 
+### Connection Identifiers {#ci}
+
+EDHOC includes connection identifiers (C_I, C_R) to correlate messages. The connection identifiers C_I and C_R do not have any cryptographic purpose in EDHOC. They contain information facilitating retrieval of the protocol state and may therefore be very short. One byte connection identifiers are realistic in many scenarios as most constrained devices only have a few connections. In cases where a node only has one connection, the identifiers may even be the empty byte string. 
+
+The connection identifier MAY be used with an application protocol (e.g. OSCORE) for which EDHOC establishes keys, in which case the connection identifiers SHALL adhere to the requirements for that protocol. Each party choses a connection identifier it desires the other party to use in outgoing messages. (For OSCORE this results in the endpoint selecting its Recipient ID, see Section 3.1 of {{RFC8613}}).
 
 ### Transport {#transport}
 
@@ -382,7 +381,7 @@ For example, if the key exchange is transported over CoAP, the CoAP Token can be
 
 ## Authentication Keys and Identities {#auth-key-id}
 
-## Authentication Keys
+### Authentication Keys
 
 The authentication key MUST be a signature key or static Diffie-Hellman key. The Initiator and the Responder
  MAY use different types of authentication keys, e.g. one uses a signature key and the other uses a static Diffie-Hellman key. When using a signature key, the authentication is provided by a signature. When using a static Diffie-Hellman key the authentication is provided by a Message Authentication Code (MAC) computed from an ephemeral-static ECDH shared secret which enables significant reductions in message sizes. The MAC is implemented with an AEAD algorithm. When using a static Diffie-Hellman keys the Initiator's and Responder's private authentication keys are called I and R, respectively, and the public authentication keys are called G_I and G_R, respectively.
