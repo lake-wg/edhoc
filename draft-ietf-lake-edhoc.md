@@ -418,7 +418,7 @@ CRED_x = {
 }
 ~~~~~~~~~~~
 
-## Encoding of Public Authentication Key Identifiers {#id_cred}
+## Identification of Public Authentication Keys {#id_cred}
 
 ID_CRED_I and ID_CRED_R are identifiers of the public authentication keys of the Initiator and the Responder, respectively. 
 ID_CRED_I and ID_CRED_R do not have any cryptographic purpose in EDHOC.
