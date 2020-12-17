@@ -328,11 +328,20 @@ Initiator                                                   Responder
 {: artwork-align="center"}
 
 
-## Method {#method}
+## Connection Identifiers {#ci}
+
+EDHOC includes connection identifiers (C_I, C_R) to correlate messages. The connection identifiers C_I and C_R do not have any cryptographic purpose in EDHOC. They contain information facilitating retrieval of the protocol state and may therefore be very short. One byte connection identifiers are realistic in many scenarios as most constrained devices only have a few connections. In cases where a node only has one connection, the identifiers may even be the empty byte string. 
+
+The connection identifier MAY be used with an application protocol (e.g. OSCORE) for which EDHOC establishes keys, in which case the connection identifiers SHALL adhere to the requirements for that protocol. Each party choses a connection identifier it desires the other party to use in outgoing messages. (For OSCORE this results in the endpoint selecting its Recipient ID, see Section 3.1 of {{RFC8613}}).
+
+## Method and Correlation
+
+The first data item of message_1, METHOD_CORR (see {{asym-msg1-form}}), is an integer specifying the method and the correlation properties of the transport, which are described in this section.
+
+
+### Method {#method}
 
 EDHOC supports authentication with signature or static Diffie-Hellman keys, as defined in the four authentication methods: 0, 1, 2, and 3, see {{fig-method-types}}. (Method 0 corresponds to the case outlined in {{background}} where both Initiator and Responder authenticate with signature keys.)
-
-The first data item of message_1, METHOD_CORR (see {{asym-msg1-form}}), is an integer specifying the method and the correlation properties of the transport used (see Sections {{transport}}{: format="counter"}-{{corr}}{: format="counter"}).
 
 An implementation may support only a single method. The Initiator and the Responder need to have agreed on a single method to be used for EDHOC, see {{applicability}}.
 
@@ -349,19 +358,14 @@ An implementation may support only a single method. The Initiator and the Respon
 {: #fig-method-types title="Method Types"}
 {: artwork-align="center"}
 
-## Transport {#transport}
+
+### Transport {#transport}
 
 Cryptographically, EDHOC does not put requirements on the lower layers. EDHOC is not bound to a particular transport layer, and can be used in environments without IP. The transport is responsible to handle message loss, reordering, message duplication, fragmentation, and denial of service protection, where necessary.
 
 The Initiator and the Responder need to have agreed on a transport to be used for EDHOC, see {{applicability}}. It is recommended to transport EDHOC in CoAP payloads, see {{transfer}}.
 
-## Connection Identifiers {#ci}
-
-EDHOC includes connection identifiers (C_I, C_R) to correlate messages. The connection identifiers C_I and C_R do not have any cryptographic purpose in EDHOC. They contain information facilitating retrieval of the protocol state and may therefore be very short. One byte connection identifiers are realistic in many scenarios as most constrained devices only have a few connections. In cases where a node only has one connection, the identifiers may even be the empty byte string. 
-
-The connection identifier MAY be used with an application protocol (e.g. OSCORE) for which EDHOC establishes keys, in which case the connection identifiers SHALL adhere to the requirements for that protocol. Each party choses a connection identifier it desires the other party to use in outgoing messages. (For OSCORE this results in the endpoint selecting its Recipient ID, see Section 3.1 of {{RFC8613}}).
-
-## Message Correlation {#corr}
+### Message Correlation {#corr}
 
 If the transport provides a mechanism for correlating messages, some of the connection identifiers may be omitted. There are four cases:
 
@@ -374,6 +378,7 @@ If the transport provides a mechanism for correlating messages, some of the conn
    * corr = 3, the transport provides a correlation mechanism that enables both parties to correlate all three messages.
 
 For example, if the key exchange is transported over CoAP, the CoAP Token can be used to correlate messages, see {{coap}}.
+
 
 ## Authentication Keys
 
