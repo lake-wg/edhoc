@@ -404,7 +404,7 @@ The EDHOC implementation must be able to receive and enforce information from th
 
 
 
-## Authentication Credentials {#auth-cred}
+### Authentication Credentials {#auth-cred}
 
 The authentication credentials, CRED_I and CRED_R, contain the public authentication key of the Initiator and the Responder, respectively.
 The Initiator and the Responder MAY use different types of credentials, e.g. one uses an RPK and the other uses a public key certificate.
