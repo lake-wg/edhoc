@@ -434,7 +434,7 @@ CRED_x = {
 }
 ~~~~~~~~~~~
 
-### Identification of Public Authentication Keys {#id_cred}
+### Identification of Credentials {#id_cred}
 
 ID_CRED_I and ID_CRED_R are identifiers of the public authentication keys of the Initiator and the Responder, respectively. 
 ID_CRED_I and ID_CRED_R do not have any cryptographic purpose in EDHOC.
@@ -539,7 +539,7 @@ EDHOC allows opaque auxiliary data (AD) to be sent in the EDHOC messages. Unprot
 Since data carried in AD_1 and AD_2 may not be protected, and the content of AD_3 is available to both the Initiator and the Responder, special considerations need to be made such that the availability of the data a) does not violate security and privacy requirements of the service which uses this data, and b) does not violate the security properties of EDHOC.
 
 
-## Communication/Negotiation of Protocol Features
+## Communication of Protocol Features
 
 EDHOC allows the communication or negotiation of various protocol features during the execution of the protocol.
 
