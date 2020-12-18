@@ -831,7 +831,7 @@ The Initiator SHALL process message_2 as follows:
 
 * Retrieve the protocol state using the connection identifier C_I and/or other external information such as the CoAP Token and the 5-tuple.
 
-* Decrypt CIPHERTEXT_2 by coputing an outer COSE_Encrypt0 as defined in see {{asym-msg2-proc}} and XORing CIPHERTEXT_2 with the 'ciphertext' of the outer COSE_Encrypt0 with the tag removed. 
+* Decrypt CIPHERTEXT_2 by computing an outer COSE_Encrypt0 as defined in see {{asym-msg2-proc}} and XORing CIPHERTEXT_2 with the 'ciphertext' of the outer COSE_Encrypt0 with the tag removed. 
 
 * Verify that the identity of the Responder is an allowed identity for this connection, see {{auth-key-id}}.
 
