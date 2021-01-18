@@ -1544,7 +1544,7 @@ Data_2 is constructed, as the CBOR Sequence of G_Y and C_R.
 data_2 =
 (
   h'71a3d599c21da18902a1aea810b2b6382ccd8d5f9bf0195281754c5ebcaf301e',
-  h'13'
+  19
 )
 ~~~~~~~~~~~~~~~~~~~~~~~
 
