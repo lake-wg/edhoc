@@ -245,6 +245,10 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "S
 
 Readers are expected to be familiar with the terms and concepts described in CBOR {{RFC8949}}, CBOR Sequences {{RFC8742}}, COSE {{RFC8152}}, and CDDL {{RFC8610}}. The Concise Data Definition Language (CDDL) is used to express CBOR data structures {{RFC8949}}. Examples of CBOR and CDDL are provided in {{CBOR}}.
 
+The word "ciphertext" is used in different ways in the literature for authenticated encryption. It may either mean the output of the encryption function only, or the output of the authenticated encryption function, i.e., the output of the encryption function + the authentication tag. Following [RFC8152] we use the word in the latter sense, and use the notation 'ciphertext' to remind the reader about that.
+
+
+
 # EDHOC Outline {#background}
 
 EDHOC specifies different authentication methods of the Diffie-Hellman key exchange: digital signatures and static Diffie-Hellman keys. This section outlines the digital signature based method. Further details of protocol elements and other authentication methods are provided in the remainder of this document.
@@ -463,7 +467,7 @@ Public key certificates can be identified in different ways. Header parameters f
 
 ID_CRED_x MAY contain the actual credential used for authentication, CRED_x.
 It is RECOMMENDED that they uniquely identify the public authentication key as the recipient may otherwise have to try several keys.
-ID_CRED_I and ID_CRED_R are transported in the ciphertext, see {{m3}} and {{m2}}.
+ID_CRED_I and ID_CRED_R are transported in the 'ciphertext', see {{m3}} and {{m2}}.
 
 When ID_CRED_x does not contain the actual credential it may be very short.
 One byte credential identifiers are realistic in many scenarios as most constrained devices only have a few keys. In cases where a node only has one key, the identifier may even be the empty byte string.
