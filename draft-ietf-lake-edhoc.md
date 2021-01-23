@@ -825,6 +825,12 @@ The Responder SHALL compose message_2 as follows:
 
    CIPHERTEXT_2 is the 'ciphertext' of the outer COSE_Encrypt0 with the tag removed.
 
+   EDITORS NOTE: The way to encrypt message_2 has not been determined yet. We are awaiting developer feedback if the -02 or -03 way of doing things are the best way from a development perspective. Any other suggestions is also welcome. AES-CTR and ChaCha20 without Poly1305 seems to complex to require developers to implement.
+
+Could you clarify what is missing or unclear in the -03 description? The -03 description seems correct to me. XOR is needed in more or less all modern encryption.
+
+(Feedback that AES-CTR and ChaCha20 stream cipher without Poly1305 is the right way is also ok of course. I found that alternative way to complex to implement).
+
 * Encode message_2 as a sequence of CBOR encoded data items as specified in {{asym-msg2-form}}.
 
 ### Initiator Processing of Message 2
@@ -836,6 +842,8 @@ The Initiator SHALL process message_2 as follows:
 * Retrieve the protocol state using the connection identifier C_I and/or other external information such as the CoAP Token and the 5-tuple.
 
 * Decrypt CIPHERTEXT_2 by computing an outer COSE_Encrypt0 as defined in see {{asym-msg2-proc}} and XORing CIPHERTEXT_2 with the 'ciphertext' of the outer COSE_Encrypt0 with the tag removed. 
+
+   EDITORS NOTE: The way to encrypt message_2 has not been determined yet. We are awaiting developer feedback if the -02 or -03 way of doing things are the best way from a development perspective. Any other suggestions is also welcome. AES-CTR and ChaCha20 without Poly1305 seems to complex to require developers to implement.
 
 * Verify that the identity of the Responder is an allowed identity for this connection, see {{auth-key-id}}.
 
