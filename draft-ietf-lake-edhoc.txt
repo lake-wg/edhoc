@@ -83,7 +83,7 @@ Table of Contents
      5.1.  Encoding of bstr_identifier . . . . . . . . . . . . . . .  20
      5.2.  EDHOC Message 1 . . . . . . . . . . . . . . . . . . . . .  21
      5.3.  EDHOC Message 2 . . . . . . . . . . . . . . . . . . . . .  23
-     5.4.  EDHOC Message 3 . . . . . . . . . . . . . . . . . . . . .  26
+     5.4.  EDHOC Message 3 . . . . . . . . . . . . . . . . . . . . .  27
    6.  Error Handling  . . . . . . . . . . . . . . . . . . . . . . .  30
      6.1.  EDHOC Error Message . . . . . . . . . . . . . . . . . . .  30
    7.  Transferring EDHOC and Deriving an OSCORE Context . . . . . .  33
@@ -1402,6 +1402,20 @@ Selander, et al.          Expires 27 July 2021                 [Page 25]
 Internet-Draft  Ephemeral Diffie-Hellman Over COSE (EDHO    January 2021
 
 
+      EDITORS NOTE: The way to encrypt message_2 has not been determined
+      yet.  We are awaiting developer feedback if the -02 or -03 way of
+      doing things are the best way from a development perspective.  Any
+      other suggestions is also welcome.  AES-CTR and ChaCha20 without
+      Poly1305 seems to complex to require developers to implement.
+
+   Could you clarify what is missing or unclear in the -03 description?
+   The -03 description seems correct to me.  XOR is needed in more or
+   less all modern encryption.
+
+   (Feedback that AES-CTR and ChaCha20 stream cipher without Poly1305 is
+   the right way is also ok of course.  I found that alternative way to
+   complex to implement).
+
    *  Encode message_2 as a sequence of CBOR encoded data items as
       specified in Section 5.3.1.
 
@@ -1419,6 +1433,12 @@ Internet-Draft  Ephemeral Diffie-Hellman Over COSE (EDHO    January 2021
       defined in see Section 5.3.2 and XORing CIPHERTEXT_2 with the
       'ciphertext' of the outer COSE_Encrypt0 with the tag removed.
 
+      EDITORS NOTE: The way to encrypt message_2 has not been determined
+      yet.  We are awaiting developer feedback if the -02 or -03 way of
+      doing things are the best way from a development perspective.  Any
+      other suggestions is also welcome.  AES-CTR and ChaCha20 without
+      Poly1305 seems to complex to require developers to implement.
+
    *  Verify that the identity of the Responder is an allowed identity
       for this connection, see Section 3.3.
 
@@ -1427,6 +1447,16 @@ Internet-Draft  Ephemeral Diffie-Hellman Over COSE (EDHO    January 2021
       Section 5.3.2.
 
    *  Pass AD_2 to the security application.
+
+
+
+
+
+
+Selander, et al.          Expires 27 July 2021                 [Page 26]
+
+Internet-Draft  Ephemeral Diffie-Hellman Over COSE (EDHO    January 2021
+
 
    If any verification step fails, the Responder MUST send an EDHOC
    error message back, formatted as defined in Section 6, and the
@@ -1447,16 +1477,6 @@ Internet-Draft  Ephemeral Diffie-Hellman Over COSE (EDHO    January 2021
    data_3 = (
      ? C_R : bstr_identifier,
    )
-
-
-
-
-
-
-Selander, et al.          Expires 27 July 2021                 [Page 26]
-
-Internet-Draft  Ephemeral Diffie-Hellman Over COSE (EDHO    January 2021
-
 
 5.4.2.  Initiator Processing of Message 3
 
@@ -1486,6 +1506,14 @@ Internet-Draft  Ephemeral Diffie-Hellman Over COSE (EDHO    January 2021
 
          o  AD_3 = bstr containing opaque protected auxiliary data
 
+
+
+
+Selander, et al.          Expires 27 July 2021                 [Page 27]
+
+Internet-Draft  Ephemeral Diffie-Hellman Over COSE (EDHO    January 2021
+
+
       -  plaintext = h''
 
       COSE constructs the input to the AEAD [RFC5116] as follows:
@@ -1506,14 +1534,6 @@ Internet-Draft  Ephemeral Diffie-Hellman Over COSE (EDHO    January 2021
       (method equals 2 or 3), then Signature_or_MAC_3 is MAC_3.  If the
       Initiator authenticates with a signature key (method equals 0 or
       1), then Signature_or_MAC_3 is the 'signature' of a COSE_Sign1
-
-
-
-Selander, et al.          Expires 27 July 2021                 [Page 27]
-
-Internet-Draft  Ephemeral Diffie-Hellman Over COSE (EDHO    January 2021
-
-
       object as defined in Section 4.4 of [RFC8152] using the signature
       algorithm in the selected cipher suite, the private authentication
       key of the Initiator, and the following parameters:
@@ -1543,6 +1563,13 @@ Internet-Draft  Ephemeral Diffie-Hellman Over COSE (EDHO    January 2021
       -  plaintext = ( ID_CRED_I / bstr_identifier, Signature_or_MAC_3,
          ? AD_3 )
 
+
+
+Selander, et al.          Expires 27 July 2021                 [Page 28]
+
+Internet-Draft  Ephemeral Diffie-Hellman Over COSE (EDHO    January 2021
+
+
          o  Note that if ID_CRED_I contains a single 'kid' parameter,
             i.e., ID_CRED_I = { 4 : kid_I }, only the byte string kid_I
             is conveyed in the plaintext encoded as a bstr_identifier,
@@ -1560,15 +1587,6 @@ Internet-Draft  Ephemeral Diffie-Hellman Over COSE (EDHO    January 2021
       -  Associated data A = [ "Encrypt0", h'', TH_3 ]
 
       CIPHERTEXT_3 is the 'ciphertext' of the outer COSE_Encrypt0.
-
-
-
-
-
-Selander, et al.          Expires 27 July 2021                 [Page 28]
-
-Internet-Draft  Ephemeral Diffie-Hellman Over COSE (EDHO    January 2021
-
 
    *  Encode message_3 as a sequence of CBOR encoded data items as
       specified in Section 5.4.1.
@@ -1599,6 +1617,15 @@ Internet-Draft  Ephemeral Diffie-Hellman Over COSE (EDHO    January 2021
       and/or other external information such as the CoAP Token and the
       5-tuple.
 
+
+
+
+
+Selander, et al.          Expires 27 July 2021                 [Page 29]
+
+Internet-Draft  Ephemeral Diffie-Hellman Over COSE (EDHO    January 2021
+
+
    *  Decrypt and verify the outer COSE_Encrypt0 as defined in
       Section 5.3 of [RFC8152], with the EDHOC AEAD algorithm in the
       selected cipher suite, K_3ae, and IV_3ae.
@@ -1618,13 +1645,6 @@ Internet-Draft  Ephemeral Diffie-Hellman Over COSE (EDHO    January 2021
    If any verification step fails, the Responder MUST send an EDHOC
    error message back, formatted as defined in Section 6, and the
    protocol MUST be discontinued.
-
-
-
-Selander, et al.          Expires 27 July 2021                 [Page 29]
-
-Internet-Draft  Ephemeral Diffie-Hellman Over COSE (EDHO    January 2021
-
 
    After verifying message_3, the Responder is assured that the
    Initiator has calculated the key PRK_4x3m (explicit key confirmation)
@@ -1654,6 +1674,14 @@ Internet-Draft  Ephemeral Diffie-Hellman Over COSE (EDHO    January 2021
    diagnostic message SHOULD be be provided to the calling application
    where they SHOULD be logged.  Error messages with SUITES_R MAY use
    the empty string as the diagnostic message.  The DIAG_MSG text string
+
+
+
+Selander, et al.          Expires 27 July 2021                 [Page 30]
+
+Internet-Draft  Ephemeral Diffie-Hellman Over COSE (EDHO    January 2021
+
+
    is mandatory and characteristic for error messages, which enables the
    receiver to distinguish between a normal message and an error
    message.
@@ -1672,15 +1700,6 @@ Internet-Draft  Ephemeral Diffie-Hellman Over COSE (EDHO    January 2021
    )
 
    where:
-
-
-
-
-
-Selander, et al.          Expires 27 July 2021                 [Page 30]
-
-Internet-Draft  Ephemeral Diffie-Hellman Over COSE (EDHO    January 2021
-
 
    *  C_x - (optional) variable length connection identifier, encoded as
       a bstr_identifier (see Section 5.1).  If error is sent by the
@@ -1710,6 +1729,15 @@ Internet-Draft  Ephemeral Diffie-Hellman Over COSE (EDHO    January 2021
    updated with new cipher suite policies, any cached information may be
    outdated.
 
+
+
+
+
+Selander, et al.          Expires 27 July 2021                 [Page 31]
+
+Internet-Draft  Ephemeral Diffie-Hellman Over COSE (EDHO    January 2021
+
+
 6.1.1.  Example Use of EDHOC Error Message with SUITES_R
 
    Assuming that the Initiator supports the five cipher suites 5, 6, 7,
@@ -1720,23 +1748,6 @@ Internet-Draft  Ephemeral Diffie-Hellman Over COSE (EDHO    January 2021
 
    In Figure 5, the Responder supports cipher suite 6 but not the
    initially selected cipher suite 5.
-
-
-
-
-
-
-
-
-
-
-
-
-
-Selander, et al.          Expires 27 July 2021                 [Page 31]
-
-Internet-Draft  Ephemeral Diffie-Hellman Over COSE (EDHO    January 2021
-
 
    Initiator                                                   Responder
    |            METHOD_CORR, SUITES_I = 5, G_X, C_I, AD_1             |
@@ -1775,6 +1786,14 @@ Internet-Draft  Ephemeral Diffie-Hellman Over COSE (EDHO    January 2021
    Note that the Initiator's list of supported cipher suites and order
    of preference is fixed (see Section 5.2.1 and Section 5.2.2).
    Furthermore, the Responder shall only accept message_1 if the
+
+
+
+Selander, et al.          Expires 27 July 2021                 [Page 32]
+
+Internet-Draft  Ephemeral Diffie-Hellman Over COSE (EDHO    January 2021
+
+
    selected cipher suite is the first cipher suite in SUITES_I that the
    Responder supports (see Section 5.2.3).  Following this procedure
    ensures that the selected cipher suite is the most preferred (by the
@@ -1786,13 +1805,6 @@ Internet-Draft  Ephemeral Diffie-Hellman Over COSE (EDHO    January 2021
    message_1 is manipulated then the integrity verification of message_2
    containing the transcript hash TH_2 = H( message_1, data_2 ) will
    fail and the Initiator will discontinue the protocol.
-
-
-
-Selander, et al.          Expires 27 July 2021                 [Page 32]
-
-Internet-Draft  Ephemeral Diffie-Hellman Over COSE (EDHO    January 2021
-
 
 7.  Transferring EDHOC and Deriving an OSCORE Context
 
@@ -1826,18 +1838,6 @@ Internet-Draft  Ephemeral Diffie-Hellman Over COSE (EDHO    January 2021
    Figure 7.  In this case the CoAP Token enables the Initiator to
    correlate message_1 and message_2 so the correlation parameter corr =
    1.
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
