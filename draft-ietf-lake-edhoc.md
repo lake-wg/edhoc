@@ -827,10 +827,6 @@ The Responder SHALL compose message_2 as follows:
 
    EDITORS NOTE: The way to encrypt message_2 has not been determined yet. We are awaiting developer feedback if the -02 or -03 way of doing things are the best way from a development perspective. Any other suggestions is also welcome. AES-CTR and ChaCha20 without Poly1305 seems to complex to require developers to implement.
 
-Could you clarify what is missing or unclear in the -03 description? The -03 description seems correct to me. XOR is needed in more or less all modern encryption.
-
-(Feedback that AES-CTR and ChaCha20 stream cipher without Poly1305 is the right way is also ok of course. I found that alternative way to complex to implement).
-
 * Encode message_2 as a sequence of CBOR encoded data items as specified in {{asym-msg2-form}}.
 
 ### Initiator Processing of Message 2
@@ -1038,6 +1034,68 @@ Note that the Initiator's list of supported cipher suites and order of preferenc
 If the selected cipher suite is not the first cipher suite which the Responder supports in SUITES_I received in message_1, then Responder MUST discontinue the protocol, see {{resp-proc-msg1}}. If SUITES_I in message_1 is manipulated then the integrity verification of message_2 containing the transcript hash TH_2 = H( message_1, data_2 ) will fail and the Initiator will discontinue the protocol.
 
 # Transferring EDHOC and Deriving an OSCORE Context {#transfer}
+
+## EDHOC Message 4 {#m4}
+
+To give key confirmation to the Initiator, EDHOC defines a message_4 that is OPTIONAL to support. Key confirmation is normally given by sending an application message with e.g. OSCORE from the Responder to the Initator. In deployments where no protected application message are sent from the Responder to the intiator, the Responder MUST send message_4. Such deployement can e.g. be when EDHOC is only used for authentication, and no application data are sent or when application data is only sent from the Initiator to the Responder.
+
+### Formatting of Message 4 {#asym-msg4-form}
+
+message_4 and data_4 SHALL be CBOR Sequences (see {{CBOR}}) as defined below
+
+~~~~~~~~~~~ CDDL
+message_4 = (
+  data_4,
+  MAC_4 : bstr,
+)
+~~~~~~~~~~~
+
+~~~~~~~~~~~ CDDL
+data_4 = (
+  ? C_I : bstr_identifier,
+)
+~~~~~~~~~~~
+
+### Responder Processing of Message 4 {#asym-msg4-proc}
+
+The Responder SHALL compose message_4 as follows:
+
+* If corr (METHOD_CORR mod 4) equals 1 or 3, C_I is omitted, otherwise C_I is not omitted.
+
+* Compute an inner COSE_Encrypt0 as defined in Section 5.3 of {{RFC8152}}, with the EDHOC AEAD algorithm in the selected cipher suite, and the following parameters:
+
+   * protected = h''
+
+   * external_aad = << TH_4 >>
+
+   * plaintext = h''
+
+   * Key K = EDHOC-EXPORTER( "EDHOC_message_4_Key", length ) 
+
+   * Nonce N = EDHOC-EXPORTER( "EDHOC_message_4_Nonce", length )
+
+   COSE constructs the input to the AEAD {{RFC5116}} as follows: 
+
+   * Key K = EDHOC-EXPORTER( "EDHOC_message_4_Key", length ) 
+   * Nonce N = EDHOC-EXPORTER( "EDHOC_message_4_Nonce", length )
+   * Plaintext P = 0x (the empty string)
+   * Associated data A =
+
+     \[ "Encrypt0", h'', << TH_4 >> \]
+
+   MAC_4 is the 'ciphertext' of the COSE_Encrypt0.
+
+* Encode message_4 as a sequence of CBOR encoded data items as specified in {{asym-msg4-form}}.
+
+### Initiator Processing of Message 4
+
+The Initiator SHALL process message_4 as follows:
+
+* Decode message_4 (see {{CBOR}}).
+
+* Retrieve the protocol state using the connection identifier C_I and/or other external information such as the CoAP Token and the 5-tuple.
+
+* Verify MAC_4 as defined in Section 5.3 of {{RFC8152}}, with the EDHOC AEAD algorithm in the selected cipher suite, and the parameters defined in {{asym-msg4-proc}}.
 
 ## Transferring EDHOC in CoAP {#coap}
 
