@@ -95,6 +95,7 @@ informative:
   I-D.ietf-tls-dtls13:
   I-D.selander-ace-ake-authz:
   I-D.palombini-core-oscore-edhoc:
+  I-D.mattsson-cose-cbor-cert-compress:
 
   RFC7228:
   RFC7258:
@@ -454,16 +455,20 @@ Raw public keys are most optimally stored as COSE_Key objects and identified wit
 
 * ID_CRED_x = { 4 : kid_x }, where kid_x : bstr, for x = I or R.
 
-Public key certificates can be identified in different ways. Header parameters for identifying X.509 certificates are defined in {{I-D.ietf-cose-x509}}, for example:
+Public key certificates can be identified in different ways. Header parameters for identifying CBOR certificates and X.509 certificates are defined in {{
+I-D.mattsson-cose-cbor-cert-compress}} and {{I-D.ietf-cose-x509}}, for example:
 
-* by a hash value with the 'x5t' parameter;
+* by a hash value with the 'c5t' or 'x5t' parameters;
 
    * ID_CRED_x = { 34 : COSE_CertHash }, for x = I or R,
 
-* by a URL with the 'x5u' parameter;
+   * ID_CRED_x = { TDB3 : COSE_CertHash }, for x = I or R,
+
+* by a URI with the 'c5u' or 'x5u' parameters;
 
    * ID_CRED_x = { 35 : uri }, for x = I or R,
 
+   * ID_CRED_x = { TBD4 : uri }, for x = I or R,
 
 ID_CRED_x MAY contain the actual credential used for authentication, CRED_x.
 It is RECOMMENDED that they uniquely identify the public authentication key as the recipient may otherwise have to try several keys.
