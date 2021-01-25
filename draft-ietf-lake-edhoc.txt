@@ -1067,8 +1067,7 @@ Internet-Draft  Ephemeral Diffie-Hellman Over COSE (EDHO    January 2021
 
 
    *  label is a tstr set to the name of the derived key or IV, i.e.
-      "K_2m", "IV_2m", "K_2e", "IV_2e", "K_3m", "IV_3m", "K_3ae", or
-      "IV_3ae".
+      "K_2m", "IV_2m", "K_2e", "K_3m", "IV_3m", "K_3ae", or "IV_3ae".
 
    *  length is the length of output keying material (OKM) in bytes
 
@@ -1078,13 +1077,12 @@ Internet-Draft  Ephemeral Diffie-Hellman Over COSE (EDHO    January 2021
    PRK, info, L, "" ).  If the EDHOC hash algorithm is SHAKE256, then
    Expand( PRK, info, length ) = KMAC256( PRK, info, L, "" ).
 
-   K_2e and IV_2e are derived using the transcript hash TH_2 and the
-   pseudorandom key PRK_2e.  K_2m and IV_2m are derived using the
-   transcript hash TH_2 and the pseudorandom key PRK_3e2m.  K_3ae and
-   IV_3ae are derived using the transcript hash TH_3 and the
-   pseudorandom key PRK_3e2m.  K_3m and IV_3m are derived using the
-   transcript hash TH_3 and the pseudorandom key PRK_4x3m.  IVs are only
-   used if the EDHOC AEAD algorithm uses IVs.
+   K_2m and IV_2m are derived using the transcript hash TH_2 and the
+   pseudorandom key PRK_3e2m.  K_3ae and IV_3ae are derived using the
+   transcript hash TH_3 and the pseudorandom key PRK_3e2m.  K_3m and
+   IV_3m are derived using the transcript hash TH_3 and the pseudorandom
+   key PRK_4x3m.  IVs are only used if the EDHOC AEAD algorithm uses
+   IVs.
 
 4.1.  EDHOC-Exporter Interface
 
@@ -1112,6 +1110,8 @@ Internet-Draft  Ephemeral Diffie-Hellman Over COSE (EDHO    January 2021
 
       EHDOC-Rekey-Exporter-FS( nonce ):
          PRK_4x3m = Extract( [ "TH_4", nonce ], PRK_4x3m )
+
+
 
 
 
