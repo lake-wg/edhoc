@@ -1045,7 +1045,10 @@ If the selected cipher suite is not the first cipher suite which the Responder s
 
 ## EDHOC Message 4 {#m4}
 
-To give key confirmation to the Initiator, EDHOC defines a message_4 that is OPTIONAL to support. Key confirmation is normally given by sending an application message with e.g. OSCORE from the Responder to the Initator. In deployments where no protected application message are sent from the Responder to the intiator, the Responder MUST send message_4. Such deployement can e.g. be when EDHOC is only used for authentication, and no application data are sent or when application data is only sent from the Initiator to the Responder.
+This section specifies message_4 which is OPTIONAL to support. Key confirmation is normally provided by sending an application message from the Responder to the Initator, e.g., using OSCORE. In deployments where no protected application message are sent from the Responder to the Intiator, the Responder MUST send message_4. Two examples of such deployments:
+
+1. When EDHOC is only used for authentication and no application data are sent.
+2. When application data is only sent from the Initiator to the Responder.
 
 ### Formatting of Message 4 {#asym-msg4-form}
 
@@ -1078,14 +1081,10 @@ The Responder SHALL compose message_4 as follows:
 
    * plaintext = h''
 
-   * Key K = EDHOC-EXPORTER( "EDHOC_message_4_Key", length ) 
-
-   * Nonce N = EDHOC-EXPORTER( "EDHOC_message_4_Nonce", length )
-
    COSE constructs the input to the AEAD {{RFC5116}} as follows: 
 
-   * Key K = EDHOC-EXPORTER( "EDHOC_message_4_Key", length ) 
-   * Nonce N = EDHOC-EXPORTER( "EDHOC_message_4_Nonce", length )
+   * Key K = EDHOC-Exporter( "EDHOC_message_4_Key", length ) 
+   * Nonce N = EDHOC-Exporter( "EDHOC_message_4_Nonce", length )
    * Plaintext P = 0x (the empty string)
    * Associated data A =
 
@@ -1103,7 +1102,10 @@ The Initiator SHALL process message_4 as follows:
 
 * Retrieve the protocol state using the connection identifier C_I and/or other external information such as the CoAP Token and the 5-tuple.
 
-* Verify MAC_4 as defined in Section 5.3 of {{RFC8152}}, with the EDHOC AEAD algorithm in the selected cipher suite, and the parameters defined in {{asym-msg4-proc}}.
+* Verify MAC_4 as defined in Section 5.3 of {{RFC8152}}, with the EDHOC AEAD algorithm in the selected cipher suite, and the parameters defined in {{asym-msg4-proc}}. 
+
+If any verification step fails the Initiator MUST send an EDHOC error message back, formatted as defined in {{error}}, and the protocol MUST be discontinued.
+
 
 ## Transferring EDHOC in CoAP {#coap}
 
