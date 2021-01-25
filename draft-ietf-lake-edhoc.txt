@@ -85,7 +85,7 @@ Table of Contents
      5.3.  EDHOC Message 2 . . . . . . . . . . . . . . . . . . . . .  23
      5.4.  EDHOC Message 3 . . . . . . . . . . . . . . . . . . . . .  27
    6.  Error Handling  . . . . . . . . . . . . . . . . . . . . . . .  30
-     6.1.  EDHOC Error Message . . . . . . . . . . . . . . . . . . .  31
+     6.1.  EDHOC Error Message . . . . . . . . . . . . . . . . . . .  30
    7.  Transferring EDHOC and Deriving an OSCORE Context . . . . . .  33
      7.1.  EDHOC Message 4 . . . . . . . . . . . . . . . . . . . . .  33
      7.2.  Transferring EDHOC in CoAP  . . . . . . . . . . . . . . .  35
@@ -1670,9 +1670,9 @@ Internet-Draft  Ephemeral Diffie-Hellman Over COSE (EDHO    January 2021
 
 6.  Error Handling
 
+6.1.  EDHOC Error Message
 
-
-
+   This section defines a message format for the EDHOC error message.
 
 
 
@@ -1682,34 +1682,19 @@ Selander, et al.          Expires 29 July 2021                 [Page 30]
 Internet-Draft  Ephemeral Diffie-Hellman Over COSE (EDHO    January 2021
 
 
-6.1.  EDHOC Error Message
+   An EDHOC error message can be sent by both parties as a reply to any
+   non-error EDHOC message.  Errors at the EDHOC layer are sent as
+   normal successful messages in the lower layers (e.g.  CoAP POST and
+   2.04 Changed).  An advantage of using such a construction is to avoid
+   issues created by usage of cross protocol proxies (e.g.  UDP to TCP).
 
-   This section defines a message format for the EDHOC error message,
-   used during the protocol.  An EDHOC error message can be sent by both
-   parties as a reply to any non-error EDHOC message.  All error
-   messages in EDHOC are fatal.  After sending an error message, the
-   sender MUST discontinue the protocol.  The receiver SHOULD treat an
-   error message as an indication that the other party likely has
-   discontinued the protocol.  But as the error message is not
-   authenticated, a received error messages might also have been sent by
-   an attacker and the receiver MAY therefore try to continue the
-   protocol.  Error messages with SUITES_R are acted upon be EDHOC as
-   described in Section XXX.  Error messages without SUITES_R MUST
-   contain a human-readable diagnostic message DIAG_MSG written in
-   English, explaning the error situation.  The diagnostic text message
-   is mainly intended for software engineers that during debugging need
-   to interpret it in the context of the EDHOC specification.  The
-   diagnostic message SHOULD be be provided to the calling application
-   where they SHOULD be logged.  Error messages with SUITES_R MAY use
-   the empty string as the diagnostic message.  The DIAG_MSG text string
-   is mandatory and characteristic for error messages, which enables the
-   receiver to distinguish between a normal message and an error
-   message.
-
-   Errors at the EDHOC layer are sent as normal successful messages in
-   the lower layers (e.g.  CoAP POST and 2.04 Changed).  An advantage of
-   using such a construction is to avoid issues created by usage of
-   cross protocol proxies (e.g.  UDP to TCP).
+   All error messages in EDHOC are fatal.  After sending an error
+   message, the sender MUST discontinue the protocol.  The receiver
+   SHOULD treat an error message as an indication that the other party
+   likely has discontinued the protocol.  But as the error message is
+   not authenticated, a received error messages might also have been
+   sent by an attacker and the receiver MAY therefore try to continue
+   the protocol.
 
    error SHALL be a CBOR Sequence (see Appendix A.1) as defined below
 
@@ -1728,16 +1713,6 @@ Internet-Draft  Ephemeral Diffie-Hellman Over COSE (EDHO    January 2021
       (METHOD_CORR mod 4) equals 0 or 1 then C_x is set to C_R, else C_x
       is omitted.
 
-
-
-
-
-
-Selander, et al.          Expires 29 July 2021                 [Page 31]
-
-Internet-Draft  Ephemeral Diffie-Hellman Over COSE (EDHO    January 2021
-
-
    *  DIAG_MSG - text string containing the diagnostic message in
       English.  MUST NOT be the empty string unless the error message
       contains SUITES_R.
@@ -1755,9 +1730,28 @@ Internet-Draft  Ephemeral Diffie-Hellman Over COSE (EDHO    January 2021
    the next message_1 has been sent, otherwise the Initiator and
    Responder will likely run into an infinite loop.  After a successful
    run of EDHOC, the Initiator MAY remember the selected cipher suite to
+
+
+
+Selander, et al.          Expires 29 July 2021                 [Page 31]
+
+Internet-Draft  Ephemeral Diffie-Hellman Over COSE (EDHO    January 2021
+
+
    use in future EDHOC runs.  Note that if the Initiator or Responder is
    updated with new cipher suite policies, any cached information may be
    outdated.
+
+   Error messages without SUITES_R MUST contain a human-readable
+   diagnostic message DIAG_MSG written in English, explaning the error
+   situation.  The diagnostic text message is mainly intended for
+   software engineers that during debugging need to interpret it in the
+   context of the EDHOC specification.  The diagnostic message SHOULD be
+   be provided to the calling application where they SHOULD be logged.
+   Error messages with SUITES_R MAY use the empty string as the
+   diagnostic message.  The DIAG_MSG text string is mandatory and
+   characteristic for error messages, which enables the receiver to
+   distinguish between a normal message and an error message.
 
 6.1.1.  Example Use of EDHOC Error Message with SUITES_R
 
@@ -1785,6 +1779,12 @@ Internet-Draft  Ephemeral Diffie-Hellman Over COSE (EDHO    January 2021
 
            Figure 5: Example use of error message with SUITES_R.
 
+   In Figure 6, the Responder supports cipher suite 7 and 9 but not the
+   more preferred (by the Initiator) cipher suites 5 and 6.  The order
+   of cipher suites in SUITES_R does not matter.
+
+
+
 
 
 
@@ -1793,10 +1793,6 @@ Selander, et al.          Expires 29 July 2021                 [Page 32]
 
 Internet-Draft  Ephemeral Diffie-Hellman Over COSE (EDHO    January 2021
 
-
-   In Figure 6, the Responder supports cipher suite 7 and 9 but not the
-   more preferred (by the Initiator) cipher suites 5 and 6.  The order
-   of cipher suites in SUITES_R does not matter.
 
    Initiator                                                   Responder
    |            METHOD_CORR, SUITES_I = 5, G_X, C_I, AD_1              |
@@ -1841,6 +1837,10 @@ Internet-Draft  Ephemeral Diffie-Hellman Over COSE (EDHO    January 2021
    used for authentication, and no application data are sent or when
    application data is only sent from the Initiator to the Responder.
 
+7.1.1.  Formatting of Message 4
+
+   message_4 and data_4 SHALL be CBOR Sequences (see Appendix A.1) as
+   defined below
 
 
 
@@ -1849,11 +1849,6 @@ Selander, et al.          Expires 29 July 2021                 [Page 33]
 
 Internet-Draft  Ephemeral Diffie-Hellman Over COSE (EDHO    January 2021
 
-
-7.1.1.  Formatting of Message 4
-
-   message_4 and data_4 SHALL be CBOR Sequences (see Appendix A.1) as
-   defined below
 
    message_4 = (
      data_4,
@@ -1899,15 +1894,17 @@ Internet-Draft  Ephemeral Diffie-Hellman Over COSE (EDHO    January 2021
 
       MAC_4 is the 'ciphertext' of the COSE_Encrypt0.
 
+   *  Encode message_4 as a sequence of CBOR encoded data items as
+      specified in Section 7.1.1.
+
+
+
 
 
 Selander, et al.          Expires 29 July 2021                 [Page 34]
 
 Internet-Draft  Ephemeral Diffie-Hellman Over COSE (EDHO    January 2021
 
-
-   *  Encode message_4 as a sequence of CBOR encoded data items as
-      specified in Section 7.1.1.
 
 7.1.3.  Initiator Processing of Message 4
 
@@ -1953,6 +1950,9 @@ Internet-Draft  Ephemeral Diffie-Hellman Over COSE (EDHO    January 2021
    Figure 7.  In this case the CoAP Token enables the Initiator to
    correlate message_1 and message_2 so the correlation parameter corr =
    1.
+
+
+
 
 
 
