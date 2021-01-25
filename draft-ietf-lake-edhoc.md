@@ -572,7 +572,7 @@ EDHOC uses Extract-and-Expand {{RFC5869}} with the EDHOC hash algorithm in the s
 
 If the EDHOC hash algorithm is SHA-2, then Extract( salt, IKM ) = HKDF-Extract( salt, IKM ) {{RFC5869}}. If the EDHOC hash algorithm is SHAKE128, then Extract( salt, IKM ) = KMAC128( salt, IKM, 256, "" ). If the EDHOC hash algorithm is SHAKE256, then Extract( salt, IKM ) = KMAC256( salt, IKM, 512, "" ).
 
-PRK_2e is used to derive key and IV to encrypt message_2. PRK_3e2m is used to derive keys and IVs produce a MAC in message_2 and to encrypt message_3. PRK_4x3m is used to derive keys and IVs produce a MAC in message_3 and to derive application specific data.
+PRK_2e is used to derive keystream to encrypt message_2. PRK_3e2m is used to derive keys and IVs produce a MAC in message_2 and to encrypt message_3. PRK_4x3m is used to derive keys and IVs produce a MAC in message_3 and to derive application specific data.
 
 PRK_2e is derived with the following input:
 
@@ -624,13 +624,13 @@ where
   
   + transcript_hash is a bstr set to one of the transcript hashes TH_2, TH_3, or TH_4 as defined in Sections {{asym-msg2-form}}{: format="counter"}, {{asym-msg3-form}}{: format="counter"}, and {{exporter}}{: format="counter"}.
 
-  + label is a tstr set to the name of the derived key or IV, i.e. "K_2m", "IV_2m", "K_2e", "K_3m", "IV_3m", "K_3ae", or "IV_3ae".
+  + label is a tstr set to the name of the derived key or IV, i.e. "KEYSTREAM_2", "K_2m", "IV_2m", "K_2e", "K_3m", "IV_3m", "K_3ae", or "IV_3ae".
 
   + length is the length of output keying material (OKM) in bytes
 
 If the EDHOC hash algorithm is SHA-2, then Expand( PRK, info, length ) = HKDF-Expand( PRK, info, length ) {{RFC5869}}. If the EDHOC hash algorithm is SHAKE128, then Expand( PRK, info, length ) = KMAC128( PRK, info, L, "" ). If the EDHOC hash algorithm is SHAKE256, then Expand( PRK, info, length ) = KMAC256( PRK, info, L, "" ).
 
-K_2m and IV_2m are derived using the transcript hash TH_2 and the pseudorandom key PRK_3e2m. K_3ae and IV_3ae are derived using the transcript hash TH_3 and the pseudorandom key PRK_3e2m. K_3m and IV_3m are derived using the transcript hash TH_3 and the pseudorandom key PRK_4x3m. IVs are only used if the EDHOC AEAD algorithm uses IVs.
+KEYSTREAM_2 are derived using the transcript hash TH_2 and the pseudorandom key PRK_2e. K_2m and IV_2m are derived using the transcript hash TH_2 and the pseudorandom key PRK_3e2m. K_3ae and IV_3ae are derived using the transcript hash TH_3 and the pseudorandom key PRK_3e2m. K_3m and IV_3m are derived using the transcript hash TH_3 and the pseudorandom key PRK_4x3m. IVs are only used if the EDHOC AEAD algorithm uses IVs.
 
 ## EDHOC-Exporter Interface {#exporter}
 
