@@ -851,7 +851,7 @@ The Initiator SHALL process message_2 as follows:
 
 * Pass AD_2 to the security application.
 
-If any verification step fails, the Responder MUST send an EDHOC error message back, formatted as defined in {{error}}, and the protocol MUST be discontinued.
+If any verification step fails, the Initiator MUST send an EDHOC error message back, formatted as defined in {{error}}, and the protocol MUST be discontinued.
 
 ## EDHOC Message 3 {#m3}
 
