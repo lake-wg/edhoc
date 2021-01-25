@@ -197,17 +197,25 @@ This document specifies Ephemeral Diffie-Hellman Over COSE (EDHOC), a very compa
 
 # Introduction
 
+## Motivation 
+
 Many Internet of Things (IoT) deployments require technologies which are highly performant in constrained environments {{RFC7228}}. IoT devices may be constrained in various ways, including memory, storage, processing capacity and power. The connectivity for these settings may also exhibit constraints such as unreliable and lossy channels, highly restricted bandwidth and dynamic topology. The IETF has acknowledged this problem by standardizing a range of lightweight protocols and enablers designed for the IoT, including the Constrained Application Protocol (CoAP, {{RFC7252}}), Concise Binary Object Representation (CBOR, {{RFC7049}}), and Static Context Header Compression (SCHC, {{RFC8724}}).
 
 The need for special protocols targeting constrained IoT deployments extends also to the security domain {{I-D.ietf-lake-reqs}}. Important characteristics in constrained environments are the number of round trips and protocol message sizes, which if kept low can contribute to good performance by enabling transport over a small number of radio frames, reducing latency due to fragmentation or duty cycles, etc. Another important criteria is code size, which may be prohibitive for certain deployments due to device capabilities or network load during firmware update. Some IoT deployments also need to support a variety of underlying transport technologies, potentially even with a single connection.
 
 Some security solutions for such settings exist already. CBOR Object Signing and Encryption (COSE) {{RFC8152}}) specifies basic application-layer security services efficiently encoded in CBOR. Another example is Object Security for Constrained RESTful Environments (OSCORE) {{RFC8613}} which is a lightweight communication security extension to CoAP using CBOR and COSE. In order to establish good quality cryptographic keys for security protocols such as COSE and OSCORE, the two endpoints may run an authenticated key exchange protocol, from which shared secret key material can be derived. Such a key exchange protocol should also be lightweight; to prevent bad performance in case of repeated use, e.g., due to device rebooting or frequent rekeying for security reasons; or to avoid latencies in a network formation setting with many devices authenticating at the same time.
 
+## Basics
+
 This document specifies Ephemeral Diffie-Hellman Over COSE (EDHOC), a lightweight authenticated key exchange protocol providing good security properties including perfect forward secrecy, identity protection, and cipher suite negotation. Authentication can be based on raw public keys (RPK) or public key certificates, and requires the application to provide input on how to verify that endpoints are trusted. This specificaton focuses on referencing instead of transporting credentials to reduce message overhead.
 
-A main use case for EDHOC is to establish a security context for OSCORE. EDHOC is built on the same lightweight primitives as OSCORE: CBOR for encoding, COSE for cryptography, and CoAP for transport. By reusing existing libraries the additional code size can be kept very low. EDHOC is not bound to a particular transport, but it is recommended to transfer EDHOC messages in CoAP payloads.
+EDHOC makes use of known protocol constructions, such as SIGMA {{SIGMA}} and Extract-and-Expand {{RFC5869}}. COSE also provides crypto agility and enables the use of future algorithms and headers designed for constrained IoT.
 
-The authenticated key exchange and the key derivation makes use of known protocol constructions, such as SIGMA {{SIGMA}} and Extract-and-Expand {{RFC5869}}, implemented in terms of CBOR and COSE. COSE also provides crypto agility and enables the use of future algorithms and headers designed for constrained IoT.
+## Use of EDHOC
+
+A main use case for EDHOC is to establish a security context for OSCORE and builds on the same lightweight primitives as OSCORE: CBOR for encoding, COSE for cryptography, and CoAP for transport. By reusing existing libraries the additional code size can be kept very low. EDHOC is not bound to a particular transport, but it is recommended to transfer EDHOC messages in CoAP payloads.
+
+## Message Size Examples
 
 EDHOC is designed for highly constrained settings making it especially suitable for low-power wide area networks {{RFC8376}} such as Cellular IoT, 6TiSCH, and LoRaWAN. Compared to the DTLS 1.3 handshake {{I-D.ietf-tls-dtls13}} with ECDH and connection ID, the number of bytes in EDHOC + CoAP can be less than 1/6 when RPK authentication is used, see {{I-D.ietf-lwig-security-protocol-comparison}}. {{fig-sizes}} shows two examples of message sizes for EDHOC with different kinds of authentication keys and different COSE header parameters for identification: static Diffie-Hellman keys identified by 'kid' {{RFC8152}}, and X.509 signature certificates identified by a hash value using 'x5t' {{I-D.ietf-cose-x509}}. Further reductions of message sizes are possible, for example by eliding redundant length indications.
 
@@ -223,6 +231,8 @@ Total               103       245
 =================================
 ~~~~~~~~~~~~~~~~~~~~~~~
 {: #fig-sizes title="Example of message sizes in bytes." artwork-align="center"}
+
+## Document Outline
 
 The remainder of the document is organized as follows: {{background}} outlines EDHOC authenticated with digital signatures, {{overview}} describes the protocol elements of EDHOC, including message flow, formatting of the ephemeral public keys, and key derivation, {{asym}} specifies EDHOC with authentication based on signature keys or static Diffie-Hellman keys, {{error}} specifies the EDHOC error message, and {{transfer}} describes how EDHOC can be transferred in CoAP and used to establish an OSCORE security context.
 
