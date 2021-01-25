@@ -814,22 +814,13 @@ The Responder SHALL compose message_2 as follows:
 
      \[ "Signature1", << ID_CRED_R >>, << TH_2, CRED_R, ? AD_2 >>, MAC_2 \]
 
-* Compute an outer COSE_Encrypt0 as defined in Section 5.3 of {{RFC8152}}, with the EDHOC AEAD algorithm in the selected cipher suite, K_2e, IV_2e, and the following parameters. The protected header SHALL be empty.
+* CIPHERTEXT_2 is the encrypted by using Expand function as a binary additive stream cipher. 
 
    * plaintext = ( ID_CRED_R / bstr_identifier, Signature_or_MAC_2, ? AD_2 )
 
       * Note that if ID_CRED_R contains a single 'kid' parameter, i.e., ID_CRED_R = { 4 : kid_R }, only the byte string kid_R is conveyed in the plaintext encoded as a bstr_identifier, see {{id_cred}} and {{bstr_id}}.
 
-   COSE constructs the input to the AEAD {{RFC5116}} as follows: 
-
-   * Key K = EDHOC-KDF( PRK_2e, TH_2, "K_2e", length ) 
-   * Nonce N = EDHOC-KDF( PRK_2e, TH_2, "IV_2e", length )
-   * Plaintext P = ( ID_CRED_R / bstr_identifier, Signature_or_MAC_2, ? AD_2 )
-   * Associated data A = \[ "Encrypt0", h'', TH_2 \]
-
-   CIPHERTEXT_2 is the 'ciphertext' of the outer COSE_Encrypt0 with the tag removed.
-
-   EDITORS NOTE: The way to encrypt message_2 has not been determined yet. We are awaiting developer feedback if the -02 or -03 way of doing things are the best way from a development perspective. Any other suggestions is also welcome. AES-CTR and ChaCha20 without Poly1305 seems to complex to require developers to implement.
+   * CIPHERTEXT_2 = plaintext XOR KEYSTREAM_2
 
 * Encode message_2 as a sequence of CBOR encoded data items as specified in {{asym-msg2-form}}.
 
@@ -841,9 +832,7 @@ The Initiator SHALL process message_2 as follows:
 
 * Retrieve the protocol state using the connection identifier C_I and/or other external information such as the CoAP Token and the 5-tuple.
 
-* Decrypt CIPHERTEXT_2 by computing an outer COSE_Encrypt0 as defined in see {{asym-msg2-proc}} and XORing CIPHERTEXT_2 with the 'ciphertext' of the outer COSE_Encrypt0 with the tag removed. 
-
-   EDITORS NOTE: The way to encrypt message_2 has not been determined yet. We are awaiting developer feedback if the -02 or -03 way of doing things are the best way from a development perspective. Any other suggestions is also welcome. AES-CTR and ChaCha20 without Poly1305 seems to complex to require developers to implement.
+* Decrypt CIPHERTEXT_2, see {{asym-msg2-proc}}.
 
 * Verify that the identity of the Responder is an allowed identity for this connection, see {{auth-key-id}}.
 
