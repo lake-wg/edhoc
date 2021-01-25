@@ -1211,7 +1211,7 @@ The data rates in many IoT deployments are very limited. Given that the applicat
 
 ## Cipher Suites
 
-Cipher suite number 0 (AES-CCM-16-64-128, SHA-256, X25519, EdDSA, Ed25519, AES-CCM-16-64-128, SHA-256) is mandatory to implement. Implementations only need to implement the algorithms needed for their supported methods. For many constrained IoT devices it is problematic to support more than one cipher suites, so some deployments with P-256 may not support the mandatory cipher suite. This is not a problem for local deployments.
+For many constrained IoT devices it is problematic to support more than one cipher suite. Existing devices can be expected to support either ECDSA or EdDSA. To enable as much interoperability as we can reasonably achieve, less constrained devices SHOULD implement both cipher suite 0 (AES-CCM-16-64-128, SHA-256, X25519, EdDSA, Ed25519, AES-CCM-16-64-128, SHA-256) and cipher suite 2 (AES-CCM-16-64-128, SHA-256, P-256, ES256, P-256, AES-CCM-16-64-128, SHA-256). Constrained endpoints SHOULD implement cipher suite 0 or cipher suite 2. Implementations only need to implement the algorithms needed for their supported methods. 
 
 The HMAC algorithm HMAC 256/64 (HMAC w/ SHA-256 truncated to 64 bits) SHALL NOT be supported for use in EDHOC.
 
@@ -1488,7 +1488,7 @@ Selected Cipher Suite (int)
 0
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-The mandatory-to-implement cipher suite 0 is supported by both the Initiator and the Responder, see {{cipher-suites}}.
+Cipher suite 0 is supported by both the Initiator and the Responder, see {{cipher-suites}}.
 
 ### Message_1
 
@@ -2290,7 +2290,7 @@ Selected Cipher Suite (int)
 0
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-The mandatory-to-implement cipher suite 0 is supported by both the Initiator and the Responder, see {{cipher-suites}}.
+Cipher suite 0 is supported by both the Initiator and the Responder, see {{cipher-suites}}.
 
 ### Message_1 {#dh-ss-m1}
 
