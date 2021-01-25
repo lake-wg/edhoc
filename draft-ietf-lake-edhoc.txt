@@ -1836,7 +1836,7 @@ Internet-Draft  Ephemeral Diffie-Hellman Over COSE (EDHO    January 2021
    examples of such deployments:
 
    1.  When EDHOC is only used for authentication and no application
-       data are sent.
+       data is sent.
 
    2.  When application data is only sent from the Initiator to the
        Responder.
