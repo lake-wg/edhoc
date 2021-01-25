@@ -968,10 +968,11 @@ After verifying message_3, the Responder is assured that the Initiator has calcu
 
 ## EDHOC Error Message
 
-This section defines a message format for the EDHOC error message, used during the protocol. An EDHOC error message can be sent by both parties as a reply to any non-error EDHOC message. All error messages in EDHOC are fatal. After sending an error message, the sender MUST discontinue the protocol. The receiver SHOULD treat an error message as an indication that the other party likely has discontinued the protocol. But as the error message is not authenticated, a received error messages might also have been sent by an attacker and the receiver MAY therefore try to continue the protocol. Error
-messages with SUITES_R are acted upon be EDHOC as described in Section XXX. Error messages without SUITES_R MUST contain a human-readable diagnostic message DIAG_MSG written in English, explaning the error situation. The diagnostic text message is mainly intended for software engineers that during debugging need to interpret it in the context of the EDHOC specification. The diagnostic message SHOULD be be provided to the calling application where they SHOULD be logged. Error messages with SUITES_R MAY use the empty string as the diagnostic message. The DIAG_MSG text string is mandatory and characteristic for error messages, which enables the receiver to distinguish between a normal message and an error message.
+This section defines a message format for the EDHOC error message. 
 
-Errors at the EDHOC layer are sent as normal successful messages in the lower layers (e.g. CoAP POST and 2.04 Changed). An advantage of using such a construction is to avoid issues created by usage of cross protocol proxies (e.g. UDP to TCP).
+An EDHOC error message can be sent by both parties as a reply to any non-error EDHOC message. Errors at the EDHOC layer are sent as normal successful messages in the lower layers (e.g. CoAP POST and 2.04 Changed). An advantage of using such a construction is to avoid issues created by usage of cross protocol proxies (e.g. UDP to TCP).
+
+All error messages in EDHOC are fatal. After sending an error message, the sender MUST discontinue the protocol. The receiver SHOULD treat an error message as an indication that the other party likely has discontinued the protocol. But as the error message is not authenticated, a received error messages might also have been sent by an attacker and the receiver MAY therefore try to continue the protocol. 
 
 error SHALL be a CBOR Sequence (see {{CBOR}}) as defined below
 
@@ -990,6 +991,9 @@ where:
 * SUITES_R - (optional) cipher suites from SUITES_I or the EDHOC cipher suites registry that the Responder supports. SUITES_R MUST only be included in replies to message_1. If a single supported cipher suite is conveyed then the supported cipher suite is encoded as an int instead of an array.
 
 After receiving SUITES_R, the Initiator can determine which selected cipher suite to use for the next EDHOC run with the Responder. If the Initiator intends to contact the Responder in the future, the Initiator SHOULD remember which selected cipher suite to use until the next message_1 has been sent, otherwise the Initiator and Responder will likely run into an infinite loop. After a successful run of EDHOC, the Initiator MAY remember the selected cipher suite to use in future EDHOC runs. Note that if the Initiator or Responder is updated with new cipher suite policies, any cached information may be outdated.
+
+Error messages without SUITES_R MUST contain a human-readable diagnostic message DIAG_MSG written in English, explaning the error situation. The diagnostic text message is mainly intended for software engineers that during debugging need to interpret it in the context of the EDHOC specification. The diagnostic message SHOULD be be provided to the calling application where they SHOULD be logged. Error messages with SUITES_R MAY use the empty string as the diagnostic message. The DIAG_MSG text string is mandatory and characteristic for error messages, which enables the receiver to distinguish between a normal message and an error message.
+
 
 ### Example Use of EDHOC Error Message with SUITES_R
 
