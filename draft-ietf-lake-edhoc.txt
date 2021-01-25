@@ -1948,12 +1948,12 @@ Internet-Draft  Ephemeral Diffie-Hellman Over COSE (EDHO    January 2021
    response.  EDHOC message_3 or the EDHOC error message is sent from
    the client to the server's resource in the payload of a POST request.
    If needed, an EDHOC error message is sent from the server to the
-   client in the payload of a 2.04 (Changed) response.
+   client in the payload of a 2.04 (Changed) response.  Alternatively,
+   if EDHOC message_4 is used, it is sent from the server to the client
+   in the payload of a 2.04 (Changed) response analogously to message_2.
 
-   An example of a successful EDHOC exchange using CoAP is shown in
-   Figure 7.  In this case the CoAP Token enables the Initiator to
-   correlate message_1 and message_2 so the correlation parameter corr =
-   1.
+
+
 
 
 
@@ -1961,6 +1961,11 @@ Selander, et al.          Expires 29 July 2021                 [Page 35]
 
 Internet-Draft  Ephemeral Diffie-Hellman Over COSE (EDHO    January 2021
 
+
+   An example of a successful EDHOC exchange using CoAP is shown in
+   Figure 7.  In this case the CoAP Token enables the Initiator to
+   correlate message_1 and message_2 so the correlation parameter corr =
+   1.
 
              Client    Server
                |          |
@@ -1991,13 +1996,8 @@ Internet-Draft  Ephemeral Diffie-Hellman Over COSE (EDHO    January 2021
    attackers and the client identity against passive attackers is shown
    in Figure 8.  In this case the CoAP Token enables the Responder to
    correlate message_2 and message_3 so the correlation parameter corr =
-   2.
-
-
-
-
-
-
+   2.  If EDHOC message_4 is used, it is transported with CoAP in the
+   payload of a POST request with a 2.04 (Changed) response.
 
 
 
