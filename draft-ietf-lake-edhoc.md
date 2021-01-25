@@ -455,8 +455,7 @@ Raw public keys are most optimally stored as COSE_Key objects and identified wit
 
 * ID_CRED_x = { 4 : kid_x }, where kid_x : bstr, for x = I or R.
 
-Public key certificates can be identified in different ways. Header parameters for identifying CBOR certificates and X.509 certificates are defined in {{
-I-D.mattsson-cose-cbor-cert-compress}} and {{I-D.ietf-cose-x509}}, for example:
+Public key certificates can be identified in different ways. Header parameters for identifying CBOR certificates and X.509 certificates are defined in {{I-D.mattsson-cose-cbor-cert-compress}} and {{I-D.ietf-cose-x509}}, for example:
 
 * by a hash value with the 'c5t' or 'x5t' parameters;
 
