@@ -4434,7 +4434,7 @@ Internet-Draft  Ephemeral Diffie-Hellman Over COSE (EDHO    January 2021
          correlation between message_1 and message_2.)
 
    *  CRED_I is an 802.1AR IDevID encoded as a CBOR Certificate of type
-      0
+      0 [I-D.mattsson-cose-cbor-cert-compress].
 
       -  R acquires CRED_I out-of-band, indicated in AD_1
 
