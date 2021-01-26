@@ -4459,20 +4459,20 @@ Internet-Draft  Ephemeral Diffie-Hellman Over COSE (EDHO    January 2021
 Acknowledgments
 
    The authors want to thank Alessandro Bruni, Karthikeyan Bhargavan,
-   Martin Disch, Theis Groenbech Petersen, Dan Harkins, Klaus Hartke,
-   Russ Housley, Alexandros Krontiris, Ilari Liusvaara, Karl Norrman,
-   Salvador Perez, Eric Rescorla, Michael Richardson, Thorvald Sahl
-   Joergensen, Jim Schaad, Carsten Schuermann, Ludwig Seitz, Stanislav
-   Smyshlyaev, Valery Smyslov, Rene Struik, Vaishnavi Sundararajan, Erik
-   Thormarker, and Michel Veillette for reviewing and commenting on
+   Timothy Claeys, Martin Disch, Theis Groenbech Petersen, Dan Harkins,
+   Klaus Hartke, Russ Housley, Stefan Hristozov, Alexandros Krontiris,
+   Ilari Liusvaara, Karl Norrman, Salvador Perez, Eric Rescorla, Michael
+   Richardson, Thorvald Sahl Joergensen, Jim Schaad, Carsten Schuermann,
+   Ludwig Seitz, Stanislav Smyshlyaev, Valery Smyslov, Rene Struik,
+   Vaishnavi Sundararajan, Erik Thormarker, Marco Tiloca, Michel
+   Veillette, and Malisa Vucinic for reviewing and commenting on
    intermediate versions of the draft.  We are especially indebted to
    Jim Schaad for his continuous reviewing and implementation of
    different versions of the draft.
 
 Authors' Addresses
 
-   Göran Selander
-   Ericsson AB
+
 
 
 
@@ -4481,6 +4481,9 @@ Selander, et al.          Expires 30 July 2021                 [Page 80]
 
 Internet-Draft  Ephemeral Diffie-Hellman Over COSE (EDHO    January 2021
 
+
+   Göran Selander
+   Ericsson AB
 
    Email: goran.selander@ericsson.com
 
@@ -4495,9 +4498,6 @@ Internet-Draft  Ephemeral Diffie-Hellman Over COSE (EDHO    January 2021
    Ericsson AB
 
    Email: francesca.palombini@ericsson.com
-
-
-
 
 
 
