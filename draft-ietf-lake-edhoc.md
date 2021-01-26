@@ -572,7 +572,7 @@ EDHOC uses Extract-and-Expand {{RFC5869}} with the EDHOC hash algorithm in the s
 
 If the EDHOC hash algorithm is SHA-2, then Extract( salt, IKM ) = HKDF-Extract( salt, IKM ) {{RFC5869}}. If the EDHOC hash algorithm is SHAKE128, then Extract( salt, IKM ) = KMAC128( salt, IKM, 256, "" ). If the EDHOC hash algorithm is SHAKE256, then Extract( salt, IKM ) = KMAC256( salt, IKM, 512, "" ).
 
-PRK_2e is used to derive keystream to encrypt message_2. PRK_3e2m is used to derive keys and IVs produce a MAC in message_2 and to encrypt message_3. PRK_4x3m is used to derive keys and IVs produce a MAC in message_3 and to derive application specific data.
+PRK_2e is used to derive a keystream to encrypt message_2. PRK_3e2m is used to derive keys and IVs to produce a MAC in message_2 and to encrypt message_3. PRK_4x3m is used to derive keys and IVs to produce a MAC in message_3 and to derive application specific data.
 
 PRK_2e is derived with the following input:
 
@@ -814,7 +814,7 @@ The Responder SHALL compose message_2 as follows:
 
      \[ "Signature1", << ID_CRED_R >>, << TH_2, CRED_R, ? AD_2 >>, MAC_2 \]
 
-* CIPHERTEXT_2 is the encrypted by using Expand function as a binary additive stream cipher. 
+* CIPHERTEXT_2 is encrypted by using the Expand function as a binary additive stream cipher.
 
    * plaintext = ( ID_CRED_R / bstr_identifier, Signature_or_MAC_2, ? AD_2 )
 
@@ -1034,7 +1034,7 @@ If the selected cipher suite is not the first cipher suite which the Responder s
 
 ## EDHOC Message 4 {#m4}
 
-This section specifies message_4 which is OPTIONAL to support. Key confirmation is normally provided by sending an application message from the Responder to the Initiator, e.g., using OSCORE. In deployments where no protected application message are sent from the Responder to the Initiator, the Responder MUST send message_4. Two examples of such deployments:
+This section specifies message_4 which is OPTIONAL to support. Key confirmation is normally provided by sending an application message from the Responder to the Initiator, e.g., using OSCORE. In deployments where no protected application message is sent from the Responder to the Initiator, the Responder MUST send message_4. Two examples of such deployments:
 
 1. When EDHOC is only used for authentication and no application data is sent.
 2. When application data is only sent from the Initiator to the Responder.
@@ -1564,7 +1564,7 @@ G_XY (ECDH shared secret) (32 bytes)
 15 04 91 49 5c 61 78 2b 
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-The key and nonce for calculating the ciphertext are calculated as follows, as specified in {{key-der}}.
+The key and nonce for calculating the 'ciphertext' are calculated as follows, as specified in {{key-der}}.
 
 HKDF SHA-256 is the HKDF used (as defined by cipher suite 0).
 
@@ -2084,7 +2084,7 @@ IV_3m (13 bytes)
 10 b6 f4 41 4a 2c 91 3c cd a1 96 42 e3 
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-MAC_3 is the ciphertext of the COSE_Encrypt0:
+MAC_3 is the 'ciphertext' of the COSE_Encrypt0:
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 MAC_3 (8 bytes)
@@ -2217,7 +2217,7 @@ IV_3ae (13 bytes)
 cf a9 a5 85 58 10 d6 dc e9 74 3c 3b c3 
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-Using the parameters above, the ciphertext CIPHERTEXT_3 can be computed:
+Using the parameters above, the 'ciphertext' CIPHERTEXT_3 can be computed:
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 CIPHERTEXT_3 (88 bytes)
@@ -2373,7 +2373,7 @@ de fc 2f 35 69 10 9b 3d 1f a4 a7 3d c5 e2 fe b9 e1 15 0d 90 c2 5e e2 f0
 66 c2 d8 85 f4 f8 ac 4e
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-The key and nonce for calculating the ciphertext are calculated as follows, as specified in {{key-der}}.
+The key and nonce for calculating the 'ciphertext' are calculated as follows, as specified in {{key-der}}.
 
 HKDF SHA-256 is the HKDF used (as defined by cipher suite 0).
 
@@ -2857,7 +2857,7 @@ IV_3m (13 bytes)
 1e 10 5b 88 50 0e d5 ae b0 5d 00 6b ea 
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-MAC_3 is the ciphertext of the COSE_Encrypt0:
+MAC_3 is the 'ciphertext' of the COSE_Encrypt0:
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 MAC_3 (8 bytes)
@@ -2952,7 +2952,7 @@ IV_3ae (13 bytes)
 0e 74 45 0a fc ec e9 73 af 64 e9 4d 46 
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-Using the parameters above, the ciphertext CIPHERTEXT_3 can be computed:
+Using the parameters above, the 'ciphertext' CIPHERTEXT_3 can be computed:
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 CIPHERTEXT_3 (18 bytes)
