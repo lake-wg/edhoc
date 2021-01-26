@@ -246,8 +246,7 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "S
 
 Readers are expected to be familiar with the terms and concepts described in CBOR {{RFC8949}}, CBOR Sequences {{RFC8742}}, COSE {{RFC8152}}, and CDDL {{RFC8610}}. The Concise Data Definition Language (CDDL) is used to express CBOR data structures {{RFC8949}}. Examples of CBOR and CDDL are provided in {{CBOR}}.
 
-The word "ciphertext" is used in different ways in the literature for authenticated encryption. It may either mean the output of the encryption function only, or the output of the authenticated encryption function, i.e., the output of the encryption function + the authentication tag. Following [RFC8152] we use the word in the latter sense, and use the notation 'ciphertext' to remind the reader about that.
-
+The single output from authenticated encryption (including the authentication tag) is called 'ciphertext', following {{RFC5116}}.
 
 
 # EDHOC Outline {#background}
