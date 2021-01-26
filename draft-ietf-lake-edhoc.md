@@ -40,6 +40,7 @@ normative:
   RFC5869:
   RFC6090:
   RFC6979:
+  RFC8949:
   RFC7252:
   RFC7748:
   RFC7959:
@@ -49,7 +50,7 @@ normative:
   RFC8610:
   RFC8613:
   RFC8742:
-  RFC8949:
+  
 
 
 informative:
