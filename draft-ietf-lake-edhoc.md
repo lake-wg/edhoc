@@ -3004,7 +3004,7 @@ For use of EDHOC in the XX protocol, the following assumptions are made on the p
    * method = 1 (I uses signature key, R uses static DH key.)
    * corr = 1 (CoAP Token or other transport data enables correlation between message_1 and message_2.)
 
-* CRED_I is an 802.1AR IDevID encoded as a CBOR Certificate of type 0
+* CRED_I is an 802.1AR IDevID encoded as a CBOR Certificate of type 0 {{I-D.mattsson-cose-cbor-cert-compress}}.
     * R acquires CRED_I out-of-band, indicated in AD_1
     * ID_CRED_I = {4: h''} is a kid with value empty byte string
 
