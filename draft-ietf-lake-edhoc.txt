@@ -3378,7 +3378,7 @@ Internet-Draft  Ephemeral Diffie-Hellman Over COSE (EDHO    January 2021
 
    ID_CRED_I =
    {
-     34: [-15, h'FC79990F2431A3F5']
+     34: [-15, h'5B786988439EBCF2']
    }
 
    ID_CRED_I (14 bytes)
