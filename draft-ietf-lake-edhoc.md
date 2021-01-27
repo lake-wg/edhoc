@@ -2247,6 +2247,116 @@ af 56 e4 5e 30 19 20 83 9b 81 3a 53 f6 d4 c5 57 48 0f 6c 79 7d 5b 76 f0
 e4 62 f5 f5 7a 3d b6 d2 b5 0c 32 31 9f 34 0f 4a c5 af 9a 
 ~~~~~~~~~~~~~~~~~~~~~~~
 
+### OSCORE Security Context Derivation
+
+From here, the Initiator and the Responder can derive an OSCORE Security Context, using the EDHOC-Exporter interface.
+
+From TH_3 and CIPHERTEXT_3, compute the input to the transcript hash TH_4 = H( TH_3, CIPHERTEXT_3 ), as a CBOR Sequence of these 2 data items.
+
+~~~~~~~~~~~~~~~~~~~~~~~
+Input to calculate TH_4 (CBOR Sequence) (120 bytes)
+a2 39 a6 27 ad a3 80 2d b8 da e5 1e c3 92 bf eb 92 6d 39 3e f6 ee e4 dd 
+b3 2e 4a 27 ce 93 58 da 
+2d 88 ff 86 da 47 48 2c 0d fa 55 9a c8 24 a4 a7 83 d8 70 c9 db a4 78 05 
+e8 aa fb ad 69 74 c4 96 46 58 65 03 fa 9b bf 3e 00 01 2c 03 7e af 56 e4 
+5e 30 19 20 83 9b 81 3a 53 f6 d4 c5 57 48 0f 6c 79 7d 5b 76 f0 e4 62 f5 
+f5 7a 3d b6 d2 b5 0c 32 31 9f 34 0f 4a c5 af 9a 
+~~~~~~~~~~~~~~~~~~~~~~~
+
+And from there, compute the transcript hash TH_4 = SHA-256(TH_3 , CIPHERTEXT_4)
+
+~~~~~~~~~~~~~~~~~~~~~~~
+TH_4 (32 bytes)
+36 45 7C 25 90 0B 01 26 36 77 90 2D 34 02 E6 DC
+96 D3 8C 45 73 79 F0 DC CA 1E 9B 3A AF 34 2E 43
+~~~~~~~~~~~~~~~~~~~~~~~
+
+The Master Secret and Master Salt are derived as follows:
+
+Master Secret = EDHOC-Exporter( "OSCORE Master Secret", 16 ) = EDHOC-KDF(PRK_4x3m, TH_4, "OSCORE Master Secret", 16) = Expand( PRK_4x3m, info_ms, 16 )
+
+Master Salt   = EDHOC-Exporter( "OSCORE Master Salt", 8 ) = EDHOC-KDF(PRK_4x3m, TH_4, "OSCORE Master Salt", 8) = Expand( PRK_4x3m, info_salt, 8 )
+
+info_ms for OSCORE Master Secret is defined as follows:
+
+~~~~~~~~~~~~~~~~~~~~~~~
+info_ms = [
+  10, 
+  h'36457c25900b01263677902d3402e6dc96d38c457379f0dcca1e9b3aaf342e43', 
+  "OSCORE Master Secret", 
+  16
+]
+~~~~~~~~~~~~~~~~~~~~~~~
+
+Which as a CBOR encoded data item is:
+
+~~~~~~~~~~~~~~~~~~~~~~~
+info_ms for OSCORE Master Secret (CBOR-encoded) (58 bytes)
+84 0A 58 20 36 45 7C 25 90 0B 01 26 36 77 90 2D
+34 02 E6 DC 96 D3 8C 45 73 79 F0 DC CA 1E 9B 3A
+AF 34 2E 43 74 4F 53 43 4F 52 45 20 4D 61 73 74
+65 72 20 53 65 63 72 65 74 10
+~~~~~~~~~~~~~~~~~~~~~~~
+
+
+info_salt for OSCORE Master Salt is defined as follows:
+
+~~~~~~~~~~~~~~~~~~~~~~~
+info_salt = [
+  10, 
+  h'36457c25900b01263677902d3402e6dc96d38c457379f0dcca1e9b3aaf342e43', 
+  "OSCORE Master Salt", 
+  8
+]
+~~~~~~~~~~~~~~~~~~~~~~~
+
+Which as a CBOR encoded data item is:
+
+~~~~~~~~~~~~~~~~~~~~~~~
+info for OSCORE Master Salt (CBOR-encoded) (56 Bytes)
+84 0A 58 20 36 45 7C 25 90 0B 01 26 36 77 90 2D
+34 02 E6 DC 96 D3 8C 45 73 79 F0 DC CA 1E 9B 3A
+AF 34 2E 43 72 4F 53 43 4F 52 45 20 4D 61 73 74
+65 72 20 53 61 6C 74 08
+~~~~~~~~~~~~~~~~~~~~~~~
+
+From these parameters, OSCORE Master Secret and OSCORE Master Salt are computed:
+
+~~~~~~~~~~~~~~~~~~~~~~~
+OSCORE Master Secret (16 bytes)
+EB 9E 7C 08 16 37 41 54 C8 EC D8 39 84 5F 25 62
+~~~~~~~~~~~~~~~~~~~~~~~
+
+~~~~~~~~~~~~~~~~~~~~~~~
+OSCORE Master Salt (8 bytes)
+BC E4 BF 91 4B 70 7D C1
+~~~~~~~~~~~~~~~~~~~~~~~
+
+The client's OSCORE Sender ID is C_R and the server's OSCORE Sender ID is C_I.
+
+~~~~~~~~~~~~~~~~~~~~~~~
+Client's OSCORE Sender ID (1 bytes)
+13 
+~~~~~~~~~~~~~~~~~~~~~~~
+
+~~~~~~~~~~~~~~~~~~~~~~~
+Server's OSCORE Sender ID (0 bytes)
+
+~~~~~~~~~~~~~~~~~~~~~~~
+
+The AEAD Algorithm and the hash algorithm are the application AEAD and hash algorithms in the selected cipher suite.
+
+~~~~~~~~~~~~~~~~~~~~~~~
+OSCORE AEAD Algorithm (int)
+10
+~~~~~~~~~~~~~~~~~~~~~~~
+
+~~~~~~~~~~~~~~~~~~~~~~~
+OSCORE Hash Algorithm (int)
+-16
+~~~~~~~~~~~~~~~~~~~~~~~
+
+
 ## Test Vectors for EDHOC Authenticated with Static Diffie-Hellman Keys
 
 EDHOC with static Diffie-Hellman keys is used. 
@@ -2976,6 +3086,104 @@ message_3 (CBOR Sequence) (20 bytes)
 08 52 53 c3 99 19 99 a5 ff b8 69 21 e9 9b 60 7c 06 77 70 e0 
 ~~~~~~~~~~~~~~~~~~~~~~~
 
+### OSCORE Security Context Derivation
+
+From here, the Initiator and the Responder can derive an OSCORE Security Context, using the EDHOC-Exporter interface.
+
+From TH_3 and CIPHERTEXT_3, compute the input to the transcript hash TH_4 = H( TH_3, CIPHERTEXT_3 ), as a CBOR Sequence of these 2 data items.
+
+~~~~~~~~~~~~~~~~~~~~~~~
+Input to calculate TH_4 (CBOR Sequence) (TODO bytes)
+51 dd 22 43 a6 b8 3f 13 16 dc 53 29 1a e1 91 cd 93 b4 44 cc e4 80 16 07 
+03 ee d9 c4 a1 bc b6 11 
+53 c3 99 19 99 a5 ff b8 69 21 e9 9b 60 7c 06 77 70 e0  
+~~~~~~~~~~~~~~~~~~~~~~~
+
+And from there, compute the transcript hash TH_4 = SHA-256(TH_3 , CIPHERTEXT_4)
+
+~~~~~~~~~~~~~~~~~~~~~~~
+TH_4 (32 bytes)
+TODO
+~~~~~~~~~~~~~~~~~~~~~~~
+
+The Master Secret and Master Salt are derived as follows:
+
+Master Secret = EDHOC-Exporter( "OSCORE Master Secret", 16 ) = EDHOC-KDF(PRK_4x3m, TH_4, "OSCORE Master Secret", 16) = Expand( PRK_4x3m, info_ms, 16 )
+
+Master Salt   = EDHOC-Exporter( "OSCORE Master Salt", 8 ) = EDHOC-KDF(PRK_4x3m, TH_4, "OSCORE Master Salt", 8) = Expand( PRK_4x3m, info_salt, 8 )
+
+info_ms for OSCORE Master Secret is defined as follows:
+
+~~~~~~~~~~~~~~~~~~~~~~~
+info_ms = [
+  10, 
+  TODO, 
+  "OSCORE Master Secret", 
+  16
+]
+~~~~~~~~~~~~~~~~~~~~~~~
+
+Which as a CBOR encoded data item is:
+
+~~~~~~~~~~~~~~~~~~~~~~~
+info_ms for OSCORE Master Secret (CBOR-encoded) (58 bytes)
+TODO
+~~~~~~~~~~~~~~~~~~~~~~~
+
+
+info_salt for OSCORE Master Salt is defined as follows:
+
+~~~~~~~~~~~~~~~~~~~~~~~
+info_salt = [
+  10, 
+  TODO, 
+  "OSCORE Master Salt", 
+  8
+]
+~~~~~~~~~~~~~~~~~~~~~~~
+
+Which as a CBOR encoded data item is:
+
+~~~~~~~~~~~~~~~~~~~~~~~
+info for OSCORE Master Salt (CBOR-encoded) (56 Bytes)
+TODO
+~~~~~~~~~~~~~~~~~~~~~~~
+
+From these parameters, OSCORE Master Secret and OSCORE Master Salt are computed:
+
+~~~~~~~~~~~~~~~~~~~~~~~
+OSCORE Master Secret (16 bytes)
+TODO
+~~~~~~~~~~~~~~~~~~~~~~~
+
+~~~~~~~~~~~~~~~~~~~~~~~
+OSCORE Master Salt (8 bytes)
+TODO
+~~~~~~~~~~~~~~~~~~~~~~~
+
+The client's OSCORE Sender ID is C_R and the server's OSCORE Sender ID is C_I.
+
+~~~~~~~~~~~~~~~~~~~~~~~
+Client's OSCORE Sender ID (1 bytes)
+08
+~~~~~~~~~~~~~~~~~~~~~~~
+
+~~~~~~~~~~~~~~~~~~~~~~~
+Server's OSCORE Sender ID (0 bytes)
+21
+~~~~~~~~~~~~~~~~~~~~~~~
+
+The AEAD Algorithm and the hash algorithm are the application AEAD and hash algorithms in the selected cipher suite.
+
+~~~~~~~~~~~~~~~~~~~~~~~
+OSCORE AEAD Algorithm (int)
+10
+~~~~~~~~~~~~~~~~~~~~~~~
+
+~~~~~~~~~~~~~~~~~~~~~~~
+OSCORE Hash Algorithm (int)
+-16
+~~~~~~~~~~~~~~~~~~~~~~~
 
 # Applicability Statement Template {#applicability}
 
