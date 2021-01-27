@@ -198,10 +198,11 @@ void test_vectors( EDHOCKeyType type_I, EDHOCKeyType type_R, EDHOCCorrelation co
     srand( 100 * ( 25 * METHOD_CORR + 5 * attr_I + attr_R ) + selected_suite );
 
     // EDHOC and OSCORE algorithms
-    vec SUITES_I, supported_suites = cbor( 0 ) + cbor( 1 ) + cbor( 2 ) + cbor( 3 );
+    vec SUITES_I, supported_suites;
     int edhoc_aead_alg, edhoc_hash_alg, edhoc_ecdh_curve, edhoc_sign_alg, edhoc_sign_curve, oscore_aead_alg, oscore_hash_alg;
     if ( selected_suite == suite_0 ) {
-        SUITES_I = cbor_arr( 2 ) + cbor( selected_suite ) + cbor( 0 ); // One of several possible trucations of preferred suites
+        supported_suites = cbor( 0 ) + cbor( 1 ) + cbor( 2 ) + cbor( 3 );
+        SUITES_I = cbor_arr( 3 ) + cbor( selected_suite ) + cbor( 1 ) + cbor( 2 ); // One of several possible trucations of preferred suites
         edhoc_aead_alg = AES_CCM_16_64_128;
         edhoc_hash_alg = SHA_256;
         edhoc_ecdh_curve = X25519;
@@ -211,6 +212,7 @@ void test_vectors( EDHOCKeyType type_I, EDHOCKeyType type_R, EDHOCCorrelation co
         oscore_hash_alg = SHA_256;
     }
     if ( selected_suite == suite_1 ) {
+        supported_suites = cbor( 1 ) + cbor( 0 ) + cbor( 2 ) + cbor( 3 );
         SUITES_I = cbor_arr( 4 ) + cbor( selected_suite ) + cbor( 0 ) + cbor( 1 ) + cbor( 2 ); // One of several possible trucations of preferred suites
         edhoc_aead_alg = AES_CCM_16_128_128;
         edhoc_hash_alg = SHA_256;

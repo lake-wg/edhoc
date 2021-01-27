@@ -2539,7 +2539,7 @@ Selected Cipher Suite (int)
 1
 
 Supported Cipher Suites (4 bytes)
-00 01 02 03 
+01 00 02 03 
 
 Uncompressed SUITES_I (5 bytes)
 84 01 00 01 02 
@@ -2839,7 +2839,7 @@ Selected Cipher Suite (int)
 1
 
 Supported Cipher Suites (4 bytes)
-00 01 02 03 
+01 00 02 03  
 
 Uncompressed SUITES_I (5 bytes)
 84 01 00 01 02 
@@ -3094,7 +3094,7 @@ Selected Cipher Suite (int)
 1
 
 Supported Cipher Suites (4 bytes)
-00 01 02 03 
+01 00 02 03  
 
 Uncompressed SUITES_I (5 bytes)
 84 01 00 01 02 
