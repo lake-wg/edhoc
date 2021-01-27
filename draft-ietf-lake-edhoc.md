@@ -1994,7 +1994,7 @@ ID_CRED_I = { 34 : COSE_CertHash }. In this example, the hash algorithm used is 
 ~~~~~~~~~~~~~~~~~~~~~~~
 ID_CRED_I =
 {
-  34: [-15, h'FC79990F2431A3F5']
+  34: [-15, h'5B786988439EBCF2']
 }
 ~~~~~~~~~~~~~~~~~~~~~~~
 
