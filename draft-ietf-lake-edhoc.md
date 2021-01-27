@@ -1441,7 +1441,7 @@ CBOR Object Signing and Encryption (COSE) {{RFC8152}} describes how to create an
 
 # Test Vectors {#vectors}
 
-This appendix provides detailed test vectors to ease implementation and ensure interoperability. In addition to hexadecimal, all CBOR data items and sequences are given in CBOR diagnostic notation. The test vectors use the default mapping to CoAP where the Initiator acts as CoAP client (this means that corr = 1). 
+This appendix provides detailed test vectors based on v-02 of this specification, to ease implementation and ensure interoperability. In addition to hexadecimal, all CBOR data items and sequences are given in CBOR diagnostic notation. The test vectors use the default mapping to CoAP where the Initiator acts as CoAP client (this means that corr = 1). 
 
 A more extensive test vector suite covering more combinations of authentication method used between Initiator and Responder and related code to generate them can be found at https://github.com/lake-wg/edhoc/tree/master/test-vectors .
 
@@ -1654,6 +1654,7 @@ Responders's subject name (text string)
 
 
 CRED_R is the certificate (X509_R) encoded as a CBOR byte string:
+(Note that in this version of the test vectors CRED_R is not a real certificate, but instead a string of random bytes is used)
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 X509_R (110 bytes)
@@ -1968,6 +1969,7 @@ Initiator's subject name (text string)
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 CRED_I is the certificate (X509_I) encoded as a CBOR byte string:
+(Note that in this version of the test vectors CRED_I is not a real certificate, but instead a string of random bytes is used)
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 X509_I (101 bytes)
