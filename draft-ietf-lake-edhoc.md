@@ -2015,7 +2015,7 @@ The Plaintext of the COSE_Encrypt is the empty string:
 P_3m (0 bytes)
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-The external_aad is the CBOR Sequence of CRED_I and TH_3, in this order:
+The external_aad is the CBOR Sequence of TH_3 and CRED_I, in this order:
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 A_3m (CBOR-encoded) (164 bytes)
@@ -2900,7 +2900,7 @@ The Plaintext of the COSE_Encrypt is the empty string:
 P_3m (0 bytes)
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-The external_aad is the CBOR Sequence of CRED_I and TH_3, in this order:
+The external_aad is the CBOR Sequence of TH_3 and CRED_I, in this order:
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 A_3m (CBOR-encoded) (105 bytes)
