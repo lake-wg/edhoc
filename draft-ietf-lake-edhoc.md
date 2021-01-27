@@ -321,7 +321,7 @@ Initiator                                                   Responder
 +------------------------------------------------------------------>|
 |                             message_1                             |
 |                                                                   |
-|   C_I, G_Y, C_R, Enc(K_2e; ID_CRED_R, Signature_or_MAC_2, AD_2)   |
+|      C_I, G_Y, C_R, Enc(ID_CRED_R, Signature_or_MAC_2, AD_2)      |
 |<------------------------------------------------------------------+
 |                             message_2                             |
 |                                                                   |
@@ -620,11 +620,11 @@ info = [
 
 where
 
-  + edhoc_aead_id is an int or tstr containing the algorithm identifier of the EDHOC AEAD algorithm in the selected cipher suite encoded as defined in {{RFC8152}}. Note that a single fixed edhoc_aead_id is used in all invocations of EDHOC-KDF, including the derivation of K_2e and invocations of the EDHOC-Exporter.
+  + edhoc_aead_id is an int or tstr containing the algorithm identifier of the EDHOC AEAD algorithm in the selected cipher suite encoded as defined in {{RFC8152}}. Note that a single fixed edhoc_aead_id is used in all invocations of EDHOC-KDF, including the derivation of KEYSTREAM_2 and invocations of the EDHOC-Exporter.
   
   + transcript_hash is a bstr set to one of the transcript hashes TH_2, TH_3, or TH_4 as defined in Sections {{asym-msg2-form}}{: format="counter"}, {{asym-msg3-form}}{: format="counter"}, and {{exporter}}{: format="counter"}.
 
-  + label is a tstr set to the name of the derived key or IV, i.e. "KEYSTREAM_2", "K_2m", "IV_2m", "K_2e", "K_3m", "IV_3m", "K_3ae", or "IV_3ae".
+  + label is a tstr set to the name of the derived key or IV, i.e. "K_2m", "IV_2m", "KEYSTREAM_2", "K_3m", "IV_3m", "K_3ae", or "IV_3ae".
 
   + length is the length of output keying material (OKM) in bytes
 
