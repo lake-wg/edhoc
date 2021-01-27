@@ -3392,7 +3392,7 @@ Internet-Draft  Ephemeral Diffie-Hellman Over COSE (EDHO    January 2021
 
    P_3m (0 bytes)
 
-   The external_aad is the CBOR Sequence of CRED_I and TH_3, in this
+   The external_aad is the CBOR Sequence of TH_3 and CRED_I, in this
    order:
 
  A_3m (CBOR-encoded) (164 bytes)
@@ -4290,7 +4290,7 @@ Internet-Draft  Ephemeral Diffie-Hellman Over COSE (EDHO    January 2021
 
    P_3m (0 bytes)
 
-   The external_aad is the CBOR Sequence of CRED_I and TH_3, in this
+   The external_aad is the CBOR Sequence of TH_3 and CRED_I, in this
    order:
 
  A_3m (CBOR-encoded) (105 bytes)
