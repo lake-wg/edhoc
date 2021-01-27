@@ -633,7 +633,7 @@ int main( void ) {
     // Full output
     test_vectors( sig, sig, corr_12,   suite_0, x5t,     x5t,   false, false, false, false, true );
     test_vectors( sdh, sdh, corr_12,   suite_0, kid,     kid,   false, false, false, false, true );
-    test_vectors( psk, psk, corr_12,   suite_0, kid,     kid,   false, false, false, false, true );
+    //test_vectors( psk, psk, corr_12,   suite_0, kid,     kid,   false, false, false, false, true );
 
     // Mixed key types
     test_vectors( sig, sdh, corr_12,   suite_0, x5t,     kid,   false, false, false, false, true );
@@ -648,7 +648,7 @@ int main( void ) {
     // Cipher suite nr. 1 and non-compressed SUITES_I
     test_vectors( sig, sig, corr_12,   suite_1, x5t,     x5t,   false, false, false, false, true );
     test_vectors( sdh, sdh, corr_12,   suite_1, kid,     kid,   false, false, false, false, true );
-    test_vectors( psk, psk, corr_12,   suite_1, kid,     kid,   false, false, false, false, true );
+    //test_vectors( psk, psk, corr_12,   suite_1, kid,     kid,   false, false, false, false, true );
 
     // All other correlations
     test_vectors( sdh, sdh, corr_none, suite_0, kid,     kid,   false, false, false, false, true );
@@ -657,17 +657,17 @@ int main( void ) {
 
     // Auxileary data
     test_vectors( sdh, sdh, corr_12,   suite_0, kid,     kid,   true, false, false, false, true );
-    test_vectors( psk, psk, corr_12,   suite_0, kid,     kid,   true, false, false, false, true );
+    //test_vectors( psk, psk, corr_12,   suite_0, kid,     kid,   true, false, false, false, true );
 
     // Subject names
     test_vectors( sdh, sdh, corr_12,   suite_0, kid,     kid,   false, true, false, false, true );
 
     // Long non-compressed bstr_identifiers
     test_vectors( sdh, sdh, corr_12,   suite_0, kid,     kid,   false, false, false, true, true );
-    test_vectors( psk, psk, corr_12,   suite_0, kid,     kid,   false, false, false, true, true );
+    //test_vectors( psk, psk, corr_12,   suite_0, kid,     kid,   false, false, false, true, true );
 
     // Exporter
     test_vectors( sig, sig, corr_12,   suite_0, x5t,     x5t,   false, false, true, false, true );
     test_vectors( sdh, sdh, corr_12,   suite_0, kid,     kid,   false, false, true, false, true );
-    test_vectors( psk, psk, corr_12,   suite_0, kid,     kid,   false, false, true, false, true );
+    //test_vectors( psk, psk, corr_12,   suite_0, kid,     kid,   false, false, true, false, true );
 }
