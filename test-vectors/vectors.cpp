@@ -213,7 +213,7 @@ void test_vectors( EDHOCKeyType type_I, EDHOCKeyType type_R, EDHOCCorrelation co
     }
     if ( selected_suite == suite_1 ) {
         supported_suites = cbor( 1 ) + cbor( 0 ) + cbor( 2 ) + cbor( 3 );
-        SUITES_I = cbor_arr( 4 ) + cbor( selected_suite ) + cbor( 0 ) + cbor( 1 ) + cbor( 2 ); // One of several possible trucations of preferred suites
+        SUITES_I = cbor_arr( 3 ) + cbor( selected_suite ) + cbor( 0 ) + cbor( 2 ); // One of several possible trucations of preferred suites
         edhoc_aead_alg = AES_CCM_16_128_128;
         edhoc_hash_alg = SHA_256;
         edhoc_ecdh_curve = X25519;
