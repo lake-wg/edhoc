@@ -962,7 +962,11 @@ After verifying message_3, the Responder is assured that the Initiator has calcu
 
 This section defines a message format for the EDHOC error message. 
 
-An EDHOC error message can be sent by both parties as a reply to any non-error EDHOC message. Errors at the EDHOC layer are sent as normal successful messages in the lower layers (e.g. CoAP POST and 2.04 Changed). An advantage of using such a construction is to avoid issues created by usage of cross protocol proxies (e.g. UDP to TCP).
+An EDHOC error message can be sent by either endpoint as a reply to any non-error EDHOC message.
+
+How errors at the EDHOC layer are transported depends on lower layers, which need to enable error messages to be sent and processed as intended.
+EDHOC errors sent as normal successful messages (e.g. CoAP POST and 2.04 Changed) can avoid issues created by usage of cross protocol proxies (e.g. UDP to TCP).
+However, for the combined EDHOC-in-OSCORE case {{I-D.palombini-core-oscore-edhoc}}, an error message response following a combined EDHOC message_3/OSCORE request needs to be sent with a CoAP error code.
 
 All error messages in EDHOC are fatal. After sending an error message, the sender MUST discontinue the protocol. The receiver SHOULD treat an error message as an indication that the other party likely has discontinued the protocol. But as the error message is not authenticated, a received error messages might also have been sent by an attacker and the receiver MAY therefore try to continue the protocol. 
 
