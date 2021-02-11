@@ -470,7 +470,10 @@ Public key certificates can be identified in different ways. Header parameters f
    * ID_CRED_x = { TBD4 : uri }, for x = I or R,
 
 ID_CRED_x MAY contain the actual credential used for authentication, CRED_x.
-It is RECOMMENDED that they uniquely identify the public authentication key as the recipient may otherwise have to try several keys.
+For example, in case of a DER encoded X.509 certificate when CRED_x is a COSE_X509, i.e. the CBOR byte string where the bytes are the DER encoded certificate, then this may be the value of ID_CRED_x with COSE header parameter x5chain (see Section 2 of {{I-D.ietf-cose-x509}}).
+This is typically how certificates are transported within EDHOC.
+
+It is RECOMMENDED that ID_CRED_x uniquely identify the public authentication key as the recipient may otherwise have to try several keys.
 ID_CRED_I and ID_CRED_R are transported in the 'ciphertext', see {{m3}} and {{m2}}.
 
 When ID_CRED_x does not contain the actual credential it may be very short.
