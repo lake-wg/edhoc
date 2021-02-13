@@ -656,7 +656,7 @@ To provide forward secrecy in an even more efficient way than re-running EDHOC, 
 
 ~~~~~~~~~~~
    EDHOC-KeyUpdate( nonce ):
-      PRK_4x3m = Extract( [ "TH_4", nonce ], PRK_4x3m )
+      PRK_4x3m = Extract( [ nonce, PRK_4x3m )
 ~~~~~~~~~~~
 
 # Message Formatting and Processing {#asym}
