@@ -652,10 +652,10 @@ where label is a tstr defined by the application and length is a uint defined by
 
 where H() is the hash function in the selected cipher suite. Example use of the EDHOC-Exporter is given in Sections {{oscore}}{: format="counter"}.
 
-To provide forward secrecy in an even more efficient way than re-running EDHOC, EDHOC provides the function EDHOC-Rekey-FS. When EHDOC-Rekey-FS is called the old PRK_4x3m is deleted and the new PRk_4x3m is calculated as a "hash" of the old key using the Extract function as illustrated by the following pseudocode:
+To provide forward secrecy in an even more efficient way than re-running EDHOC, EDHOC provides the function EDHOC-Key-Update. When EDHOC-Key-Update is called the old PRK_4x3m is deleted and the new PRk_4x3m is calculated as a "hash" of the old key using the Extract function as illustrated by the following pseudocode:
 
 ~~~~~~~~~~~
-   EHDOC-Rekey-FS( nonce ):
+   EDHOC-Key-Update( nonce ):
       PRK_4x3m = Extract( [ "TH_4", nonce ], PRK_4x3m )
 ~~~~~~~~~~~
 
