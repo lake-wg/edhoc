@@ -993,13 +993,13 @@ Error messages without SUITES_R MUST contain a human-readable diagnostic message
 
 ### Example Use of EDHOC Error Message with SUITES_R
 
-Assuming that the Initiator supports the five cipher suites 5, 6, 7, 8, and 9 in decreasing order of preference, Figures {{fig-error1}}{: format="counter"} and {{fig-error2}}{: format="counter"} show examples of how the Initiator can truncate SUITES_I and how SUITES_R is used by the Responder to give the Initiator information about the cipher suites that the Responder supports.
+Assume that the Initiator supports the five cipher suites 5, 6, 7, 8, and 9 in decreasing order of preference. Figures {{fig-error1}}{: format="counter"} and {{fig-error2}}{: format="counter"} show examples of how the Initiator can truncate SUITES_I and how SUITES_R is used by Responders to give the Initiator information about the cipher suites that the Responder supports.
 
-In {{fig-error1}}, the Responder supports cipher suite 6 but not the initially selected cipher suite 5.
+In the first example ({{fig-error1}}), the Responder supports cipher suite 6 but not the initially selected cipher suite 5.
 
 ~~~~~~~~~~~
 Initiator                                                   Responder
-|            METHOD_CORR, SUITES_I = 5, G_X, C_I, AD_1             |
+|            METHOD_CORR, SUITES_I = 5, G_X, C_I, AD_1              |
 +------------------------------------------------------------------>|
 |                             message_1                             |
 |                                                                   |
@@ -1011,27 +1011,28 @@ Initiator                                                   Responder
 +------------------------------------------------------------------>|
 |                             message_1                             |
 ~~~~~~~~~~~
-{: #fig-error1 title="Example use of error message with SUITES_R."}
+{: #fig-error1 title="Example of Responder supporting suite 6 but not suite 5."}
 {: artwork-align="center"}
 
-In {{fig-error2}}, the Responder supports cipher suite 7 and 9 but not the more preferred (by the Initiator) cipher suites 5 and 6. The order of cipher suites in SUITES_R does not matter.
+In the second example ({{fig-error2}}), the Responder supports cipher suites 8 and 9 but not the more preferred (by the Initiator) cipher suites 5, 6 or 7. To illustrate the negotiation mechanics we let the Initiator makes a guess that the Responder supports suite 6 but not suite 5. Since the Responder supports neither 5 nor 6, it responds with an error and SUITES_R, after which the Initiator can select a better suite. The order of cipher suites in SUITES_R does not matter. (If the Responder had supported suite 5, it would include it in SUITES_R of the response, and it would in that case be the selected suite in the second message_1.) 
 
 ~~~~~~~~~~~
 Initiator                                                   Responder
-|            METHOD_CORR, SUITES_I = 5, G_X, C_I, AD_1              |
+|        METHOD_CORR, SUITES_I = [6, 5, 6], G_X, C_I, AD_1          |
 +------------------------------------------------------------------>|
 |                             message_1                             |
 |                                                                   |
-|                  C_I, DIAG_MSG, SUITES_R = [9, 7]                 |
+|                  C_I, DIAG_MSG, SUITES_R = [9, 8]                 |
 |<------------------------------------------------------------------+
 |                               error                               |
 |                                                                   |
-|        METHOD_CORR, SUITES_I = [7, 5, 6, 7], G_X, C_I, AD_1       |
+|       METHOD_CORR, SUITES_I = [8, 5, 6, 7, 8], G_X, C_I, AD_1     |
 +------------------------------------------------------------------>|
 |                             message_1                             |
 ~~~~~~~~~~~
-{: #fig-error2 title="Example use of error message with SUITES_R."}
+{: #fig-error2 title="Example of Responder supporting suites 8 and 9 but not 5, 6 or 7."}
 {: artwork-align="center"}
+
 
 Note that the Initiator's list of supported cipher suites and order of preference is fixed (see {{asym-msg1-form}} and {{init-proc-msg1}}). Furthermore, the Responder shall only accept message_1 if the selected cipher suite is the first cipher suite in SUITES_I that the Responder supports (see {{resp-proc-msg1}}). Following this procedure ensures that the selected cipher suite is the most preferred (by the Initiator) cipher suite supported by both parties.
 
