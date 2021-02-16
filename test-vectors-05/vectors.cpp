@@ -200,8 +200,9 @@ void test_vectors( EDHOCKeyType type_I, EDHOCKeyType type_R, EDHOCCorrelation co
     vec SUITES_I, supported_suites;
     int edhoc_aead_alg, edhoc_hash_alg, edhoc_ecdh_curve, edhoc_sign_alg, edhoc_sign_curve, oscore_aead_alg, oscore_hash_alg;
     if ( selected_suite == suite_0 ) {
-        supported_suites = cbor( 0 ) + cbor( 1 ) + cbor( 2 ) + cbor( 3 );
-        SUITES_I = cbor_arr( 3 ) + cbor( selected_suite ) + cbor( 1 ) + cbor( 2 ); // One of several possible trucations of preferred suites
+        supported_suites = cbor( 0 ); // + cbor( 1 ) + cbor( 2 ) + cbor( 3 );
+//        SUITES_I = cbor_arr( 3 ) + cbor( selected_suite ) + cbor( 1 ) + cbor( 2 ); // One of several possible trucations of preferred suites
+        SUITES_I = cbor_arr( 1 ) + cbor( 0 ) + cbor( 0 );
         edhoc_aead_alg = AES_CCM_16_64_128;
         edhoc_hash_alg = SHA_256;
         edhoc_ecdh_curve = X25519;
@@ -211,8 +212,9 @@ void test_vectors( EDHOCKeyType type_I, EDHOCKeyType type_R, EDHOCCorrelation co
         oscore_hash_alg = SHA_256;
     }
     if ( selected_suite == suite_1 ) {
-        supported_suites = cbor( 1 ) + cbor( 0 ) + cbor( 2 ) + cbor( 3 );
-        SUITES_I = cbor_arr( 3 ) + cbor( selected_suite ) + cbor( 0 ) + cbor( 2 ); // One of several possible trucations of preferred suites
+        supported_suites = cbor( 1 ); // + cbor( 0 ) + cbor( 2 ) + cbor( 3 );
+//        SUITES_I = cbor_arr( 3 ) + cbor( selected_suite ) + cbor( 0 ) + cbor( 2 ); // One of several possible trucations of preferred suites
+        SUITES_I = cbor_arr( 1 ) + cbor( 1 ) + cbor( 1 );
         edhoc_aead_alg = AES_CCM_16_128_128;
         edhoc_hash_alg = SHA_256;
         edhoc_ecdh_curve = X25519;
@@ -286,11 +288,8 @@ void test_vectors( EDHOCKeyType type_I, EDHOCKeyType type_R, EDHOCCorrelation co
         if ( long_id == true )
             return random_vector( 2 + rand() % 2 );
         else {
-            int i = rand() % 49;
-            if ( i == 48 )
-                return vec{};
-            else
-                return vec{ (uint8_t) i };
+            int i = rand() % 48;
+            return vec{ (uint8_t) i };
         }
     };
 
@@ -336,7 +335,7 @@ void test_vectors( EDHOCKeyType type_I, EDHOCKeyType type_R, EDHOCCorrelation co
         AD_3 = random_vector( 10 + rand() % 10 );
     }
  
-    vec message_1 = cbor( METHOD_CORR ) + compress_suites( SUITES_I ) + cbor( G_X ) + cbor_id( C_I ) + cbor_AD( AD_1 );
+    vec message_1 = cbor( vec{} ) + cbor( METHOD_CORR ) + compress_suites( SUITES_I ) + cbor( G_X ) + cbor_id( C_I ) + cbor_AD( AD_1 );
 
     // Helper funtions using local variables ////////////////////////////////////////////////////////////////////////////
 
