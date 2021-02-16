@@ -1014,7 +1014,7 @@ Initiator                                                   Responder
 {: #fig-error1 title="Example of Responder supporting suite 6 but not suite 5."}
 {: artwork-align="center"}
 
-In the second example ({{fig-error2}}), the Responder supports cipher suites 8 and 9 but not the more preferred (by the Initiator) cipher suites 5, 6 or 7. To illustrate the negotiation mechanics we let the Initiator makes a guess that the Responder supports suite 6 but not suite 5. Since the Responder supports neither 5 nor 6, it responds with an error and SUITES_R, after which the Initiator can select a better suite. The order of cipher suites in SUITES_R does not matter. (If the Responder had supported suite 5, it would include it in SUITES_R of the response, and it would in that case be the selected suite in the second message_1.) 
+In the second example ({{fig-error2}}), the Responder supports cipher suites 8 and 9 but not the more preferred (by the Initiator) cipher suites 5, 6 or 7. To illustrate the negotiation mechanics we let the Initiator make a guess that the Responder supports suite 6 but not suite 5. Since the Responder supports neither 5 nor 6, it responds with an error and SUITES_R, after which the Initiator can select a better suite. The order of cipher suites in SUITES_R does not matter. (If the Responder had supported suite 5, it would include it in SUITES_R of the response, and it would in that case be the selected suite in the second message_1.) 
 
 ~~~~~~~~~~~
 Initiator                                                   Responder
