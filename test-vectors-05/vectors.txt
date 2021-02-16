@@ -1,3 +1,6 @@
+These Test vectors are generated for version -05 of the draft.
+
+Note that any X.509 certificates are just random strings for now.
 
 ---------------------------------------------------------------
 Test Vectors for EHDOC
