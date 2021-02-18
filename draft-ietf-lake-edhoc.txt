@@ -1756,7 +1756,8 @@ Internet-Draft  Ephemeral Diffie-Hellman Over COSE (EDHO   February 2021
 
    This section specifies message_4 which is OPTIONAL to support.  Key
    confirmation is normally provided by sending an application message
-   from the Responder to the Initiator, e.g., using OSCORE.  In
+   from the Responder to the Initiator protected with a key derived with
+   the EDHOC-Exporter, e.g., using OSCORE (see Section 7.2.1).  In
    deployments where no protected application message is sent from the
    Responder to the Initiator, the Responder MUST send message_4.  Two
    examples of such deployments:
@@ -1766,6 +1767,8 @@ Internet-Draft  Ephemeral Diffie-Hellman Over COSE (EDHO   February 2021
 
    2.  When application data is only sent from the Initiator to the
        Responder.
+
+   Further considerations are provided in Appendix C.
 
 7.1.1.  Formatting of Message 4
 
@@ -1781,9 +1784,6 @@ Internet-Draft  Ephemeral Diffie-Hellman Over COSE (EDHO   February 2021
      ? C_I : bstr_identifier,
    )
 
-7.1.2.  Responder Processing of Message 4
-
-   The Responder SHALL compose message_4 as follows:
 
 
 
@@ -1793,6 +1793,10 @@ Selander, et al.         Expires 22 August 2021                [Page 32]
 
 Internet-Draft  Ephemeral Diffie-Hellman Over COSE (EDHO   February 2021
 
+
+7.1.2.  Responder Processing of Message 4
+
+   The Responder SHALL compose message_4 as follows:
 
    *  If corr (METHOD_CORR mod 4) equals 1 or 3, C_I is omitted,
       otherwise C_I is not omitted.
@@ -1838,10 +1842,6 @@ Internet-Draft  Ephemeral Diffie-Hellman Over COSE (EDHO   February 2021
       EDHOC AEAD algorithm in the selected cipher suite, and the
       parameters defined in Section 7.1.2.
 
-   If any verification step fails the Initiator MUST send an EDHOC error
-   message back, formatted as defined in Section 6, and the protocol
-   MUST be discontinued.
-
 
 
 
@@ -1849,6 +1849,10 @@ Selander, et al.         Expires 22 August 2021                [Page 33]
 
 Internet-Draft  Ephemeral Diffie-Hellman Over COSE (EDHO   February 2021
 
+
+   If any verification step fails the Initiator MUST send an EDHOC error
+   message back, formatted as defined in Section 6, and the protocol
+   MUST be discontinued.
 
 7.2.  Transferring EDHOC in CoAP
 
@@ -1882,10 +1886,6 @@ Internet-Draft  Ephemeral Diffie-Hellman Over COSE (EDHO   February 2021
    Figure 7.  In this case the CoAP Token enables the Initiator to
    correlate message_1 and message_2 so the correlation parameter corr =
    1.
-
-
-
-
 
 
 
