@@ -127,8 +127,8 @@ Internet-Draft  Ephemeral Diffie-Hellman Over COSE (EDHO   February 2021
            Diffie-Hellman Keys . . . . . . . . . . . . . . . . . . .  69
    Appendix C.  Applicability Statement Template . . . . . . . . . .  83
      C.1.  Use of EDHOC in the XX Protocol . . . . . . . . . . . . .  84
-   Acknowledgments . . . . . . . . . . . . . . . . . . . . . . . . .  85
-   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  85
+   Acknowledgments . . . . . . . . . . . . . . . . . . . . . . . . .  86
+   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  86
 
 1.  Introduction
 
@@ -4650,16 +4650,21 @@ Selander, et al.         Expires 22 August 2021                [Page 83]
 Internet-Draft  Ephemeral Diffie-Hellman Over COSE (EDHO   February 2021
 
 
-   2.  Type of authentication credentials (CRED_I, CRED_R, see
+   2.  How EDHOC messages are transported and how the peer detects that
+       an EDHOC message is received, e.g.  URI, media type.
+
+   3.  Type of authentication credentials (CRED_I, CRED_R, see
        Section 3.3.4).
 
-   3.  Type for identifying authentication credentials (ID_CRED_I,
+   4.  Type for identifying authentication credentials (ID_CRED_I,
        ID_CRED_R, see Section 3.3.4).
 
-   4.  Type and use of Auxiliary Data AD_1, AD_2, AD_3 (see
+   5.  Type and use of Auxiliary Data AD_1, AD_2, AD_3 (see
        Section 3.6).
 
-   5.  Identifier used as identity of endpoint (see Section 3.3).
+   6.  Identifier used as identity of endpoint (see Section 3.3).
+
+   7.  If message_4 shall be sent/expected.
 
    An example of an applicability statement is shown in the next
    section.
@@ -4681,22 +4686,17 @@ Internet-Draft  Ephemeral Diffie-Hellman Over COSE (EDHO   February 2021
    and HTTP may be used along the path and still allow correlation
    between message_1 and message_2.
 
+   EDHOC enables policy decisions to be based on the identity of the
+   peer.  If other information must to be conveyed, such as target
+   application or use (e.g. if there is more than one and they have
+   different policies) this may be signalled for example in URI or
+   Auxiliary Data and need to be specified in the applicability
+   statement.
+
 C.1.  Use of EDHOC in the XX Protocol
 
    For use of EDHOC in the XX protocol, the following assumptions are
    made on the parameters.
-
-   *  METHOD_CORR = 5
-
-      -  method = 1 (I uses signature key, R uses static DH key.)
-
-      -  corr = 1 (CoAP Token or other transport data enables
-         correlation between message_1 and message_2.)
-
-   *  CRED_I is an 802.1AR IDevID encoded as a CBOR Certificate of type
-      0 [I-D.mattsson-cose-cbor-cert-compress].
-
-      -  R acquires CRED_I out-of-band, indicated in AD_1
 
 
 
@@ -4705,6 +4705,21 @@ Selander, et al.         Expires 22 August 2021                [Page 84]
 
 Internet-Draft  Ephemeral Diffie-Hellman Over COSE (EDHO   February 2021
 
+
+   *  METHOD_CORR = 5
+
+      -  method = 1 (I uses signature key, R uses static DH key.)
+
+      -  corr = 1 (CoAP Token or other transport data enables
+         correlation between message_1 and message_2.)
+
+   *  EDHOC requests are expected by the server at /app1-edh, no
+      Content-Format needed.
+
+   *  CRED_I is an 802.1AR IDevID encoded as a CBOR Certificate of type
+      0 [I-D.mattsson-cose-cbor-cert-compress].
+
+      -  R acquires CRED_I out-of-band, indicated in AD_1
 
       -  ID_CRED_I = {4: h''} is a kid with value empty byte string
 
@@ -4719,10 +4734,33 @@ Internet-Draft  Ephemeral Diffie-Hellman Over COSE (EDHO   February 2021
 
    *  AD_2 contains Auxiliary Data of type B (TBD)
 
-   Auxiliary Data is processed as specified in
-   [I-D.ietf-ace-oauth-authz].
+   *  No use of message_4 - the application is built on protected
+      messages being sent to I.
+
+   *  Auxiliary Data is processed as specified in
+      [I-D.ietf-ace-oauth-authz].
 
    *  Need to specify use of C_I/C_R ? (TBD)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Selander, et al.         Expires 22 August 2021                [Page 85]
+
+Internet-Draft  Ephemeral Diffie-Hellman Over COSE (EDHO   February 2021
+
 
 Acknowledgments
 
@@ -4755,48 +4793,10 @@ Authors' Addresses
    Email: john.mattsson@ericsson.com
 
 
-
-
-Selander, et al.         Expires 22 August 2021                [Page 85]
-
-Internet-Draft  Ephemeral Diffie-Hellman Over COSE (EDHO   February 2021
-
-
    Francesca Palombini
    Ericsson AB
 
    Email: francesca.palombini@ericsson.com
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
