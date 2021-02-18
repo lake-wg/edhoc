@@ -3198,27 +3198,26 @@ OSCORE Hash Algorithm (int)
 
 # Applicability Statement Template {#applicability}
 
-EDHOC requires certain parameters to be agreed upon between Initiator and Responder. A cipher suite is negotiated with the protocol, but certain other parameters need to be agreed beforehand:
+EDHOC requires certain parameters to be agreed upon between Initiator and Responder. EDHOC supports cipher suite negotiation, but certain other parameters need to be agreed beforehand:
 
-1. Method and correlation of underlying transport messages (METHOD_CORR, see {{method}} and {{corr}}).
-2. How EDHOC messages are transported and how the peer detects that an EDHOC message is received, e.g. URI, media type.
-3. Type of authentication credentials (CRED_I, CRED_R, see {{id_cred}}).
-4. Type for identifying authentication credentials (ID_CRED_I, ID_CRED_R, see {{id_cred}}).
-5. Type and use of Auxiliary Data AD_1, AD_2, AD_3 (see {{AD}}).
+1. Method and correlation of underlying transport messages (METHOD_CORR; see {{method}} and {{corr}}).
+2. How EDHOC messages are transported and how the peer detects that an EDHOC message is received, e.g. URI, media type (for an example using CoAP, see {{oscore}}).
+3. Type of authentication credentials (CRED_I, CRED_R; see {{id_cred}}).
+4. Type for identifying authentication credentials (ID_CRED_I, ID_CRED_R; see {{id_cred}}).
+5. Type and use of Auxiliary Data (AD_1, AD_2, AD_3; see {{AD}}).
 6. Identifier used as identity of endpoint (see {{auth-key-id}}).
-7. If message_4 shall be sent/expected.
-
+7. If message_4 shall be sent/expected (see {{m4}}).
 
 
 An example of an applicability statement is shown in the next section.
 
-Note that for some of the parameters, like METHOD_CORR, ID_CRED_x, type of AD_x, the receiver is able to assert whether it supports the parameter or not and thus, if it fails, to infer why. 
+Note that for some of the parameters, like METHOD_CORR, ID_CRED_x, type of AD_x, the receiver is able to assert whether it supports the received parameter or not and thus, if the protocol fails because of this, to infer the reason why the protocol failed. 
 
-For other parameters, like type of authentication credential, it may be more difficult to detect if the receiver got the wrong type since the credential is not necessarily transported, and a failed integrity of the received message may be caused by other circumstances. For example in the case of public key certificates there is a large variety of profiles and alternative encodings, which the applicability statement needs to nail down.
+For other parameters, like authentication credential which is not transported, it may be difficult to detect if integrity failed because of wrong credential or for some other reason. For example, in the case of public key certificates where there is a large variety of profiles and alternative encodings, unless the certificate (chain) is transported, the endpoints need to agree on the precise format.
 
 Note also that it is not always necessary for the endpoints to agree on the transport for the EDHOC messages. For example, a mix of CoAP and HTTP may be used along the path and still allow correlation between message_1 and message_2.
 
-EDHOC enables policy decisions to be based on the identity of the peer. If other information must to be conveyed, such as target application or use (e.g. if there is more than one and they have different policies) this may be signalled for example in URI or Auxiliary Data and need to be specified in the applicability statement.
+EDHOC enables policy decisions based on the identity of the peer. If other information must to be conveyed, such as target application or use (e.g. if there is more than one application/use with different policies) then this may be signalled for example in URI or Auxiliary Data and could to be specified in the applicability statement.
 
 
 ## Use of EDHOC in the XX Protocol
@@ -3242,7 +3241,7 @@ For use of EDHOC in the XX protocol, the following assumptions are made on the p
 * AD_1 contains Auxiliary Data of type A (TBD)
 * AD_2 contains Auxiliary Data of type B (TBD)
 
-* No use of message_4 - the application is built on protected messages being sent to I.
+* No use of message_4 - the application is sends protected messages from R to I.
 
 * Auxiliary Data is processed as specified in {{I-D.ietf-ace-oauth-authz}}.
 
