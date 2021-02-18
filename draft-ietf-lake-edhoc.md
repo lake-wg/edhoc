@@ -3201,10 +3201,14 @@ OSCORE Hash Algorithm (int)
 EDHOC requires certain parameters to be agreed upon between Initiator and Responder. A cipher suite is negotiated with the protocol, but certain other parameters need to be agreed beforehand:
 
 1. Method and correlation of underlying transport messages (METHOD_CORR, see {{method}} and {{corr}}).
+2. How EDHOC messages are transported and how the peer detects that an EDHOC message is received, e.g. URI, media type.
 3. Type of authentication credentials (CRED_I, CRED_R, see {{id_cred}}).
 4. Type for identifying authentication credentials (ID_CRED_I, ID_CRED_R, see {{id_cred}}).
-6. Type and use of Auxiliary Data AD_1, AD_2, AD_3 (see {{AD}}).
-7. Identifier used as identity of endpoint (see {{auth-key-id}}).
+5. Type and use of Auxiliary Data AD_1, AD_2, AD_3 (see {{AD}}).
+6. Identifier used as identity of endpoint (see {{auth-key-id}}).
+7. If message_4 shall be sent/expected.
+
+
 
 An example of an applicability statement is shown in the next section.
 
@@ -3214,6 +3218,8 @@ For other parameters, like type of authentication credential, it may be more dif
 
 Note also that it is not always necessary for the endpoints to agree on the transport for the EDHOC messages. For example, a mix of CoAP and HTTP may be used along the path and still allow correlation between message_1 and message_2.
 
+EDHOC enables policy decisions to be based on the identity of the peer. If other information must to be conveyed, such as target application or use (e.g. if there is more than one and they have different policies) this may be signalled for example in URI or Auxiliary Data and need to be specified in the applicability statement.
+
 
 ## Use of EDHOC in the XX Protocol
 
@@ -3222,6 +3228,8 @@ For use of EDHOC in the XX protocol, the following assumptions are made on the p
 * METHOD_CORR = 5
    * method = 1 (I uses signature key, R uses static DH key.)
    * corr = 1 (CoAP Token or other transport data enables correlation between message_1 and message_2.)
+
+* EDHOC requests are expected by the server at /app1-edh, no Content-Format needed.
 
 * CRED_I is an 802.1AR IDevID encoded as a CBOR Certificate of type 0 {{I-D.mattsson-cose-cbor-cert-compress}}.
     * R acquires CRED_I out-of-band, indicated in AD_1
@@ -3234,7 +3242,9 @@ For use of EDHOC in the XX protocol, the following assumptions are made on the p
 * AD_1 contains Auxiliary Data of type A (TBD)
 * AD_2 contains Auxiliary Data of type B (TBD)
 
-Auxiliary Data is processed as specified in {{I-D.ietf-ace-oauth-authz}}.
+* No use of message_4 - the application is built on protected messages being sent to I.
+
+* Auxiliary Data is processed as specified in {{I-D.ietf-ace-oauth-authz}}.
 
 * Need to specify use of C\_I/C\_R ? (TBD)
 
