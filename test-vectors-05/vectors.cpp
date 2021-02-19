@@ -433,8 +433,7 @@ void test_vectors( EDHOCKeyType type_I, EDHOCKeyType type_R, EDHOCCorrelation co
         signature_or_MAC_3 = sign( SK_I, M_3 );
 
     // Calculate CIPHERTEXT_3
-    vec P_3ae;
-    P_3ae = P_3ae + cbor_AD( AD_3 );
+    vec P_3ae = compress_id_cred( ID_CRED_I ) + cbor( signature_or_MAC_3 )+ cbor_AD( AD_3 );
     vec A_3ae = A( cbor( vec{} ), cbor( TH_3 ) );
     auto [ info_K_3ae,   K_3ae ] = KDF( PRK_3e2m, TH_3,  "K_3ae", 16 );
     auto [ info_IV_3ae, IV_3ae ] = KDF( PRK_3e2m, TH_3, "IV_3ae", 13 );
