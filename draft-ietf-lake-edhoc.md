@@ -3196,7 +3196,7 @@ OSCORE Hash Algorithm (int)
 -16
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-# Applicability Statement Template {#applicability}
+# Applicability Statement {#applicability}
 
 EDHOC requires certain parameters to be agreed upon between Initiator and Responder. EDHOC supports cipher suite negotiation, but certain other parameters need to be agreed beforehand:
 
@@ -3206,7 +3206,7 @@ EDHOC requires certain parameters to be agreed upon between Initiator and Respon
 4. Type for identifying authentication credentials (ID_CRED_I, ID_CRED_R; see {{id_cred}}).
 5. Type and use of Auxiliary Data (AD_1, AD_2, AD_3; see {{AD}}).
 6. Identifier used as identity of endpoint (see {{auth-key-id}}).
-7. If message_4 shall be sent/expected (see {{m4}}).
+7. If message_4 shall be sent/expected, and if not, how to ensure protected application message is sent from the Responder to the Initiator (see {{m4}}).
 
 
 An example of an applicability statement is shown in the next section.
@@ -3220,9 +3220,9 @@ Note also that it is not always necessary for the endpoints to agree on the tran
 EDHOC enables policy decisions based on the identity of the peer. If other information must to be conveyed, such as target application or use (e.g. if there is more than one application/use with different policies) then this may be signalled for example in URI or Auxiliary Data and could to be specified in the applicability statement.
 
 
-## Use of EDHOC in the XX Protocol
+## Template: Use of EDHOC in the XX Protocol
 
-For use of EDHOC in the XX protocol, the following assumptions are made on the parameters.
+For use of EDHOC in the XX protocol, the following assumptions are made on the parameters.  
 
 * METHOD_CORR = 5
    * method = 1 (I uses signature key, R uses static DH key.)
@@ -3241,9 +3241,9 @@ For use of EDHOC in the XX protocol, the following assumptions are made on the p
 * AD_1 contains Auxiliary Data of type A (TBD)
 * AD_2 contains Auxiliary Data of type B (TBD)
 
-* No use of message_4 - the application is sends protected messages from R to I.
+* No use of message_4: the application sends protected messages from R to I.
 
-* Auxiliary Data is processed as specified in {{I-D.ietf-ace-oauth-authz}}.
+* Auxiliary Data is processed as specified in {{I-D.selander-ace-ake-authz}}.
 
 * Need to specify use of C\_I/C\_R ? (TBD)
 
