@@ -397,11 +397,6 @@ void test_vectors( EDHOCKeyType type_I, EDHOCKeyType type_R, EDHOCCorrelation co
     vec P_2e = compress_id_cred( ID_CRED_R ) + cbor( signature_or_MAC_2 ) + cbor_AD( AD_2 );
     auto [ info_KEYSTREAM_2, KEYSTREAM_2 ] = KDF( PRK_2e, TH_2, "KEYSTREAM_2", P_2e.size() );
 
-    vec P_2ae = cbor_AD( AD_2 );
-    vec A_2ae = A( cbor( vec{} ), cbor( TH_2 ) );
-    auto [ info_K_2ae,   K_2ae ] = KDF( PRK_2e, TH_2,  "K_2ae", 16 );
-    auto [ info_IV_2ae, IV_2ae ] = KDF( PRK_2e, TH_2, "IV_2ae", 13 );
-
     vec CIPHERTEXT_2 = xor_encryption( KEYSTREAM_2, P_2e );
 
     // Calculate message_2
@@ -433,7 +428,7 @@ void test_vectors( EDHOCKeyType type_I, EDHOCKeyType type_R, EDHOCCorrelation co
         signature_or_MAC_3 = sign( SK_I, M_3 );
 
     // Calculate CIPHERTEXT_3
-    vec P_3ae = compress_id_cred( ID_CRED_I ) + cbor( signature_or_MAC_3 )+ cbor_AD( AD_3 );
+    vec P_3ae = compress_id_cred( ID_CRED_I ) + cbor( signature_or_MAC_3 ) + cbor_AD( AD_3 );
     vec A_3ae = A( cbor( vec{} ), cbor( TH_3 ) );
     auto [ info_K_3ae,   K_3ae ] = KDF( PRK_3e2m, TH_3,  "K_3ae", 16 );
     auto [ info_IV_3ae, IV_3ae ] = KDF( PRK_3e2m, TH_3, "IV_3ae", 13 );
@@ -458,7 +453,7 @@ void test_vectors( EDHOCKeyType type_I, EDHOCKeyType type_R, EDHOCCorrelation co
     // KeyUpdate funtion
     vec nonce = random_vector( 16 );
     vec PRK_4x3m_new = hkdf_extract( nonce, PRK_4x3m );
-    auto Export2 = [=] ( string label, int length ) { return KDF( PRK_4x3m, TH_4, label, length ); };
+    auto Export2 = [=] ( string label, int length ) { return KDF( PRK_4x3m_new, TH_4, label, length ); };
     auto [ info_OSCORE_secretFS, OSCORE_secretFS ] = Export2( "OSCORE Master Secret", 16 );
     auto [ info_OSCORE_saltFS,   OSCORE_saltFS ]   = Export2( "OSCORE Master Salt",    8 );
 
