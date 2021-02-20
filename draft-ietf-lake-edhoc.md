@@ -2400,7 +2400,9 @@ OSCORE Hash Algorithm (int)
 
 ## Test Vectors for EDHOC Authenticated with Static Diffie-Hellman Keys
 
-EDHOC with static Diffie-Hellman keys is used. 
+<!-- Test vector index (int) 34900 -->
+
+EDHOC with static Diffie-Hellman keys and raw public keys is used. In this test vector, a key identifier is used to identify the raw public key.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 method (Static DH Based Authentication)
