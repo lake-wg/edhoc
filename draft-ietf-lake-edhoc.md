@@ -1499,6 +1499,8 @@ Cipher suite 0 is supported by both the Initiator and the Responder, see {{ciphe
 
 ### Message_1
 
+The Initiator generates its ephemeral key pair.
+
 ~~~~~~~~~~~~~~~~~~~~~~~
 X (Initiator's ephemeral private key) (32 bytes)
 8f 78 1a 09 53 72 f8 5b 6d 9f 61 09 ae 42 26 11 73 4d 7d bf a0 06 9a 2d 
@@ -2425,11 +2427,11 @@ METHOD_CORR (4 * method + corr) (int)
 
 No unprotected opaque auxiliary data is sent in the message exchanges.
 
-The list of supported cipher suites of the Initiator in order of preference is the following:
+There is only one supported cipher suite indicated by the Initiator.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
-Supported Cipher Suites (4 bytes)
-00 01 02 03
+Supported Cipher Suites (1 byte)
+00
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 The cipher suite selected by the Initiator is the most preferred:
@@ -2442,6 +2444,8 @@ Selected Cipher Suite (int)
 Cipher suite 0 is supported by both the Initiator and the Responder, see {{cipher-suites}}.
 
 ### Message_1 {#dh-ss-m1}
+
+The Initiator generates its ephemeral key pair.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 X (Initiator's ephemeral private key) (32 bytes)
@@ -2489,6 +2493,7 @@ With SUITES_I = 0, message_1 is constructed, as the CBOR Sequence of the CBOR da
 ~~~~~~~~~~~~~~~~~~~~~~~
 message_1 =
 (
+  h'',
   13,
   0,
   h'8D3EF56D1B750A4351D68AC250A0E883790EFC80A538A444EE9E2B57E2441A7C',
@@ -2497,14 +2502,16 @@ message_1 =
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 ~~~~~~~~~~~~~~~~~~~~~~~
-message_1 (CBOR Sequence) (37 bytes)
-0d 00 58 20 8d 3e f5 6d 1b 75 0a 43 51 d6 8a c2 50 a0 e8 83 79 0e fc 80 
-a5 38 a4 44 ee 9e 2b 57 e2 44 1a 7c 21 
+message_1 (CBOR Sequence) (38 bytes)
+40 0d 00 58 20 8d 3e f5 6d 1b 75 0a 43 51 d6 8a c2 50 a0 e8 83 79 0e fc 
+80 a5 38 a4 44 ee 9e 2b 57 e2 44 1a 7c 21 
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 ### Message_2 {#dh-ss-m2}
 
 Since METHOD_CORR mod 4 equals 1, C_I is omitted from data_2.
+
+The Responder generates the following ephemeral key pair.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 Y (Responder's ephemeral private key) (32 bytes)
@@ -2546,7 +2553,8 @@ PRK_2e (32 bytes)
 71 fa 13 4e 0d c5 a0 4d 
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-Since the Responder authenticates with a static Diffie-Hellman key, PRK_3e2m = HKDF-Extract( PRK_2e, G_RX ), where G_RX is the ECDH shared secret calculated from G_R and X, or G_X and R.
+The Responder's static Diffie-Hellman key pair is the following:
+
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 R (Responder's private authentication key) (32 bytes)
@@ -2559,6 +2567,8 @@ G_R (Responder's public authentication key) (32 bytes)
 a3 ff 26 35 95 be b3 77 d1 a0 ce 1d 04 da d2 d4 09 66 ac 6b cb 62 20 51 
 b8 46 59 18 4d 5d 9a 32
 ~~~~~~~~~~~~~~~~~~~~~~~
+
+Since the Responder authenticates with a static Diffie-Hellman key, PRK_3e2m = HKDF-Extract( PRK_2e, G_RX ), where G_RX is the ECDH shared secret calculated from G_R and X, or G_X and R.
 
 From the Responder's authentication key and the Initiator's ephemeral key (see {{dh-ss-m1}}), the ECDH shared secret G_RX is calculated.
 
@@ -2578,14 +2588,14 @@ The Responder chooses a connection identifier C_R.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 Connection identifier chosen by Responder (1 byte)
-20
+00
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-Note that since C_R is a byte strings of length one, it is encoded as the corresponding integer - 24 (see bstr_identifier in {{bstr_id}}), i.e. 0x20 = 32, 32 - 24 = 8, and 8 in CBOR encoding is equal to 0x08.
+Note that since C_R is a byte strings of length one, it is encoded as the corresponding integer - 24 (see bstr_identifier in {{bstr_id}}), i.e. 0x00 = 0, 0 - 24 = -24, and -24 in CBOR encoding is equal to 0x37.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 C_R (1 byte)
-08
+37
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 Data_2 is constructed, as the CBOR Sequence of G_Y and C_R.
@@ -2594,31 +2604,32 @@ Data_2 is constructed, as the CBOR Sequence of G_Y and C_R.
 data_2 =
 (
   h'52FBA0BDC8D953DD86CE1AB2FD7C05A4658C7C30AFDBFC3301047069451BAF35',
-  08
+  37
 )
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 data_2 (CBOR Sequence) (35 bytes)
 58 20 52 fb a0 bd c8 d9 53 dd 86 ce 1a b2 fd 7c 05 a4 65 8c 7c 30 af db 
-fc 33 01 04 70 69 45 1b af 35 08 
+fc 33 01 04 70 69 45 1b af 35 37 
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 From data_2 and message_1, compute the input to the transcript hash TH_2 = H( message_1, data_2 ), as a CBOR Sequence of these 2 data items.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
-Input to calculate TH_2 (CBOR Sequence) (72 bytes)
-0d 00 58 20 8d 3e f5 6d 1b 75 0a 43 51 d6 8a c2 50 a0 e8 83 79 0e fc 80 
-a5 38 a4 44 ee 9e 2b 57 e2 44 1a 7c 21 58 20 52 fb a0 bd c8 d9 53 dd 86 
-ce 1a b2 fd 7c 05 a4 65 8c 7c 30 af db fc 33 01 04 70 69 45 1b af 35 08  
+Input to calculate TH_2 (CBOR Sequence) (73 bytes)
+40 0d 00 58 20 8d 3e f5 6d 1b 75 0a 43 51 d6 8a c2 50 a0 e8 83 79 0e fc 
+80 a5 38 a4 44 ee 9e 2b 57 e2 44 1a 7c 21 58 20 52 fb a0 bd c8 d9 53 dd 
+86 ce 1a b2 fd 7c 05 a4 65 8c 7c 30 af db fc 33 01 04 70 69 45 1b af 35 
+37  
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 And from there, compute the transcript hash TH_2 = SHA-256( message_1, data_2 )
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 TH_2 (32 bytes)
-6a 28 78 e8 4b 2c c0 21 cc 1a eb a2 96 52 53 ef 42 f7 fa 30 0c af 9c 49 
-1a 52 e6 83 6a 25 64 ff 
+a5 1c 76 46 3e 8a e5 8f d3 b8 dc 5e de 1e 27 14 3c c9 2d 22 3e ac d9 e5 
+ff 6e 3f ac 87 66 58 a5 
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 The Responder's subject name is the empty string:
@@ -2633,13 +2644,13 @@ ID_CRED_R is the following:
 ~~~~~~~~~~~~~~~~~~~~~~~
 ID_CRED_R =
 {
-  4: h'07'
+  4: h'05'
 }
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 ID_CRED_R (4 bytes)
-a1 04 41 07
+a1 04 41 05 
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 CRED_R is the following COSE_Key:
@@ -2648,7 +2659,7 @@ CRED_R is the following COSE_Key:
 {
   1: 1,
   -1: 4,
-  -2: h'A3FF263595BEB377D1A0CE1D04DAD2D40966AC6BCB622051B84659184D5D9A32',
+  -2: h'A3FF263595BEB377D1A0CE1D04DAD2D40966AC6BCB622051B84659184D5D9A32,
   "subject name": ""
 }
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -2680,8 +2691,10 @@ The Enc_structure is defined as follows: \[ "Encrypt0", << ID_CRED_R >>, << TH_2
 A_2m =
 [
   "Encrypt0", 
-  h'A1044107', 
-  h'58206A2878E84B2CC021CC1AEBA2965253EF42F7FA300CAF9C491A52E6836A2564FFA401012004215820A3FF263595BEB377D1A0CE1D04DAD2D40966AC6BCB622051B84659184D5D9A326C7375626A656374206E616D6560'
+  h'A1044105', 
+  h'5820A51C76463E8AE58FD3B8DC5EDE1E27143CC92D223EACD9E5FF6E3FAC876658A5
+  A401012004215820A3FF263595BEB377D1A0CE1D04DAD2D40966AC6BCB622051B84659
+  184D5D9A326C7375626A656374206E616D6560'
 ]
 ~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -2689,9 +2702,9 @@ Which encodes to the following byte string to be used as Additional Authenticate
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 A_2m (CBOR-encoded) (105 bytes)
-83 68 45 6e 63 72 79 70 74 30 44 a1 04 41 07 58 58 58 20 6a 28 78 e8 4b 
-2c c0 21 cc 1a eb a2 96 52 53 ef 42 f7 fa 30 0c af 9c 49 1a 52 e6 83 6a 
-25 64 ff a4 01 01 20 04 21 58 20 a3 ff 26 35 95 be b3 77 d1 a0 ce 1d 04 
+83 68 45 6e 63 72 79 70 74 30 44 a1 04 41 05 58 58 58 20 a5 1c 76 46 3e 
+8a e5 8f d3 b8 dc 5e de 1e 27 14 3c c9 2d 22 3e ac d9 e5 ff 6e 3f ac 87 
+66 58 a5 a4 01 01 20 04 21 58 20 a3 ff 26 35 95 be b3 77 d1 a0 ce 1d 04 
 da d2 d4 09 66 ac 6b cb 62 20 51 b8 46 59 18 4d 5d 9a 32 6c 73 75 62 6a 
 65 63 74 20 6e 61 6d 65 60 
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -2702,7 +2715,7 @@ info for K_2m is defined as follows:
 info for K_2m =
 [
   10, 
-  h'6A2878E84B2CC021CC1AEBA2965253EF42F7FA300CAF9C491A52E6836A2564FF', 
+  h'A51C76463E8AE58FD3B8DC5EDE1E27143CC92D223EACD9E5FF6E3FAC876658A5', 
   "K_2m", 
   16
 ]
@@ -2712,15 +2725,15 @@ Which as a CBOR encoded data item is:
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 info for K_2m (CBOR-encoded) (42 bytes)
-84 0a 58 20 6a 28 78 e8 4b 2c c0 21 cc 1a eb a2 96 52 53 ef 42 f7 fa 30 
-0c af 9c 49 1a 52 e6 83 6a 25 64 ff 64 4b 5f 32 6d 10 
+84 0a 58 20 a5 1c 76 46 3e 8a e5 8f d3 b8 dc 5e de 1e 27 14 3c c9 2d 22 
+3e ac d9 e5 ff 6e 3f ac 87 66 58 a5 64 4b 5f 32 6d 10
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 From these parameters, K_2m is computed. Key K_2m is the output of HKDF-Expand(PRK_3e2m, info, L), where L is the length of K_2m, so 16 bytes.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 K_2m (16 bytes)
-81 2a 48 87 d1 90 ff ed 2b 10 0b a7 a5 c2 5e 67
+89 2f e8 58 31 ec c1 6d b7 a9 8a 0a d1 dd f6 85 
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 info for IV_2m is defined as follows:
@@ -2729,7 +2742,7 @@ info for IV_2m is defined as follows:
 info for IV_2m =
 [
   10, 
-  h'6A2878E84B2CC021CC1AEBA2965253EF42F7FA300CAF9C491A52E6836A2564FF', 
+  h'A51C76463E8AE58FD3B8DC5EDE1E27143CC92D223EACD9E5FF6E3FAC876658A5', 
   "IV_2m", 
   13
 ]
@@ -2739,15 +2752,15 @@ Which as a CBOR encoded data item is:
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 info for IV_2m (CBOR-encoded) (43 bytes)
-84 0a 58 20 6a 28 78 e8 4b 2c c0 21 cc 1a eb a2 96 52 53 ef 42 f7 fa 30 
-0c af 9c 49 1a 52 e6 83 6a 25 64 ff 65 49 56 5f 32 6d 0d
+84 0a 58 20 a5 1c 76 46 3e 8a e5 8f d3 b8 dc 5e de 1e 27 14 3c c9 2d 22 
+3e ac d9 e5 ff 6e 3f ac 87 66 58 a5 65 49 56 5f 32 6d 0d
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 From these parameters, IV_2m is computed. IV_2m is the output of HKDF-Expand(PRK_3e2m, info, L), where L is the length of IV_2m, so 13 bytes.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 IV_2m (13 bytes)
-92 3c 0f 94 31 51 5b 69 21 30 49 2b 7f 
+13 0a ba 71 74 68 96 15 5b fb 5a 20 e1
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 Finally, COSE_Encrypt0 is computed from the parameters above.
@@ -2760,35 +2773,37 @@ Finally, COSE_Encrypt0 is computed from the parameters above.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 MAC_2 (8 bytes)
-64 21 0d 2e 18 b9 28 cd 
+40 50 10 1d a6 18 79 17  
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 From there Signature_or_MAC_2 is the MAC (since method = 3):
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 Signature_or_MAC_2 (8 bytes)
-64 21 0d 2e 18 b9 28 cd 
+40 50 10 1d a6 18 79 17
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-CIPHERTEXT_2 is the ciphertext resulting from XOR encrypting a plaintext constructed from the following parameters and the key K_2e.
+CIPHERTEXT_2 is the ciphertext resulting from XOR between plaintext and KEYSTREAM_2 which is derived from TH_2 and the pseudorandom key PRK_2e.
 
-* plaintext = CBOR Sequence of the items ID_CRED_R and the CBOR encoded Signature_or_MAC_2, in this order. Note that since ID_CRED_R contains a single 'kid' parameter, i.e., ID_CRED_R = { 4 : kid_R }, only the byte string kid_R is conveyed in the plaintext encoded as a bstr_identifier. kid_R is encoded as the corresponding integer - 24 (see bstr_identifier in {{bstr_id}}), i.e. 0x07 = 7, 7 - 24 = -17, and -17 in CBOR encoding is equal to 0x30.
+* plaintext = CBOR Sequence of the items ID_CRED_R and the CBOR encoded Signature_or_MAC_2, in this order (AD_2 is empty). 
+
+Note that since ID_CRED_R contains a single 'kid' parameter, i.e., ID_CRED_R = { 4 : kid_R }, only the byte string kid_R is conveyed in the plaintext encoded as a bstr_identifier. kid_R is encoded as the corresponding integer - 24 (see bstr_identifier in {{bstr_id}}), i.e. 0x05 = 5, 5 - 24 = -19, and -19 in CBOR encoding is equal to 0x32.
 
 The plaintext is the following:
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 P_2e (CBOR Sequence) (10 bytes)
-30 48 64 21 0d 2e 18 b9 28 cd 
+32 48 40 50 10 1d a6 18 79 17
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-K_2e = HKDF-Expand( PRK, info, length ), where length is the length of the plaintext, so 10.
+KEYSTREAM_2 = Expand( PRK, info, length ), where length is the length of the plaintext, so 10.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
-info for K_2e =
+info for KEYSTREAM_2 =
 [
   10, 
-  h'6A2878E84B2CC021CC1AEBA2965253EF42F7FA300CAF9C491A52E6836A2564FF', 
-  "K_2e", 
+  h'A51C76463E8AE58FD3B8DC5EDE1E27143CC92D223EACD9E5FF6E3FAC876658A5', 
+  "KEYSTREAM_2", 
   10
 ]
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -2796,23 +2811,24 @@ info for K_2e =
 Which as a CBOR encoded data item is:
 
 ~~~~~~~~~~~~~~~~~~~~~~~
-info for K_2e (CBOR-encoded) (42 bytes)
-84 0a 58 20 6a 28 78 e8 4b 2c c0 21 cc 1a eb a2 96 52 53 ef 42 f7 fa 30 
-0c af 9c 49 1a 52 e6 83 6a 25 64 ff 64 4b 5f 32 65 0a 
+info for KEYSTREAM_2 (CBOR-encoded) (49 bytes)
+84 0a 58 20 a5 1c 76 46 3e 8a e5 8f d3 b8 dc 5e de 1e 27 14 3c c9 2d 22 
+3e ac d9 e5 ff 6e 3f ac 87 66 58 a5 6b 4b 45 59 53 54 52 45 41 4d 5f 32 
+0a 
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-From there, K_2e is computed:
+From there, KEYSTREAM_2 is computed:
 
 ~~~~~~~~~~~~~~~~~~~~~~~
-K_2e (10 bytes)
-ec be 9a bd 5f 62 3a fc 65 26 
+KEYSTREAM_2(10 bytes)
+49 f7 2b f5 e7 18 5d 94 ba 99
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 Using the parameters above, the ciphertext CIPHERTEXT_2 can be computed:
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 CIPHERTEXT_2 (10 bytes)
-dc f6 fe 9c 52 4c 22 45 4d eb 
+7b bf 6b a5 f7 05 fb 8c c3 8e 
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 message_2 is the CBOR Sequence of data_2 and CIPHERTEXT_2, in this order:
@@ -2821,7 +2837,7 @@ message_2 is the CBOR Sequence of data_2 and CIPHERTEXT_2, in this order:
 message_2 =
 (
  data_2,
- h'DCF6FE9C524C22454DEB'
+ h'7BBF6BA5F705FB8CC38E'
 ) 
 ~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -2830,7 +2846,7 @@ Which as a CBOR encoded data item is:
 ~~~~~~~~~~~~~~~~~~~~~~~
 message_2 (CBOR Sequence) (46 bytes)
 58 20 52 fb a0 bd c8 d9 53 dd 86 ce 1a b2 fd 7c 05 a4 65 8c 7c 30 af db 
-fc 33 01 04 70 69 45 1b af 35 08 4a dc f6 fe 9c 52 4c 22 45 4d eb 
+fc 33 01 04 70 69 45 1b af 35 37 4a 7b bf 6b a5 f7 05 fb 8c c3 8e 
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 ### Message_3
