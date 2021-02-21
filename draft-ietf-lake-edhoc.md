@@ -316,7 +316,7 @@ An EDHOC message flow consists of three mandatory messages (message_1, message_2
 
 Application data is protected using the agreed application algorithms (AEAD, hash) in the selected cipher suite (see {{cs}}) and the application can make use of the established connection identifiers C_I and C_R (see {{corr}}). EDHOC may be used with the media type application/edhoc defined in {{iana}}.
 
-The Initiator can derive symmetric application keys after creating EDHOC message_3, see {{exporter}}. Application protected data can therefore be sent in parallel with EDHOC message_3, optionally in the same CoAP message {{I-D.palombini-core-oscore-edhoc}}.
+The Initiator can derive symmetric application keys after creating EDHOC message_3, see {{exporter}}. Application protected data can therefore be sent in parallel or toghether with EDHOC message_3.
 
 ~~~~~~~~~~~
 Initiator                                                   Responder
