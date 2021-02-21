@@ -1178,11 +1178,11 @@ When EDHOC is used to derive parameters for OSCORE {{RFC8613}}, the parties  mak
 
 * The AEAD Algorithm and the hash algorithm are the application AEAD and hash algorithms in the selected cipher suite.
 
-* The Master Secret and Master Salt are derived as follows where length is the key length (in bytes) of the application AEAD Algorithm.
+* The Master Secret and Master Salt are derived as follows. By default key_length is the key length (in bytes) of the application AEAD Algorithm and salt_length is 8 bytes. The Intiator and Responder MAY agree out-of-band on a longer key_length than the default and a different salt_length. 
 
 ~~~~~~~~~~~~~~~~~~~~~~~
-   Master Secret = EDHOC-Exporter( "OSCORE Master Secret", length )
-   Master Salt   = EDHOC-Exporter( "OSCORE Master Salt", 8 )
+   Master Secret = EDHOC-Exporter( "OSCORE Master Secret", key_length )
+   Master Salt   = EDHOC-Exporter( "OSCORE Master Salt", salt_length )
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 # Security Considerations {#security}
