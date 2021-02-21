@@ -2947,20 +2947,20 @@ B.1.  Test Vectors for EDHOC Authenticated with Signature Keys (x5t)
    METHOD_CORR (4 * method + corr) (int)
    1
 
-   There is only one supported cipher suite indicated by the Initiator.
+   The Initiator indicates only one cipher suite in the (potentially
+   trunkated) list of cipher suites.
 
    Supported Cipher Suites (1 byte)
    00
 
-   The selected cipher suite is a subset of the supported cipher suites
-   indicated by the Initiator.  Since the selected and supported
-   coincide, SUITES_I consists only of that suite.
+   The Initiator selected the indicated cipher suite.
 
    Selected Cipher Suite (int)
    0
 
    Cipher suite 0 is supported by both the Initiator and the Responder,
    see Section 3.4.
+
 
 
 
@@ -2984,7 +2984,7 @@ B.1.1.  Message_1
 
    The Initiator chooses a connection identifier C_I:
 
-   Connection identifier chosen by Initiator (1 bytes)
+   Connection identifier chosen by Initiator (1 byte)
    09
 
    Note that since C_I is a byte string of length one, it is encoded as
@@ -3901,19 +3901,19 @@ B.2.  Test Vectors for EDHOC Authenticated with Static Diffie-Hellman
    METHOD_CORR (4 * method + corr) (int)
    13
 
-   There is only one supported cipher suite indicated by the Initiator.
+   The Initiator indicates only one cipher suite in the (potentially
+   trunkated) list of cipher suites.
 
    Supported Cipher Suites (1 byte)
    00
 
-   The selected cipher suite is a subset of the supported cipher suites
-   indicated by the Initiator.  Since the selected and supported
-   coincide, SUITES_I consists only of that suite.
+   The Initiator selected the indicated cipher suite.
 
    Selected Cipher Suite (int)
    0
 
-
+   Cipher suite 0 is supported by both the Initiator and the Responder,
+   see Section 3.4.
 
 
 
@@ -3921,9 +3921,6 @@ Selander, et al.         Expires 25 August 2021                [Page 70]
 
 Internet-Draft  Ephemeral Diffie-Hellman Over COSE (EDHO   February 2021
 
-
-   Cipher suite 0 is supported by both the Initiator and the Responder,
-   see Section 3.4.
 
 B.2.1.  Message_1
 
@@ -3966,6 +3963,9 @@ B.2.1.  Message_1
 
    With SUITES_I = 0, message_1 is constructed, as the CBOR Sequence of
    the CBOR data items above.
+
+
+
 
 
 
