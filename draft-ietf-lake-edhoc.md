@@ -226,11 +226,11 @@ Compared to the DTLS 1.3 handshake {{I-D.ietf-tls-dtls13}} with ECDHE and connec
 =================================
                     kid       x5t                     
 ---------------------------------
-message_1            38        38                     
+message_1            37        37                     
 message_2            46       117       
 message_3            20        91        
 ---------------------------------
-Total               104       246      
+Total               103       245      
 =================================
 ~~~~~~~~~~~~~~~~~~~~~~~
 {: #fig-sizes title="Example of message sizes in bytes." artwork-align="center"}
@@ -320,7 +320,7 @@ The Initiator can derive symmetric application keys after creating EDHOC message
 
 ~~~~~~~~~~~
 Initiator                                                   Responder
-|            C_1, METHOD_CORR, SUITES_I, G_X, C_I, AD_1             |
+|               METHOD_CORR, SUITES_I, G_X, C_I, AD_1               |
 +------------------------------------------------------------------>|
 |                             message_1                             |
 |                                                                   |
@@ -361,7 +361,7 @@ An implementation may support only a single method. The Initiator and the Respon
 
 ### Connection Identifiers {#ci}
 
-EDHOC includes connection identifiers (C_I, C_R) to correlate messages. The connection identifiers C_I and C_R do not have any cryptographic purpose in EDHOC. They contain information facilitating retrieval of the protocol state and may therefore be very short. One byte connection identifiers are realistic in many scenarios as most constrained devices only have a few connections. In cases where a node only has one connection, the identifiers may even be the empty byte string. The connection identifier (C_1) in message_1 is always set to the empty byte string to enable the initiator to distinguish message_1 from message_3.
+EDHOC includes connection identifiers (C_I, C_R) to correlate messages. The connection identifiers C_I and C_R do not have any cryptographic purpose in EDHOC. They contain information facilitating retrieval of the protocol state and may therefore be very short. One byte connection identifiers are realistic in many scenarios as most constrained devices only have a few connections. In cases where a node only has one connection, the identifiers may even be the empty byte string. 
 
 The connection identifier MAY be used with an application protocol (e.g. OSCORE) for which EDHOC establishes keys, in which case the connection identifiers SHALL adhere to the requirements for that protocol. Each party choses a connection identifier it desires the other party to use in outgoing messages. (For OSCORE this results in the endpoint selecting its Recipient ID, see Section 3.1 of {{RFC8613}}).
 
@@ -695,7 +695,6 @@ message_1 SHALL be a CBOR Sequence (see {{CBOR}}) as defined below
 
 ~~~~~~~~~~~ CDDL
 message_1 = (
-  C_1 : bstr .size 0,
   METHOD_CORR : int,
   SUITES_I : [ selected : suite, supported : 2* suite ] / suite,
   G_X : bstr,
@@ -708,7 +707,6 @@ suite = int
 
 where:
 
-* C_1 -  always set to the empty byte string to enable the initiator to distinguish message_1 from message_3.
 * METHOD_CORR = 4 * method + corr, where method = 0, 1, 2, or 3 (see {{fig-method-types}}) and the correlation parameter corr is chosen based on the transport and determines which connection identifiers that are omitted (see {{corr}}).
 * SUITES_I - cipher suites which the Initiator supports in order of (decreasing) preference. The list of supported cipher suites can be truncated at the end, as is detailed in the processing steps below. One of the supported cipher suites is selected. The selected suite is the first suite in the SUITES_I CBOR array. If a single supported cipher suite is conveyed then that cipher suite is selected and the selected cipher suite is encoded as an int instead of an array.
 * G_X - the ephemeral public key of the Initiator
@@ -775,7 +773,7 @@ The Responder SHALL compose message_2 as follows:
 
 * Generate an ephemeral ECDH key pair as specified in Section 5 of {{SP-800-56A}} using the curve in the selected cipher suite and format it as a COSE_Key. Let G_Y be the 'x' parameter of the COSE_Key.
 
-* Choose a connection identifier C_R and store it for the length of the protocol. C_R MUST be different from C_1.
+* Choose a connection identifier C_R and store it for the length of the protocol.
 
 * Compute the transcript hash TH_2 = H(message_1, data_2) where H() is the hash function in the selected cipher suite. The transcript hash TH_2 is a CBOR encoded bstr and the input to the hash function is a CBOR Sequence.
 
