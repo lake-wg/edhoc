@@ -1495,7 +1495,7 @@ Supported Cipher Suites (1 byte)
 00
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-The cipher suite selected by the Initiator is the most preferred:
+The selected cipher suite is a subset of the supported cipher suites indicated by the Initiator. Since the selected and supported coincide, SUITES_I consists only of that suite.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 Selected Cipher Suite (int)
@@ -2439,7 +2439,7 @@ Supported Cipher Suites (1 byte)
 00
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-The cipher suite selected by the Initiator is the most preferred:
+The selected cipher suite is a subset of the supported cipher suites indicated by the Initiator. Since the selected and supported coincide, SUITES_I consists only of that suite.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 Selected Cipher Suite (int)
