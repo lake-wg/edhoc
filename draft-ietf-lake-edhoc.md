@@ -1671,19 +1671,18 @@ data_2 (CBOR Sequence) (35 bytes)
 From data_2 and message_1, compute the input to the transcript hash TH_2 = H( message_1, data_2 ), as a CBOR Sequence of these 2 data items.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
-Input to calculate TH_2 (CBOR Sequence) (73 bytes)
-40 01 00 58 20 89 8f f7 9a 02 06 7a 16 ea 1e cc b9 0f a5 22 46 f5 aa 4d 
-d6 ec 07 6b ba 02 59 d9 04 b7 ec 8b 0c 2e 58 20 71 a3 d5 99 c2 1d a1 89 
-02 a1 ae a8 10 b2 b6 38 2c cd 8d 5f 9b f0 19 52 81 75 4c 5e bc af 30 1e 
-37 
+Input to calculate TH_2 (CBOR Sequence) (72 bytes)
+01 00 58 20 89 8f f7 9a 02 06 7a 16 ea 1e cc b9 0f a5 22 46 f5 aa 4d d6 
+ec 07 6b ba 02 59 d9 04 b7 ec 8b 0c 2e 58 20 71 a3 d5 99 c2 1d a1 89 02 
+a1 ae a8 10 b2 b6 38 2c cd 8d 5f 9b f0 19 52 81 75 4c 5e bc af 30 1e 37 
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 And from there, compute the transcript hash TH_2 = SHA-256( message_1, data_2 )
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 TH_2 (32 bytes)
-65 5c ab 4d 8c f4 de 31 a8 a1 54 ca 06 4e 20 c9 04 6e c3 7b fc 47 49 9e 
-58 ca ab 23 a4 2c b8 40
+86 4e 32 b3 6a 7b 5f 21 f1 9e 99 f0 c6 6d 91 1e 0a ce 99 72 d3 76 d2 c2 
+c1 53 c1 7f 8e 96 29 ff 
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 The Responder's subject name is the empty string:
@@ -1750,7 +1749,7 @@ A_2m =
 [
   "Encrypt0", 
   h'A11822822E486844078A53F312F5',
-  h'5820655CAB4D8CF4DE31A8A154CA064E20C9046EC37BFC47499E58CAAB23A42CB840
+  h'5820864E32B36A7B5F21F19E99F0C66D911E0ACE9972D376D2C2C153C17F8E9629FF
   5864C788370016B8965BDB2074BFF82E5A20E09BEC21F8406E86442B87EC3FF245B70A
   47624DC9CDC6824B2A4C52E95EC9D6B0534B71C2B49E4BF9031500CEE6869979C297BB
   5A8B381E98DB714108415E5C50DB78974C271579B01633A3EF6271BE5C225EB2'
@@ -1762,12 +1761,12 @@ Which encodes to the following byte string to be used as Additional Authenticate
 ~~~~~~~~~~~~~~~~~~~~~~~
 A_2m (CBOR-encoded) (163 bytes)
 83 68 45 6e 63 72 79 70 74 30 4e a1 18 22 82 2e 48 68 44 07 8a 53 f3 12 
-f5 58 88 58 20 65 5c ab 4d 8c f4 de 31 a8 a1 54 ca 06 4e 20 c9 04 6e c3 
-7b fc 47 49 9e 58 ca ab 23 a4 2c b8 40 58 64 c7 88 37 00 16 b8 96 5b db 
+f5 58 88 58 20 86 4e 32 b3 6a 7b 5f 21 f1 9e 99 f0 c6 6d 91 1e 0a ce 99 
+72 d3 76 d2 c2 c1 53 c1 7f 8e 96 29 ff 58 64 c7 88 37 00 16 b8 96 5b db 
 20 74 bf f8 2e 5a 20 e0 9b ec 21 f8 40 6e 86 44 2b 87 ec 3f f2 45 b7 0a 
 47 62 4d c9 cd c6 82 4b 2a 4c 52 e9 5e c9 d6 b0 53 4b 71 c2 b4 9e 4b f9 
 03 15 00 ce e6 86 99 79 c2 97 bb 5a 8b 38 1e 98 db 71 41 08 41 5e 5c 50 
-db 78 97 4c 27 15 79 b0 16 33 a3 ef 62 71 be 5c 22 5e b2  
+db 78 97 4c 27 15 79 b0 16 33 a3 ef 62 71 be 5c 22 5e b2 
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 info for K_2m is defined as follows:
@@ -1776,7 +1775,7 @@ info for K_2m is defined as follows:
 info for K_2m =
 [
   10,
-  h'655CAB4D8CF4DE31A8A154CA064E20C9046EC37BFC47499E58CAAB23A42CB840', 
+  h'864E32B36A7B5F21F19E99F0C66D911E0ACE9972D376D2C2C153C17F8E9629FF', 
   "K_2m",
   16
 ]
@@ -1786,15 +1785,15 @@ Which as a CBOR encoded data item is:
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 info for K_2m (CBOR-encoded) (42 bytes)
-84 0a 58 20 65 5c ab 4d 8c f4 de 31 a8 a1 54 ca 06 4e 20 c9 04 6e c3 7b 
-fc 47 49 9e 58 ca ab 23 a4 2c b8 40 64 4b 5f 32 6d 10 
+84 0a 58 20 86 4e 32 b3 6a 7b 5f 21 f1 9e 99 f0 c6 6d 91 1e 0a ce 99 72 
+d3 76 d2 c2 c1 53 c1 7f 8e 96 29 ff 64 4b 5f 32 6d 10 
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 From these parameters, K_2m is computed. Key K_2m is the output of HKDF-Expand(PRK_3e2m, info, L), where L is the length of K_2m, so 16 bytes.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 K_2m (16 bytes)
-31 0c 1d 46 66 00 6b 3d 51 96 31 3f 87 d8 81 db
+80 cc a7 49 ab 58 f5 69 ca 35 da ee 05 be d1 94
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 info for IV_2m is defined as follows:
@@ -1803,7 +1802,7 @@ info for IV_2m is defined as follows:
 info for IV_2m =
 [
   10,
-  h'655CAB4D8CF4DE31A8A154CA064E20C9046EC37BFC47499E58CAAB23A42CB840', 
+  h'864E32B36A7B5F21F19E99F0C66D911E0ACE9972D376D2C2C153C17F8E9629FF', 
   "IV_2m",
   13
 ]
@@ -1813,15 +1812,15 @@ Which as a CBOR encoded data item is:
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 info for IV_2m (CBOR-encoded) (43 bytes)
-84 0a 58 20 65 5c ab 4d 8c f4 de 31 a8 a1 54 ca 06 4e 20 c9 04 6e c3 7b 
-fc 47 49 9e 58 ca ab 23 a4 2c b8 40 65 49 56 5f 32 6d 0d
+84 0a 58 20 86 4e 32 b3 6a 7b 5f 21 f1 9e 99 f0 c6 6d 91 1e 0a ce 99 72 
+d3 76 d2 c2 c1 53 c1 7f 8e 96 29 ff 65 49 56 5f 32 6d 0d 
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 From these parameters, IV_2m is computed. IV_2m is the output of HKDF-Expand(PRK_3e2m, info, L), where L is the length of IV_2m, so 13 bytes.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 IV_2m (13 bytes)
-b1 aa 78 11 5b 5c 18 06 e3 b8 85 cb f7 
+c8 1e 1a 95 cc 93 b3 36 69 6e d5 02 55 
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 Finally, COSE_Encrypt0 is computed from the parameters above.
@@ -1834,7 +1833,7 @@ Finally, COSE_Encrypt0 is computed from the parameters above.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 MAC_2 (8 bytes)
-c1 d1 0e 48 96 1c 71 85
+fa bb a4 7e 56 71 a1 82 
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 To compute the Signature_or_MAC_2, the key is the private authentication key of the Responder and 
@@ -1845,11 +1844,11 @@ M_2 =
 [
   "Signature1",
   h'A11822822E486844078A53F312F5',
-  h'5820655CAB4D8CF4DE31A8A154CA064E20C9046EC37BFC47499E58CAAB23A42CB84
-  05864C788370016B8965BDB2074BFF82E5A20E09BEC21F8406E86442B87EC3FF245B7
+  h'5820864E32B36A7B5F21F19E99F0C66D911E0ACE9972D376D2C2C153C17F8E9629F
+  F5864C788370016B8965BDB2074BFF82E5A20E09BEC21F8406E86442B87EC3FF245B7
   0A47624DC9CDC6824B2A4C52E95EC9D6B0534B71C2B49E4BF9031500CEE6869979C29
   7BB5A8B381E98DB714108415E5C50DB78974C271579B01633A3EF6271BE5C225EB2',
-  h'C1D10E48961C7185'
+  h'FABBA47E5671A182'
 ]
 ~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -1858,22 +1857,22 @@ Which as a CBOR encoded data item is:
 ~~~~~~~~~~~~~~~~~~~~~~~
 M_2 (174 bytes)
 84 6a 53 69 67 6e 61 74 75 72 65 31 4e a1 18 22 82 2e 48 68 44 07 8a 53 
-f3 12 f5 58 88 58 20 65 5c ab 4d 8c f4 de 31 a8 a1 54 ca 06 4e 20 c9 04 
-6e c3 7b fc 47 49 9e 58 ca ab 23 a4 2c b8 40 58 64 c7 88 37 00 16 b8 96 
+f3 12 f5 58 88 58 20 86 4e 32 b3 6a 7b 5f 21 f1 9e 99 f0 c6 6d 91 1e 0a 
+ce 99 72 d3 76 d2 c2 c1 53 c1 7f 8e 96 29 ff 58 64 c7 88 37 00 16 b8 96 
 5b db 20 74 bf f8 2e 5a 20 e0 9b ec 21 f8 40 6e 86 44 2b 87 ec 3f f2 45 
 b7 0a 47 62 4d c9 cd c6 82 4b 2a 4c 52 e9 5e c9 d6 b0 53 4b 71 c2 b4 9e 
 4b f9 03 15 00 ce e6 86 99 79 c2 97 bb 5a 8b 38 1e 98 db 71 41 08 41 5e 
-5c 50 db 78 97 4c 27 15 79 b0 16 33 a3 ef 62 71 be 5c 22 5e b2 48 c1 d1 
-0e 48 96 1c 71 85 
+5c 50 db 78 97 4c 27 15 79 b0 16 33 a3 ef 62 71 be 5c 22 5e b2 48 fa bb 
+a4 7e 56 71 a1 82 
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 Since the method = 0, Signature_or_Mac_3 is a signature:
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 Signature_or_MAC_2 (64 bytes)
-fb 4f b1 9b 13 a9 31 e9 5d be b0 a1 20 15 bc b9 d6 58 a4 1e d3 68 b6 fd 
-de ac 63 aa 94 7f 61 d8 76 15 64 34 84 7c dc 69 b8 d1 44 0a ea 85 07 6f 
-4e 59 e6 79 7b 02 fc 63 b2 68 ea d3 f4 5e c8 0b 
+1f 17 00 6a 98 48 c9 77 cb bd ca a7 57 b6 fd 46 82 c8 17 39 e1 5c 99 37 
+c2 1c f5 e9 a0 e6 03 9f 54 fd 2a 6c 3a 11 18 f2 b9 d8 eb cd 48 23 48 b9 
+9c 3e d7 ed 1b d9 80 6c 93 c8 90 68 e8 36 b4 0f 
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 CIPHERTEXT_2 is the ciphertext resulting from XOR between plaintext and KEYSTREAM_2 which is derived from TH_2 and the pseudorandom key PRK_2e.
@@ -1884,10 +1883,10 @@ The plaintext is the following:
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 P_2e (CBOR Sequence) (80 bytes)
-a1 18 22 82 2e 48 68 44 07 8a 53 f3 12 f5 58 40 fb 4f b1 9b 13 a9 31 e9 
-5d be b0 a1 20 15 bc b9 d6 58 a4 1e d3 68 b6 fd de ac 63 aa 94 7f 61 d8 
-76 15 64 34 84 7c dc 69 b8 d1 44 0a ea 85 07 6f 4e 59 e6 79 7b 02 fc 63 
-b2 68 ea d3 f4 5e c8 0b 
+a1 18 22 82 2e 48 68 44 07 8a 53 f3 12 f5 58 40 1f 17 00 6a 98 48 c9 77 
+cb bd ca a7 57 b6 fd 46 82 c8 17 39 e1 5c 99 37 c2 1c f5 e9 a0 e6 03 9f 
+54 fd 2a 6c 3a 11 18 f2 b9 d8 eb cd 48 23 48 b9 9c 3e d7 ed 1b d9 80 6c 
+93 c8 90 68 e8 36 b4 0f 
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 KEYSTREAM_2 = Expand( PRK, info, length ), where length is the length of the plaintext, so 80.
@@ -1896,7 +1895,7 @@ KEYSTREAM_2 = Expand( PRK, info, length ), where length is the length of the pla
 info for KEYSTREAM_2 =
 [
   10,
-  h'655CAB4D8CF4DE31A8A154CA064E20C9046EC37BFC47499E58CAAB23A42CB840',
+  h'864E32B36A7B5F21F19E99F0C66D911E0ACE9972D376D2C2C153C17F8E9629FF',
   "KEYSTREAM_2",
   80
 ]
@@ -1906,8 +1905,8 @@ Which as a CBOR encoded data item is:
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 info for KEYSTREAM_2 (CBOR-encoded) (50 bytes)
-84 0a 58 20 65 5c ab 4d 8c f4 de 31 a8 a1 54 ca 06 4e 20 c9 04 6e c3 7b 
-fc 47 49 9e 58 ca ab 23 a4 2c b8 40 6b 4b 45 59 53 54 52 45 41 4d 5f 32 
+84 0a 58 20 86 4e 32 b3 6a 7b 5f 21 f1 9e 99 f0 c6 6d 91 1e 0a ce 99 72 
+d3 76 d2 c2 c1 53 c1 7f 8e 96 29 ff 6b 4b 45 59 53 54 52 45 41 4d 5f 32 
 18 50 
 ~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -1915,20 +1914,20 @@ From there, KEYSTREAM_2 is computed:
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 KEYSTREAM_2 (80 bytes)
-92 58 b5 aa 14 1f ea 42 91 f2 78 51 ac b3 9a ac d5 4d 5d 4e 4e 21 cf aa 
-55 f1 5d 58 5c 8e 04 ab f3 d8 47 ef 96 ac d5 d0 85 cb 19 8f 2b fc 0b c5 
-54 1c 95 68 3e e2 13 db df 90 6a 28 b3 06 dc 77 b0 16 66 c8 c5 1f 99 6b 
-9b f4 12 5e 5d e5 21 f8 
+ae ea 8e af 50 cf c6 70 09 da e8 2d 8d 85 b0 e7 60 91 bf 0f 07 0b 79 53 
+6c 83 23 dc 3d 9d 61 13 10 35 94 63 f4 4b 12 4b ea b3 a1 9d 09 93 82 d7 
+30 80 17 f4 92 62 06 e4 f5 44 9b 9f c9 24 bc b6 bd 78 ec 45 0a 66 83 fb 
+8a 2f 5f 92 4f c4 40 4f 
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 Using the parameters above, the ciphertext CIPHERTEXT_2 can be computed:
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 CIPHERTEXT_2 (80 bytes)
-33 40 97 28 3a 57 82 06 96 78 2b a2 be 46 c2 ec 2e 02 ec d5 5d 88 fe 43 
-08 4f ed f9 7c 9b b8 12 25 80 e3 f1 45 c4 63 2d 5b 67 7a 25 bf 83 6a 1d 
-22 09 f1 5c ba 9e cf b2 67 41 2e 22 59 83 db 18 fe 4f 80 b1 be 1d 65 08 
-29 9c f8 8d a9 bb e9 f3 
+0f f2 ac 2d 7e 87 ae 34 0e 50 bb de 9f 70 e8 a7 7f 86 bf 65 9f 43 b0 24 
+a7 3e e9 7b 6a 2b 9c 55 92 fd 83 5a 15 17 8b 7c 28 af 54 74 a9 75 81 48 
+64 7d 3d 98 a8 73 1e 16 4c 9c 70 52 81 07 f4 0f 21 46 3b a8 11 bf 03 97 
+19 e7 cf fa a7 f2 f4 40
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 message_2 is the CBOR Sequence of data_2 and CIPHERTEXT_2, in this order:
@@ -1937,9 +1936,9 @@ message_2 is the CBOR Sequence of data_2 and CIPHERTEXT_2, in this order:
 message_2 =
 (
   data_2,
-  h'334097283A57820696782BA2BE46C2EC2E02ECD55D88FE43084FEDF97C9BB8122580
-  E3F145C4632D5B677A25BF836A1D2209F15CBA9ECFB267412E225983DB18FE4F80B1BE
-  1D6508299CF88DA9BBE9F3'
+  h'0FF2AC2D7E87AE340E50BBDE9F70E8A77F86BF659F43B024A73EE97B6A2B9C5592FD
+  835A15178B7C28AF5474A9758148647D3D98A8731E164C9C70528107F40F21463BA811
+  BF039719E7CFFAA7F2F440'
 ) 
 ~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -1948,10 +1947,10 @@ Which as a CBOR encoded data item is:
 ~~~~~~~~~~~~~~~~~~~~~~~
 message_2 (CBOR Sequence) (117 bytes)
 58 20 71 a3 d5 99 c2 1d a1 89 02 a1 ae a8 10 b2 b6 38 2c cd 8d 5f 9b f0 
-19 52 81 75 4c 5e bc af 30 1e 37 58 50 33 40 97 28 3a 57 82 06 96 78 2b 
-a2 be 46 c2 ec 2e 02 ec d5 5d 88 fe 43 08 4f ed f9 7c 9b b8 12 25 80 e3 
-f1 45 c4 63 2d 5b 67 7a 25 bf 83 6a 1d 22 09 f1 5c ba 9e cf b2 67 41 2e 
-22 59 83 db 18 fe 4f 80 b1 be 1d 65 08 29 9c f8 8d a9 bb e9 f3 
+19 52 81 75 4c 5e bc af 30 1e 37 58 50 0f f2 ac 2d 7e 87 ae 34 0e 50 bb 
+de 9f 70 e8 a7 7f 86 bf 65 9f 43 b0 24 a7 3e e9 7b 6a 2b 9c 55 92 fd 83 
+5a 15 17 8b 7c 28 af 54 74 a9 75 81 48 64 7d 3d 98 a8 73 1e 16 4c 9c 70 
+52 81 07 f4 0f 21 46 3b a8 11 bf 03 97 19 e7 cf fa a7 f2 f4 40 
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 ### Message_3
