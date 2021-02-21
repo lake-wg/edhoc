@@ -288,11 +288,8 @@ void test_vectors( EDHOCKeyType type_I, EDHOCKeyType type_R, EDHOCCorrelation co
         if ( long_id == true )
             return random_vector( 2 + rand() % 2 );
         else {
-           int i = rand() % 49;
-            if ( i == 48 )
-                return vec{};
-            else
-                return vec{ (uint8_t) i };
+           int i = rand() % 48;
+            return vec{ (uint8_t) i };
         }
     };
 
