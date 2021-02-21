@@ -290,7 +290,7 @@ In order to create a "full-fledged" protocol some additional protocol elements a
 
 * Computationally independent keys derived from the ECDH shared secret and used for authenticated encryption of different messages.
 
-* An optional fouth flight giving explicit key confirmation to I in deployments where no application data is send from R to I.
+* An optional fourth flight giving explicit key confirmation to I in deployments where no application data is sent from R to I.
 
 * A key material exporter and a key update function enabling frequent forward secrecy.
 
@@ -312,7 +312,7 @@ To simplify for implementors, the use of CBOR and COSE in EDHOC is summarized in
 
 ## General 
 
-An EDHOC message flow consists of three mandatory messages (message_1, message_2, message_3) between Initiator and Responder, an optional forth message (message_4), plus an EDHOC error message. EDHOC messages are CBOR Sequences {{RFC8742}}, see {{fig-flow}}. The protocol elements in the figure are introduced in the following sections. Message formatting and processing is specified in {{asym}} and {{error}}. An implementation may support only Initiator or only Responder. 
+An EDHOC message flow consists of three mandatory messages (message_1, message_2, message_3) between Initiator and Responder, an optional fourth message (message_4), plus an EDHOC error message. EDHOC messages are CBOR Sequences {{RFC8742}}, see {{fig-flow}}. The protocol elements in the figure are introduced in the following sections. Message formatting and processing is specified in {{asym}} and {{error}}. An implementation may support only Initiator or only Responder. 
 
 Application data is protected using the agreed application algorithms (AEAD, hash) in the selected cipher suite (see {{cs}}) and the application can make use of the established connection identifiers C_I and C_R (see {{corr}}). EDHOC may be used with the media type application/edhoc defined in {{iana}}.
 
@@ -712,7 +712,7 @@ where:
 * G_X - the ephemeral public key of the Initiator
 * C_I - variable length connection identifier, encoded as a bstr_identifier (see {{bstr_id}}).
 * AD_1 - bstr containing unprotected opaque auxiliary data
-* 
+
 ### Initiator Processing of Message 1 {#init-proc-msg1}
 
 The Initiator SHALL compose message_1 as follows:
