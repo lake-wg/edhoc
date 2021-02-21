@@ -320,7 +320,7 @@ The Initiator can derive symmetric application keys after creating EDHOC message
 
 ~~~~~~~~~~~
 Initiator                                                   Responder
-|            C_R, METHOD_CORR, SUITES_I, G_X, C_I, AD_1             |
+|            C_1, METHOD_CORR, SUITES_I, G_X, C_I, AD_1             |
 +------------------------------------------------------------------>|
 |                             message_1                             |
 |                                                                   |
