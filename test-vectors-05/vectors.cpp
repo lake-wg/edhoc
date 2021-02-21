@@ -288,8 +288,11 @@ void test_vectors( EDHOCKeyType type_I, EDHOCKeyType type_R, EDHOCCorrelation co
         if ( long_id == true )
             return random_vector( 2 + rand() % 2 );
         else {
-            int i = rand() % 48;
-            return vec{ (uint8_t) i };
+           int i = rand() % 49;
+            if ( i == 48 )
+                return vec{};
+            else
+                return vec{ (uint8_t) i };
         }
     };
 
@@ -335,7 +338,7 @@ void test_vectors( EDHOCKeyType type_I, EDHOCKeyType type_R, EDHOCCorrelation co
         AD_3 = random_vector( 10 + rand() % 10 );
     }
  
-    vec message_1 = cbor( vec{} ) + cbor( METHOD_CORR ) + compress_suites( SUITES_I ) + cbor( G_X ) + cbor_id( C_I ) + cbor_AD( AD_1 );
+    vec message_1 = cbor( METHOD_CORR ) + compress_suites( SUITES_I ) + cbor( G_X ) + cbor_id( C_I ) + cbor_AD( AD_1 );
 
     // Helper funtions using local variables ////////////////////////////////////////////////////////////////////////////
 
