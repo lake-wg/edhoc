@@ -1467,7 +1467,7 @@ A more extensive test vector suite covering more combinations of authentication 
 
 <!-- Test vector index (int) 22900 -->
 
-EDHOC with signature authentication and X.509 certificates is used. In this test vector, the hash value 'x5t' is used to identify the certificate.
+EDHOC with signature authentication and X.509 certificates is used. In this test vector, the hash value 'x5t' is used to identify the certificate. No auxiliary data is sent in the message exchange.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 method (Signature Authentication)
@@ -1487,8 +1487,6 @@ From there, METHOD_CORR has the following value:
 METHOD_CORR (4 * method + corr) (int)
 1
 ~~~~~~~~~~~~~~~~~~~~~~~
-
-No unprotected opaque auxiliary data is sent in the message exchanges.
 
 There is only one supported cipher suite indicated by the Initiator. 
 
@@ -1536,7 +1534,7 @@ C_I (1 byte)
 2e
 ~~~~~~~~~~~~~~~~~~~~~~~ 
 
-Since no unprotected opaque auxiliary data is sent in the message exchanges:
+Since no auxiliary data is sent:
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 AD_1 (0 bytes)
@@ -1732,7 +1730,7 @@ ID_CRED_R (14 bytes)
 a1 18 22 82 2e 48 68 44 07 8a 53 f3 12 f5 
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-Since no unprotected opaque auxiliary data is sent in the message exchanges:
+Since no auxiliary data is sent:
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 AD_2  (0 bytes)
@@ -2053,7 +2051,7 @@ ID_CRED_I (14 bytes)
 a1 18 22 82 2e 48 70 5d 58 45 f3 6f c6 a6 
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-Since no opaque auxiliary data is exchanged:
+Since no auxiliary data is exchanged:
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 AD_3 (0 bytes)
@@ -2413,7 +2411,7 @@ OSCORE Hash Algorithm (int)
 
 <!-- Test vector index (int) 34900 -->
 
-EDHOC with static Diffie-Hellman keys and raw public keys is used. In this test vector, a key identifier is used to identify the raw public key.
+EDHOC with static Diffie-Hellman keys and raw public keys is used. In this test vector, a key identifier is used to identify the raw public key. No auxiliary data is sent in the message exchange.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 method (Static DH Based Authentication)
@@ -2433,8 +2431,6 @@ From there, METHOD_CORR has the following value:
 METHOD_CORR (4 * method + corr) (int)
 13
 ~~~~~~~~~~~~~~~~~~~~~~~
-
-No unprotected opaque auxiliary data is sent in the message exchanges.
 
 There is only one supported cipher suite indicated by the Initiator.
 
@@ -2482,7 +2478,7 @@ C_I (1 byte)
 21
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-Since no unprotected opaque auxiliary data is sent in the message exchanges:
+Since no auxiliary data is sent:
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 AD_1 (0 bytes)
@@ -2682,7 +2678,7 @@ a4 01 01 20 04 21 58 20 a3 ff 26 35 95 be b3 77 d1 a0 ce 1d 04 da d2 d4
 20 6e 61 6d 65 60 
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-Since no unprotected opaque auxiliary data is sent in the message exchanges:
+Since no auxiliary data is sent:
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 AD_2  (0 bytes)
@@ -2958,7 +2954,7 @@ aa 4f 4e 7a bb 83 5e c3 0f 1d e8 8a db 96 ff 71 6c 73 75 62 6a 65 63 74
 20 6e 61 6d 65 60 
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-Since no opaque auxiliary data is exchanged:
+Since no auxiliary data is exchanged:
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 AD_3 (0 bytes)
