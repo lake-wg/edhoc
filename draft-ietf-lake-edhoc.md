@@ -32,9 +32,6 @@ author:
         
 normative:
 
-  I-D.ietf-cose-x509:
-  I-D.ietf-core-echo-request-tag:
-  I-D.ietf-lake-reqs:
   RFC2119:
   RFC5116:
   RFC5869:
@@ -51,9 +48,25 @@ normative:
   RFC8613:
   RFC8724:
   RFC8742:
-
+  I-D.ietf-cose-x509:
+  I-D.ietf-core-echo-request-tag:
+  I-D.ietf-lake-reqs:
 
 informative:
+
+  RFC7228:
+  RFC7258:
+  RFC7296:
+  RFC8446:
+  RFC8937:
+  I-D.ietf-6tisch-dtsecurity-zerotouch-join:
+  I-D.ietf-core-resource-directory:
+  I-D.ietf-lwig-security-protocol-comparison:
+  I-D.ietf-tls-dtls13:
+  I-D.selander-ace-ake-authz:
+  I-D.palombini-core-oscore-edhoc:
+  I-D.mattsson-cose-cbor-cert-compress:
+  I-D.mattsson-cfrg-det-sigs-with-noise:
 
   SP-800-56A:
     target: https://doi.org/10.6028/NIST.SP.800-56Ar3
@@ -89,20 +102,6 @@ informative:
         ins: (Placeholder)
     date: August 2015
     
-  I-D.ietf-6tisch-dtsecurity-zerotouch-join:
-  I-D.ietf-core-resource-directory:
-  I-D.ietf-lwig-security-protocol-comparison:
-  I-D.ietf-tls-dtls13:
-  I-D.selander-ace-ake-authz:
-  I-D.palombini-core-oscore-edhoc:
-  I-D.mattsson-cose-cbor-cert-compress:
-  I-D.mattsson-cfrg-det-sigs-with-noise:
-
-  RFC7228:
-  RFC7258:
-  RFC7296:
-  RFC8446:
-
   LoRa1:
     target: https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6021899/pdf/sensors-18-01833.pdf
     title: Enhancing LoRaWAN Security through a Lightweight and Authenticated Key Management Approach
