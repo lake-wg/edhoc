@@ -1239,7 +1239,7 @@ EDHOC itself does not provide countermeasures against Denial-of-Service attacks.
 The availability of a secure random number generator is essential for the security of EDHOC. If no true random number generator is available, a truly random seed MUST be provided from an external source and used with a cryptographically secure pseudorandom number generator. As each pseudorandom number must only be used once, an implementation need to get a new truly random seed after reboot, or continuously store state in nonvolatile memory, see ({{RFC8613}}, Appendix B.1.1) for issues and solution approaches for writing to nonvolatile memory. Intentionally or unintentionally weak or predictable pseudorandom number generators can be abused or exploited for malicious purposes. {{RFC8937}} describes a way for security protocol implementations to augment their (pseudo)random number generators using a long-term private keys and a deterministic signature function. This improves randomness from broken or otherwise subverted random number generators. The same idea can be used with other secrets and functions such as a Diffie-Hellman function or a symmetric secret and a PRF like HMAC or KMAC. It is RECOMMENDED to not trust a single source of randomness and to not put unaugmented random numbers on the wire.
 
 If ECDSA is supported, "deterministic ECDSA" as specified in {{RFC6979}} MAY be used. Pure deterministic elliptic-curve signatures such as deterministic ECDSA and EdDSA have gained popularity over randomized ECDSA as their security do not depend on a source of high-quality randomness. Recent research has however found that implementations of these signature algorithms may be vulnerable to certain side-channel and
-fault injection attacks due to their determinism. See e.g. Section 1 of {{draft-mattsson-cfrg-det-sigs-with-noise}} for a list of attack papers. As suggested in Section 2.1.1 of {{RFC8152}} this can be adressed by combining randomness and determinism.
+fault injection attacks due to their determinism. See e.g. Section 1 of {{I-D.mattsson-cfrg-det-sigs-with-noise}} for a list of attack papers. As suggested in Section 2.1.1 of {{RFC8152}} this can be adressed by combining randomness and determinism.
 
 The referenced processing instructions in {{SP-800-56A}} must be complied with, including deleting the intermediate computed values along with any ephemeral ECDH secrets after the key derivation is completed. The ECDH shared secrets, keys, and IVs MUST be secret. Implementations should provide countermeasures to side-channel attacks such as timing attacks. Depending on the selected curve, the parties should perform various validations of each other's public keys, see e.g. Section 5 of {{SP-800-56A}}.
 
@@ -1504,7 +1504,7 @@ Selected Cipher Suite (int)
 0
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-Cipher suite 0 is supported by both the Initiator and the Responder, see {{cipher-suites}}.
+Cipher suite 0 is supported by both the Initiator and the Responder, see {{cs}}.
 
 ### Message_1
 
@@ -2450,7 +2450,7 @@ Selected Cipher Suite (int)
 0
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-Cipher suite 0 is supported by both the Initiator and the Responder, see {{cipher-suites}}.
+Cipher suite 0 is supported by both the Initiator and the Responder, see {{cs}}.
 
 ### Message_1 {#dh-ss-m1}
 
