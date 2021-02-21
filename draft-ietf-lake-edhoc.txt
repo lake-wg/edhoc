@@ -2932,7 +2932,7 @@ B.1.  Test Vectors for EDHOC Authenticated with Signature Keys (x5t)
 
    EDHOC with signature authentication and X.509 certificates is used.
    In this test vector, the hash value 'x5t' is used to identify the
-   certificate.
+   certificate.  No auxiliary data is sent in the message exchange.
 
    method (Signature Authentication)
    0
@@ -2947,9 +2947,6 @@ B.1.  Test Vectors for EDHOC Authenticated with Signature Keys (x5t)
    METHOD_CORR (4 * method + corr) (int)
    1
 
-   No unprotected opaque auxiliary data is sent in the message
-   exchanges.
-
    There is only one supported cipher suite indicated by the Initiator.
 
    Supported Cipher Suites (1 byte)
@@ -2962,6 +2959,9 @@ B.1.  Test Vectors for EDHOC Authenticated with Signature Keys (x5t)
 
    Cipher suite 0 is supported by both the Initiator and the Responder,
    see Section 3.4.
+
+
+
 
 
 
@@ -2995,8 +2995,7 @@ B.1.1.  Message_1
    C_I (1 byte)
    2e
 
-   Since no unprotected opaque auxiliary data is sent in the message
-   exchanges:
+   Since no auxiliary data is sent:
 
    AD_1 (0 bytes)
 
@@ -3013,6 +3012,7 @@ B.1.1.  Message_1
 
    With SUITES_I = 0, message_1 is constructed as the CBOR Sequence of
    the CBOR data items above.
+
 
 
 
@@ -3202,8 +3202,7 @@ Internet-Draft  Ephemeral Diffie-Hellman Over COSE (EDHO   February 2021
    ID_CRED_R (14 bytes)
    a1 18 22 82 2e 48 68 44 07 8a 53 f3 12 f5
 
-   Since no unprotected opaque auxiliary data is sent in the message
-   exchanges:
+   Since no auxiliary data is sent:
 
    AD_2  (0 bytes)
 
@@ -3237,6 +3236,7 @@ A_2m =
  db 78 97 4c 27 15 79 b0 16 33 a3 ef 62 71 be 5c 22 5e b2
 
    info for K_2m is defined as follows:
+
 
 
 
@@ -3533,7 +3533,7 @@ Internet-Draft  Ephemeral Diffie-Hellman Over COSE (EDHO   February 2021
    ID_CRED_I (14 bytes)
    a1 18 22 82 2e 48 70 5d 58 45 f3 6f c6 a6
 
-   Since no opaque auxiliary data is exchanged:
+   Since no auxiliary data is exchanged:
 
    AD_3 (0 bytes)
 
@@ -3886,7 +3886,7 @@ B.2.  Test Vectors for EDHOC Authenticated with Static Diffie-Hellman
 
    EDHOC with static Diffie-Hellman keys and raw public keys is used.
    In this test vector, a key identifier is used to identify the raw
-   public key.
+   public key.  No auxiliary data is sent in the message exchange.
 
    method (Static DH Based Authentication)
    3
@@ -3901,9 +3901,6 @@ B.2.  Test Vectors for EDHOC Authenticated with Static Diffie-Hellman
    METHOD_CORR (4 * method + corr) (int)
    13
 
-   No unprotected opaque auxiliary data is sent in the message
-   exchanges.
-
    There is only one supported cipher suite indicated by the Initiator.
 
    Supported Cipher Suites (1 byte)
@@ -3914,6 +3911,9 @@ B.2.  Test Vectors for EDHOC Authenticated with Static Diffie-Hellman
    Selected Cipher Suite (int)
    0
 
+   Cipher suite 0 is supported by both the Initiator and the Responder,
+   see Section 3.4.
+
 
 
 
@@ -3921,9 +3921,6 @@ Selander, et al.         Expires 25 August 2021                [Page 70]
 
 Internet-Draft  Ephemeral Diffie-Hellman Over COSE (EDHO   February 2021
 
-
-   Cipher suite 0 is supported by both the Initiator and the Responder,
-   see Section 3.4.
 
 B.2.1.  Message_1
 
@@ -3950,8 +3947,7 @@ B.2.1.  Message_1
    C_I (1 byte)
    21
 
-   Since no unprotected opaque auxiliary data is sent in the message
-   exchanges:
+   Since no auxiliary data is sent:
 
    AD_1 (0 bytes)
 
@@ -3967,6 +3963,10 @@ B.2.1.  Message_1
 
    With SUITES_I = 0, message_1 is constructed, as the CBOR Sequence of
    the CBOR data items above.
+
+
+
+
 
 
 
@@ -4160,8 +4160,7 @@ Internet-Draft  Ephemeral Diffie-Hellman Over COSE (EDHO   February 2021
  09 66 ac 6b cb 62 20 51 b8 46 59 18 4d 5d 9a 32 6c 73 75 62 6a 65 63 74
  20 6e 61 6d 65 60
 
-   Since no unprotected opaque auxiliary data is sent in the message
-   exchanges:
+   Since no auxiliary data is sent:
 
    AD_2  (0 bytes)
 
@@ -4192,6 +4191,7 @@ A_2m =
  65 63 74 20 6e 61 6d 65 60
 
    info for K_2m is defined as follows:
+
 
 
 
@@ -4440,7 +4440,7 @@ Internet-Draft  Ephemeral Diffie-Hellman Over COSE (EDHO   February 2021
  aa 4f 4e 7a bb 83 5e c3 0f 1d e8 8a db 96 ff 71 6c 73 75 62 6a 65 63 74
  20 6e 61 6d 65 60
 
-   Since no opaque auxiliary data is exchanged:
+   Since no auxiliary data is exchanged:
 
    AD_3 (0 bytes)
 
