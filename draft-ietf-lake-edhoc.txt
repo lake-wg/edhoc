@@ -3459,7 +3459,7 @@ B.1.3.  Message_3
 
    data 3 is equal to C_R.
 
-   data_3 (CBOR Sequence) (1 bytes)
+   data_3 (CBOR Sequence) (1 byte)
    37
 
    From data_3, CIPHERTEXT_2, and TH_2, compute the input to the
@@ -3866,7 +3866,7 @@ Selander, et al.         Expires 25 August 2021                [Page 69]
 Internet-Draft  Ephemeral Diffie-Hellman Over COSE (EDHO   February 2021
 
 
-   Client's OSCORE Sender ID (1 bytes)
+   Client's OSCORE Sender ID (1 byte)
    00
 
    Server's OSCORE Sender ID (0 bytes)
@@ -3936,7 +3936,7 @@ B.2.1.  Message_1
 
    The Initiator chooses a connection identifier C_I:
 
-   Connection identifier chosen by Initiator (1 bytes)
+   Connection identifier chosen by Initiator (1 byte)
    16
 
    Note that since C_I is a byte strings of length one, it is encoded as
@@ -4378,7 +4378,7 @@ Internet-Draft  Ephemeral Diffie-Hellman Over COSE (EDHO   February 2021
 
    data 3 is equal to C_R.
 
-   data_3 (CBOR Sequence) (1 bytes)
+   data_3 (CBOR Sequence) (1 byte)
    37
 
    From data_3, CIPHERTEXT_2, and TH_2, compute the input to the
@@ -4732,7 +4732,7 @@ Internet-Draft  Ephemeral Diffie-Hellman Over COSE (EDHO   February 2021
    The client's OSCORE Sender ID is C_R and the server's OSCORE Sender
    ID is C_I.
 
-   Client's OSCORE Sender ID (1 bytes)
+   Client's OSCORE Sender ID (1 byte)
    00
 
    Server's OSCORE Sender ID (0 bytes)
