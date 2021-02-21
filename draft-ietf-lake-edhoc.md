@@ -1549,23 +1549,24 @@ SUITES_I (int)
 0
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-With SUITES_I = 0, message_1 is constructed as the CBOR Sequence of the CBOR data items above.
+With SUITES_I = 0, message_1 is constructed as the CBOR Sequence of the CBOR data items above. In CBOR diagnostic notation: 
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 message_1 =
 (
-  h'',
   1,
   0,
-  h'898ff79a02067a16ea1eccb90fa52246f5aa4dd6ec076bba0259d904b7ec8b0c',
+  h'898FF79A02067A16EA1ECCB90FA52246F5AA4DD6EC076BBA0259D904B7EC8B0C',
   -15
 )
 ~~~~~~~~~~~~~~~~~~~~~~~
 
+Which as a CBOR encoded data item is:
+
 ~~~~~~~~~~~~~~~~~~~~~~~
-message_1 (CBOR Sequence) (38 bytes)
-40 01 00 58 20 89 8f f7 9a 02 06 7a 16 ea 1e cc b9 0f a5 22 46 f5 aa 4d 
-d6 ec 07 6b ba 02 59 d9 04 b7 ec 8b 0c 2e 
+message_1 (CBOR Sequence) (37 bytes)
+01 00 58 20 89 8f f7 9a 02 06 7a 16 ea 1e cc b9 0f a5 22 46 f5 aa 4d d6 
+ec 07 6b ba 02 59 d9 04 b7 ec 8b 0c 2e 
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 ### Message_2
@@ -2493,18 +2494,19 @@ SUITES_I (int)
 0
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-With SUITES_I = 0, message_1 is constructed, as the CBOR Sequence of the CBOR data items above.
+With SUITES_I = 0, message_1 is constructed, as the CBOR Sequence of the CBOR data items above. In CBOR diagnostic notation: 
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 message_1 =
 (
-  h'',
   13,
   0,
   h'8D3EF56D1B750A4351D68AC250A0E883790EFC80A538A444EE9E2B57E2441A7C',
   -2
 )
 ~~~~~~~~~~~~~~~~~~~~~~~
+
+Which as a CBOR encoded data item is:
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 message_1 (CBOR Sequence) (38 bytes)
@@ -2861,7 +2863,7 @@ Since corr equals 1, C_R is not omitted from data_3.
 The Initiator's static Diffie-Hellman key pair is the following:
 
 ~~~~~~~~~~~~~~~~~~~~~~~
-SK_I (Initiator's private authentication key) (32 bytes)
+I (Initiator's private authentication key) (32 bytes)
 2b be a6 55 c2 33 71 c3 29 cf bd 3b 1f 02 c6 c0 62 03 38 37 b8 b5 90 99 
 a4 43 6f 66 60 81 b0 8e 
 ~~~~~~~~~~~~~~~~~~~~~~~
