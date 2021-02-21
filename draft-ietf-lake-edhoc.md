@@ -1984,7 +1984,7 @@ d8 2f be b7 99 71 39 4a
 data 3 is equal to C_R.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
-data_3 (CBOR Sequence) (1 bytes)
+data_3 (CBOR Sequence) (1 byte)
 37
 ~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -2385,7 +2385,7 @@ OSCORE Master Salt (8 bytes)
 The client's OSCORE Sender ID is C_R and the server's OSCORE Sender ID is C_I.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
-Client's OSCORE Sender ID (1 bytes)
+Client's OSCORE Sender ID (1 byte)
 00 
 ~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -2467,7 +2467,7 @@ ee 9e 2b 57 e2 44 1a 7c
 The Initiator chooses a connection identifier C_I:
 
 ~~~~~~~~~~~~~~~~~~~~~~~
-Connection identifier chosen by Initiator (1 bytes)
+Connection identifier chosen by Initiator (1 byte)
 16
 ~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -2894,7 +2894,7 @@ PRK_4x3m (32 bytes)
 data 3 is equal to C_R.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
-data_3 (CBOR Sequence) (1 bytes)
+data_3 (CBOR Sequence) (1 byte)
 37 
 ~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -3236,7 +3236,7 @@ OSCORE Master Salt (8 bytes)
 The client's OSCORE Sender ID is C_R and the server's OSCORE Sender ID is C_I.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
-Client's OSCORE Sender ID (1 bytes)
+Client's OSCORE Sender ID (1 byte)
 00
 ~~~~~~~~~~~~~~~~~~~~~~~
 
