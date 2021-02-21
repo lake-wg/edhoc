@@ -1527,7 +1527,7 @@ Connection identifier chosen by Initiator (1 byte)
 09
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-Note that since C_I is a byte string of length one, it is encoded as the corresponding integer subtracted by 24 (see bstr_identifier in {{bstr_id}}). Thus 0x09 = 09, 9 - 24 = -15, and -15 in CBOR encoding is equal to 0x2e.
+Note that since C_I is a byte string in the interval h'00' to h'2f', it is encoded as the corresponding integer subtracted by 24 (see bstr_identifier in {{bstr_id}}). Thus 0x09 = 09, 9 - 24 = -15, and -15 in CBOR encoding is equal to 0x2e.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 C_I (1 byte)
@@ -1645,7 +1645,7 @@ Connection identifier chosen by Responder (1 byte)
 00
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-Note that since C_R is a byte string of length one, it is encoded as the corresponding integer subtracted by 24 (see bstr_identifier in {{bstr_id}}). Thus 0x00 = 0, 0 - 24 = -24, and -24 in CBOR encoding is equal to 0x37.
+Note that since C_R is a byte string in the interval h'00' to h'2f', it is encoded as the corresponding integer subtracted by 24 (see bstr_identifier in {{bstr_id}}). Thus 0x00 = 0, 0 - 24 = -24, and -24 in CBOR encoding is equal to 0x37.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 C_R (1 byte)
@@ -2471,7 +2471,7 @@ Connection identifier chosen by Initiator (1 byte)
 16
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-Note that since C_I is a byte strings of length one, it is encoded as the corresponding integer - 24 (see bstr_identifier in {{bstr_id}}), i.e. 0x16 = 22, 22 - 24 = -2, and -2 in CBOR encoding is equal to 0x21.
+Note that since C_I is a byte string in the interval h'00' to h'2f', it is encoded as the corresponding integer - 24 (see bstr_identifier in {{bstr_id}}), i.e. 0x16 = 22, 22 - 24 = -2, and -2 in CBOR encoding is equal to 0x21.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 C_I (1 byte)
@@ -2508,9 +2508,9 @@ message_1 =
 Which as a CBOR encoded data item is:
 
 ~~~~~~~~~~~~~~~~~~~~~~~
-message_1 (CBOR Sequence) (38 bytes)
-40 0d 00 58 20 8d 3e f5 6d 1b 75 0a 43 51 d6 8a c2 50 a0 e8 83 79 0e fc 
-80 a5 38 a4 44 ee 9e 2b 57 e2 44 1a 7c 21 
+message_1 (CBOR Sequence) (37 bytes)
+0d 00 58 20 8d 3e f5 6d 1b 75 0a 43 51 d6 8a c2 50 a0 e8 83 79 0e fc 80 
+a5 38 a4 44 ee 9e 2b 57 e2 44 1a 7c 21  
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 ### Message_2 {#dh-ss-m2}
@@ -2597,7 +2597,7 @@ Connection identifier chosen by Responder (1 byte)
 00
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-Note that since C_R is a byte strings of length one, it is encoded as the corresponding integer - 24 (see bstr_identifier in {{bstr_id}}), i.e. 0x00 = 0, 0 - 24 = -24, and -24 in CBOR encoding is equal to 0x37.
+Note that since C_R is a byte string in the interval h'00' to h'2f', it is encoded as the corresponding integer - 24 (see bstr_identifier in {{bstr_id}}), i.e. 0x00 = 0, 0 - 24 = -24, and -24 in CBOR encoding is equal to 0x37.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 C_R (1 byte)
