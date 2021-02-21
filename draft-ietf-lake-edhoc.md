@@ -90,7 +90,6 @@ informative:
     date: August 2015
     
   I-D.ietf-6tisch-dtsecurity-zerotouch-join:
-  I-D.ietf-ace-oauth-authz:
   I-D.ietf-core-resource-directory:
   I-D.ietf-lwig-security-protocol-comparison:
   I-D.ietf-tls-dtls13:
@@ -201,7 +200,7 @@ This document specifies Ephemeral Diffie-Hellman Over COSE (EDHOC), a very compa
 
 ## Motivation 
 
-Many Internet of Things (IoT) deployments require technologies which are highly performant in constrained environments {{RFC7228}}. IoT devices may be constrained in various ways, including memory, storage, processing capacity and power. The connectivity for these settings may also exhibit constraints such as unreliable and lossy channels, highly restricted bandwidth and dynamic topology. The IETF has acknowledged this problem by standardizing a range of lightweight protocols and enablers designed for the IoT, including the Constrained Application Protocol (CoAP, {{RFC7252}}), Concise Binary Object Representation (CBOR, {{RFC8949}}), and Static Context Header Compression (SCHC, {{RFC8724}}).
+Many Internet of Things (IoT) deployments require technologies which are highly performant in constrained environments {{RFC7228}}. IoT devices may be constrained in various ways, including memory, storage, processing capacity, and power. The connectivity for these settings may also exhibit constraints such as unreliable and lossy channels, highly restricted bandwidth, and dynamic topology. The IETF has acknowledged this problem by standardizing a range of lightweight protocols and enablers designed for the IoT, including the Constrained Application Protocol (CoAP, {{RFC7252}}), Concise Binary Object Representation (CBOR, {{RFC8949}}), and Static Context Header Compression (SCHC, {{RFC8724}}).
 
 The need for special protocols targeting constrained IoT deployments extends also to the security domain {{I-D.ietf-lake-reqs}}. Important characteristics in constrained environments are the number of round trips and protocol message sizes, which if kept low can contribute to good performance by enabling transport over a small number of radio frames, reducing latency due to fragmentation or duty cycles, etc. Another important criteria is code size, which may be prohibitive for certain deployments due to device capabilities or network load during firmware update. Some IoT deployments also need to support a variety of underlying transport technologies, potentially even with a single connection.
 
@@ -213,7 +212,7 @@ EDHOC makes use of known protocol constructions, such as SIGMA {{SIGMA}} and Ext
 
 ## Use of EDHOC
 
-EDHOC is designed for highly constrained settings making it especially suitable for low-power wide area networks {{RFC8376}} such as Cellular IoT, 6TiSCH, and LoRaWAN. A main objective for EDHOC is to be a lightweight AKE for OSCORE, i.e. to provide authentication and session key establishment for IoT use cases such as those built on CoAP {{RFC7252}}. CoAP is a specialized web transfer protocol for use with constrained nodes and networks, providing a request/response interaction model between application endpoints. As such, EDHOC is targeting a large variety of use cases involving 'things' with embedded microcontrollers, sensors and actuators.
+EDHOC is designed for highly constrained settings making it especially suitable for low-power wide area networks {{RFC8376}} such as Cellular IoT, 6TiSCH, and LoRaWAN. A main objective for EDHOC is to be a lightweight AKE for OSCORE, i.e. to provide authentication and session key establishment for IoT use cases such as those built on CoAP {{RFC7252}}. CoAP is a specialized web transfer protocol for use with constrained nodes and networks, providing a request/response interaction model between application endpoints. As such, EDHOC is targeting a large variety of use cases involving 'things' with embedded microcontrollers, sensors, and actuators.
 
 A typical setting is when one of the endpoints is constrained or in a constrained network, and the other endpoint is a node on the Internet (such as a mobile phone) or at the edge of the constrained network (such as a gateway). Thing-to-thing interactions over constrained networks are also relevant since both endpoints would then benefit from the lightweight properties of the protocol. EDHOC could e.g. be run when a device/device(s) connect(s) for the first time, or to establish fresh keys which are not revealed by a later compromise of the long-term keys. Further security properties are described in {{sec-prop}}.
 
@@ -221,24 +220,24 @@ EDHOC builds on the same lightweight primitives as OSCORE: CBOR for encoding, CO
 
 ## Message Size Examples
 
-Compared to the DTLS 1.3 handshake {{I-D.ietf-tls-dtls13}} with ECDH and connection ID, the number of bytes in EDHOC + CoAP can be less than 1/6 when RPK authentication is used, see {{I-D.ietf-lwig-security-protocol-comparison}}. {{fig-sizes}} shows two examples of message sizes for EDHOC with different kinds of authentication keys and different COSE header parameters for identification: static Diffie-Hellman keys identified by 'kid' {{RFC8152}}, and X.509 signature certificates identified by a hash value using 'x5t' {{I-D.ietf-cose-x509}}. Further reductions of message sizes are possible, for example by eliding redundant length indications.
+Compared to the DTLS 1.3 handshake {{I-D.ietf-tls-dtls13}} with ECDHE and connection ID, the number of bytes in EDHOC + CoAP can be less than 1/6 when RPK authentication is used, see {{I-D.ietf-lwig-security-protocol-comparison}}. {{fig-sizes}} shows two examples of message sizes for EDHOC with different kinds of authentication keys and different COSE header parameters for identification: static Diffie-Hellman keys identified by 'kid' {{RFC8152}}, and X.509 signature certificates identified by a hash value using 'x5t' {{I-D.ietf-cose-x509}}. 
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 =================================
                     kid       x5t                     
 ---------------------------------
-message_1            37        37                     
+message_1            38        38                     
 message_2            46       117       
 message_3            20        91        
-----------------------------------
-Total               103       245      
+---------------------------------
+Total               104       246      
 =================================
 ~~~~~~~~~~~~~~~~~~~~~~~
 {: #fig-sizes title="Example of message sizes in bytes." artwork-align="center"}
 
 ## Document Structure
 
-The remainder of the document is organized as follows: {{background}} outlines EDHOC authenticated with digital signatures, {{overview}} describes the protocol elements of EDHOC, including message flow, formatting of the ephemeral public keys, and key derivation, {{asym}} specifies EDHOC with authentication based on signature keys or static Diffie-Hellman keys, {{error}} specifies the EDHOC error message, and {{transfer}} describes how EDHOC can be transferred in CoAP and used to establish an OSCORE security context.
+The remainder of the document is organized as follows: {{background}} outlines EDHOC authenticated with digital signatures, {{overview}} describes the protocol elements of EDHOC, including message flow, and formatting of the ephemeral public keys, {{key-der}} describes the key derivation, {{asym}} specifies EDHOC with authentication based on signature keys or static Diffie-Hellman keys, {{error}} specifies the EDHOC error message, and {{transfer}} describes how EDHOC can be transferred in CoAP and used to establish an OSCORE security context.
 
 
 ## Terminology and Requirements Language
@@ -291,6 +290,10 @@ In order to create a "full-fledged" protocol some additional protocol elements a
 
 * Computationally independent keys derived from the ECDH shared secret and used for authenticated encryption of different messages.
 
+* An optional fouth flight giving explicit key confirmation in deployment where no application data is send.
+
+* A key material exporter and a key update function enabling frequent forward secrecy.
+
 * Verification of a common preferred cipher suite:
 
    * The Initiator lists supported cipher suites in order of preference
@@ -309,7 +312,7 @@ To simplify for implementors, the use of CBOR and COSE in EDHOC is summarized in
 
 ## General 
 
-EDHOC consists of three messages (message_1, message_2, message_3) between Initiator and Responder, plus an EDHOC error message. EDHOC messages are CBOR Sequences {{RFC8742}}, see {{fig-flow}}. The protocol elements in the figure are introduced in the following sections. Message formatting and processing is specified in {{asym}} and {{error}}. An implementation may support only Initiator or only Responder. 
+An EDHOC message flow consists of three mandatory messages (message_1, message_2, message_3) between Initiator and Responder, an optional forth message (message_4), plus an EDHOC error message. EDHOC messages are CBOR Sequences {{RFC8742}}, see {{fig-flow}}. The protocol elements in the figure are introduced in the following sections. Message formatting and processing is specified in {{asym}} and {{error}}. An implementation may support only Initiator or only Responder. 
 
 Application data is protected using the agreed application algorithms (AEAD, hash) in the selected cipher suite (see {{cs}}) and the application can make use of the established connection identifiers C_I and C_R (see {{corr}}). EDHOC may be used with the media type application/edhoc defined in {{iana}}.
 
@@ -317,7 +320,7 @@ The Initiator can derive symmetric application keys after creating EDHOC message
 
 ~~~~~~~~~~~
 Initiator                                                   Responder
-|               METHOD_CORR, SUITES_I, G_X, C_I, AD_1               |
+|            C_R, METHOD_CORR, SUITES_I, G_X, C_I, AD_1             |
 +------------------------------------------------------------------>|
 |                             message_1                             |
 |                                                                   |
@@ -335,8 +338,7 @@ Initiator                                                   Responder
 
 ## Method and Correlation
 
-The first data item of message_1, METHOD_CORR (see {{asym-msg1-form}}), is an integer specifying the method and the correlation properties of the transport, which are described in this section.
-
+The data item METHOD_CORR in message_1 (see {{asym-msg1-form}}), is an integer specifying the method and the correlation properties of the transport, which are described in this section.
 
 ### Method {#method}
 
@@ -359,7 +361,7 @@ An implementation may support only a single method. The Initiator and the Respon
 
 ### Connection Identifiers {#ci}
 
-EDHOC includes connection identifiers (C_I, C_R) to correlate messages. The connection identifiers C_I and C_R do not have any cryptographic purpose in EDHOC. They contain information facilitating retrieval of the protocol state and may therefore be very short. One byte connection identifiers are realistic in many scenarios as most constrained devices only have a few connections. In cases where a node only has one connection, the identifiers may even be the empty byte string. 
+EDHOC includes connection identifiers (C_I, C_R) to correlate messages. The connection identifiers C_I and C_R do not have any cryptographic purpose in EDHOC. They contain information facilitating retrieval of the protocol state and may therefore be very short. One byte connection identifiers are realistic in many scenarios as most constrained devices only have a few connections. In cases where a node only has one connection, the identifiers may even be the empty byte string. The connection identifier (C_1) in message_1 is always set to the empty byte string to enable the initiator to distinguish message_1 from message_3.
 
 The connection identifier MAY be used with an application protocol (e.g. OSCORE) for which EDHOC establishes keys, in which case the connection identifiers SHALL adhere to the requirements for that protocol. Each party choses a connection identifier it desires the other party to use in outgoing messages. (For OSCORE this results in the endpoint selecting its Recipient ID, see Section 3.1 of {{RFC8613}}).
 
@@ -389,7 +391,7 @@ For example, if the key exchange is transported over CoAP, the CoAP Token can be
 ### Authentication Keys
 
 The authentication key MUST be a signature key or static Diffie-Hellman key. The Initiator and the Responder
- MAY use different types of authentication keys, e.g. one uses a signature key and the other uses a static Diffie-Hellman key. When using a signature key, the authentication is provided by a signature. When using a static Diffie-Hellman key the authentication is provided by a Message Authentication Code (MAC) computed from an ephemeral-static ECDH shared secret which enables significant reductions in message sizes. The MAC is implemented with an AEAD algorithm. When using a static Diffie-Hellman keys the Initiator's and Responder's private authentication keys are called I and R, respectively, and the public authentication keys are called G_I and G_R, respectively.
+ MAY use different types of authentication keys, e.g. one uses a signature key and the other uses a static Diffie-Hellman key. When using a signature key, the authentication is provided by a signature. When using a static Diffie-Hellman key the authentication is provided by a Message Authentication Code (MAC) computed from an ephemeral-static ECDH shared secret which enables significant reductions in message sizes. The MAC is implemented with an AEAD algorithm. When using static Diffie-Hellman keys the Initiator's and Responder's private authentication keys are called I and R, respectively, and the public authentication keys are called G_I and G_R, respectively.
 
 * Only the Responder SHALL have access to the Responder's private authentication key.
 
@@ -693,6 +695,7 @@ message_1 SHALL be a CBOR Sequence (see {{CBOR}}) as defined below
 
 ~~~~~~~~~~~ CDDL
 message_1 = (
+  C_1 : bstr .size 0,
   METHOD_CORR : int,
   SUITES_I : [ selected : suite, supported : 2* suite ] / suite,
   G_X : bstr,
@@ -705,12 +708,13 @@ suite = int
 
 where:
 
+* C_1 -  always set to the empty byte string to enable the initiator to distinguish message_1 from message_3.
 * METHOD_CORR = 4 * method + corr, where method = 0, 1, 2, or 3 (see {{fig-method-types}}) and the correlation parameter corr is chosen based on the transport and determines which connection identifiers that are omitted (see {{corr}}).
 * SUITES_I - cipher suites which the Initiator supports in order of (decreasing) preference. The list of supported cipher suites can be truncated at the end, as is detailed in the processing steps below. One of the supported cipher suites is selected. The selected suite is the first suite in the SUITES_I CBOR array. If a single supported cipher suite is conveyed then that cipher suite is selected and the selected cipher suite is encoded as an int instead of an array.
 * G_X - the ephemeral public key of the Initiator
 * C_I - variable length connection identifier, encoded as a bstr_identifier (see {{bstr_id}}).
 * AD_1 - bstr containing unprotected opaque auxiliary data
-
+* 
 ### Initiator Processing of Message 1 {#init-proc-msg1}
 
 The Initiator SHALL compose message_1 as follows:
