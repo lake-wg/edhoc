@@ -2105,7 +2105,7 @@ Internet-Draft  Ephemeral Diffie-Hellman Over COSE (EDHO   February 2021
    force attacks.  This is in line with IPsec, TLS, and COSE.  To break
    64-bit security against online brute force an attacker would on
    average have to send 4.3 billion messages per second for 68 years,
-   which is very infeasable in contrained IoT radio technologies.
+   which is infeasible in constrained IoT radio technologies.
 
    After sending message_3, the Initiator is assured that no other party
    than the Responder can compute the key PRK_4x3m (implicit key
