@@ -775,7 +775,7 @@ The Responder SHALL compose message_2 as follows:
 
 * Generate an ephemeral ECDH key pair as specified in Section 5 of {{SP-800-56A}} using the curve in the selected cipher suite and format it as a COSE_Key. Let G_Y be the 'x' parameter of the COSE_Key.
 
-* Choose a connection identifier C_R and store it for the length of the protocol.
+* Choose a connection identifier C_R and store it for the length of the protocol. C_R MUST be different from C_1.
 
 * Compute the transcript hash TH_2 = H(message_1, data_2) where H() is the hash function in the selected cipher suite. The transcript hash TH_2 is a CBOR encoded bstr and the input to the hash function is a CBOR Sequence.
 
