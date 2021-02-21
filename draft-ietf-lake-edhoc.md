@@ -1488,14 +1488,14 @@ METHOD_CORR (4 * method + corr) (int)
 1
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-There is only one supported cipher suite indicated by the Initiator. 
+The Initiator indicates only one cipher suite in the (potentially trunkated) list of cipher suites.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 Supported Cipher Suites (1 byte)
 00
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-The selected cipher suite is a subset of the supported cipher suites indicated by the Initiator. Since the selected and supported coincide, SUITES_I consists only of that suite.
+The Initiator selected the indicated cipher suite.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 Selected Cipher Suite (int)
@@ -1523,7 +1523,7 @@ G_X (Initiator's ephemeral public key) (32 bytes)
 The Initiator chooses a connection identifier C_I:
 
 ~~~~~~~~~~~~~~~~~~~~~~~
-Connection identifier chosen by Initiator (1 bytes)
+Connection identifier chosen by Initiator (1 byte)
 09
 ~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -2432,14 +2432,14 @@ METHOD_CORR (4 * method + corr) (int)
 13
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-There is only one supported cipher suite indicated by the Initiator.
+The Initiator indicates only one cipher suite in the (potentially trunkated) list of cipher suites.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 Supported Cipher Suites (1 byte)
 00
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-The selected cipher suite is a subset of the supported cipher suites indicated by the Initiator. Since the selected and supported coincide, SUITES_I consists only of that suite.
+The Initiator selected the indicated cipher suite.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 Selected Cipher Suite (int)
