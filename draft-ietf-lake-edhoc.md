@@ -1992,19 +1992,19 @@ From data_3, CIPHERTEXT_2, and TH_2, compute the input to the transcript hash TH
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 Input to calculate TH_3 (CBOR Sequence) (117 bytes)
-58 20 65 5c ab 4d 8c f4 de 31 a8 a1 54 ca 06 4e 20 c9 04 6e c3 7b fc 47 
-49 9e 58 ca ab 23 a4 2c b8 40 58 50 33 40 97 28 3a 57 82 06 96 78 2b a2 
-be 46 c2 ec 2e 02 ec d5 5d 88 fe 43 08 4f ed f9 7c 9b b8 12 25 80 e3 f1 
-45 c4 63 2d 5b 67 7a 25 bf 83 6a 1d 22 09 f1 5c ba 9e cf b2 67 41 2e 22 
-59 83 db 18 fe 4f 80 b1 be 1d 65 08 29 9c f8 8d a9 bb e9 f3 37
+58 20 86 4e 32 b3 6a 7b 5f 21 f1 9e 99 f0 c6 6d 91 1e 0a ce 99 72 d3 76 
+d2 c2 c1 53 c1 7f 8e 96 29 ff 58 50 0f f2 ac 2d 7e 87 ae 34 0e 50 bb de 
+9f 70 e8 a7 7f 86 bf 65 9f 43 b0 24 a7 3e e9 7b 6a 2b 9c 55 92 fd 83 5a 
+15 17 8b 7c 28 af 54 74 a9 75 81 48 64 7d 3d 98 a8 73 1e 16 4c 9c 70 52 
+81 07 f4 0f 21 46 3b a8 11 bf 03 97 19 e7 cf fa a7 f2 f4 40 37 
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 And from there, compute the transcript hash TH_3 = SHA-256(TH_2 , CIPHERTEXT_2, data_3)
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 TH_3 (32 bytes)
-75 ec 51 a0 af d3 31 82 73 4f 2b d4 3a ba 09 ba 48 4f 13 dc 95 f5 c7 4f 
-72 5a 38 50 e4 4e 98 17 
+f2 4d 18 ca fc e3 74 d4 e3 73 63 29 c1 52 ab 3a ea 9c 7c 0f 65 0c 30 70 
+b6 f5 1e 68 e2 ae bb 60 
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 The Initiator's subject name is the empty string:
@@ -2068,8 +2068,8 @@ The external_aad is the CBOR Sequence of TH_3 and CRED_I, in this order:
 ~~~~~~~~~~~~~~~~~~~~~~~
 A_3m (CBOR-encoded) (164 bytes)
 83 68 45 6e 63 72 79 70 74 30 4e a1 18 22 82 2e 48 70 5d 58 45 f3 6f c6 
-a6 58 89 58 20 75 ec 51 a0 af d3 31 82 73 4f 2b d4 3a ba 09 ba 48 4f 13 
-dc 95 f5 c7 4f 72 5a 38 50 e4 4e 98 17 58 65 54 13 20 4c 3e bc 34 28 a6 
+a6 58 89 58 20 f2 4d 18 ca fc e3 74 d4 e3 73 63 29 c1 52 ab 3a ea 9c 7c 
+0f 65 0c 30 70 b6 f5 1e 68 e2 ae bb 60 58 65 54 13 20 4c 3e bc 34 28 a6 
 cf 57 e2 4c 9d ef 59 65 17 70 44 9b ce 7e c6 56 1e 52 43 3a a5 5e 71 f1 
 fa 34 b2 2a 9c a4 a1 e1 29 24 ea e1 d1 76 60 88 09 84 49 cb 84 8f fc 79 
 5f 88 af c4 9c be 8a fd d1 ba 00 9f 21 67 5e 8f 6c 77 a4 a2 c3 01 95 60 
@@ -2082,7 +2082,7 @@ Info for K_3m is computed as follows:
 info for K_3m =
 [
   10,
-  h'75EC51A0AFD33182734F2BD43ABA09BA484F13DC95F5C74F725A3850E44E9817',
+  h'F24D18CAFCE374D4E3736329C152AB3AEA9C7C0F650C3070B6F51E68E2AEBB60',
   "K_3m",
   16
 ]
@@ -2092,15 +2092,15 @@ Which as a CBOR encoded data item is:
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 info for K_3m (CBOR-encoded) (42 bytes)
-84 0a 58 20 75 ec 51 a0 af d3 31 82 73 4f 2b d4 3a ba 09 ba 48 4f 13 dc 
-95 f5 c7 4f 72 5a 38 50 e4 4e 98 17 64 4b 5f 33 6d 10 
+84 0a 58 20 f2 4d 18 ca fc e3 74 d4 e3 73 63 29 c1 52 ab 3a ea 9c 7c 0f 
+65 0c 30 70 b6 f5 1e 68 e2 ae bb 60 64 4b 5f 33 6d 10 
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 From these parameters, K_3m is computed. Key K_3m is the output of HKDF-Expand(PRK_4x3m, info, L), where L is the length of K_2m, so 16 bytes.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 K_3m (16 bytes)
-76 26 73 92 b8 b0 3e 73 c6 63 f8 c2 08 e9 00 db 
+83 a9 c3 88 02 91 2e 7f 8f 0d 2b 84 14 d1 e5 2c 
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 Nonce IV_3m is the output of HKDF-Expand(PRK_4x3m, info, L), where L = 13 bytes.
@@ -2111,7 +2111,7 @@ Info for IV_3m is defined as follows:
 info for IV_3m =
 [
   10,
-  h'75EC51A0AFD33182734F2BD43ABA09BA484F13DC95F5C74F725A3850E44E9817',
+  h'F24D18CAFCE374D4E3736329C152AB3AEA9C7C0F650C3070B6F51E68E2AEBB60',
   "IV_3m",
   13
 ]
@@ -2121,22 +2121,22 @@ Which as a CBOR encoded data item is:
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 info for IV_3m (CBOR-encoded) (43 bytes)
-84 0a 58 20 75 ec 51 a0 af d3 31 82 73 4f 2b d4 3a ba 09 ba 48 4f 13 dc 
-95 f5 c7 4f 72 5a 38 50 e4 4e 98 17 65 49 56 5f 33 6d 0d 
+84 0a 58 20 f2 4d 18 ca fc e3 74 d4 e3 73 63 29 c1 52 ab 3a ea 9c 7c 0f 
+65 0c 30 70 b6 f5 1e 68 e2 ae bb 60 65 49 56 5f 33 6d 0d 
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 From these parameters, IV_3m is computed:
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 IV_3m (13 bytes)
-c3 6e e0 35 4b 38 e6 1f ee 98 92 da 7e 
+9c 83 9c 0e e8 36 42 50 5a 8e 1c 9f b2 
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 MAC_3 is the 'ciphertext' of the COSE_Encrypt0:
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 MAC_3 (8 bytes)
-6b ec ad 03 a1 b7 5a 45 
+2f a1 e3 9e ae 7d 5f 8d
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 Since the method = 0, Signature_or_Mac_3 is a signature:
@@ -2150,12 +2150,12 @@ M_3 =
 [
   "Signature1", 
   h'A11822822E48705D5845F36FC6A6', 
-  h'582075EC51A0AFD33182734F2BD43ABA09BA484F13DC95F5C74F725A3850E44E981
-  758655413204C3EBC3428A6CF57E24C9DEF59651770449BCE7EC6561E52433AA55E71
+  h'5820F24D18CAFCE374D4E3736329C152AB3AEA9C7C0F650C3070B6F51E68E2AEBB6
+  058655413204C3EBC3428A6CF57E24C9DEF59651770449BCE7EC6561E52433AA55E71
   F1FA34B22A9CA4A1E12924EAE1D1766088098449CB848FFC795F88AFC49CBE8AFDD1B
   A009F21675E8F6C77A4A2C30195601F6F0A0852978BD43D28207D44486502FF7BDD
   A6',
-  h'6BECAD03A1B75A45']
+  h'2FA1E39EAE7D5F8D']
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 Which as a CBOR encoded data item is:
@@ -2163,22 +2163,22 @@ Which as a CBOR encoded data item is:
 ~~~~~~~~~~~~~~~~~~~~~~~
 M_3 (175 bytes)
 84 6a 53 69 67 6e 61 74 75 72 65 31 4e a1 18 22 82 2e 48 70 5d 58 45 f3 
-6f c6 a6 58 89 58 20 75 ec 51 a0 af d3 31 82 73 4f 2b d4 3a ba 09 ba 48 
-4f 13 dc 95 f5 c7 4f 72 5a 38 50 e4 4e 98 17 58 65 54 13 20 4c 3e bc 34 
+6f c6 a6 58 89 58 20 f2 4d 18 ca fc e3 74 d4 e3 73 63 29 c1 52 ab 3a ea 
+9c 7c 0f 65 0c 30 70 b6 f5 1e 68 e2 ae bb 60 58 65 54 13 20 4c 3e bc 34 
 28 a6 cf 57 e2 4c 9d ef 59 65 17 70 44 9b ce 7e c6 56 1e 52 43 3a a5 5e 
 71 f1 fa 34 b2 2a 9c a4 a1 e1 29 24 ea e1 d1 76 60 88 09 84 49 cb 84 8f 
 fc 79 5f 88 af c4 9c be 8a fd d1 ba 00 9f 21 67 5e 8f 6c 77 a4 a2 c3 01 
-95 60 1f 6f 0a 08 52 97 8b d4 3d 28 20 7d 44 48 65 02 ff 7b dd a6 48 6b 
-ec ad 03 a1 b7 5a 45 
+95 60 1f 6f 0a 08 52 97 8b d4 3d 28 20 7d 44 48 65 02 ff 7b dd a6 48 2f 
+a1 e3 9e ae 7d 5f 8d 
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 From there, the signature can be computed:
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 Signature_or_MAC_3 (64 bytes)
-da df eb ae 51 7a 6b 1c 67 5b e8 c7 75 64 59 bf 69 a5 1c 24 0d 4c 5f 2c 
-87 21 37 d2 3a 35 e6 37 a1 20 0d af c1 e6 16 d5 9d 88 30 8e d1 01 5c fd 
-3b c7 a9 87 67 c5 7b a3 5d 85 41 22 6b 18 cc 06 
+ab 9f 7b bd eb c4 eb f8 a3 d3 04 17 9b cc a3 9d 9c 8a 76 73 65 76 fb 3c 
+32 d2 fa c7 e2 59 34 e5 33 dc c7 02 2e 4d 68 61 c8 f5 fe cb e9 2d 17 4e 
+b2 be af 0a 59 a4 15 84 37 2f 43 2e 6b f4 7b 04 
 ~~~~~~~~~~~~~~~~~~~~~~~ 
 
 Finally, the outer COSE_Encrypt0 is computed.
@@ -2188,10 +2188,10 @@ plaintext = ( ID_CRED_I , Signature_or_MAC_3 )
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 P_3ae (CBOR Sequence) (80 bytes)
-a1 18 22 82 2e 48 70 5d 58 45 f3 6f c6 a6 58 40 da df eb ae 51 7a 6b 1c 
-67 5b e8 c7 75 64 59 bf 69 a5 1c 24 0d 4c 5f 2c 87 21 37 d2 3a 35 e6 37 
-a1 20 0d af c1 e6 16 d5 9d 88 30 8e d1 01 5c fd 3b c7 a9 87 67 c5 7b a3 
-5d 85 41 22 6b 18 cc 06 
+a1 18 22 82 2e 48 70 5d 58 45 f3 6f c6 a6 58 40 ab 9f 7b bd eb c4 eb f8 
+a3 d3 04 17 9b cc a3 9d 9c 8a 76 73 65 76 fb 3c 32 d2 fa c7 e2 59 34 e5 
+33 dc c7 02 2e 4d 68 61 c8 f5 fe cb e9 2d 17 4e b2 be af 0a 59 a4 15 84 
+37 2f 43 2e 6b f4 7b 04 
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 The Associated data A is the following:
@@ -2199,8 +2199,8 @@ Associated data A = \[ "Encrypt0", h'', TH_3 \]
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 A_3ae (CBOR-encoded) (45 bytes)
-83 68 45 6e 63 72 79 70 74 30 40 58 20 75 ec 51 a0 af d3 31 82 73 4f 2b 
-d4 3a ba 09 ba 48 4f 13 dc 95 f5 c7 4f 72 5a 38 50 e4 4e 98 17 
+83 68 45 6e 63 72 79 70 74 30 40 58 20 f2 4d 18 ca fc e3 74 d4 e3 73 63 
+29 c1 52 ab 3a ea 9c 7c 0f 65 0c 30 70 b6 f5 1e 68 e2 ae bb 60 
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 Key K_3ae is the output of HKDF-Expand(PRK_3e2m, info, L).
@@ -2211,7 +2211,7 @@ info is defined as follows:
 info for K_3ae = 
 [
   10,
-  h'75EC51A0AFD33182734F2BD43ABA09BA484F13DC95F5C74F725A3850E44E9817',
+  h'F24D18CAFCE374D4E3736329C152AB3AEA9C7C0F650C3070B6F51E68E2AEBB60',
   "K_3ae",
   16
 ]
@@ -2221,8 +2221,8 @@ Which as a CBOR encoded data item is:
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 info for K_3ae (CBOR-encoded) (43 bytes)
-84 0a 58 20 a2 39 a6 27 ad a3 80 2d b8 da e5 1e c3 92 bf eb 92 6d 39 3e 
-f6 ee e4 dd b3 2e 4a 27 ce 93 58 da 65 4b 5f 33 61 65 10 
+84 0a 58 20 f2 4d 18 ca fc e3 74 d4 e3 73 63 29 c1 52 ab 3a ea 9c 7c 0f 
+65 0c 30 70 b6 f5 1e 68 e2 ae bb 60 65 4b 5f 33 61 65 10 
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 L is the length of K_3ae, so 16 bytes.
@@ -2231,7 +2231,7 @@ From these parameters, K_3ae is computed:
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 K_3ae (16 bytes)
-ec 25 67 ed b5 7e ea c0 e7 74 f1 0f 19 cd 3e cd
+b8 79 9f e3 d1 50 4f d8 eb 22 c4 72 62 cd bb 05
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 Nonce IV_3ae is the output of HKDF-Expand(PRK_3e2m, info, L).
@@ -2242,7 +2242,7 @@ info is defined as follows:
 info for IV_3ae =
 [
   10,
-  h'75EC51A0AFD33182734F2BD43ABA09BA484F13DC95F5C74F725A3850E44E9817',
+  h'F24D18CAFCE374D4E3736329C152AB3AEA9C7C0F650C3070B6F51E68E2AEBB60',
   "IV_3ae", 
   13
 ]
@@ -2252,8 +2252,8 @@ Which as a CBOR encoded data item is:
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 info for IV_3ae (CBOR-encoded) (44 bytes)
-84 0a 58 20 75 ec 51 a0 af d3 31 82 73 4f 2b d4 3a ba 09 ba 48 4f 13 dc 
-95 f5 c7 4f 72 5a 38 50 e4 4e 98 17 66 49 56 5f 33 61 65 0d 
+84 0a 58 20 f2 4d 18 ca fc e3 74 d4 e3 73 63 29 c1 52 ab 3a ea 9c 7c 0f 
+65 0c 30 70 b6 f5 1e 68 e2 ae bb 60 66 49 56 5f 33 61 65 0d  
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 L is the length of IV_3ae, so 13 bytes.
@@ -2262,17 +2262,17 @@ From these parameters, IV_3ae is computed:
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 IV_3ae (13 bytes)
-22 79 12 aa 14 9a 21 15 e4 c8 f3 c0 eb 
+74 c7 de 41 b8 4a 5b b7 19 0a 85 98 dc 
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 Using the parameters above, the 'ciphertext' CIPHERTEXT_3 can be computed:
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 CIPHERTEXT_3 (88 bytes)
-1c 66 82 d6 08 d6 ad ce 9f 82 a3 eb 13 43 8d c7 db 43 aa 7e f0 b1 ac c3 
-62 fe 6f 74 d8 c3 9b 31 de fb 9d 6e 9e 3a fb 24 a4 7f 9b 8b e7 21 22 63 
-7d 92 2a 43 a1 d7 77 0b 87 19 be 1a 51 7b 75 be f9 65 81 2c 10 f7 d7 cd 
-c6 63 bd aa 09 c5 c9 fa 34 2f eb 07 a3 c2 45 fa 
+f5 f6 de bd 82 14 05 1c d5 83 c8 40 96 c4 80 1d eb f3 5b 15 36 3d d1 6e 
+bd 85 30 df dc fb 34 fc d2 eb 6c ad 1d ac 66 a4 79 fb 38 de aa f1 d3 0a 
+7e 68 17 a2 2a b0 4f 3d 5b 1e 97 2a 0d 13 ea 86 c6 6b 60 51 4c 96 57 ea 
+89 c5 7b 04 01 ed c5 aa 8b bc ab 81 3c c5 d6 e7
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 From the parameter above, message_3 is computed, as the CBOR Sequence of the following items: (C_R, CIPHERTEXT_3).
@@ -2280,10 +2280,10 @@ From the parameter above, message_3 is computed, as the CBOR Sequence of the fol
 ~~~~~~~~~~~~~~~~~~~~~~~
 message_3 =
 (
-  h'00',
-  h'1C6682D608D6ADCE9F82A3EB13438DC7DB43AA7EF0B1ACC362FE6F74D8C39B31DEFB
-  9D6E9E3AFB24A47F9B8BE72122637D922A43A1D7770B8719BE1A517B75BEF965812C10
-  F7D7CDC663BDAA09C5C9FA342FEB07A3C245FA'
+  -24,
+  h'F5F6DEBD8214051CD583C84096C4801DEBF35B15363DD16EBD8530DFDCFB34FCD2EB
+  6CAD1DAC66A479FB38DEAAF1D30A7E6817A22AB04F3D5B1E972A0D13EA86C66B60514C
+  9657EA89C57B0401EDC5AA8BBCAB813CC5D6E7'
 )
 ~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -2291,10 +2291,10 @@ Which encodes to the following byte string:
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 message_3 (CBOR Sequence) (91 bytes)
-37 58 58 1c 66 82 d6 08 d6 ad ce 9f 82 a3 eb 13 43 8d c7 db 43 aa 7e f0 
-b1 ac c3 62 fe 6f 74 d8 c3 9b 31 de fb 9d 6e 9e 3a fb 24 a4 7f 9b 8b e7 
-21 22 63 7d 92 2a 43 a1 d7 77 0b 87 19 be 1a 51 7b 75 be f9 65 81 2c 10 
-f7 d7 cd c6 63 bd aa 09 c5 c9 fa 34 2f eb 07 a3 c2 45 fa 
+37 58 58 f5 f6 de bd 82 14 05 1c d5 83 c8 40 96 c4 80 1d eb f3 5b 15 36 
+3d d1 6e bd 85 30 df dc fb 34 fc d2 eb 6c ad 1d ac 66 a4 79 fb 38 de aa 
+f1 d3 0a 7e 68 17 a2 2a b0 4f 3d 5b 1e 97 2a 0d 13 ea 86 c6 6b 60 51 4c 
+96 57 ea 89 c5 7b 04 01 ed c5 aa 8b bc ab 81 3c c5 d6 e7 
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 
@@ -2307,20 +2307,20 @@ From TH_3 and CIPHERTEXT_3, compute the input to the transcript hash TH_4 = H( T
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 Input to calculate TH_4 (CBOR Sequence) (124 bytes)
-58 20 75 ec 51 a0 af d3 31 82 73 4f 2b d4 3a ba 09 ba 48 4f 13 dc 95 f5 
-c7 4f 72 5a 38 50 e4 4e 98 17 58 58 1c 66 82 d6 08 d6 ad ce 9f 82 a3 eb 
-13 43 8d c7 db 43 aa 7e f0 b1 ac c3 62 fe 6f 74 d8 c3 9b 31 de fb 9d 6e 
-9e 3a fb 24 a4 7f 9b 8b e7 21 22 63 7d 92 2a 43 a1 d7 77 0b 87 19 be 1a 
-51 7b 75 be f9 65 81 2c 10 f7 d7 cd c6 63 bd aa 09 c5 c9 fa 34 2f eb 07 
-a3 c2 45 fa 
+58 20 f2 4d 18 ca fc e3 74 d4 e3 73 63 29 c1 52 ab 3a ea 9c 7c 0f 65 0c 
+30 70 b6 f5 1e 68 e2 ae bb 60 58 58 f5 f6 de bd 82 14 05 1c d5 83 c8 40 
+96 c4 80 1d eb f3 5b 15 36 3d d1 6e bd 85 30 df dc fb 34 fc d2 eb 6c ad 
+1d ac 66 a4 79 fb 38 de aa f1 d3 0a 7e 68 17 a2 2a b0 4f 3d 5b 1e 97 2a 
+0d 13 ea 86 c6 6b 60 51 4c 96 57 ea 89 c5 7b 04 01 ed c5 aa 8b bc ab 81 
+3c c5 d6 e7 
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 And from there, compute the transcript hash TH_4 = SHA-256(TH_3 , CIPHERTEXT_4)
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 TH_4 (32 bytes)
-e6 2d fe 6d 32 36 a6 55 9d c6 ef 46 ff b4 ae c2 18 ee 46 fb 07 fd ad 59 
-5f e7 8a 42 c9 f8 d7 fa 
+3b 69 a6 7f ec 7e 73 6c c1 a9 52 6c da 00 02 d4 09 f5 b9 ea 0a 2b e9 60 
+51 a6 e3 0d 93 05 fd 51 
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 The Master Secret and Master Salt are derived as follows:
@@ -2334,7 +2334,7 @@ info_ms for OSCORE Master Secret is defined as follows:
 ~~~~~~~~~~~~~~~~~~~~~~~
 info_ms = [
   10, 
-  h'E62DFE6D3236A6559DC6EF46FFB4AEC218EE46FB07FDAD595FE78A42C9F8D7FA', 
+  h'3B69A67FEC7E736CC1A9526CDA0002D409F5B9EA0A2BE96051A6E30D9305FD51', 
   "OSCORE Master Secret", 
   16
 ]
@@ -2344,8 +2344,8 @@ Which as a CBOR encoded data item is:
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 info_ms for OSCORE Master Secret (CBOR-encoded) (58 bytes)
-84 0a 58 20 e6 2d fe 6d 32 36 a6 55 9d c6 ef 46 ff b4 ae c2 18 ee 46 fb 
-07 fd ad 59 5f e7 8a 42 c9 f8 d7 fa 74 4f 53 43 4f 52 45 20 4d 61 73 74 
+84 0a 58 20 3b 69 a6 7f ec 7e 73 6c c1 a9 52 6c da 00 02 d4 09 f5 b9 ea 
+0a 2b e9 60 51 a6 e3 0d 93 05 fd 51 74 4f 53 43 4f 52 45 20 4d 61 73 74 
 65 72 20 53 65 63 72 65 74 10 
 ~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -2355,7 +2355,7 @@ info_salt for OSCORE Master Salt is defined as follows:
 ~~~~~~~~~~~~~~~~~~~~~~~
 info_salt = [
   10, 
-  h'E62DFE6D3236A6559DC6EF46FFB4AEC218EE46FB07FDAD595FE78A42C9F8D7FA', 
+  h'3B69A67FEC7E736CC1A9526CDA0002D409F5B9EA0A2BE96051A6E30D9305FD51', 
   "OSCORE Master Salt", 
   8
 ]
@@ -2365,8 +2365,8 @@ Which as a CBOR encoded data item is:
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 info for OSCORE Master Salt (CBOR-encoded) (56 Bytes)
-84 0a 58 20 e6 2d fe 6d 32 36 a6 55 9d c6 ef 46 ff b4 ae c2 18 ee 46 fb 
-07 fd ad 59 5f e7 8a 42 c9 f8 d7 fa 72 4f 53 43 4f 52 45 20 4d 61 73 74 
+84 0a 58 20 3b 69 a6 7f ec 7e 73 6c c1 a9 52 6c da 00 02 d4 09 f5 b9 ea 
+0a 2b e9 60 51 a6 e3 0d 93 05 fd 51 72 4f 53 43 4f 52 45 20 4d 61 73 74 
 65 72 20 53 61 6c 74 08 
 ~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -2374,12 +2374,12 @@ From these parameters, OSCORE Master Secret and OSCORE Master Salt are computed:
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 OSCORE Master Secret (16 bytes)
-31 8a 98 6d 6d 3a d6 bb 41 e9 66 0b 63 5b c7 22
+96 aa 88 ce 86 5e ba 1f fa f3 89 64 13 2c c4 42
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 OSCORE Master Salt (8 bytes)
-64 c2 1f 5d d0 83 7d 3b
+5e c3 ee 41 7c fb ba e9 
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 The client's OSCORE Sender ID is C_R and the server's OSCORE Sender ID is C_I.
