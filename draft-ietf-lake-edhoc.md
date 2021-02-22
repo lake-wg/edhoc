@@ -1458,9 +1458,14 @@ CBOR Object Signing and Encryption (COSE) {{RFC8152}} describes how to create an
 
 # Test Vectors {#vectors}
 
-This appendix provides detailed test vectors based on v-02 of this specification, to ease implementation and ensure interoperability. In addition to hexadecimal, all CBOR data items and sequences are given in CBOR diagnostic notation. The test vectors use the default mapping to CoAP where the Initiator acts as CoAP client (this means that corr = 1). 
+This appendix provides detailed test vectors based on v-05 of this specification, to ease implementation and ensure interoperability. In addition to hexadecimal, all CBOR data items and sequences are given in CBOR diagnostic notation. The test vectors use the default mapping to CoAP where the Initiator acts as CoAP client (this means that corr = 1). 
 
-A more extensive test vector suite covering more combinations of authentication method used between Initiator and Responder and related code to generate them can be found at https://github.com/lake-wg/edhoc/tree/master/test-vectors .
+A more extensive test vector suite covering more combinations of authentication method used between Initiator and Responder and related code to generate them can be found at https://github.com/lake-wg/edhoc/tree/master/test-vectors-05.
+
+NOTE 1. In the previous and current test vectors the same name is used for certain byte strings and their CBOR bstr encodings. For example the transcript hash TH_2 is used to denote both the output of the hash function and the input into the key derivation function, whereas the latter is a CBOR bstr encoding of the former. Some attempts are made to clarify that in this Appendix (e.g. using "CBOR encoded"/"CBOR unencoded").
+
+NOTE 2. If not clear from the context, remember that CBOR sequences and CBOR arrays assume CBOR encoded data items as elements.
+
 
 ## Test Vectors for EDHOC Authenticated with Signature Keys (x5t)
 
@@ -1514,7 +1519,7 @@ f2 93 5b b2 e0 53 bf 35
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 ~~~~~~~~~~~~~~~~~~~~~~~
-G_X (Initiator's ephemeral public key) (32 bytes)
+G_X (Initiator's ephemeral public key, CBOR unencoded) (32 bytes)
 89 8f f7 9a 02 06 7a 16 ea 1e cc b9 0f a5 22 46 f5 aa 4d d6 ec 07 6b ba 
 02 59 d9 04 b7 ec 8b 0c
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -1548,7 +1553,7 @@ SUITES_I (int)
 0
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-With SUITES_I = 0, message_1 is constructed as the CBOR Sequence of the CBOR data items above. In CBOR diagnostic notation: 
+message_1 is constructed as the CBOR Sequence of the data items above encoded as CBOR. In CBOR diagnostic notation: 
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 message_1 =
@@ -1581,7 +1586,7 @@ d4 cd 71 67 ca ba ec da
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 ~~~~~~~~~~~~~~~~~~~~~~~
-G_Y (Responder's ephemeral public key) (32 bytes)
+G_Y (Responder's ephemeral public key, CBOR unencoded) (32 bytes)
 71 a3 d5 99 c2 1d a1 89 02 a1 ae a8 10 b2 b6 38 2c cd 8d 5f 9b f0 19 52 
 81 75 4c 5e bc af 30 1e 
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -1651,7 +1656,7 @@ C_R (1 byte)
 37
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-Data_2 is constructed as the CBOR Sequence of G_Y and C_R.
+Data_2 is constructed as the CBOR Sequence of G_Y and C_R, encoded as CBOR byte strings. The CBOR diagnostic notation is:
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 data_2 =
@@ -1681,7 +1686,7 @@ a1 ae a8 10 b2 b6 38 2c cd 8d 5f 9b f0 19 52 81 75 4c 5e bc af 30 1e 37
 And from there, compute the transcript hash TH_2 = SHA-256( message_1, data_2 )
 
 ~~~~~~~~~~~~~~~~~~~~~~~
-TH_2 (32 bytes)
+TH_2 (CBOR unencoded) (32 bytes)
 86 4e 32 b3 6a 7b 5f 21 f1 9e 99 f0 c6 6d 91 1e 0a ce 99 72 d3 76 d2 c2 
 c1 53 c1 7f 8e 96 29 ff 
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -1717,7 +1722,7 @@ c9 d6 b0 53 4b 71 c2 b4 9e 4b f9 03 15 00 ce e6 86 99 79 c2 97 bb 5a 8b
 
 And because certificates are identified by a hash value with the 'x5t' parameter, ID_CRED_R is the following:
 
-ID_CRED_R = { 34 : COSE_CertHash }. In this example, the hash algorithm used is SHA-2 256-bit with hash truncated to 64-bits (value -15). The hash value is calculated over the certificate X509_R.
+ID_CRED_R = { 34 : COSE_CertHash }. In this example, the hash algorithm used is SHA-2 256-bit with hash truncated to 64-bits (value -15). The hash value is calculated over the certificate X509_R. The CBOR diagnostic notation is:
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 ID_CRED_R =
@@ -1725,6 +1730,8 @@ ID_CRED_R =
   34: [-15, h'6844078A53F312F5']
 }
 ~~~~~~~~~~~~~~~~~~~~~~~
+
+which when encoded as a CBOR map becomes:
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 ID_CRED_R (14 bytes)
@@ -1737,13 +1744,13 @@ Since no auxiliary data is sent:
 AD_2  (0 bytes)
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-The Plaintext is defined as the empty string:
+The plaintext is defined as the empty string:
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 P_2m (0 bytes)
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-The Enc_structure is defined as follows: \[ "Encrypt0", << ID_CRED_R >>, << TH_2, CRED_R >> \]
+The Enc_structure is defined as follows: \[ "Encrypt0", << ID_CRED_R >>, << TH_2, CRED_R >> \], indicating that ID_CRED_R is encoded as a CBOR byte string, and that the concatenation of the CBOR byte strings TH_2 and CRED_R is wrapped as a CBOR bstr. The CBOR diagnostic notation is the following:
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 A_2m =
@@ -1770,7 +1777,7 @@ f5 58 88 58 20 86 4e 32 b3 6a 7b 5f 21 f1 9e 99 f0 c6 6d 91 1e 0a ce 99
 db 78 97 4c 27 15 79 b0 16 33 a3 ef 62 71 be 5c 22 5e b2 
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-info for K_2m is defined as follows:
+info for K_2m is defined as follows in CBOR diagnostic notation:
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 info for K_2m =
@@ -1797,7 +1804,7 @@ K_2m (16 bytes)
 80 cc a7 49 ab 58 f5 69 ca 35 da ee 05 be d1 94
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-info for IV_2m is defined as follows:
+info for IV_2m is defined as follows, in CBOR diagnostic notation:
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 info for IV_2m =
@@ -1833,12 +1840,12 @@ Finally, COSE_Encrypt0 is computed from the parameters above.
 * empty plaintext = P_2m
 
 ~~~~~~~~~~~~~~~~~~~~~~~
-MAC_2 (8 bytes)
+MAC_2 (CBOR unencoded) (8 bytes)
 fa bb a4 7e 56 71 a1 82 
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 To compute the Signature_or_MAC_2, the key is the private authentication key of the Responder and 
-the message M_2 to be signed = \[ "Signature1", << ID_CRED_R >>, << TH_2, CRED_R, ? AD_2 >>, MAC_2 \]
+the message M_2 to be signed = \[ "Signature1", << ID_CRED_R >>, << TH_2, CRED_R, ? AD_2 >>, MAC_2 \]. ID_CRED_R is encoded as a CBOR byte string, the concatenation of the CBOR byte strings TH_2 and CRED_R is wrapped as a CBOR bstr, and MAC_2 is encoded as a CBOR bstr.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 M_2 = 
@@ -1870,7 +1877,7 @@ a4 7e 56 71 a1 82
 Since the method = 0, Signature_or_Mac_3 is a signature:
 
 ~~~~~~~~~~~~~~~~~~~~~~~
-Signature_or_MAC_2 (64 bytes)
+Signature_or_MAC_2 (CBOR unencoded) (64 bytes)
 1f 17 00 6a 98 48 c9 77 cb bd ca a7 57 b6 fd 46 82 c8 17 39 e1 5c 99 37 
 c2 1c f5 e9 a0 e6 03 9f 54 fd 2a 6c 3a 11 18 f2 b9 d8 eb cd 48 23 48 b9 
 9c 3e d7 ed 1b d9 80 6c 93 c8 90 68 e8 36 b4 0f 
@@ -1878,7 +1885,8 @@ c2 1c f5 e9 a0 e6 03 9f 54 fd 2a 6c 3a 11 18 f2 b9 d8 eb cd 48 23 48 b9
 
 CIPHERTEXT_2 is the ciphertext resulting from XOR between plaintext and KEYSTREAM_2 which is derived from TH_2 and the pseudorandom key PRK_2e.
 
-* plaintext = CBOR Sequence of the items ID_CRED_R and Signature_or_MAC_2, in this order (AD_2 is empty).
+* plaintext = CBOR Sequence of the items ID_CRED_R and Signature_or_MAC_2 encoded as CBOR byte strings, in this order (AD_2 is empty).
+
 
 The plaintext is the following:
 
@@ -1890,7 +1898,7 @@ cb bd ca a7 57 b6 fd 46 82 c8 17 39 e1 5c 99 37 c2 1c f5 e9 a0 e6 03 9f
 93 c8 90 68 e8 36 b4 0f 
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-KEYSTREAM_2 = Expand( PRK, info, length ), where length is the length of the plaintext, so 80.
+KEYSTREAM_2 = HKDF-Expand( PRK_2e, info, length ), where length is the length of the plaintext, so 80.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 info for KEYSTREAM_2 =
@@ -1924,7 +1932,7 @@ ae ea 8e af 50 cf c6 70 09 da e8 2d 8d 85 b0 e7 60 91 bf 0f 07 0b 79 53
 Using the parameters above, the ciphertext CIPHERTEXT_2 can be computed:
 
 ~~~~~~~~~~~~~~~~~~~~~~~
-CIPHERTEXT_2 (80 bytes)
+CIPHERTEXT_2 (CBOR unencoded) (80 bytes)
 0f f2 ac 2d 7e 87 ae 34 0e 50 bb de 9f 70 e8 a7 7f 86 bf 65 9f 43 b0 24 
 a7 3e e9 7b 6a 2b 9c 55 92 fd 83 5a 15 17 8b 7c 28 af 54 74 a9 75 81 48 
 64 7d 3d 98 a8 73 1e 16 4c 9c 70 52 81 07 f4 0f 21 46 3b a8 11 bf 03 97 
@@ -2003,7 +2011,7 @@ d2 c2 c1 53 c1 7f 8e 96 29 ff 58 50 0f f2 ac 2d 7e 87 ae 34 0e 50 bb de
 And from there, compute the transcript hash TH_3 = SHA-256(TH_2 , CIPHERTEXT_2, data_3)
 
 ~~~~~~~~~~~~~~~~~~~~~~~
-TH_3 (32 bytes)
+TH_3 (CBOR unencoded) (32 bytes)
 f2 4d 18 ca fc e3 74 d4 e3 73 63 29 c1 52 ab 3a ea 9c 7c 0f 65 0c 30 70 
 b6 f5 1e 68 e2 ae bb 60 
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -2047,6 +2055,8 @@ ID_CRED_I =
 }
 ~~~~~~~~~~~~~~~~~~~~~~~
 
+which when encoded as a CBOR map becomes:
+
 ~~~~~~~~~~~~~~~~~~~~~~~
 ID_CRED_I (14 bytes)
 a1 18 22 82 2e 48 70 5d 58 45 f3 6f c6 a6 
@@ -2058,13 +2068,15 @@ Since no auxiliary data is exchanged:
 AD_3 (0 bytes)
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-The Plaintext of the COSE_Encrypt is the empty string:
+The plaintext of the COSE_Encrypt is the empty string:
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 P_3m (0 bytes)
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-The external_aad is the CBOR Sequence of TH_3 and CRED_I, in this order:
+The associated data is the following:
+\[ "Encrypt0", << ID_CRED_I >>, << TH_3, CRED_I, ? AD_3 >> \].
+
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 A_3m (CBOR-encoded) (164 bytes)
@@ -2136,13 +2148,13 @@ IV_3m (13 bytes)
 MAC_3 is the 'ciphertext' of the COSE_Encrypt0:
 
 ~~~~~~~~~~~~~~~~~~~~~~~
-MAC_3 (8 bytes)
+MAC_3 (CBOR unencoded) (8 bytes)
 2f a1 e3 9e ae 7d 5f 8d
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 Since the method = 0, Signature_or_Mac_3 is a signature:
 
-* The message M_3 to be signed = \[ "Signature1", << ID_CRED_I >>, << TH_3, CRED_I >>, MAC_3 \] 
+* The message M_3 to be signed = \[ "Signature1", << ID_CRED_I >>, << TH_3, CRED_I >>, MAC_3 \], i.e. ID_CRED_I encoded as CBOR bstr, the concatenation of the CBOR byte strings TH_3 and CRED_I wrapped as a CBOR bstr, and MAC_3 encoded as a CBOR bstr.
 
 * The signing key is the private authentication key of the Initiator.
 
@@ -2176,7 +2188,7 @@ a1 e3 9e ae 7d 5f 8d
 From there, the signature can be computed:
 
 ~~~~~~~~~~~~~~~~~~~~~~~
-Signature_or_MAC_3 (64 bytes)
+Signature_or_MAC_3 (CBOR unencoded) (64 bytes)
 ab 9f 7b bd eb c4 eb f8 a3 d3 04 17 9b cc a3 9d 9c 8a 76 73 65 76 fb 3c 
 32 d2 fa c7 e2 59 34 e5 33 dc c7 02 2e 4d 68 61 c8 f5 fe cb e9 2d 17 4e 
 b2 be af 0a 59 a4 15 84 37 2f 43 2e 6b f4 7b 04 
@@ -2184,8 +2196,7 @@ b2 be af 0a 59 a4 15 84 37 2f 43 2e 6b f4 7b 04
 
 Finally, the outer COSE_Encrypt0 is computed.
 
-The Plaintext is the following CBOR Sequence: 
-plaintext = ( ID_CRED_I , Signature_or_MAC_3 )
+The plaintext is the CBOR Sequence of the items ID_CRED_I and the CBOR encoded Signature_or_MAC_3, in this order (AD_3 is empty).
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 P_3ae (CBOR Sequence) (80 bytes)
@@ -2269,14 +2280,14 @@ IV_3ae (13 bytes)
 Using the parameters above, the 'ciphertext' CIPHERTEXT_3 can be computed:
 
 ~~~~~~~~~~~~~~~~~~~~~~~
-CIPHERTEXT_3 (88 bytes)
+CIPHERTEXT_3 (CBOR unencoded) (88 bytes)
 f5 f6 de bd 82 14 05 1c d5 83 c8 40 96 c4 80 1d eb f3 5b 15 36 3d d1 6e 
 bd 85 30 df dc fb 34 fc d2 eb 6c ad 1d ac 66 a4 79 fb 38 de aa f1 d3 0a 
 7e 68 17 a2 2a b0 4f 3d 5b 1e 97 2a 0d 13 ea 86 c6 6b 60 51 4c 96 57 ea 
 89 c5 7b 04 01 ed c5 aa 8b bc ab 81 3c c5 d6 e7
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-From the parameter above, message_3 is computed, as the CBOR Sequence of the following items: (C_R, CIPHERTEXT_3).
+From the parameter above, message_3 is computed, as the CBOR Sequence of the following CBOR encoded data items: (C_R, CIPHERTEXT_3).
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 message_3 =
@@ -2319,16 +2330,16 @@ Input to calculate TH_4 (CBOR Sequence) (124 bytes)
 And from there, compute the transcript hash TH_4 = SHA-256(TH_3 , CIPHERTEXT_4)
 
 ~~~~~~~~~~~~~~~~~~~~~~~
-TH_4 (32 bytes)
+TH_4 (CBOR unencoded) (32 bytes)
 3b 69 a6 7f ec 7e 73 6c c1 a9 52 6c da 00 02 d4 09 f5 b9 ea 0a 2b e9 60 
 51 a6 e3 0d 93 05 fd 51 
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 The Master Secret and Master Salt are derived as follows:
 
-Master Secret = EDHOC-Exporter( "OSCORE Master Secret", 16 ) = EDHOC-KDF(PRK_4x3m, TH_4, "OSCORE Master Secret", 16) = Expand( PRK_4x3m, info_ms, 16 )
+Master Secret = EDHOC-Exporter( "OSCORE Master Secret", 16 ) = EDHOC-KDF(PRK_4x3m, TH_4, "OSCORE Master Secret", 16) = HKDF-Expand( PRK_4x3m, info_ms, 16 )
 
-Master Salt   = EDHOC-Exporter( "OSCORE Master Salt", 8 ) = EDHOC-KDF(PRK_4x3m, TH_4, "OSCORE Master Salt", 8) = Expand( PRK_4x3m, info_salt, 8 )
+Master Salt   = EDHOC-Exporter( "OSCORE Master Salt", 8 ) = EDHOC-KDF(PRK_4x3m, TH_4, "OSCORE Master Salt", 8) = HKDF-Expand( PRK_4x3m, info_salt, 8 )
 
 info_ms for OSCORE Master Secret is defined as follows:
 
@@ -2460,7 +2471,7 @@ ae 11 a0 db 86 3c 02 27 e5 39 92 fe b8 f5 92 4c 50 d0 a7 ba 6e ea b4 ad
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 ~~~~~~~~~~~~~~~~~~~~~~~
-G_X (Initiator's ephemeral public key) (32 bytes)
+G_X (Initiator's ephemeral public key, CBOR unencoded) (32 bytes)
 8d 3e f5 6d 1b 75 0a 43 51 d6 8a c2 50 a0 e8 83 79 0e fc 80 a5 38 a4 44 
 ee 9e 2b 57 e2 44 1a 7c
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -2494,7 +2505,7 @@ SUITES_I (int)
 0
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-With SUITES_I = 0, message_1 is constructed as the CBOR Sequence of the CBOR data items above. In CBOR diagnostic notation: 
+message_1 is constructed as the CBOR Sequence of the data items above encoded as CBOR. In CBOR diagnostic notation: 
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 message_1 =
@@ -2527,7 +2538,7 @@ a3 a5 e0 69 c1 16 16 9a
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 ~~~~~~~~~~~~~~~~~~~~~~~
-G_Y (Responder's ephemeral public key) (32 bytes)
+G_Y (Responder's ephemeral public key, CBOR unencoded) (32 bytes)
 52 fb a0 bd c8 d9 53 dd 86 ce 1a b2 fd 7c 05 a4 65 8c 7c 30 af db fc 33 
 01 04 70 69 45 1b af 35 
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -2635,7 +2646,7 @@ ce 1a b2 fd 7c 05 a4 65 8c 7c 30 af db fc 33 01 04 70 69 45 1b af 35 37
 And from there, compute the transcript hash TH_2 = SHA-256( message_1, data_2 )
 
 ~~~~~~~~~~~~~~~~~~~~~~~
-TH_2 (32 bytes)
+TH_2 (CBOR unencoded) (32 bytes)
 de cf d6 4a 36 67 64 0a 02 33 b0 4a a8 aa 91 f6 89 56 b8 a5 36 d0 cf 8c 
 73 a6 e8 a7 c3 62 1e 26 
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -2687,13 +2698,13 @@ Since no auxiliary data is sent:
 AD_2  (0 bytes)
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-The Plaintext is defined as the empty string:
+The plaintext is defined as the empty string:
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 P_2m (0 bytes)
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-The Enc_structure is defined as follows: \[ "Encrypt0", << ID_CRED_R >>, << TH_2, CRED_R >> \]
+The Enc_structure is defined as follows: \[ "Encrypt0", << ID_CRED_R >>, << TH_2, CRED_R >> \], so ID_CRED_R is encoded as a CBOR bstr, and the contatenation of the CBOR byte strings TH_2 and CRED_R is wrapped in a CBOR bstr.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 A_2m =
@@ -2780,20 +2791,20 @@ Finally, COSE_Encrypt0 is computed from the parameters above.
 * empty plaintext = P_2m
 
 ~~~~~~~~~~~~~~~~~~~~~~~
-MAC_2 (8 bytes)
+MAC_2 (CBOR unencoded) (8 bytes)
 42 e7 99 78 43 1e 6b 8f
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 From there Signature_or_MAC_2 is the MAC (since method = 3):
 
 ~~~~~~~~~~~~~~~~~~~~~~~
-Signature_or_MAC_2 (8 bytes)
+Signature_or_MAC_2 (CBOR unencoded) (8 bytes)
 42 e7 99 78 43 1e 6b 8f 
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 CIPHERTEXT_2 is the ciphertext resulting from XOR between plaintext and KEYSTREAM_2 which is derived from TH_2 and the pseudorandom key PRK_2e.
 
-* plaintext = CBOR Sequence of the items ID_CRED_R and the CBOR encoded Signature_or_MAC_2, in this order (AD_2 is empty). 
+The plaintext is the CBOR Sequence of the items ID_CRED_R and the CBOR encoded Signature_or_MAC_2, in this order (AD_2 is empty). 
 
 Note that since ID_CRED_R contains a single 'kid' parameter, i.e., ID_CRED_R = { 4 : kid_R }, only the byte string kid_R is conveyed in the plaintext encoded as a bstr_identifier. kid_R is encoded as the corresponding integer - 24 (see bstr_identifier in {{bstr_id}}), i.e. 0x05 = 5, 5 - 24 = -19, and -19 in CBOR encoding is equal to 0x32.
 
@@ -2804,7 +2815,7 @@ P_2e (CBOR Sequence) (10 bytes)
 32 48 42 e7 99 78 43 1e 6b 8f 
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-KEYSTREAM_2 = Expand( PRK, info, length ), where length is the length of the plaintext, so 10.
+KEYSTREAM_2 = HKDF-Expand( PRK_2e, info, length ), where length is the length of the plaintext, so 10.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 info for KEYSTREAM_2 =
@@ -2828,14 +2839,14 @@ info for KEYSTREAM_2 (CBOR-encoded) (49 bytes)
 From there, KEYSTREAM_2 is computed:
 
 ~~~~~~~~~~~~~~~~~~~~~~~
-KEYSTREAM_2(10 bytes)
+KEYSTREAM_2 (10 bytes)
 91 b9 ff ba 9b f5 5a d1 57 16 
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 Using the parameters above, the ciphertext CIPHERTEXT_2 can be computed:
 
 ~~~~~~~~~~~~~~~~~~~~~~~
-CIPHERTEXT_2 (10 bytes)
+CIPHERTEXT_2 (CBOR unencoded) (10 bytes)
 a3 f1 bd 5d 02 8d 19 cf 3c 99
 ~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -2870,7 +2881,7 @@ a4 43 6f 66 60 81 b0 8e
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 ~~~~~~~~~~~~~~~~~~~~~~~
-G_I (Initiator's public authentication key) (32 bytes)
+G_I (Initiator's public authentication key, CBOR unencoded) (32 bytes)
 2c 44 0c c1 21 f8 d7 f2 4c 3b 0e 41 ae da fe 9c aa 4f 4e 7a bb 83 5e c3 
 0f 1d e8 8a db 96 ff 71
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -2911,7 +2922,7 @@ cf 8c 73 a6 e8 a7 c3 62 1e 26 4a a3 f1 bd 5d 02 8d 19 cf 3c 99 37
 And from there, compute the transcript hash TH_3 = SHA-256(TH_2 , CIPHERTEXT_2, data_3)
 
 ~~~~~~~~~~~~~~~~~~~~~~~
-TH_3 (32 bytes)
+TH_3 (CBOR unencoded) (32 bytes)
 b6 cd 80 4f c4 b9 d7 ca c5 02 ab d7 7c da 74 e4 1c b0 11 82 d7 cb 8b 84 
 db 03 ff a5 83 a3 5f cb 
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -2963,13 +2974,14 @@ Since no auxiliary data is exchanged:
 AD_3 (0 bytes)
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-The Plaintext of the COSE_Encrypt is the empty string:
+The plaintext of the COSE_Encrypt is the empty string:
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 P_3m (0 bytes)
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-The external_aad is the CBOR Sequence of TH_3 and CRED_I, in this order:
+The associated data is the following: 
+\[ "Encrypt0", << ID_CRED_I >>, << TH_3, CRED_I, ? AD_3 >> \].
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 A_3m (CBOR-encoded) (105 bytes)
@@ -3039,21 +3051,22 @@ IV_3m (13 bytes)
 MAC_3 is the 'ciphertext' of the COSE_Encrypt0:
 
 ~~~~~~~~~~~~~~~~~~~~~~~
-MAC_3 (8 bytes)
+MAC_3 (CBOR unencoded) (8 bytes)
 ee 59 8e a6 61 17 dc c3 
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 Since the method = 3, Signature_or_Mac_3 is the MAC_3:
 
 ~~~~~~~~~~~~~~~~~~~~~~~
-Signature_or_MAC_3 (8 bytes)
+Signature_or_MAC_3 (CBOR unencoded) (8 bytes)
 ee 59 8e a6 61 17 dc c3 
 ~~~~~~~~~~~~~~~~~~~~~~~ 
 
 Finally, the outer COSE_Encrypt0 is computed.
 
-The Plaintext is the following CBOR Sequence: 
-plaintext = ( ID_CRED_I , Signature_or_MAC_3 ).  Note that since ID_CRED_I contains a single 'kid' parameter, i.e., ID_CRED_I = { 4 : kid_I }, only the byte string kid_I is conveyed in the plaintext encoded as a bstr_identifier. kid_I is encoded as the corresponding integer - 24 (see bstr_identifier in {{bstr_id}}), i.e. 0x23 = 35, 35 - 24 = 11, and 11 in CBOR encoding is equal to 0x0b.
+The plaintext is the CBOR Sequence of the items ID_CRED_I and the CBOR encoded Signature_or_MAC_3, in this order (AD_3 is empty). 
+
+Note that since ID_CRED_I contains a single 'kid' parameter, i.e., ID_CRED_I = { 4 : kid_I }, only the byte string kid_I is conveyed in the plaintext encoded as a bstr_identifier. kid_I is encoded as the corresponding integer - 24 (see bstr_identifier in {{bstr_id}}), i.e. 0x23 = 35, 35 - 24 = 11, and 11 in CBOR encoding is equal to 0x0b.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 P_3ae (CBOR Sequence) (10 bytes)
@@ -3134,7 +3147,7 @@ IV_3ae (13 bytes)
 Using the parameters above, the 'ciphertext' CIPHERTEXT_3 can be computed:
 
 ~~~~~~~~~~~~~~~~~~~~~~~
-CIPHERTEXT_3 (18 bytes)
+CIPHERTEXT_3 (CBOR unencoded) (18 bytes)
 d5 53 5f 31 47 e8 5f 1c fa cd 9e 78 ab f9 e0 a8 1b bf 
 ~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -3171,16 +3184,16 @@ f9 e0 a8 1b bf
 And from there, compute the transcript hash TH_4 = SHA-256(TH_3 , CIPHERTEXT_4)
 
 ~~~~~~~~~~~~~~~~~~~~~~~
-TH_4 (32 bytes)
+TH_4 (CBOR unencoded) (32 bytes)
 7c cf de dc 2c 10 ca 03 56 e9 57 b9 f6 a5 92 e0 fa 74 db 2a b5 4f 59 24 
 40 96 f9 a2 ac 56 d2 07 
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 The Master Secret and Master Salt are derived as follows:
 
-Master Secret = EDHOC-Exporter( "OSCORE Master Secret", 16 ) = EDHOC-KDF(PRK_4x3m, TH_4, "OSCORE Master Secret", 16) = Expand( PRK_4x3m, info_ms, 16 )
+Master Secret = EDHOC-Exporter( "OSCORE Master Secret", 16 ) = EDHOC-KDF(PRK_4x3m, TH_4, "OSCORE Master Secret", 16) = HKDF-Expand( PRK_4x3m, info_ms, 16 )
 
-Master Salt   = EDHOC-Exporter( "OSCORE Master Salt", 8 ) = EDHOC-KDF(PRK_4x3m, TH_4, "OSCORE Master Salt", 8) = Expand( PRK_4x3m, info_salt, 8 )
+Master Salt   = EDHOC-Exporter( "OSCORE Master Salt", 8 ) = EDHOC-KDF(PRK_4x3m, TH_4, "OSCORE Master Salt", 8) = HKDF-Expand( PRK_4x3m, info_salt, 8 )
 
 info_ms for OSCORE Master Secret is defined as follows:
 
