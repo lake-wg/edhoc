@@ -3278,7 +3278,7 @@ K_2m (16 bytes)
 80 cc a7 49 ab 58 f5 69 ca 35 da ee 05 be d1 94
 </pre><a href="#section-b.1.2-55" class="pilcrow">¶</a>
 </div>
-<p id="section-b.1.2-56">info for IV_2m is defined as follows, in CBOR diagnostic notation:<a href="#section-b.1.2-56" class="pilcrow">¶</a></p>
+<p id="section-b.1.2-56">info for IV_2m is defined as follows, in CBOR diagnostic notation (10 is the COSE algorithm no. of the AEAD algorithm in the selected cipher suite 0):<a href="#section-b.1.2-56" class="pilcrow">¶</a></p>
 <div class="artwork art-text alignLeft" id="section-b.1.2-57">
 <pre>
 info for IV_2m =
@@ -3350,7 +3350,7 @@ b7 0a 47 62 4d c9 cd c6 82 4b 2a 4c 52 e9 5e c9 d6 b0 53 4b 71 c2 b4 9e
 a4 7e 56 71 a1 82
 </pre><a href="#section-b.1.2-68" class="pilcrow">¶</a>
 </div>
-<p id="section-b.1.2-69">Since the method = 0, Signature_or_Mac_3 is a signature:<a href="#section-b.1.2-69" class="pilcrow">¶</a></p>
+<p id="section-b.1.2-69">Since the method = 0, Signature_or_MAC_2 is a signature. The algorithm with selected cipher suite 0 is Ed25519 and the output is 64 bytes.<a href="#section-b.1.2-69" class="pilcrow">¶</a></p>
 <div class="artwork art-text alignLeft" id="section-b.1.2-70">
 <pre>
 Signature_or_MAC_2 (CBOR unencoded) (64 bytes)
@@ -3630,7 +3630,7 @@ MAC_3 (CBOR unencoded) (8 bytes)
 2f a1 e3 9e ae 7d 5f 8d
 </pre><a href="#section-b.1.3-45" class="pilcrow">¶</a>
 </div>
-<p id="section-b.1.3-46">Since the method = 0, Signature_or_Mac_3 is a signature:<a href="#section-b.1.3-46" class="pilcrow">¶</a></p>
+<p id="section-b.1.3-46">Since the method = 0, Signature_or_MAC_3 is a signature. The algorithm with selected cipher suite 0 is Ed25519.<a href="#section-b.1.3-46" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-b.1.3-47.1">The message M_3 to be signed = [ "Signature1", &lt;&lt; ID_CRED_I &gt;&gt;, &lt;&lt; TH_3, CRED_I &gt;&gt;, MAC_3 ], i.e. ID_CRED_I encoded as CBOR bstr, the concatenation of the CBOR byte strings TH_3 and CRED_I wrapped as a CBOR bstr, and MAC_3 encoded as a CBOR bstr.<a href="#section-b.1.3-47.1" class="pilcrow">¶</a>
 </li>
@@ -3665,7 +3665,7 @@ fc 79 5f 88 af c4 9c be 8a fd d1 ba 00 9f 21 67 5e 8f 6c 77 a4 a2 c3 01
 a1 e3 9e ae 7d 5f 8d
 </pre><a href="#section-b.1.3-50" class="pilcrow">¶</a>
 </div>
-<p id="section-b.1.3-51">From there, the signature can be computed:<a href="#section-b.1.3-51" class="pilcrow">¶</a></p>
+<p id="section-b.1.3-51">From there, the 64 byte signature can be computed:<a href="#section-b.1.3-51" class="pilcrow">¶</a></p>
 <div class="artwork art-text alignLeft" id="section-b.1.3-52">
 <pre>
 Signature_or_MAC_3 (CBOR unencoded) (64 bytes)
@@ -4276,31 +4276,32 @@ e9 b8 e4 b1 bd 02 f4 9a 82 0d d3 53 4f
             <li class="normal" id="section-b.2.2-63.3">empty plaintext = P_2m<a href="#section-b.2.2-63.3" class="pilcrow">¶</a>
 </li>
           </ul>
-<div class="artwork art-text alignLeft" id="section-b.2.2-64">
+<p id="section-b.2.2-64">MAC_2 is the 'ciphertext' of the COSE_Encrypt0 with empty plaintext. In case of cipher suite 0 the AEAD is AES-CCM trunkated to 8 bytes:<a href="#section-b.2.2-64" class="pilcrow">¶</a></p>
+<div class="artwork art-text alignLeft" id="section-b.2.2-65">
 <pre>
 MAC_2 (CBOR unencoded) (8 bytes)
 42 e7 99 78 43 1e 6b 8f
-</pre><a href="#section-b.2.2-64" class="pilcrow">¶</a>
+</pre><a href="#section-b.2.2-65" class="pilcrow">¶</a>
 </div>
-<p id="section-b.2.2-65">From there Signature_or_MAC_2 is the MAC (since method = 3):<a href="#section-b.2.2-65" class="pilcrow">¶</a></p>
-<div class="artwork art-text alignLeft" id="section-b.2.2-66">
+<p id="section-b.2.2-66">Since method = 2, Signature_or_MAC_2 is MAC_2:<a href="#section-b.2.2-66" class="pilcrow">¶</a></p>
+<div class="artwork art-text alignLeft" id="section-b.2.2-67">
 <pre>
 Signature_or_MAC_2 (CBOR unencoded) (8 bytes)
 42 e7 99 78 43 1e 6b 8f
-</pre><a href="#section-b.2.2-66" class="pilcrow">¶</a>
+</pre><a href="#section-b.2.2-67" class="pilcrow">¶</a>
 </div>
-<p id="section-b.2.2-67">CIPHERTEXT_2 is the ciphertext resulting from XOR between plaintext and KEYSTREAM_2 which is derived from TH_2 and the pseudorandom key PRK_2e.<a href="#section-b.2.2-67" class="pilcrow">¶</a></p>
-<p id="section-b.2.2-68">The plaintext is the CBOR Sequence of the items ID_CRED_R and the CBOR encoded Signature_or_MAC_2, in this order (AD_2 is empty).<a href="#section-b.2.2-68" class="pilcrow">¶</a></p>
-<p id="section-b.2.2-69">Note that since ID_CRED_R contains a single 'kid' parameter, i.e., ID_CRED_R = { 4 : kid_R }, only the byte string kid_R is conveyed in the plaintext encoded as a bstr_identifier. kid_R is encoded as the corresponding integer - 24 (see bstr_identifier in <a href="#bstr_id" class="xref">Section 5.1</a>), i.e. 0x05 = 5, 5 - 24 = -19, and -19 in CBOR encoding is equal to 0x32.<a href="#section-b.2.2-69" class="pilcrow">¶</a></p>
-<p id="section-b.2.2-70">The plaintext is the following:<a href="#section-b.2.2-70" class="pilcrow">¶</a></p>
-<div class="artwork art-text alignLeft" id="section-b.2.2-71">
+<p id="section-b.2.2-68">CIPHERTEXT_2 is the ciphertext resulting from XOR between plaintext and KEYSTREAM_2 which is derived from TH_2 and the pseudorandom key PRK_2e.<a href="#section-b.2.2-68" class="pilcrow">¶</a></p>
+<p id="section-b.2.2-69">The plaintext is the CBOR Sequence of the items ID_CRED_R and the CBOR encoded Signature_or_MAC_2, in this order (AD_2 is empty).<a href="#section-b.2.2-69" class="pilcrow">¶</a></p>
+<p id="section-b.2.2-70">Note that since ID_CRED_R contains a single 'kid' parameter, i.e., ID_CRED_R = { 4 : kid_R }, only the byte string kid_R is conveyed in the plaintext encoded as a bstr_identifier. kid_R is encoded as the corresponding integer - 24 (see bstr_identifier in <a href="#bstr_id" class="xref">Section 5.1</a>), i.e. 0x05 = 5, 5 - 24 = -19, and -19 in CBOR encoding is equal to 0x32.<a href="#section-b.2.2-70" class="pilcrow">¶</a></p>
+<p id="section-b.2.2-71">The plaintext is the following:<a href="#section-b.2.2-71" class="pilcrow">¶</a></p>
+<div class="artwork art-text alignLeft" id="section-b.2.2-72">
 <pre>
 P_2e (CBOR Sequence) (10 bytes)
 32 48 42 e7 99 78 43 1e 6b 8f
-</pre><a href="#section-b.2.2-71" class="pilcrow">¶</a>
+</pre><a href="#section-b.2.2-72" class="pilcrow">¶</a>
 </div>
-<p id="section-b.2.2-72">KEYSTREAM_2 = HKDF-Expand( PRK_2e, info, length ), where length is the length of the plaintext, so 10.<a href="#section-b.2.2-72" class="pilcrow">¶</a></p>
-<div class="artwork art-text alignLeft" id="section-b.2.2-73">
+<p id="section-b.2.2-73">KEYSTREAM_2 = HKDF-Expand( PRK_2e, info, length ), where length is the length of the plaintext, so 10.<a href="#section-b.2.2-73" class="pilcrow">¶</a></p>
+<div class="artwork art-text alignLeft" id="section-b.2.2-74">
 <pre>
 info for KEYSTREAM_2 =
 [
@@ -4309,48 +4310,48 @@ info for KEYSTREAM_2 =
   "KEYSTREAM_2",
   10
 ]
-</pre><a href="#section-b.2.2-73" class="pilcrow">¶</a>
+</pre><a href="#section-b.2.2-74" class="pilcrow">¶</a>
 </div>
-<p id="section-b.2.2-74">Which as a CBOR encoded data item is:<a href="#section-b.2.2-74" class="pilcrow">¶</a></p>
-<div class="artwork art-text alignLeft" id="section-b.2.2-75">
+<p id="section-b.2.2-75">Which as a CBOR encoded data item is:<a href="#section-b.2.2-75" class="pilcrow">¶</a></p>
+<div class="artwork art-text alignLeft" id="section-b.2.2-76">
 <pre>
 info for KEYSTREAM_2 (CBOR-encoded) (49 bytes)
 84 0a 58 20 de cf d6 4a 36 67 64 0a 02 33 b0 4a a8 aa 91 f6 89 56 b8 a5
 36 d0 cf 8c 73 a6 e8 a7 c3 62 1e 26 6b 4b 45 59 53 54 52 45 41 4d 5f 32
 0a
-</pre><a href="#section-b.2.2-75" class="pilcrow">¶</a>
+</pre><a href="#section-b.2.2-76" class="pilcrow">¶</a>
 </div>
-<p id="section-b.2.2-76">From there, KEYSTREAM_2 is computed:<a href="#section-b.2.2-76" class="pilcrow">¶</a></p>
-<div class="artwork art-text alignLeft" id="section-b.2.2-77">
+<p id="section-b.2.2-77">From there, KEYSTREAM_2 is computed:<a href="#section-b.2.2-77" class="pilcrow">¶</a></p>
+<div class="artwork art-text alignLeft" id="section-b.2.2-78">
 <pre>
 KEYSTREAM_2 (10 bytes)
 91 b9 ff ba 9b f5 5a d1 57 16
-</pre><a href="#section-b.2.2-77" class="pilcrow">¶</a>
+</pre><a href="#section-b.2.2-78" class="pilcrow">¶</a>
 </div>
-<p id="section-b.2.2-78">Using the parameters above, the ciphertext CIPHERTEXT_2 can be computed:<a href="#section-b.2.2-78" class="pilcrow">¶</a></p>
-<div class="artwork art-text alignLeft" id="section-b.2.2-79">
+<p id="section-b.2.2-79">Using the parameters above, the ciphertext CIPHERTEXT_2 can be computed:<a href="#section-b.2.2-79" class="pilcrow">¶</a></p>
+<div class="artwork art-text alignLeft" id="section-b.2.2-80">
 <pre>
 CIPHERTEXT_2 (CBOR unencoded) (10 bytes)
 a3 f1 bd 5d 02 8d 19 cf 3c 99
-</pre><a href="#section-b.2.2-79" class="pilcrow">¶</a>
+</pre><a href="#section-b.2.2-80" class="pilcrow">¶</a>
 </div>
-<p id="section-b.2.2-80">message_2 is the CBOR Sequence of data_2 and CIPHERTEXT_2, in this order:<a href="#section-b.2.2-80" class="pilcrow">¶</a></p>
-<div class="artwork art-text alignLeft" id="section-b.2.2-81">
+<p id="section-b.2.2-81">message_2 is the CBOR Sequence of data_2 and CIPHERTEXT_2, in this order:<a href="#section-b.2.2-81" class="pilcrow">¶</a></p>
+<div class="artwork art-text alignLeft" id="section-b.2.2-82">
 <pre>
 message_2 =
 (
  data_2,
  h'A3F1BD5D028D19CF3C99'
 )
-</pre><a href="#section-b.2.2-81" class="pilcrow">¶</a>
+</pre><a href="#section-b.2.2-82" class="pilcrow">¶</a>
 </div>
-<p id="section-b.2.2-82">Which as a CBOR encoded data item is:<a href="#section-b.2.2-82" class="pilcrow">¶</a></p>
-<div class="artwork art-text alignLeft" id="section-b.2.2-83">
+<p id="section-b.2.2-83">Which as a CBOR encoded data item is:<a href="#section-b.2.2-83" class="pilcrow">¶</a></p>
+<div class="artwork art-text alignLeft" id="section-b.2.2-84">
 <pre>
 message_2 (CBOR Sequence) (46 bytes)
 58 20 52 fb a0 bd c8 d9 53 dd 86 ce 1a b2 fd 7c 05 a4 65 8c 7c 30 af db
 fc 33 01 04 70 69 45 1b af 35 37 4a a3 f1 bd 5d 02 8d 19 cf 3c 99
-</pre><a href="#section-b.2.2-83" class="pilcrow">¶</a>
+</pre><a href="#section-b.2.2-84" class="pilcrow">¶</a>
 </div>
 </section>
 </div>
@@ -4536,14 +4537,14 @@ IV_3m (13 bytes)
 0d a7 cc 3a 6f 9a b2 48 52 ce 8b 37 a6
 </pre><a href="#section-b.2.3-43" class="pilcrow">¶</a>
 </div>
-<p id="section-b.2.3-44">MAC_3 is the 'ciphertext' of the COSE_Encrypt0:<a href="#section-b.2.3-44" class="pilcrow">¶</a></p>
+<p id="section-b.2.3-44">MAC_3 is the 'ciphertext' of the COSE_Encrypt0 with empty plaintext. In case of cipher suite 0 the AEAD is AES-CCM trunkated to 8 bytes:<a href="#section-b.2.3-44" class="pilcrow">¶</a></p>
 <div class="artwork art-text alignLeft" id="section-b.2.3-45">
 <pre>
 MAC_3 (CBOR unencoded) (8 bytes)
 ee 59 8e a6 61 17 dc c3
 </pre><a href="#section-b.2.3-45" class="pilcrow">¶</a>
 </div>
-<p id="section-b.2.3-46">Since the method = 3, Signature_or_Mac_3 is the MAC_3:<a href="#section-b.2.3-46" class="pilcrow">¶</a></p>
+<p id="section-b.2.3-46">Since method = 3, Signature_or_MAC_3 is MAC_3:<a href="#section-b.2.3-46" class="pilcrow">¶</a></p>
 <div class="artwork art-text alignLeft" id="section-b.2.3-47">
 <pre>
 Signature_or_MAC_3 (CBOR unencoded) (8 bytes)
