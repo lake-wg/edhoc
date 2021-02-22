@@ -1804,7 +1804,7 @@ K_2m (16 bytes)
 80 cc a7 49 ab 58 f5 69 ca 35 da ee 05 be d1 94
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-info for IV_2m is defined as follows, in CBOR diagnostic notation:
+info for IV_2m is defined as follows, in CBOR diagnostic notation (10 is the COSE algorithm no. of the AEAD algorithm in the selected cipher suite 0):
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 info for IV_2m =
@@ -1874,7 +1874,7 @@ b7 0a 47 62 4d c9 cd c6 82 4b 2a 4c 52 e9 5e c9 d6 b0 53 4b 71 c2 b4 9e
 a4 7e 56 71 a1 82 
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-Since the method = 0, Signature_or_Mac_3 is a signature:
+Since the method = 0, Signature_or_MAC_2 is a signature. The algorithm with selected cipher suite 0 is Ed25519 and the output is 64 bytes. 
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 Signature_or_MAC_2 (CBOR unencoded) (64 bytes)
@@ -2154,7 +2154,7 @@ MAC_3 (CBOR unencoded) (8 bytes)
 2f a1 e3 9e ae 7d 5f 8d
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-Since the method = 0, Signature_or_Mac_3 is a signature:
+Since the method = 0, Signature_or_MAC_3 is a signature. The algorithm with selected cipher suite 0 is Ed25519.
 
 * The message M_3 to be signed = \[ "Signature1", << ID_CRED_I >>, << TH_3, CRED_I >>, MAC_3 \], i.e. ID_CRED_I encoded as CBOR bstr, the concatenation of the CBOR byte strings TH_3 and CRED_I wrapped as a CBOR bstr, and MAC_3 encoded as a CBOR bstr.
 
@@ -2187,7 +2187,7 @@ fc 79 5f 88 af c4 9c be 8a fd d1 ba 00 9f 21 67 5e 8f 6c 77 a4 a2 c3 01
 a1 e3 9e ae 7d 5f 8d 
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-From there, the signature can be computed:
+From there, the 64 byte signature can be computed:
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 Signature_or_MAC_3 (CBOR unencoded) (64 bytes)
@@ -2792,12 +2792,16 @@ Finally, COSE_Encrypt0 is computed from the parameters above.
 
 * empty plaintext = P_2m
 
+
+
+MAC_2 is the 'ciphertext' of the COSE_Encrypt0 with empty plaintext. In case of cipher suite 0 the AEAD is AES-CCM trunkated to 8 bytes:
+
 ~~~~~~~~~~~~~~~~~~~~~~~
 MAC_2 (CBOR unencoded) (8 bytes)
 42 e7 99 78 43 1e 6b 8f
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-From there Signature_or_MAC_2 is the MAC (since method = 3):
+Since method = 2, Signature_or_MAC_2 is MAC_2:
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 Signature_or_MAC_2 (CBOR unencoded) (8 bytes)
@@ -3050,14 +3054,14 @@ IV_3m (13 bytes)
 0d a7 cc 3a 6f 9a b2 48 52 ce 8b 37 a6  
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-MAC_3 is the 'ciphertext' of the COSE_Encrypt0:
+MAC_3 is the 'ciphertext' of the COSE_Encrypt0 with empty plaintext. In case of cipher suite 0 the AEAD is AES-CCM trunkated to 8 bytes:
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 MAC_3 (CBOR unencoded) (8 bytes)
 ee 59 8e a6 61 17 dc c3 
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-Since the method = 3, Signature_or_Mac_3 is the MAC_3:
+Since method = 3, Signature_or_MAC_3 is MAC_3:
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 Signature_or_MAC_3 (CBOR unencoded) (8 bytes)
