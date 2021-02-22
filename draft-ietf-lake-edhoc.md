@@ -1652,7 +1652,7 @@ C_R (1 byte)
 37
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-Data_2 is constructed, as the CBOR Sequence of G_Y and C_R.
+Data_2 is constructed as the CBOR Sequence of G_Y and C_R.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 data_2 =
@@ -2392,7 +2392,7 @@ Client's OSCORE Sender ID (1 byte)
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 ~~~~~~~~~~~~~~~~~~~~~~~
-Server's OSCORE Sender ID (0 bytes)
+Server's OSCORE Sender ID (1 byte)
 09
 ~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -2495,7 +2495,7 @@ SUITES_I (int)
 0
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-With SUITES_I = 0, message_1 is constructed, as the CBOR Sequence of the CBOR data items above. In CBOR diagnostic notation: 
+With SUITES_I = 0, message_1 is constructed as the CBOR Sequence of the CBOR data items above. In CBOR diagnostic notation: 
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 message_1 =
@@ -2606,7 +2606,7 @@ C_R (1 byte)
 37
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-Data_2 is constructed, as the CBOR Sequence of G_Y and C_R.
+Data_2 is constructed as the CBOR Sequence of G_Y and C_R.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 data_2 =
@@ -3244,7 +3244,7 @@ Client's OSCORE Sender ID (1 byte)
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 ~~~~~~~~~~~~~~~~~~~~~~~
-Server's OSCORE Sender ID (0 bytes)
+Server's OSCORE Sender ID (1 byte)
 16
 ~~~~~~~~~~~~~~~~~~~~~~~
 
