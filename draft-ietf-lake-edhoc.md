@@ -1698,18 +1698,18 @@ Responders's subject name (text string)
 ""
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-
-CRED_R is the certificate (X509_R) encoded as a CBOR byte string:
-(Note that in this version of the test vectors CRED_R is not a real certificate, but instead a string of random bytes is used)
+In this version of the test vectors CRED_R is not a DER encoded X.509 certificate, but a string of random bytes.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
-X509_R (100 bytes)
+CRED_R (CBOR unencoded) (100 bytes)
 c7 88 37 00 16 b8 96 5b db 20 74 bf f8 2e 5a 20 e0 9b ec 21 f8 40 6e 86 
 44 2b 87 ec 3f f2 45 b7 0a 47 62 4d c9 cd c6 82 4b 2a 4c 52 e9 5e c9 d6 
 b0 53 4b 71 c2 b4 9e 4b f9 03 15 00 ce e6 86 99 79 c2 97 bb 5a 8b 38 1e 
 98 db 71 41 08 41 5e 5c 50 db 78 97 4c 27 15 79 b0 16 33 a3 ef 62 71 be 
 5c 22 5e b2
 ~~~~~~~~~~~~~~~~~~~~~~~
+
+CRED_R is defined to be the CBOR bstr containing the credential of the Responder.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 CRED_R (102 bytes)
@@ -1722,7 +1722,7 @@ c9 d6 b0 53 4b 71 c2 b4 9e 4b f9 03 15 00 ce e6 86 99 79 c2 97 bb 5a 8b
 
 And because certificates are identified by a hash value with the 'x5t' parameter, ID_CRED_R is the following:
 
-ID_CRED_R = { 34 : COSE_CertHash }. In this example, the hash algorithm used is SHA-2 256-bit with hash truncated to 64-bits (value -15). The hash value is calculated over the certificate X509_R. The CBOR diagnostic notation is:
+ID_CRED_R = { 34 : COSE_CertHash }. In this example, the hash algorithm used is SHA-2 256-bit with hash truncated to 64-bits (value -15). The hash value is calculated over the CBOR unencoded CRED_R. The CBOR diagnostic notation is:
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 ID_CRED_R =
@@ -2023,17 +2023,19 @@ Initiator's subject name (text string)
 ""
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-CRED_I is the certificate (X509_I) encoded as a CBOR byte string:
-(Note that in this version of the test vectors CRED_I is not a real certificate, but instead a string of random bytes is used)
+
+In this version of the test vectors CRED_I is not a DER encoded X.509 certificate, but a string of random bytes.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
-X509_I (101 bytes)
+CRED_I (CBOR unencoded) (101 bytes)
 54 13 20 4c 3e bc 34 28 a6 cf 57 e2 4c 9d ef 59 65 17 70 44 9b ce 7e c6 
 56 1e 52 43 3a a5 5e 71 f1 fa 34 b2 2a 9c a4 a1 e1 29 24 ea e1 d1 76 60 
 88 09 84 49 cb 84 8f fc 79 5f 88 af c4 9c be 8a fd d1 ba 00 9f 21 67 5e 
 8f 6c 77 a4 a2 c3 01 95 60 1f 6f 0a 08 52 97 8b d4 3d 28 20 7d 44 48 65 
 02 ff 7b dd a6
 ~~~~~~~~~~~~~~~~~~~~~~~
+
+CRED_I is defined to be the CBOR bstr containing the credential of the Initiator.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 CRED_I (103 bytes)
@@ -2046,7 +2048,7 @@ CRED_I (103 bytes)
 
 And because certificates are identified by a hash value with the 'x5t' parameter, ID_CRED_I is the following:
 
-ID_CRED_I = { 34 : COSE_CertHash }. In this example, the hash algorithm used is SHA-2 256-bit with hash truncated to 64-bits (value -15). The hash value is calculated over the certificate X509_I.
+ID_CRED_I = { 34 : COSE_CertHash }. In this example, the hash algorithm used is SHA-2 256-bit with hash truncated to 64-bits (value -15). The hash value is calculated over the CBOR unencoded CRED_I.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 ID_CRED_I =
