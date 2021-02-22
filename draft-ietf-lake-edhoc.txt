@@ -1603,21 +1603,21 @@ Internet-Draft  Ephemeral Diffie-Hellman Over COSE (EDHO   February 2021
    This section defines a message format for the EDHOC error message.
 
    An EDHOC error message can be sent by either endpoint as a reply to
-   any non-error EDHOC message.
+   any non-error EDHOC message.  How errors at the EDHOC layer are
+   transported depends on lower layers, which need to enable error
+   messages to be sent and processed as intended.
 
-   How errors at the EDHOC layer are transported depends on lower
-   layers, which need to enable error messages to be sent and processed
-   as intended.  EDHOC errors sent as normal successful messages (e.g.
-   CoAP POST and 2.04 Changed) can avoid issues created by usage of
-   cross protocol proxies (e.g.  UDP to TCP).  However, for the combined
-   EDHOC-in-OSCORE case [I-D.palombini-core-oscore-edhoc], an error
-   message response following a combined EDHOC message_3/OSCORE request
-   needs to be sent with a CoAP error code.
+   EDHOC errors sent as successful messages on the underlying layer can
+   avoid issues created by usage of cross protocol proxies (e.g.  UDP to
+   TCP).
 
    All error messages in EDHOC are fatal.  After sending an error
    message, the sender MUST discontinue the protocol.  The receiver
    SHOULD treat an error message as an indication that the other party
    likely has discontinued the protocol.  But as the error message is
+   not authenticated, a received error messages might also have been
+   sent by an attacker and the receiver MAY therefore try to continue
+   the protocol.
 
 
 
@@ -1625,10 +1625,6 @@ Selander, et al.         Expires 26 August 2021                [Page 29]
 
 Internet-Draft  Ephemeral Diffie-Hellman Over COSE (EDHO   February 2021
 
-
-   not authenticated, a received error messages might also have been
-   sent by an attacker and the receiver MAY therefore try to continue
-   the protocol.
 
    error SHALL be a CBOR Sequence (see Appendix A.1) as defined below
 
@@ -1674,6 +1670,10 @@ Internet-Draft  Ephemeral Diffie-Hellman Over COSE (EDHO   February 2021
    software engineers that during debugging need to interpret it in the
    context of the EDHOC specification.  The diagnostic message SHOULD be
    be provided to the calling application where they SHOULD be logged.
+   Error messages with SUITES_R MAY use the empty string as the
+   diagnostic message.  The DIAG_MSG text string is mandatory and
+   characteristic for error messages, which enables the receiver to
+   distinguish between a normal message and an error message.
 
 
 
@@ -1681,11 +1681,6 @@ Selander, et al.         Expires 26 August 2021                [Page 30]
 
 Internet-Draft  Ephemeral Diffie-Hellman Over COSE (EDHO   February 2021
 
-
-   Error messages with SUITES_R MAY use the empty string as the
-   diagnostic message.  The DIAG_MSG text string is mandatory and
-   characteristic for error messages, which enables the receiver to
-   distinguish between a normal message and an error message.
 
 6.1.1.  Example Use of EDHOC Error Message with SUITES_R
 
@@ -1723,6 +1718,11 @@ Internet-Draft  Ephemeral Diffie-Hellman Over COSE (EDHO   February 2021
    matter.  (If the Responder had supported suite 5, it would include it
    in SUITES_R of the response, and it would in that case be the
    selected suite in the second message_1.)
+
+
+
+
+
 
 
 
@@ -2027,6 +2027,16 @@ Internet-Draft  Ephemeral Diffie-Hellman Over COSE (EDHO   February 2021
     Master Secret = EDHOC-Exporter( "OSCORE Master Secret", key_length )
     Master Salt   = EDHOC-Exporter( "OSCORE Master Salt", salt_length )
 
+7.2.2.  Error Messages
+
+   Errors messages to EDHOC messages transported over CoAP SHOULD be
+   sent as successful requests and responses (e.g.  POST and 2.04
+   (Changed)).  In case of combining EDHOC and OSCORE as specified in
+   [I-D.palombini-core-oscore-edhoc], an error message response
+   following a combined EDHOC message_3/OSCORE request MUST to be sent
+   with a CoAP error code and SHALL contain the EDHOC diagnostic message
+   DIAG_MSG as payload (see Section 6).
+
 8.  Security Considerations
 
 8.1.  Security Properties
@@ -2056,16 +2066,6 @@ Internet-Draft  Ephemeral Diffie-Hellman Over COSE (EDHO   February 2021
    Responder to verify that the selected cipher suite is the most
    preferred cipher suite by the Initiator which is supported by both
    the Initiator and the Responder.
-
-
-
-
-
-
-
-
-
-
 
 
 
