@@ -1,6 +1,6 @@
 ---
 title: Ephemeral Diffie-Hellman Over COSE (EDHOC)
-docname: draft-ietf-lake-edhoc-05
+docname: draft-ietf-lake-edhoc-latest
 
 ipr: trust200902
 cat: std
