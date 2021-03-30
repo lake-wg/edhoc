@@ -1,6 +1,6 @@
 ---
 title: Ephemeral Diffie-Hellman Over COSE (EDHOC)
-docname: draft-ietf-lake-edhoc-latest
+docname: draft-ietf-lake-edhoc-05
 
 ipr: trust200902
 cat: std
@@ -1254,7 +1254,7 @@ The Responder MUST finish the verification step of message_3 before passing AD_3
 
 If two nodes unintentionally initiate two simultaneous EDHOC message exchanges with each other even if they only want to complete a single EDHOC message exchange, they MAY terminate the exchange with the lexicographically smallest G_X. If the two G_X values are equal, the received message_1 MUST be discarded to mitigate reflection attacks. Note that in the case of two simultaneous EDHOC exchanges where the nodes only complete one and where the nodes have different preferred cipher suites, an attacker can affect which of the two nodes’ preferred cipher suites will be used by blocking the other exchange.
 
-If supported by the device, it is RECOMMENDED that at least the long-term private keys is stored in a Trusted Execution Environment (TEE) and that sensitive operations using these keys are performed inside the TEE. To achieve even higher security it is RECOMMENDED that additional operations such as ephemeral key generation, all computations of shared secrets, and storage of the PRK keys can be done inside the TEE. The TEE can also be used to protect the EDHOC and application protocol (e.g. OSCORE) implementation using some form of "secure boot", memory protection etc. Typically an adversary with physical access to a device can be assumed to gain access to all information outside of the TEE, but none of the information inside the TEE.
+If supported by the device, it is RECOMMENDED that at least the long-term private keys is stored in a Trusted Execution Environment (TEE) and that sensitive operations using these keys are performed inside the TEE. To achieve even higher security it is RECOMMENDED that additional operations such as ephemeral key generation, all computations of shared secrets, and storage of the PRK keys can be done inside the TEE. The TEE can also be used to protect the EDHOC and application protocol (e.g. OSCORE) implementation using some form of "secure boot", memory protection etc. The use of a TEE enforces that code within that environment cannot be tampered with, and that any data used by such code cannot be read or tampered with by code outside that environment.
 
 ## Other Documents Referencing EDHOC
 
