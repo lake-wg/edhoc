@@ -298,7 +298,7 @@ In order to create a "full-fledged" protocol some additional protocol elements a
 
    * The Initiator lists supported cipher suites in order of preference
    
-   * The Responder verifies that the selected cipher suite is the first supported cipher suite
+   * The Responder verifies that the selected cipher suite is the first supported cipher suite (or else rejects and states supported cipher suites). 
 
 * Method types and error handling.
 
@@ -550,19 +550,33 @@ EDHOC allows opaque auxiliary data (AD) to be sent in the EDHOC messages. Unprot
 Since data carried in AD_1 and AD_2 may not be protected, and the content of AD_3 is available to both the Initiator and the Responder, special considerations need to be made such that the availability of the data a) does not violate security and privacy requirements of the service which uses this data, and b) does not violate the security properties of EDHOC.
 
 
-## Communication of Protocol Features
+## Applicability Statement {#applicability}
 
-EDHOC allows the communication or negotiation of various protocol features during the execution of the protocol.
+EDHOC requires certain parameters to be agreed upon between Initiator and Responder. Some parameters can be agreed through protocol execution (e.g., negotiation of cipher suite, see {{ex-neg}}) but other parameters may need to be known out-of-band (e.g., optional protocol fields). 
 
-* The Initiator proposes a cipher suite (see {{cs}}), and the Responder either accepts or rejects, and may make a counter proposal. 
+In order to ensure that EDHOC is used for the intended purpose, each protocol instance needs to be verified against an applicability statement, from which it should be possible to determine: 
 
-* The Initiator decides on the correlation parameter corr (see {{corr}}). This is typically given by the transport which the Initiator and the Responder have agreed on beforehand. The Responder either accepts or rejects.
+1. How EDHOC messages are transported; see {{transport}}
+2. How the peer detects that an EDHOC message is received, e.g. URI, media type; for an example using CoAP, see {{coap}}. 
+2. Whether the initial optional null byte of message_1 is used; see {{asym-msg1-form}}
+1. Method and correlation of underlying transport messages (METHOD_CORR; see {{method}} and {{corr}}).
+3. Type of authentication credentials (CRED_I, CRED_R; see {{id_cred}}).
+4. Type used to identify authentication credentials (ID_CRED_I, ID_CRED_R; see {{id_cred}}).
+5. Type and use of Auxiliary Data (AD_1, AD_2, AD_3; see {{AD}}).
+6. Identifier used as identity of endpoint; see {{auth-key-id}}.
+7. If message_4 shall be sent/expected, and if not, how to ensure a protected application message is sent from the Responder to the Initiator; see {{m4}}.
 
-* The Initiator decides on the method parameter, see {{fig-method-types}}. The Responder either accepts or rejects.
+An example of an applicability statement is shown in {{appl-temp}}.
 
-* The Initiator and the Responder decide on the representation of the identifier of their respective credentials, ID_CRED_I and ID_CRED_R. The decision is reflected by the label used in the CBOR map, see for example {{id_cred}}.
+Note that for some parameters, like METHOD_CORR, ID_CRED_x, type of AD_x, the receiver is able to verify compliance with applicability statement, and if it needs to fail because of incompliance, to infer the reason why the protocol failed. 
 
-Editor's note: This section needs to be aligned with {{applicability}}.
+For other parameters, like authentication credential in the case it is not transported, it may not be possible to verify compliance with applicability statement since integrity verification in message_2 or message_3 may fail because of wrong credential or for some other reason. For example, in the case of public key certificates where there is a large variety of profiles and alternative encodings, unless the certificate is transported, the endpoints need to agree on the precise format.
+
+Note also that it is not always necessary for the endpoints to agree on a single transport for the EDHOC messages. For example, a mix of CoAP and HTTP may be used along the path and still allow correlation between messages.
+
+EDHOC enables policy decisions based on the identity of the peer. If other information must to be conveyed, such as target application or use (e.g. if there is more than one application/use with different policies) then this may be signalled for example in URI or Auxiliary Data and could to be specified in the applicability statement.
+
+In case multiple applicability statements are used, the receiver needs to be able to determine which is applicable for a given protocol instance, e.g. by using different URIs.
 
 
 # Key Derivation {#key-der}
@@ -991,7 +1005,7 @@ After receiving SUITES_R, the Initiator can determine which selected cipher suit
 Error messages without SUITES_R MUST contain a human-readable diagnostic message DIAG_MSG written in English, explaning the error situation. The diagnostic text message is mainly intended for software engineers that during debugging need to interpret it in the context of the EDHOC specification. The diagnostic message SHOULD be be provided to the calling application where they SHOULD be logged. Error messages with SUITES_R MAY use the empty string as the diagnostic message. The DIAG_MSG text string is mandatory and characteristic for error messages, which enables the receiver to distinguish between a normal message and an error message.
 
 
-### Example Use of EDHOC Error Message with SUITES_R
+### Example Use of EDHOC Error Message with SUITES_R {#ex-neg}
 
 Assume that the Initiator supports the five cipher suites 5, 6, 7, 8, and 9 in decreasing order of preference. Figures {{fig-error1}}{: format="counter"} and {{fig-error2}}{: format="counter"} show examples of how the Initiator can truncate SUITES_I and how SUITES_R is used by Responders to give the Initiator information about the cipher suites that the Responder supports.
 
@@ -3284,33 +3298,11 @@ OSCORE Hash Algorithm (int)
 -16
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-# Applicability Statement {#applicability}
+# Applicability Template {#appl-temp}
 
-EDHOC requires certain parameters to be agreed upon between Initiator and Responder. EDHOC supports cipher suite negotiation, but certain other parameters need to be agreed beforehand:
+This appendix contains an example of an applicability statement, see {{applicability}}.
 
-1. Method and correlation of underlying transport messages (METHOD_CORR; see {{method}} and {{corr}}).
-2. How EDHOC messages are transported and how the peer detects that an EDHOC message is received, e.g. URI, media type (for an example using CoAP, see {{oscore}}).
-3. Type of authentication credentials (CRED_I, CRED_R; see {{id_cred}}).
-4. Type for identifying authentication credentials (ID_CRED_I, ID_CRED_R; see {{id_cred}}).
-5. Type and use of Auxiliary Data (AD_1, AD_2, AD_3; see {{AD}}).
-6. Identifier used as identity of endpoint (see {{auth-key-id}}).
-7. If message_4 shall be sent/expected, and if not, how to ensure protected application message is sent from the Responder to the Initiator (see {{m4}}).
-
-
-An example of an applicability statement is shown in the next section.
-
-Note that for some of the parameters, like METHOD_CORR, ID_CRED_x, type of AD_x, the receiver is able to assert whether it supports the received parameter or not and thus, if the protocol fails because of this, to infer the reason why the protocol failed. 
-
-For other parameters, like authentication credential which is not transported, it may be difficult to detect if integrity failed because of wrong credential or for some other reason. For example, in the case of public key certificates where there is a large variety of profiles and alternative encodings, unless the certificate (chain) is transported, the endpoints need to agree on the precise format.
-
-Note also that it is not always necessary for the endpoints to agree on the transport for the EDHOC messages. For example, a mix of CoAP and HTTP may be used along the path and still allow correlation between message_1 and message_2.
-
-EDHOC enables policy decisions based on the identity of the peer. If other information must to be conveyed, such as target application or use (e.g. if there is more than one application/use with different policies) then this may be signalled for example in URI or Auxiliary Data and could to be specified in the applicability statement.
-
-
-## Template: Use of EDHOC in the XX Protocol
-
-For use of EDHOC in the XX protocol, the following assumptions are made on the parameters.  
+For use of EDHOC in the XX protocol, the following assumptions are made on the parameters:  
 
 * METHOD_CORR = 5
    * method = 1 (I uses signature key, R uses static DH key.)
