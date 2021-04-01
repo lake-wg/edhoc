@@ -398,7 +398,7 @@ The authentication key MUST be a signature key or static Diffie-Hellman key. The
 * Only the Initiator SHALL have access to the Initiator's private authentication key.
 
 
-### Identities
+### Identities {#identities}
 
 EDHOC assumes the existence of mechanisms (certification authority, trusted third party, manual distribution, etc.) for specifying and distributing authentication keys and identities. Policies are set based on the identity of the other party, and parties typically only allow connections from a specific identity or a small restricted set of identities. For example, in the case of a device connecting to a network, the network may only allow connections from devices which authenticate with certificates having a particular range of serial numbers in the subject field and signed by a particular CA. On the other side, the device may only be allowed to connect to a network which authenticate with a particular public key (information of which may be provisioned, e.g., out of band or in the Auxiliary Data, see {{AD}}).
  
@@ -533,7 +533,7 @@ The following cipher suite is for high security application such as government u
 
 The different methods use the same cipher suites, but some algorithms are not used in some methods. The EDHOC signature algorithm and the EDHOC signature algorithm curve are not used in methods without signature authentication.
 
-The Initiator needs to have a list of cipher suites it supports in order of preference. The Responder needs to have a list of cipher suites it supports. SUITES_I is a CBOR array containing cipher suites that the Initiator supports. SUITES_I is formatted and processed as detailed in {{asym-msg1-form}} to secure the cipher suite negotation.
+The Initiator needs to have a list of cipher suites it supports in order of preference. The Responder needs to have a list of cipher suites it supports. SUITES_I is a CBOR array containing cipher suites that the Initiator supports. SUITES_I is formatted and processed as detailed in {{asym-msg1-form}} to secure the cipher suite negotation. Examples of cipher suite negotiation are give in {{ex-neg}}.
 
 
 ## Ephemeral Public Keys {#cose_key}
@@ -552,31 +552,31 @@ Since data carried in AD_1 and AD_2 may not be protected, and the content of AD_
 
 ## Applicability Statement {#applicability}
 
-EDHOC requires certain parameters to be agreed upon between Initiator and Responder. Some parameters can be agreed through protocol execution (e.g., negotiation of cipher suite, see {{ex-neg}}) but other parameters may need to be known out-of-band (e.g., optional protocol fields). 
+EDHOC requires certain parameters to be agreed upon between Initiator and Responder. Some parameters can be agreed through the protocol execution (specifically cipher suite negotiation, see {{cs}}) but other parameters may need to be known out-of-band (e.g., which authentication method is used, see {{method}}).
 
-In order to ensure that EDHOC is used for the intended purpose, each protocol instance needs to be verified against an applicability statement, from which it should be possible to determine: 
+In order to ensure that EDHOC is used for the intended purpose, each message needs to be verified against an applicability statement associated to the protocol instance. If the message does not comply with the applicability statement, the protocol needs to be discontinued. This allows for the relevant processing and verifications to be made, including things like:
 
-1. How EDHOC messages are transported; see {{transport}}
-2. How the peer detects that an EDHOC message is received, e.g. URI, media type; for an example using CoAP, see {{coap}}. 
-2. Whether the initial optional null byte of message_1 is used; see {{asym-msg1-form}}
-1. Method and correlation of underlying transport messages (METHOD_CORR; see {{method}} and {{corr}}).
-3. Type of authentication credentials (CRED_I, CRED_R; see {{id_cred}}).
+1. How the peer detects that an EDHOC message is received. This includes how EDHOC messages are transported, for example in the payload of a CoAP message with a certain Uri-Path or Content-Format; see {{coap}}.
+1. Method and correlation of underlying transport messages (METHOD_CORR; see {{method}} and {{corr}}). This gives information about the optional connection identifier fields.
+2. Whether the optional initial `null` of message_1 is used; see {{asym-msg1-form}}
+3. Authentication credentials (CRED_I, CRED_R; see {{auth-cred}}).
 4. Type used to identify authentication credentials (ID_CRED_I, ID_CRED_R; see {{id_cred}}).
-5. Type and use of Auxiliary Data (AD_1, AD_2, AD_3; see {{AD}}).
-6. Identifier used as identity of endpoint; see {{auth-key-id}}.
+5. Use and type of Auxiliary Data (AD_1, AD_2, AD_3; see {{AD}}).
+6. Identifier used as identity of endpoint; see {{identities}}.
 7. If message_4 shall be sent/expected, and if not, how to ensure a protected application message is sent from the Responder to the Initiator; see {{m4}}.
 
 An example of an applicability statement is shown in {{appl-temp}}.
 
-Note that for some parameters, like METHOD_CORR, ID_CRED_x, type of AD_x, the receiver is able to verify compliance with applicability statement, and if it needs to fail because of incompliance, to infer the reason why the protocol failed. 
+For some parameters, like METHOD_CORR, ID_CRED_x, type of AD_x, the receiver is able to verify compliance with applicability statement, and if it needs to fail because of incompliance, to infer the reason why the protocol failed.
 
-For other parameters, like authentication credential in the case it is not transported, it may not be possible to verify compliance with applicability statement since integrity verification in message_2 or message_3 may fail because of wrong credential or for some other reason. For example, in the case of public key certificates where there is a large variety of profiles and alternative encodings, unless the certificate is transported, the endpoints need to agree on the precise format.
+For other parameters, like an CRED_x in the case that it is not transported, it may not be possible to verify that incompliance with applicability statement was the reason for failure: Integrity verification in message_2 or message_3 may fail not only because of wrong authentication credential. For example, in case the Initiator uses public key certificate by reference (i.e. not transported within the protocol) then both endpoints need to use an identical data structure as CRED_I or else the integrity verification will fail.
 
-Note also that it is not always necessary for the endpoints to agree on a single transport for the EDHOC messages. For example, a mix of CoAP and HTTP may be used along the path and still allow correlation between messages.
+Note that it is not necessary for the endpoints to specify a single transport for the EDHOC messages. For example, a mix of CoAP and HTTP may be used along the path, and this may still allow correlation between messages.
 
-EDHOC enables policy decisions based on the identity of the peer. If other information must to be conveyed, such as target application or use (e.g. if there is more than one application/use with different policies) then this may be signalled for example in URI or Auxiliary Data and could to be specified in the applicability statement.
+The applicability statement may be dependent on the identity of the peer, but this applies only to the later phases of the protocol when identities are known. (Initiator does not know identity of Responder before having verified message_2, and Responder does not know identity of Initiator before having verified message_3.)
 
-In case multiple applicability statements are used, the receiver needs to be able to determine which is applicable for a given protocol instance, e.g. by using different URIs.
+Other conditions may be part of the applicability statement, such as target application or use (if there is more than one application/use) to the extent that EDHOC can distinguish between them. In case multiple applicability statements are used, the receiver needs to be able to determine which is applicable for a given protocol instance, for example based on URI or Auxiliary Data type.
+
 
 
 # Key Derivation {#key-der}
