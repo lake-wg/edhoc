@@ -700,6 +700,14 @@ bstr_identifier = bstr / int
 
 Note that, despite what could be interpreted by the CDDL definition only, bstr_identifier once decoded are always byte strings.
 
+## High-Level Message Processing
+
+The protocol messages are processed according to current state of the protocol instance. If there is no state of this protocol instance, i.e. message_1, a new protocol state is created. At reception of other messages than message_1, the existing protocol state is retrieved and processing is performed accordingly. If the processing fails for some reason, the protocol is by default discontinued and the protocol state is erased. (The case when the transport does not support message de-duplication is addressed in {{no-de-duplication}}.)
+
+The protocol state can be identified by a received connection identifier ({{ci}}) or with message correlation provided by transport ({{corr}}). An initial `null` byte in message_1 ({{asym-msg1-form}}) can be used to distinguish the case when there is no previous protocol state. The applicability statement associated to a particular protocol instance  specifies how message_1 and existing protocol state are identified (see {{applicability}}). 
+
+
+
 ## EDHOC Message 1
 
 ### Formatting of Message 1 {#asym-msg1-form}
@@ -3328,7 +3336,9 @@ For use of EDHOC in the XX protocol, the following assumptions are made on the p
 * Need to specify use of C\_I/C\_R ? (TBD)
 
 
+# Lack of Message De-duplication {#no-de-duplication}
 
+TBD
 
 
 # Acknowledgments
