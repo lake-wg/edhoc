@@ -708,7 +708,7 @@ The protocol state can be identified by a received connection identifier ({{ci}}
 
 
 
-## EDHOC Message 1
+## EDHOC Message 1 {#m1}
 
 ### Formatting of Message 1 {#asym-msg1-form}
 
@@ -982,9 +982,7 @@ After verifying message_3, the Responder is assured that the Initiator has calcu
 
 # Error Handling {#error}
 
-## EDHOC Error Message
-
-This section defines a message format for the EDHOC error message. 
+This section defines the format for error messages.
 
 An EDHOC error message can be sent by either endpoint as a reply to any non-error EDHOC message. How errors at the EDHOC layer are transported depends on lower layers, which need to enable error messages to be sent and processed as intended.
 
@@ -997,23 +995,68 @@ error SHALL be a CBOR Sequence (see {{CBOR}}) as defined below
 ~~~~~~~~~~~ CDDL
 error = (
   ? C_x : bstr_identifier,
-  DIAG_MSG : tstr,
-  ? SUITES_R : [ supported : 2* suite ] / suite,
+  ERR_CODE : int,
+  ERR_INFO : any
 )
 ~~~~~~~~~~~
+{: #fig-error-message title="EDHOC Error Message"}
 
 where:
 
 * C_x - (optional) variable length connection identifier, encoded as a bstr_identifier (see {{bstr_id}}). If error is sent by the Responder and corr (METHOD_CORR mod 4) equals 0 or 2 then C_x is set to C_I, else if error is sent by the Initiator and corr (METHOD_CORR mod 4) equals 0 or 1 then C_x is set to C_R, else C_x is omitted.
-* DIAG_MSG - text string containing the diagnostic message in English. MUST NOT be the empty string unless the error message contains SUITES_R.
-* SUITES_R - (optional) cipher suites from SUITES_I or the EDHOC cipher suites registry that the Responder supports. SUITES_R MUST only be included in replies to message_1. If a single supported cipher suite is conveyed then the supported cipher suite is encoded as an int instead of an array.
+* ERR_CODE - error code encoded as an integer.
+* ERR_INFO - error information. Content and encoding depend on error code.
 
-After receiving SUITES_R, the Initiator can determine which selected cipher suite to use for the next EDHOC run with the Responder. If the Initiator intends to contact the Responder in the future, the Initiator SHOULD remember which selected cipher suite to use until the next message_1 has been sent, otherwise the Initiator and Responder will likely run into an infinite loop. After a successful run of EDHOC, the Initiator MAY remember the selected cipher suite to use in future EDHOC runs. Note that if the Initiator or Responder is updated with new cipher suite policies, any cached information may be outdated.
+The remainder of this section specifies the currently defined error codes, see {{fig-error-codes}}. Error codes 1, 0 and -1 MUST be supported. Additional error codes and corresponding error information may be specified.
 
-Error messages without SUITES_R MUST contain a human-readable diagnostic message DIAG_MSG written in English, explaning the error situation. The diagnostic text message is mainly intended for software engineers that during debugging need to interpret it in the context of the EDHOC specification. The diagnostic message SHOULD be be provided to the calling application where they SHOULD be logged. Error messages with SUITES_R MAY use the empty string as the diagnostic message. The DIAG_MSG text string is mandatory and characteristic for error messages, which enables the receiver to distinguish between a normal message and an error message.
+~~~~~~~~~~~
++----------+---------------+----------------------------------------+
+| ERR_CODE | ERR_INFO Type | Description                            |
++==========+===============+========================================+
+|       -1 | TBD           | Success                                |
++----------+---------------+----------------------------------------+
+|        0 | tstr          | Unspecified                            |
++----------+---------------+----------------------------------------+
+|        1 | SUITES_R      | Wrong selected cipher suite            |
++----------+---------------+----------------------------------------+
+~~~~~~~~~~~
+{: #fig-error-codes title="Error Codes and Error Information"}
 
 
-### Example Use of EDHOC Error Message with SUITES_R {#ex-neg}
+
+## Success (ERR_CODE == -1)
+
+TBD
+
+## Unspecified (ERR_CODE == 0)
+
+Error code 0 is used for unspecified errors and contain a diagnostic message.
+
+For error messages with ERR_CODE == 0, ERR_INFO MUST be a text string containing a human-readable diagnostic message written in English. The diagnostic text message is mainly intended for software engineers that during debugging need to interpret it in the context of the EDHOC specification. The diagnostic message SHOULD be be provided to the calling application where it SHOULD be logged.
+
+
+## Wrong Selected Cipher Suite (ERR_CODE == 1)
+
+Error code 1 MUST only be used in a response to message_1 in case the cipher suite selected by the Initiator is not supported by the Responder, or if the Responder supports a cipher suite more preferred by the Initiator than the selected cipher suite, see {{m1}}.
+
+ERR_INFO is of type SUITES_R:
+
+~~~~~~~~~~ CDDL
+SUITES_R : [ supported : 2* suite ] / suite
+~~~~~~~~~~~
+
+SUITES_R contains all cipher suites which the Responder supports, not restricted to a subset of SUITES_I. If a single supported cipher suite is conveyed with SUITES_R then the supported cipher suite is encoded as an int instead of an array.
+
+
+### Cipher Suite Negotiation
+
+After receiving SUITES_R, the Initiator can determine which cipher suite to select for the next EDHOC run with the Responder.
+
+If the Initiator intends to contact the Responder in the future, the Initiator SHOULD remember which selected cipher suite to use until the next message_1 has been sent, otherwise the Initiator and Responder will likely run into an infinite loop. After a successful run of EDHOC, the Initiator MAY remember the selected cipher suite to use in future EDHOC runs. Note that if the Initiator or Responder is updated with new cipher suite policies, any cached information may be outdated.
+
+
+
+### Example {#ex-neg}
 
 Assume that the Initiator supports the five cipher suites 5, 6, 7, 8, and 9 in decreasing order of preference. Figures {{fig-error1}}{: format="counter"} and {{fig-error2}}{: format="counter"} show examples of how the Initiator can truncate SUITES_I and how SUITES_R is used by Responders to give the Initiator information about the cipher suites that the Responder supports.
 
@@ -1036,7 +1079,7 @@ Initiator                                                   Responder
 {: #fig-error1 title="Example of Responder supporting suite 6 but not suite 5."}
 {: artwork-align="center"}
 
-In the second example ({{fig-error2}}), the Responder supports cipher suites 8 and 9 but not the more preferred (by the Initiator) cipher suites 5, 6 or 7. To illustrate the negotiation mechanics we let the Initiator make a guess that the Responder supports suite 6 but not suite 5. Since the Responder supports neither 5 nor 6, it responds with an error and SUITES_R, after which the Initiator can select a better suite. The order of cipher suites in SUITES_R does not matter. (If the Responder had supported suite 5, it would include it in SUITES_R of the response, and it would in that case be the selected suite in the second message_1.) 
+In the second example ({{fig-error2}}), the Responder supports cipher suites 8 and 9 but not the more preferred (by the Initiator) cipher suites 5, 6 or 7. To illustrate the negotiation mechanics we let the Initiator first make a guess that the Responder supports suite 6 but not suite 5. Since the Responder supports neither 5 nor 6, it responds with an error and SUITES_R, after which the Initiator selects its most preferred supported suite. The order of cipher suites in SUITES_R does not matter. (If the Responder had supported suite 5, it would include it in SUITES_R of the response, and it would in that case have become the selected suite in the second message_1.)
 
 ~~~~~~~~~~~
 Initiator                                                   Responder
