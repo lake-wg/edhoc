@@ -731,7 +731,7 @@ where:
 
 * an initial CBOR simple value `null` (= 0xf6) MAY be used to distinguish message_1 from other messages.
 * METHOD_CORR = 4 * method + corr, where method = 0, 1, 2, or 3 (see {{fig-method-types}}) and the correlation parameter corr is chosen based on the transport and determines which connection identifiers that are omitted (see {{corr}}).
-* SUITES_I - cipher suites which the Initiator supports in order of (decreasing) preference. The list of supported cipher suites can be truncated at the end, as is detailed in the processing steps below. One of the supported cipher suites is selected. The selected suite is the first suite in the SUITES_I CBOR array. If a single supported cipher suite is conveyed then that cipher suite is selected and the selected cipher suite is encoded as an int instead of an array.
+* SUITES_I - cipher suites which the Initiator supports in order of (decreasing) preference. The list of supported cipher suites can be truncated at the end, as is detailed in the processing steps below and {{wrong-selected}}. One of the supported cipher suites is selected. The selected suite is the first suite in the SUITES_I CBOR array. If a single supported cipher suite is conveyed then that cipher suite is selected and SUITES_I is encoded as an int instead of an array.
 * G_X - the ephemeral public key of the Initiator
 * C_I - variable length connection identifier, encoded as a bstr_identifier (see {{bstr_id}}).
 * AD_1 - bstr containing unprotected opaque auxiliary data
@@ -742,7 +742,7 @@ The Initiator SHALL compose message_1 as follows:
 
 * The supported cipher suites and the order of preference MUST NOT be changed based on previous error messages. However, the list SUITES_I sent to the Responder MAY be truncated such that cipher suites which are the least preferred are omitted. The amount of truncation MAY be changed between sessions, e.g. based on previous error messages (see next bullet), but all cipher suites which are more preferred than the least preferred cipher suite in the list MUST be included in the list.
 
-* Determine the cipher suite to use with the Responder in message_1. If the Initiator previously received from the Responder an error message to a message_1 with diagnostic payload identifying a cipher suite that the Initiator supports, then the Initiator SHALL use that cipher suite. Otherwise the first supported (i.e. the most preferred) cipher suite in SUITES_I MUST be used.
+* The Initiator MUST select its most preferred cipher suite, conditioned on what it can assume to be supported by the Responder. If the Initiator previously received from the Responder an error message with error code 1 (see {{wrong-selected}}) indicating cipher suites supported by the Responder which also are supported by the Initiator, then the Initiator SHALL select the most preferred cipher suite of those.
 
 * Generate an ephemeral ECDH key pair as specified in Section 5 of {{SP-800-56A}} using the curve in the selected cipher suite and format it as a COSE_Key. Let G_X be the 'x' parameter of the COSE_Key.
    
@@ -1035,7 +1035,7 @@ Error code 0 is used for unspecified errors and contain a diagnostic message.
 For error messages with ERR_CODE == 0, ERR_INFO MUST be a text string containing a human-readable diagnostic message written in English. The diagnostic text message is mainly intended for software engineers that during debugging need to interpret it in the context of the EDHOC specification. The diagnostic message SHOULD be be provided to the calling application where it SHOULD be logged.
 
 
-## Wrong Selected Cipher Suite (ERR_CODE == 1)
+## Wrong Selected Cipher Suite (ERR_CODE == 1) {#wrong-selected}
 
 Error code 1 MUST only be used in a response to message_1 in case the cipher suite selected by the Initiator is not supported by the Responder, or if the Responder supports a cipher suite more preferred by the Initiator than the selected cipher suite, see {{m1}}.
 
@@ -1045,7 +1045,7 @@ ERR_INFO is of type SUITES_R:
 SUITES_R : [ supported : 2* suite ] / suite
 ~~~~~~~~~~~
 
-SUITES_R contains all cipher suites which the Responder supports, not restricted to a subset of SUITES_I. If a single supported cipher suite is conveyed with SUITES_R then the supported cipher suite is encoded as an int instead of an array.
+SUITES_R contains all cipher suites which the Responder supports, not restricted to SUITES_I. If a single supported cipher suite is conveyed with SUITES_R then the supported cipher suite is encoded as an int instead of an array.
 
 
 ### Cipher Suite Negotiation
@@ -1056,7 +1056,7 @@ If the Initiator intends to contact the Responder in the future, the Initiator S
 
 
 
-### Example {#ex-neg}
+### Examples {#ex-neg}
 
 Assume that the Initiator supports the five cipher suites 5, 6, 7, 8, and 9 in decreasing order of preference. Figures {{fig-error1}}{: format="counter"} and {{fig-error2}}{: format="counter"} show examples of how the Initiator can truncate SUITES_I and how SUITES_R is used by Responders to give the Initiator information about the cipher suites that the Responder supports.
 
