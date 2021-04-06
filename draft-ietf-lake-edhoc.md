@@ -3383,6 +3383,52 @@ For use of EDHOC in the XX protocol, the following assumptions are made on the p
 
 TBD
 
+# Change Log
+
+Main changes:
+
+* From -04 to -05:
+   * EDHOC-Rekey-FS -> EDHOC-KeyUpdate
+   * Clarification of cipher suite negotiation
+   * Updated security considerations
+   * Updated test vectors 
+   * Updated applicability statement template
+
+   
+* From -03 to -04:
+   * Restructure of section 1 
+   * Added references to CBOR Certificates
+   * Change in CIPHERTEXT_2 -> plaintext XOR KEYSTREAM_2 (test vector not updated)
+   * "K_2e", "IV_2e" -> KEYSTREAM_2
+   * Specified optional message 4
+   * EDHOC-Exporter-FS -> EDHOC-Rekey-FS
+   * Less constrained devices SHOULD implement both suite 0 and 2
+   * Clarification of error message 
+   * Added exporter interface test vector 
+
+* From -02 to -03:
+   * Rearrangements of section 3 and beginning of section 4
+   * Key derivation new section 4
+   * Cipher suites 4 and 5 added
+   * EDHOC-EXPORTER-FS - generate a new PRK_4x3m from a old one
+   * Change in CIPHERTEXT_2 -> COSE_Encrypt0 without tag (no change to test vector)
+   * Clarification of error message 
+   * New appendix C applicability statement 
+
+
+* From -01 to -02:
+   * New section 1.2 Use of EDHOC
+   * Clarification of identities
+   * New section 4.3 clarifying bstr_identifier
+   * Updated security considerations
+   * Updated text on cipher suite negotiation and key confirmation
+   * Test vector for static DH
+
+* From -00 to -01:
+   * Removed PSK method
+   * Removed references to certificate by value
+
+
 
 # Acknowledgments
 {: numbered="no"}
