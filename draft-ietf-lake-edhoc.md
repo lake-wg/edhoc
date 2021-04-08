@@ -204,7 +204,7 @@ Many Internet of Things (IoT) deployments require technologies which are highly 
 
 The need for special protocols targeting constrained IoT deployments extends also to the security domain {{I-D.ietf-lake-reqs}}. Important characteristics in constrained environments are the number of round trips and protocol message sizes, which if kept low can contribute to good performance by enabling transport over a small number of radio frames, reducing latency due to fragmentation or duty cycles, etc. Another important criteria is code size, which may be prohibitive for certain deployments due to device capabilities or network load during firmware update. Some IoT deployments also need to support a variety of underlying transport technologies, potentially even with a single connection.
 
-Some security solutions for such settings exist already. CBOR Object Signing and Encryption (COSE) {{RFC8152}} specifies basic application-layer security services efficiently encoded in CBOR. Another example is Object Security for Constrained RESTful Environments (OSCORE) {{RFC8613}} which is a lightweight communication security extension to CoAP using CBOR and COSE. In order to establish good quality cryptographic keys for security protocols such as COSE and OSCORE, the two endpoints may run an authenticated key exchange protocol, from which shared secret key material can be derived. Such a key exchange protocol should also be lightweight; to prevent bad performance in case of repeated use, e.g., due to device rebooting or frequent rekeying for security reasons; or to avoid latencies in a network formation setting with many devices authenticating at the same time.
+Some security solutions for such settings exist already. CBOR Object Signing and Encryption (COSE) {{RFC8152}} specifies basic application-layer security services efficiently encoded in CBOR. Another example is Object Security for Constrained RESTful Environments (OSCORE) {{RFC8613}} which is a lightweight communication security extension to CoAP using CBOR and COSE. In order to establish good quality cryptographic keys for security protocols such as COSE and OSCORE, the two endpoints may run an authenticated Diffie-Hellman key exchange protocol, from which shared secret key material can be derived. Such a key exchange protocol should also be lightweight; to prevent bad performance in case of repeated use, e.g., due to device rebooting or frequent rekeying for security reasons; or to avoid latencies in a network formation setting with many devices authenticating at the same time.
 
 This document specifies Ephemeral Diffie-Hellman Over COSE (EDHOC), a lightweight authenticated key exchange protocol providing good security properties including perfect forward secrecy, identity protection, and cipher suite negotation. Authentication can be based on raw public keys (RPK) or public key certificates, and requires the application to provide input on how to verify that endpoints are trusted. This specificaton focuses on referencing instead of transporting credentials to reduce message overhead.
 
@@ -212,11 +212,11 @@ EDHOC makes use of known protocol constructions, such as SIGMA {{SIGMA}} and Ext
 
 ## Use of EDHOC
 
-EDHOC is designed for highly constrained settings making it especially suitable for low-power wide area networks {{RFC8376}} such as Cellular IoT, 6TiSCH, and LoRaWAN. A main objective for EDHOC is to be a lightweight AKE for OSCORE, i.e. to provide authentication and session key establishment for IoT use cases such as those built on CoAP {{RFC7252}}. CoAP is a specialized web transfer protocol for use with constrained nodes and networks, providing a request/response interaction model between application endpoints. As such, EDHOC is targeting a large variety of use cases involving 'things' with embedded microcontrollers, sensors, and actuators.
+EDHOC is designed for highly constrained settings making it especially suitable for low-power wide area networks {{RFC8376}} such as Cellular IoT, 6TiSCH, and LoRaWAN. A main objective for EDHOC is to be a lightweight authenticated key exchange for OSCORE, i.e. to provide authentication and session key establishment for IoT use cases such as those built on CoAP {{RFC7252}}. CoAP is a specialized web transfer protocol for use with constrained nodes and networks, providing a request/response interaction model between application endpoints. As such, EDHOC is targeting a large variety of use cases involving 'things' with embedded microcontrollers, sensors, and actuators.
 
 A typical setting is when one of the endpoints is constrained or in a constrained network, and the other endpoint is a node on the Internet (such as a mobile phone) or at the edge of the constrained network (such as a gateway). Thing-to-thing interactions over constrained networks are also relevant since both endpoints would then benefit from the lightweight properties of the protocol. EDHOC could e.g. be run when a device/device(s) connect(s) for the first time, or to establish fresh keys which are not revealed by a later compromise of the long-term keys. Further security properties are described in {{sec-prop}}.
 
-EDHOC builds on the same lightweight primitives as OSCORE: CBOR for encoding, COSE for cryptography, and CoAP for transport. By reusing existing libraries the additional code size can be kept very low. EDHOC is not bound to a particular transport, but it is recommended to transfer EDHOC messages in CoAP payloads.
+EDHOC enables the reuse of the same lightweight primitives as OSCORE: CBOR for encoding, COSE for cryptography, and CoAP for transport. By reusing existing libraries the additional code size can be kept very low. Note that, while CBOR and COSE primitives are built into the protocol messages, EDHOC is not bound to a particular transport. However, it is recommended to transfer EDHOC messages in CoAP payloads as is detailed in {{coap}}.
 
 ## Message Size Examples
 
@@ -253,7 +253,7 @@ The single output from authenticated encryption (including the authentication ta
 
 EDHOC specifies different authentication methods of the Diffie-Hellman key exchange: digital signatures and static Diffie-Hellman keys. This section outlines the digital signature based method. Further details of protocol elements and other authentication methods are provided in the remainder of this document.
 
-SIGMA (SIGn-and-MAc) is a family of theoretical protocols with a large number of variants {{SIGMA}}. Like IKEv2 {{RFC7296}} and (D)TLS 1.3 {{RFC8446}}, EDHOC authenticated with digital signatures is built on a variant of the SIGMA protocol which provide identity protection of the initiator (SIGMA-I), and like IKEv2 {{RFC7296}}, EDHOC implements the SIGMA-I variant as MAC-then-Sign. The SIGMA-I protocol using an authenticated encryption algorithm is shown in {{fig-sigma}}.
+SIGMA (SIGn-and-MAc) is a family of theoretical protocols with a large number of variants {{SIGMA}}. Like IKEv2 {{RFC7296}} and (D)TLS 1.3 {{RFC8446}}, EDHOC authenticated with digital signatures is built on a variant of the SIGMA protocol which provides identity protection of the initiator (SIGMA-I), and like IKEv2 {{RFC7296}}, EDHOC implements the SIGMA-I variant as MAC-then-Sign. The SIGMA-I protocol using an authenticated encryption algorithm is shown in {{fig-sigma}}.
 
 ~~~~~~~~~~~
 Initiator                                               Responder
@@ -270,7 +270,7 @@ Initiator                                               Responder
 {: #fig-sigma title="Authenticated encryption variant of the SIGMA-I protocol."}
 {: artwork-align="center"}
 
-The parties exchanging messages are called Initiator (I) and Responder (R). They exchange ephemeral public keys, compute the shared secret, and derive symmetric application keys. 
+The parties exchanging messages are called Initiator (I) and Responder (R). They exchange ephemeral public keys, compute a shared secret, and derive symmetric application keys used to protect application data.
 
 * G_X and G_Y are the ECDH ephemeral public keys of I and R, respectively.
 
@@ -278,7 +278,7 @@ The parties exchanging messages are called Initiator (I) and Responder (R). They
 
 * ID_CRED_I and ID_CRED_R are data enabling the recipient party to retrieve the credential of I and R, respectively.
 
-* Sig(I; . ) and S(R; . ) denote signatures made with the private authentication key of I and R, respectively.
+* Sig(I; . ) and Sig(R; . ) denote signatures made with the private authentication key of I and R, respectively.
 
 * AEAD(K; . ) denotes authenticated encryption with additional data using a key K derived from the shared secret.
 
@@ -290,7 +290,7 @@ In order to create a "full-fledged" protocol some additional protocol elements a
 
 * Computationally independent keys derived from the ECDH shared secret and used for authenticated encryption of different messages.
 
-* An optional fourth flight giving explicit key confirmation to I in deployments where no application data is sent from R to I.
+* An optional fourth message giving explicit key confirmation to I in deployments where no protected application data is sent from R to I.
 
 * A key material exporter and a key update function enabling frequent forward secrecy.
 
@@ -373,7 +373,7 @@ The Initiator and the Responder need to have agreed on a transport to be used fo
 
 ### Message Correlation {#corr}
 
-If the transport provides a mechanism for correlating messages, some of the connection identifiers may be omitted. There are four cases:
+If the transport provides a mechanism for correlating messages received with messages previously sent, then some of the connection identifiers may be omitted. There are four cases:
 
    * corr = 0, the transport does not provide a correlation mechanism.
 
@@ -400,9 +400,9 @@ The authentication key MUST be a signature key or static Diffie-Hellman key. The
 
 ### Identities {#identities}
 
-EDHOC assumes the existence of mechanisms (certification authority, trusted third party, manual distribution, etc.) for specifying and distributing authentication keys and identities. Policies are set based on the identity of the other party, and parties typically only allow connections from a specific identity or a small restricted set of identities. For example, in the case of a device connecting to a network, the network may only allow connections from devices which authenticate with certificates having a particular range of serial numbers in the subject field and signed by a particular CA. On the other side, the device may only be allowed to connect to a network which authenticate with a particular public key (information of which may be provisioned, e.g., out of band or in the Auxiliary Data, see {{AD}}).
+EDHOC assumes the existence of mechanisms (certification authority, trusted third party, manual distribution, etc.) for specifying and distributing authentication keys and identities. Policies are set based on the identity of the other party, and parties typically only allow connections from a specific identity or a small restricted set of identities. For example, in the case of a device connecting to a network, the network may only allow connections from devices which authenticate with certificates having a particular range of serial numbers in the subject field and signed by a particular CA. On the other side, the device may only be allowed to connect to a network which authenticates with a particular public key (information of which may be provisioned, e.g., out of band or in the Auxiliary Data, see {{AD}}).
  
-The EDHOC implementation must be able to receive and enforce information from the application about what is the intended peer endpoint, and in particular whether it is a specific identity or a set of identities.
+The EDHOC implementation must be able to receive and enforce information from the application about what is the intended endpoint, and in particular whether it is a specific identity or a set of identities.
 
 * When a Public Key Infrastructure (PKI) is used, the trust anchor is a Certification Authority (CA) certificate, and the identity is the subject whose unique name (e.g. a domain name, NAI, or EUI) is included in the endpoint's certificate. Before running EDHOC each party needs at least one CA public key certificate, or just the public key, and a specific identity or set of identities it is allowed to communicate with. Only validated public-key certificates with an allowed subject name, as specified by the application, are to be accepted. EDHOC provides proof that the other party possesses the private authentication key corresponding to the public authentication key in its certificate. The certification path provides proof that the subject of the certificate owns the public key in the certificate.
 
@@ -556,9 +556,9 @@ EDHOC requires certain parameters to be agreed upon between Initiator and Respon
 
 In order to ensure that EDHOC is used for the intended purpose, each message needs to be verified against an applicability statement associated to the protocol instance. If the message does not comply with the applicability statement, the protocol needs to be discontinued. This allows for the relevant processing and verifications to be made, including things like:
 
-1. How the peer detects that an EDHOC message is received. This includes how EDHOC messages are transported, for example in the payload of a CoAP message with a certain Uri-Path or Content-Format; see {{coap}}.
+1. How the endpoint detects that an EDHOC message is received. This includes how EDHOC messages are transported, for example in the payload of a CoAP message with a certain Uri-Path or Content-Format; see {{coap}}.
 1. Method and correlation of underlying transport messages (METHOD_CORR; see {{method}} and {{corr}}). This gives information about the optional connection identifier fields.
-2. Whether the optional initial `null` of message_1 is used; see {{asym-msg1-form}}
+2. How message_1 is identified, in particular if the optional initial `null` of message_1 is present; see {{asym-msg1-form}}
 3. Authentication credentials (CRED_I, CRED_R; see {{auth-cred}}).
 4. Type used to identify authentication credentials (ID_CRED_I, ID_CRED_R; see {{id_cred}}).
 5. Use and type of Auxiliary Data (AD_1, AD_2, AD_3; see {{AD}}).
@@ -573,7 +573,7 @@ For other parameters, like an CRED_x in the case that it is not transported, it 
 
 Note that it is not necessary for the endpoints to specify a single transport for the EDHOC messages. For example, a mix of CoAP and HTTP may be used along the path, and this may still allow correlation between messages.
 
-The applicability statement may be dependent on the identity of the peer, but this applies only to the later phases of the protocol when identities are known. (Initiator does not know identity of Responder before having verified message_2, and Responder does not know identity of Initiator before having verified message_3.)
+The applicability statement may be dependent on the identity of the other endpoint, but this applies only to the later phases of the protocol when identities are known. (Initiator does not know identity of Responder before having verified message_2, and Responder does not know identity of Initiator before having verified message_3.)
 
 Other conditions may be part of the applicability statement, such as target application or use (if there is more than one application/use) to the extent that EDHOC can distinguish between them. In case multiple applicability statements are used, the receiver needs to be able to determine which is applicable for a given protocol instance, for example based on URI or Auxiliary Data type.
 
@@ -581,7 +581,7 @@ Other conditions may be part of the applicability statement, such as target appl
 
 # Key Derivation {#key-der}
 
-EDHOC uses Extract-and-Expand {{RFC5869}} with the EDHOC hash algorithm in the selected cipher suite to derive keys. Extract is used to derive fixed-length uniformly pseudorandom keys (PRK) from ECDH shared secrets. Expand is used to derive additional output keying material (OKM) from the PRKs. The PRKs are derived using Extract.
+EDHOC uses Extract-and-Expand {{RFC5869}} with the EDHOC hash algorithm in the selected cipher suite to derive keys used in EDHOC and in the application. Extract is used to derive fixed-length uniformly pseudorandom keys (PRK) from ECDH shared secrets. Expand is used to derive additional output keying material (OKM) from the PRKs. The PRKs are derived using Extract.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
    PRK = Extract( salt, IKM )
@@ -700,12 +700,27 @@ bstr_identifier = bstr / int
 
 Note that, despite what could be interpreted by the CDDL definition only, bstr_identifier once decoded are always byte strings.
 
-## High-Level Message Processing
+## Message Processing Outline
 
-The protocol messages are processed according to current state of the protocol instance. If there is no state of this protocol instance, i.e. message_1, a new protocol state is created. At reception of other messages than message_1, the existing protocol state is retrieved and processing is performed accordingly. If the processing fails for some reason, the protocol is by default discontinued and the protocol state is erased. (The case when the transport does not support message de-duplication is addressed in {{no-de-duplication}}.)
+This section outlines the message processing of EDHOC. 
 
-The protocol state can be identified by a received connection identifier ({{ci}}) or with message correlation provided by transport ({{corr}}). An initial `null` byte in message_1 ({{asym-msg1-form}}) can be used to distinguish the case when there is no previous protocol state. The applicability statement associated to a particular protocol instance  specifies how message_1 and existing protocol state are identified (see {{applicability}}). 
+For each protocol instance, the endpoints are assumed to keep an associated protocol state containing connection identifiers, ephemeral keys, pseudo-random keys, etc. used for subsequent processing of protocol related data. The protocol state is associated to an applicability statement ({{applicability}}) which provides the context for how messages are transported, identified and processed. 
 
+EDHOC messages SHALL be processed according to the current protocol state. 
+
+If there is no protocol state, in the case of message_1, a new protocol state is created. An initial `null` byte in message_1 ({{asym-msg1-form}}) can be used to distinguish message_1 from other messages. The Responder endpoint needs to make use of available Denial-of-Service mitigation ({{dos}}). 
+
+Except for message_1, the following steps are expected to be performed at reception of an EDHOC message:
+
+1. Detect that an EDHOC message has been recieved, for example by means of URI or media type ({{applicability}}).
+
+2. Retrieve the protocol state, e.g. using the received connection identifier ({{ci}}) or with the help of message correlation provided by the transport protocol ({{corr}}). 
+
+3. If the message received is an error message then process according to {{error}}, else process as the expected next message according to the protocol state. 
+
+If the processing fails, then the protocol is discontinued, an error message sent, and the protocol state erased. Further details are provided in the following subsections.
+
+Different instances of the same message MUST NOT be processed in one protocol instance.  Note that processing will fail if the same message appears a second time for EDHOC processing because the state of the protocol has moved on and now expects something else. This assumes that message duplication due to re-transmissions is handled by the transport protocol, see {{transport}}. The case when the transport does not support message de-duplication is addressed in {{no-de-duplication}}.
 
 
 ## EDHOC Message 1 {#m1}
@@ -729,7 +744,7 @@ suite = int
 
 where:
 
-* an initial CBOR simple value `null` (= 0xf6) MAY be used to distinguish message_1 from other messages.
+* an initial CBOR simple value null (= 0xf6) MAY be used to distinguish message_1 from other messages. The applicability statement ({{applicability}}) specifies whether this field is present or not.
 * METHOD_CORR = 4 * method + corr, where method = 0, 1, 2, or 3 (see {{fig-method-types}}) and the correlation parameter corr is chosen based on the transport and determines which connection identifiers that are omitted (see {{corr}}).
 * SUITES_I - cipher suites which the Initiator supports in order of (decreasing) preference. The list of supported cipher suites can be truncated at the end, as is detailed in the processing steps below and {{wrong-selected}}. One of the supported cipher suites is selected. The selected suite is the first suite in the SUITES_I CBOR array. If a single supported cipher suite is conveyed then that cipher suite is selected and SUITES_I is encoded as an int instead of an array.
 * G_X - the ephemeral public key of the Initiator
@@ -1247,7 +1262,7 @@ When EDHOC is used to derive parameters for OSCORE {{RFC8613}}, the parties  mak
    Master Salt   = EDHOC-Exporter( "OSCORE Master Salt", salt_length )
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-### Error Messages
+### Error Messages with CoAP Transport
 
 Errors messages to EDHOC messages transported over CoAP SHOULD be sent as successful requests and responses (e.g. POST  and 2.04 (Changed)). In case of combining EDHOC and OSCORE as specified in {{I-D.palombini-core-oscore-edhoc}}, an error message response following a combined EDHOC message_3/OSCORE request MUST to be sent with a CoAP error code and SHALL contain the EDHOC diagnostic message DIAG_MSG as payload (see {{error}}).
 
@@ -1300,7 +1315,7 @@ The Initiator and the Responder must make sure that unprotected data and metadat
 
 The Initiator and the Responder must also make sure that unauthenticated data does not trigger any harmful actions. In particular, this applies to AD_1 and ERR_MSG.
 
-## Denial-of-Service
+## Denial-of-Service {#dos}
 
 EDHOC itself does not provide countermeasures against Denial-of-Service attacks. By sending a number of new or replayed message_1 an attacker may cause the Responder to allocate state, perform cryptographic operations, and amplify messages. To mitigate such attacks, an implementation SHOULD rely on lower layer mechanisms such as the Echo option in CoAP {{I-D.ietf-core-echo-request-tag}} that forces the initiator to demonstrate reachability at its apparent network address.
 
