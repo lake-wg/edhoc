@@ -565,7 +565,6 @@ In order to ensure that EDHOC is used for the intended purpose, each message nee
 5. Use and type of Auxiliary Data (AD_1, AD_2, AD_3; see {{AD}}).
 6. Identifier used as identity of endpoint; see {{identities}}.
 7. If message_4 shall be sent/expected, and if not, how to ensure a protected application message is sent from the Responder to the Initiator; see {{m4}}.
-8. If EDHOC message deduplication is supported; see {{duplication}}
 
 An example of an applicability statement is shown in {{appl-temp}}.
 
@@ -3479,8 +3478,6 @@ Duplicate messages are not processed by the EDHOC state machine.
 * Different instances of the same message MUST NOT be processed in one protocol instance.
 
 Note that if a different instance (no. 2) of EDHOC message_x is received, then the processing above will result in the sending of the response to message_x, instance no. 1, which will correctly result in a failure in integrity verification due to difference in transcript hashes between the message_x instances. 
-
-Both endpoints MUST be aware that EDHOC message deduplication is being used. The use of EDHOC message deduplication is one item in the applicability statement (see {{applicability}}).
 
 
 # Change Log
