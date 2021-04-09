@@ -1428,7 +1428,11 @@ Reference: [[this document]]
 
 ## EDHOC Method Type Registry {#method-types}
 
-IANA has created a new registry titled "EDHOC Method Type" under the new heading "EDHOC". The registration procedure is "Expert Review". The columns of the registry are Value, Description, and Reference, where Value is an integer and the other columns are text strings. The initial contents of the registry is shown in {{fig-method-types}}.
+IANA has created a new registry entitled "EDHOC Method Type" under the new heading "EDHOC". The registration procedure is "Expert Review". The columns of the registry are Value, Description, and Reference, where Value is an integer and the other columns are text strings. The initial contents of the registry is shown in {{fig-method-types}}.
+
+## EDHOC Error Codes Registry
+
+IANA has created a new registry entitled "EDHOC Error Codes" under the new heading "EDHOC". The registration procedure is "Specification Required". The columns of the registry are ERR_CODE, ERR_INFO Type and Description, where ERR_CODE is an integer, ERR_INFO is a CDDL defined type, and Description is a text string. The initial contents of the registry is shown in {{fig-error-codes}}.
 
 
 ## The Well-Known URI Registry
