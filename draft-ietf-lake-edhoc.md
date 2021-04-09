@@ -564,6 +564,7 @@ In order to ensure that EDHOC is used for the intended purpose, each message nee
 5. Use and type of Auxiliary Data (AD_1, AD_2, AD_3; see {{AD}}).
 6. Identifier used as identity of endpoint; see {{identities}}.
 7. If message_4 shall be sent/expected, and if not, how to ensure a protected application message is sent from the Responder to the Initiator; see {{m4}}.
+8. If EDHOC message deduplication is supported; see {{duplication}}
 
 An example of an applicability statement is shown in {{appl-temp}}.
 
@@ -700,7 +701,7 @@ bstr_identifier = bstr / int
 
 Note that, despite what could be interpreted by the CDDL definition only, bstr_identifier once decoded are always byte strings.
 
-## Message Processing Outline
+## Message Processing Outline {#proc-outline}
 
 This section outlines the message processing of EDHOC. 
 
@@ -720,7 +721,7 @@ Except for message_1, the following steps are expected to be performed at recept
 
 If the processing fails, then the protocol is discontinued, an error message sent, and the protocol state erased. Further details are provided in the following subsections.
 
-Different instances of the same message MUST NOT be processed in one protocol instance.  Note that processing will fail if the same message appears a second time for EDHOC processing because the state of the protocol has moved on and now expects something else. This assumes that message duplication due to re-transmissions is handled by the transport protocol, see {{transport}}. The case when the transport does not support message de-duplication is addressed in {{no-de-duplication}}.
+Different instances of the same message MUST NOT be processed in one protocol instance.  Note that processing will fail if the same message appears a second time for EDHOC processing because the state of the protocol has moved on and now expects something else. This assumes that message duplication due to re-transmissions is handled by the transport protocol, see {{transport}}. The case when the transport does not support message deduplication is addressed in {{duplication}}.
 
 
 ## EDHOC Message 1 {#m1}
@@ -3394,9 +3395,30 @@ For use of EDHOC in the XX protocol, the following assumptions are made on the p
 * Need to specify use of C\_I/C\_R ? (TBD)
 
 
-# Lack of Message De-duplication {#no-de-duplication}
+# EDHOC Message Deduplication {#duplication}
 
-TBD
+EDHOC by default assumes that message duplication due to re-transmissions is handled by the transport, in this section examplified with CoAP.
+
+Deduplication of CoAP messages is described in Section 4.5 of {{RFC7252}}. This handles the case when the same Confirmable (CON) message is received multiple times due to missing acknowledgement on CoAP messaging layer. The recommended processing in {{RFC7252}} is that the duplicate message is acknowledged (ACK), but the received message is only processed once by the CoAP stack.
+
+Message deduplication is resource demanding and therefore not supported in all CoAP implementations. Since EDHOC is targeting constrained environments, it is desirable that EDHOC can support transport layers which does not handle message duplication. Special care is needed to avoid issues with duplicate messages, see {{proc-outline}}.
+
+The guiding principle here is derived from the deduplication processing on CoAP messaging layer: a received duplicate EDHOC message should result in the same response as the first time, in this case a duplicate EDHOC message being sent, but the received message must not be processed more than once by the EDHOC implementation. This is called "EDHOC message deduplication".
+
+An EDHOC implementation MAY store the previous sent EDHOC message to be able to resend it. An EDHOC implementation MAY keep the protocol state to be able to recreate the previous sent EDHOC message and resend it. The previous message or protocol state MUST NOT be kept longer than what is required for retransmission, for example, in the case of CoAP transport, no longer than the EXCHANGE_LIFETIME (see Section 4.8.2 of {{RFC7252}}).
+
+Note that this processing does not contradict the requirements in {{proc-outline}}:
+
+* EDHOC messages SHALL be processed according to the current protocol state.
+
+Duplicate messages are not processed by the EDHOC state machine.
+
+* Different instances of the same message MUST NOT be processed in one protocol instance.
+
+Note that if a different instance (no. 2) of EDHOC message_x is received, then the processing above will result in the sending of the response to message_x, instance no. 1, which will correctly result in a failure in integrity verification due to difference in transcript hashes between the message_x instances. 
+
+Both endpoints MUST be aware that EDHOC message deduplication is being used. The use of EDHOC message deduplication is one item in the applicability statement (see {{applicability}}).
+
 
 # Change Log
 
