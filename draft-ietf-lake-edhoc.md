@@ -1543,6 +1543,63 @@ h'12cd'             0x4212cd             byte string
 ~~~~~~~~~~~~~~~~~~~~~~~
 {: artwork-align="center"}
 
+## CDDL Definitions
+
+This sections compiles the CDDL definitions for ease of reference.
+
+
+~~~~~~~~~~~ CDDL
+bstr_identifier = bstr / int
+
+suite = int
+
+SUITES_R : [ supported : 2* suite ] / suite
+
+message_1 = (
+  ? null : bstr,
+  METHOD_CORR : int,
+  SUITES_I : [ selected : suite, supported : 2* suite ] / suite,
+  G_X : bstr,
+  C_I : bstr_identifier,
+  ? AD_1 : bstr,
+)
+
+message_2 = (
+  data_2,
+  CIPHERTEXT_2 : bstr,
+)
+
+data_2 = (
+  ? C_I : bstr_identifier,
+  G_Y : bstr,
+  C_R : bstr_identifier,
+)
+
+message_3 = (
+  data_3,
+  CIPHERTEXT_3 : bstr,
+)
+
+data_3 = (
+  ? C_R : bstr_identifier,
+)
+
+message_4 = (
+  data_4,
+  MAC_4 : bstr,
+)
+
+data_4 = (
+  ? C_I : bstr_identifier,
+)
+
+error = (
+  ? C_x : bstr_identifier,
+  ERR_CODE : int,
+  ERR_INFO : any
+)
+~~~~~~~~~~~
+
 ## COSE {#COSE}
 
 CBOR Object Signing and Encryption (COSE) {{RFC8152}} describes how to create and process signatures, message authentication codes, and encryption using CBOR. COSE builds on JOSE, but is adapted to allow more efficient processing in constrained devices. EDHOC makes use of COSE_Key, COSE_Encrypt0, and COSE_Sign1 objects.
