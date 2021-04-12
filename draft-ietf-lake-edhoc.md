@@ -3465,19 +3465,15 @@ Deduplication of CoAP messages is described in Section 4.5 of {{RFC7252}}. This 
 
 Message deduplication is resource demanding and therefore not supported in all CoAP implementations. Since EDHOC is targeting constrained environments, it is desirable that EDHOC can support transport layers which does not handle message duplication. Special care is needed to avoid issues with duplicate messages, see {{proc-outline}}.
 
-The guiding principle here is derived from the deduplication processing on CoAP messaging layer: a received duplicate EDHOC message should result in the same response as the first time, in this case a duplicate EDHOC message being sent, but the received message must not be processed more than once by the EDHOC implementation. This is called "EDHOC message deduplication".
+The guiding principle here is derived from the deduplication processing on CoAP messaging layer: a received duplicate EDHOC message should result in the same response as the first time - in this case a duplicate EDHOC message is sent - but the received message must not be processed more than once by the EDHOC implementation. This is called "EDHOC message deduplication".
 
-An EDHOC implementation MAY store the previous sent EDHOC message to be able to resend it. An EDHOC implementation MAY keep the protocol state to be able to recreate the previous sent EDHOC message and resend it. The previous message or protocol state MUST NOT be kept longer than what is required for retransmission, for example, in the case of CoAP transport, no longer than the EXCHANGE_LIFETIME (see Section 4.8.2 of {{RFC7252}}).
+An EDHOC implementation MAY store the previously sent EDHOC message to be able to resend it. An EDHOC implementation MAY keep the protocol state to be able to recreate the previously sent EDHOC message and resend it. The previous message or protocol state MUST NOT be kept longer than what is required for retransmission, for example, in the case of CoAP transport, no longer than the EXCHANGE_LIFETIME (see Section 4.8.2 of {{RFC7252}}).
 
-Note that this processing does not contradict the requirements in {{proc-outline}}:
+Note that the requirements in {{proc-outline}} still apply because duplicate messages are not processed by the EDHOC state machine:
 
 * EDHOC messages SHALL be processed according to the current protocol state.
 
-Duplicate messages are not processed by the EDHOC state machine.
-
 * Different instances of the same message MUST NOT be processed in one protocol instance.
-
-Note that if a different instance (no. 2) of EDHOC message_x is received, then the processing above will result in the sending of the response to message_x, instance no. 1, which will correctly result in a failure in integrity verification due to difference in transcript hashes between the message_x instances. 
 
 
 # Change Log
