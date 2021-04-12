@@ -60,7 +60,6 @@ informative:
   RFC7296:
   RFC8446:
   RFC8937:
-  I-D.ietf-6tisch-dtsecurity-zerotouch-join:
   I-D.ietf-core-resource-directory:
   I-D.ietf-lwig-security-protocol-comparison:
   I-D.ietf-tls-dtls13:
@@ -102,56 +101,20 @@ informative:
       -
         ins: (Placeholder)
     date: August 2015
-    
-  LoRa1:
-    target: https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6021899/pdf/sensors-18-01833.pdf
-    title: Enhancing LoRaWAN Security through a Lightweight and Authenticated Key Management Approach
+
+  Norrman20:
+    target: https://arxiv.org/abs/2007.11427
+    title: Formal Analysis of EDHOC Key Establishment for Constrained IoT Devices
     author:
       -
-        ins: R. Sanchez-Iborra
+        ins: K. Norrman
       -
-        ins: J. Sánchez-Gómez
+        ins: V. Sundararajan
       -
-        ins: S. Pérez
-      -
-        ins: P.J. Fernández
-      -
-        ins: J. Santa
-      -
-        ins: J.L. Hernández-Ramos
-      -
-        ins: A.F. Skarmeta
-    date: June 2018
+        ins: A. Bruni
+    date: September 2020
 
-  LoRa2:
-    target: https://ants.inf.um.es/~josesanta/doc/GIoTS1.pdf
-    title: Internet Access for LoRaWAN Devices Considering Security Issues
-    author:
-      -
-        ins: R. Sanchez-Iborra
-      -
-        ins: J. Sánchez-Gómez
-      -
-        ins: S. Pérez
-      -
-        ins: P.J. Fernández
-      -
-        ins: J. Santa
-      -
-        ins: J.L. Hernández-Ramos
-      -
-        ins: A.F. Skarmeta
-    date: June 2018
-
-  Kron18:
-    target: https://www.nada.kth.se/~ann/exjobb/alexandros_krontiris.pdf
-    title: Evaluation of Certificate Enrollment over Application Layer Security
-    author:
-      -
-        ins: A. Krontiris
-    date: May 2018
-
-  SSR18:
+  Bruni18:
     target: https://www.springerprofessional.de/en/formal-verification-of-ephemeral-diffie-hellman-over-cose-edhoc/16284348
     title: Formal Verification of Ephemeral Diffie-Hellman Over COSE (EDHOC)
     author:
@@ -164,24 +127,6 @@ informative:
       -
         ins: C. Schürmann
     date: November 2018
-
-  Perez18:
-    target: http://www.anastacia-h2020.eu/publications/Architecture_of_security_association_establishment_based_on_bootstrapping_technologies_for_enabling_critical_IoT_infrastructures.pdf
-    title: Architecture of security association establishment based on bootstrapping technologies for enabling critical IoT K
-    author:
-      -
-        ins: S. Pérez
-      -
-        ins: D. Garcia-Carrillo
-      -
-        ins: R. Marín-López
-      -
-        ins: J. Hernández-Ramos
-      -
-        ins: R. Marín-Pérez
-      -
-        ins: A. Skarmeta
-    date: October 2018
     
   CborMe:
     target: http://cbor.me/
@@ -1293,6 +1238,8 @@ Key compromise impersonation (KCI): In EDHOC authenticated with signature keys, 
 
 Repudiation: In EDHOC authenticated with signature keys, the Initiator could theoretically prove that the Responder performed a run of the protocol by presenting the private ephemeral key, and vice versa. Note that storing the private ephemeral keys violates the protocol requirements. With static Diffie-Hellman key authentication, both parties can always deny having participated in the protocol.
 
+Two earlier versions of EDHOC have been formally analysed {{Norrman20}} {{Bruni18}} and the specification has been updated based on the analysis.
+
 ## Cryptographic Considerations
 The security of the SIGMA protocol requires the MAC to be bound to the identity of the signer. Hence the message authenticating functionality of the authenticated encryption in EDHOC is critical: authenticated encryption MUST NOT be replaced by plain encryption only, even if authentication is provided at another level or through a different mechanism. EDHOC implements SIGMA-I using a MAC-then-Sign approach.
 
@@ -1338,10 +1285,6 @@ The Responder MUST finish the verification step of message_3 before passing AD_3
 If two nodes unintentionally initiate two simultaneous EDHOC message exchanges with each other even if they only want to complete a single EDHOC message exchange, they MAY terminate the exchange with the lexicographically smallest G_X. If the two G_X values are equal, the received message_1 MUST be discarded to mitigate reflection attacks. Note that in the case of two simultaneous EDHOC exchanges where the nodes only complete one and where the nodes have different preferred cipher suites, an attacker can affect which of the two nodes’ preferred cipher suites will be used by blocking the other exchange.
 
 If supported by the device, it is RECOMMENDED that at least the long-term private keys is stored in a Trusted Execution Environment (TEE) and that sensitive operations using these keys are performed inside the TEE. To achieve even higher security it is RECOMMENDED that additional operations such as ephemeral key generation, all computations of shared secrets, and storage of the PRK keys can be done inside the TEE. The TEE can also be used to protect the EDHOC and application protocol (e.g. OSCORE) implementation using some form of "secure boot", memory protection etc. The use of a TEE enforces that code within that environment cannot be tampered with, and that any data used by such code cannot be read or tampered with by code outside that environment.
-
-## Other Documents Referencing EDHOC
-
-EDHOC has been analyzed in several other documents. A formal verification of EDHOC was done in {{SSR18}}, an analysis of EDHOC for certificate enrollment was done in {{Kron18}}, the use of EDHOC in LoRaWAN is analyzed in {{LoRa1}} and {{LoRa2}}, the use of EDHOC in IoT bootstrapping is analyzed in {{Perez18}}, and the use of EDHOC in 6TiSCH is described in {{I-D.ietf-6tisch-dtsecurity-zerotouch-join}}. 
 
 # IANA Considerations {#iana}
 
