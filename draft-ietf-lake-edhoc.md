@@ -511,7 +511,9 @@ In order to ensure that EDHOC is used for the intended purpose, each message nee
 6. Identifier used as identity of endpoint; see {{identities}}.
 7. If message_4 shall be sent/expected, and if not, how to ensure a protected application message is sent from the Responder to the Initiator; see {{m4}}.
 
-An example of an applicability statement is shown in {{appl-temp}}.
+The applicability statement may also contain information about supported cipher suites. The procedure for selecting and and verifying cipher suite is still performed as specified by the protocol, but it may become simplified by this knowledge. 
+
+An example of an applicability statement is shown in {{appl-temp}}. 
 
 For some parameters, like METHOD_CORR, ID_CRED_x, type of AD_x, the receiver is able to verify compliance with applicability statement, and if it needs to fail because of incompliance, to infer the reason why the protocol failed.
 
