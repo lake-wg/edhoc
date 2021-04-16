@@ -3382,6 +3382,8 @@ For use of EDHOC in the XX protocol, the following assumptions are made on the p
 
 * EDHOC requests are expected by the server at /app1-edh, no Content-Format needed.
 
+* `null` is used to identify message_1
+
 * CRED_I is an 802.1AR IDevID encoded as a CBOR Certificate of type 0 {{I-D.mattsson-cose-cbor-cert-compress}}.
     * R acquires CRED_I out-of-band, indicated in AD_1
     * ID_CRED_I = {4: h''} is a kid with value empty byte string
@@ -3397,7 +3399,6 @@ For use of EDHOC in the XX protocol, the following assumptions are made on the p
 
 * Auxiliary Data is processed as specified in {{I-D.selander-ace-ake-authz}}.
 
-* Need to specify use of C\_I/C\_R ? (TBD)
 
 
 # EDHOC Message Deduplication {#duplication}
