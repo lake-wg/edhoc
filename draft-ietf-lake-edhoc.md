@@ -652,7 +652,7 @@ Note that, despite what could be interpreted by the CDDL definition only, bstr_i
 
 This section outlines the message processing of EDHOC. 
 
-For each protocol instance, the endpoints are assumed to keep an associated protocol state containing connection identifiers, ephemeral keys, pseudo-random keys, etc. used for subsequent processing of protocol related data. The protocol state is associated to an applicability statement ({{applicability}}) which provides the context for how messages are transported, identified and processed. 
+For each protocol instance, the endpoints are assumed to keep an associated protocol state containing connection identifiers, keys, etc. used for subsequent processing of protocol related data. The protocol state is associated to an applicability statement ({{applicability}}) which provides the context for how messages are transported, identified and processed. 
 
 EDHOC messages SHALL be processed according to the current protocol state. 
 
