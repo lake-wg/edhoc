@@ -679,7 +679,7 @@ message_1 SHALL be a CBOR Sequence (see {{CBOR}}) as defined below
 
 ~~~~~~~~~~~ CDDL
 message_1 = (
-  ? null : bstr,
+  ? C_1 : null,
   METHOD_CORR : int,
   SUITES_I : [ selected : suite, supported : 2* suite ] / suite,
   G_X : bstr,
@@ -692,7 +692,7 @@ suite = int
 
 where:
 
-* an initial CBOR simple value null (= 0xf6) MAY be used to distinguish message_1 from other messages. The applicability statement ({{applicability}}) specifies whether this field is present or not.
+* C_1 - an initial CBOR simple value null (= 0xf6) MAY be used to distinguish message_1 from other messages. The applicability statement ({{applicability}}) specifies whether this field is present or not.
 * METHOD_CORR = 4 * method + corr, where method = 0, 1, 2, or 3 (see {{fig-method-types}}) and the correlation parameter corr is chosen based on the transport and determines which connection identifiers that are omitted (see {{corr}}).
 * SUITES_I - cipher suites which the Initiator supports in order of (decreasing) preference. The list of supported cipher suites can be truncated at the end, as is detailed in the processing steps below and {{wrong-selected}}. One of the supported cipher suites is selected. The selected suite is the first suite in the SUITES_I CBOR array. If a single supported cipher suite is conveyed then that cipher suite is selected and SUITES_I is encoded as an int instead of an array.
 * G_X - the ephemeral public key of the Initiator
