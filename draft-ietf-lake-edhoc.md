@@ -696,7 +696,7 @@ where:
 * METHOD_CORR = 4 * method + corr, where method = 0, 1, 2, or 3 (see {{fig-method-types}}) and the correlation parameter corr is chosen based on the transport and determines which connection identifiers that are omitted (see {{corr}}).
 * SUITES_I - cipher suites which the Initiator supports in order of (decreasing) preference. The list of supported cipher suites can be truncated at the end, as is detailed in the processing steps below and {{wrong-selected}}. One of the supported cipher suites is selected. The selected suite is the first suite in the SUITES_I CBOR array. If a single supported cipher suite is conveyed then that cipher suite is selected and SUITES_I is encoded as an int instead of an array.
 * G_X - the ephemeral public key of the Initiator
-* C_I - variable length connection identifier, encoded as a bstr or int.
+* C_I - variable length connection identifier, either a bstr or int.
 * AD_1 - bstr containing unprotected opaque auxiliary data
 
 ### Initiator Processing of Message 1 {#init-proc-msg1}
@@ -749,7 +749,7 @@ data_2 = (
 where:
 
 * G_Y - the ephemeral public key of the Responder
-* C_R - variable length connection identifier, encoded as a bstr or int.
+* C_R - variable length connection identifier, either a bstr or int.
 
 ### Responder Processing of Message 2 {#asym-msg2-proc}
 
@@ -966,7 +966,7 @@ error = (
 
 where:
 
-* C_x - (optional) variable length connection identifier, encoded as a bstr or int. If error is sent by the Responder and corr (METHOD_CORR mod 4) equals 0 or 2 then C_x is set to C_I, else if error is sent by the Initiator and corr (METHOD_CORR mod 4) equals 0 or 1 then C_x is set to C_R, else C_x is omitted.
+* C_x - (optional) variable length connection identifier, either a bstr or int. If error is sent by the Responder and corr (METHOD_CORR mod 4) equals 0 or 2 then C_x is set to C_I, else if error is sent by the Initiator and corr (METHOD_CORR mod 4) equals 0 or 1 then C_x is set to C_R, else C_x is omitted.
 * ERR_CODE - error code encoded as an integer.
 * ERR_INFO - error information. Content and encoding depend on error code.
 
