@@ -574,14 +574,14 @@ The keys and IVs used in EDHOC are derived from PRK using Expand {{RFC5869}} whe
 
 where info is the CBOR encoding of
 
-~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~ CDDL
 info = [
    edhoc_aead_id : int / tstr,
    transcript_hash : bstr,
    label : tstr,
    length : uint
 ]
-~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~
 
 where
 
@@ -1542,6 +1542,13 @@ error = (
   ERR_CODE : int,
   ERR_INFO : any
 )
+
+info = [
+   edhoc_aead_id : int / tstr,
+   transcript_hash : bstr,
+   label : tstr,
+   length : uint
+]
 ~~~~~~~~~~~
 
 ## COSE {#COSE}
