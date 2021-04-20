@@ -1501,7 +1501,7 @@ suite = int
 SUITES_R : [ supported : 2* suite ] / suite
 
 message_1 = (
-  ? null : bstr,
+  ? C_1 : null,
   METHOD_CORR : int,
   SUITES_I : [ selected : suite, supported : 2* suite ] / suite,
   G_X : bstr,
