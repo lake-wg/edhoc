@@ -504,7 +504,7 @@ In order to ensure that EDHOC is used for the intended purpose, each message nee
 
 1. How the endpoint detects that an EDHOC message is received. This includes how EDHOC messages are transported, for example in the payload of a CoAP message with a certain Uri-Path or Content-Format; see {{coap}}.
 1. Method and correlation of underlying transport messages (METHOD_CORR; see {{method}} and {{corr}}). This gives information about the optional connection identifier fields.
-2. How message_1 is identified, in particular if the optional initial `null` of message_1 is present; see {{asym-msg1-form}}
+2. How message_1 is identified, in particular if the optional initial C_1 = `null` of message_1 is present; see {{asym-msg1-form}}
 3. Authentication credentials (CRED_I, CRED_R; see {{auth-cred}}).
 4. Type used to identify authentication credentials (ID_CRED_I, ID_CRED_R; see {{id_cred}}).
 5. Use and type of Auxiliary Data (AD_1, AD_2, AD_3; see {{AD}}).
@@ -656,7 +656,7 @@ For each protocol instance, the endpoints are assumed to keep an associated prot
 
 EDHOC messages SHALL be processed according to the current protocol state. 
 
-If there is no protocol state, in the case of message_1, a new protocol state is created. An initial `null` byte in message_1 ({{asym-msg1-form}}) can be used to distinguish message_1 from other messages. The Responder endpoint needs to make use of available Denial-of-Service mitigation ({{dos}}). 
+If there is no protocol state, in the case of message_1, a new protocol state is created. An initial C_1 = `null` byte in message_1 ({{asym-msg1-form}}) can be used to distinguish message_1 from other messages. The Responder endpoint needs to make use of available Denial-of-Service mitigation ({{dos}}).
 
 Except for message_1, the following steps are expected to be performed at reception of an EDHOC message:
 
@@ -692,7 +692,7 @@ suite = int
 
 where:
 
-* C_1 - an initial CBOR simple value null (= 0xf6) MAY be used to distinguish message_1 from other messages. The applicability statement ({{applicability}}) specifies whether this field is present or not.
+* C_1 - an initial CBOR simple value `null` (= 0xf6) MAY be used to distinguish message_1 from other messages. The applicability statement ({{applicability}}) specifies whether this field is present or not.
 * METHOD_CORR = 4 * method + corr, where method = 0, 1, 2, or 3 (see {{fig-method-types}}) and the correlation parameter corr is chosen based on the transport and determines which connection identifiers that are omitted (see {{corr}}).
 * SUITES_I - cipher suites which the Initiator supports in order of (decreasing) preference. The list of supported cipher suites can be truncated at the end, as is detailed in the processing steps below and {{wrong-selected}}. One of the supported cipher suites is selected. The selected suite is the first suite in the SUITES_I CBOR array. If a single supported cipher suite is conveyed then that cipher suite is selected and SUITES_I is encoded as an int instead of an array.
 * G_X - the ephemeral public key of the Initiator
@@ -3390,7 +3390,7 @@ For use of EDHOC in the XX protocol, the following assumptions are made on the p
 
 * EDHOC requests are expected by the server at /app1-edh, no Content-Format needed.
 
-* `null` is used to identify message_1
+* C_1 = `null` is present to identify message_1
 
 * CRED_I is an 802.1AR IDevID encoded as a CBOR Certificate of type 0 {{I-D.mattsson-cose-cbor-cert-compress}}.
     * R acquires CRED_I out-of-band, indicated in AD_1
