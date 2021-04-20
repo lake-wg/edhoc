@@ -949,8 +949,6 @@ This section defines the format for error messages.
 
 An EDHOC error message can be sent by either endpoint as a reply to any non-error EDHOC message. How errors at the EDHOC layer are transported depends on lower layers, which need to enable error messages to be sent and processed as intended.
 
-EDHOC errors sent as successful messages on the underlying layer can avoid issues created by usage of cross protocol proxies (e.g. UDP to TCP).
-
 All error messages in EDHOC are fatal. After sending an error message, the sender MUST discontinue the protocol. The receiver SHOULD treat an error message as an indication that the other party likely has discontinued the protocol. But as the error message is not authenticated, a received error messages might also have been sent by an attacker and the receiver MAY therefore try to continue the protocol. 
 
 error SHALL be a CBOR Sequence (see {{CBOR}}) as defined below
