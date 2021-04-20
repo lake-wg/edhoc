@@ -1212,7 +1212,8 @@ When EDHOC is used to derive parameters for OSCORE {{RFC8613}}, the parties  mak
 
 ### Error Messages with CoAP Transport
 
-Error messages to EDHOC messages transported over CoAP SHOULD be sent as successful requests and responses (e.g. POST  and 2.04 (Changed)). In case of combining EDHOC and OSCORE as specified in {{I-D.palombini-core-oscore-edhoc}}, an error message response following a combined EDHOC message_3/OSCORE request MUST be sent with a CoAP error code and SHALL contain the EDHOC diagnostic message DIAG_MSG as payload (see {{error}}).
+EDHOC does not restrict how error messages are transported with CoAP, as long as the appropriate error message can to be transported in response to a message that failed (see {{error}}).
+In case of combining EDHOC and OSCORE as specified in {{I-D.palombini-core-oscore-edhoc}}, an error message following a combined EDHOC message_3/OSCORE request MUST be sent with a CoAP error code and SHALL contain the ERR_INFO as payload (see {{error}}).
 
 
 
