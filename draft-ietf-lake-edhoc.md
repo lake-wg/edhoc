@@ -260,13 +260,13 @@ To simplify for implementors, the use of CBOR and COSE in EDHOC is summarized in
 
 An EDHOC message flow consists of three mandatory messages (message_1, message_2, message_3) between Initiator and Responder, an optional fourth message (message_4), plus an EDHOC error message. EDHOC messages are CBOR Sequences {{RFC8742}}, see {{fig-flow}}. The protocol elements in the figure are introduced in the following sections. Message formatting and processing is specified in {{asym}} and {{error}}. An implementation may support only Initiator or only Responder. 
 
-Application data is protected using the agreed application algorithms (AEAD, hash) in the selected cipher suite (see {{cs}}) and the application can make use of the established connection identifiers C_I and C_R (see {{corr}}). EDHOC may be used with the media type application/edhoc defined in {{iana}}.
+Application data is protected using the agreed application algorithms (AEAD, hash) in the selected cipher suite (see {{cs}}) and the application can make use of the established connection identifiers C_1, C_I, and C_R (see {{corr}}). EDHOC may be used with the media type application/edhoc defined in {{iana}}.
 
 The Initiator can derive symmetric application keys after creating EDHOC message_3, see {{exporter}}. Application protected data can therefore be sent in parallel or together with EDHOC message_3.
 
 ~~~~~~~~~~~
 Initiator                                                   Responder
-|               METHOD_CORR, SUITES_I, G_X, C_I, AD_1               |
+|            C_1, METHOD_CORR, SUITES_I, G_X, C_I, AD_1             |
 +------------------------------------------------------------------>|
 |                             message_1                             |
 |                                                                   |
@@ -307,7 +307,7 @@ An implementation may support only a single method. The Initiator and the Respon
 
 ### Connection Identifiers {#ci}
 
-EDHOC includes connection identifiers (C_I, C_R) to correlate messages. The connection identifiers C_I and C_R do not have any cryptographic purpose in EDHOC. They contain information facilitating retrieval of the protocol state and may therefore be very short. One byte connection identifiers are realistic in many scenarios as most constrained devices only have a few connections. In cases where a node only has one connection, the identifiers may even be the empty byte string. 
+EDHOC includes optinal connection identifiers (C_1, C_I, C_R). The connection identifiers C_1, C_I, and C_R do not have any cryptographic purpose in EDHOC. They contain information facilitating retrieval of the protocol state and may therefore be very short. C_1 is always set to `null`, while  C_I and C_R are chosen by I and R, respectively. One byte connection identifiers are realistic in many scenarios as most constrained devices only have a few connections. In cases where a node only has one connection, the identifiers may even be the empty byte string. 
 
 The connection identifier MAY be used with an application protocol (e.g. OSCORE) for which EDHOC establishes keys, in which case the connection identifiers SHALL adhere to the requirements for that protocol. Each party choses a connection identifier it desires the other party to use in outgoing messages. (For OSCORE this results in the endpoint selecting its Recipient ID, see Section 3.1 of {{RFC8613}}).
 
@@ -319,17 +319,17 @@ The Initiator and the Responder need to have agreed on a transport to be used fo
 
 ### Message Correlation {#corr}
 
-If the transport provides a mechanism for correlating messages received with messages previously sent, then some of the connection identifiers may be omitted. There are four cases:
+If the whole transport path provides a mechanism for correlating messages received with messages previously sent, then some of the connection identifiers may be omitted. There are four cases:
 
    * corr = 0, the transport does not provide a correlation mechanism.
 
-   * corr = 1, the transport provides a correlation mechanism that enables the Responder to correlate message_2 and message_1.
+   * corr = 1, the transport provides a correlation mechanism that enables the Responder to correlate message_2 and message_1 as well as message_4 and message_3.
 
    * corr = 2, the transport provides a correlation mechanism that enables the Initiator to correlate message_3 and message_2.
 
    * corr = 3, the transport provides a correlation mechanism that enables both parties to correlate all three messages.
 
-For example, if the key exchange is transported over CoAP, the CoAP Token can be used to correlate messages, see {{coap}}.
+For example, if the key exchange is transported over CoAP, the CoAP Token can be used to correlate messages, see {{coap}}. 
 
 
 ## Authentication Parameters {#auth-key-id}
@@ -396,14 +396,13 @@ ID_CRED_I and ID_CRED_R do not have any cryptographic purpose in EDHOC.
 
 * ID_CRED_I is intended to facilitate for the Responder to retrieve the Initiator's public authentication key.
 
-The identifiers ID_CRED_I and ID_CRED_R are COSE header_maps, i.e. CBOR maps containing Common COSE Header Parameters, see Section 3.1 of {{I-D.ietf-cose-rfc8152bis-struct}}).
-In the following we give some examples of COSE header_maps.
+The identifiers ID_CRED_I and ID_CRED_R are COSE header_maps, i.e. CBOR maps containing Common COSE Header Parameters, see Section 3.1 of {{I-D.ietf-cose-rfc8152bis-struct}}). In the following we give some examples of COSE header_maps.
 
 Raw public keys are most optimally stored as COSE_Key objects and identified with a 'kid' parameter:
 
 * ID_CRED_x = { 4 : kid_x }, where kid_x : bstr, for x = I or R.
 
-Public key certificates can be identified in different ways. Header parameters for identifying CBOR certificates and X.509 certificates are defined in {{I-D.mattsson-cose-cbor-cert-compress}} and {{I-D.ietf-cose-x509}}, for example:
+Public key certificates can be identified in different ways. Header parameters for identifying C509 certificates and X.509 certificates are defined in {{I-D.mattsson-cose-cbor-cert-compress}} and {{I-D.ietf-cose-x509}}, for example:
 
 * by a hash value with the 'c5t' or 'x5t' parameters;
 
@@ -417,10 +416,9 @@ Public key certificates can be identified in different ways. Header parameters f
 
    * ID_CRED_x = { TBD4 : uri }, for x = I or R,
 
-* ID_CRED_x MAY contain the actual credential used for authentication, CRED_x. For example, a DER encoded X.509 certificate chain can be transported in ID_CRED_x with COSE header parameter x5chain, see Section 2 of {{I-D.ietf-cose-x509}}. This is typically how certificates are transported within EDHOC.
+* ID_CRED_x MAY contain the actual credential used for authentication, CRED_x. For example, a certificate chain can be transported in ID_CRED_x with COSE header parameter c5c or x5chain, defined in {{I-D.mattsson-cose-cbor-cert-compress}} and {{I-D.ietf-cose-x509}}. This is typically how certificates are transported within EDHOC.
 
-It is RECOMMENDED that ID_CRED_x uniquely identify the public authentication key as the recipient may otherwise have to try several keys.
-ID_CRED_I and ID_CRED_R are transported in the 'ciphertext', see {{m3}} and {{m2}}.
+It is RECOMMENDED that ID_CRED_x uniquely identify the public authentication key as the recipient may otherwise have to try several keys. ID_CRED_I and ID_CRED_R are transported in the 'ciphertext', see {{m3}} and {{m2}}.
 
 When ID_CRED_x does not contain the actual credential it may be very short.
 One byte credential identifiers are realistic in many scenarios as most constrained devices only have a few keys. In cases where a node only has one key, the identifier may even be the empty byte string.
@@ -3392,7 +3390,7 @@ For use of EDHOC in the XX protocol, the following assumptions are made on the p
 
 * C_1 = `null` is present to identify message_1
 
-* CRED_I is an 802.1AR IDevID encoded as a CBOR Certificate of type 0 {{I-D.mattsson-cose-cbor-cert-compress}}.
+* CRED_I is an 802.1AR IDevID encoded as a C509 Certificate of type 0 {{I-D.mattsson-cose-cbor-cert-compress}}.
     * R acquires CRED_I out-of-band, indicated in AD_1
     * ID_CRED_I = {4: h''} is a kid with value empty byte string
 
@@ -3442,7 +3440,7 @@ Main changes:
    
 * From -03 to -04:
    * Restructure of section 1 
-   * Added references to CBOR Certificates
+   * Added references to C509 Certificates
    * Change in CIPHERTEXT_2 -> plaintext XOR KEYSTREAM_2 (test vector not updated)
    * "K_2e", "IV_2e" -> KEYSTREAM_2
    * Specified optional message 4
