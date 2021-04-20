@@ -1558,7 +1558,7 @@ CBOR Object Signing and Encryption (COSE) {{I-D.ietf-cose-rfc8152bis-struct}} de
 
 # Test Vectors {#vectors}
 
-This appendix provides detailed test vectors based on v-05 of this specification, to ease implementation and ensure interoperability. In addition to hexadecimal, all CBOR data items and sequences are given in CBOR diagnostic notation. The test vectors use the default mapping to CoAP where the Initiator acts as CoAP client (this means that corr = 1). 
+This appendix provides detailed test vectors compatible with versions -05 and -06 of this specification, to ease implementation and ensure interoperability. In addition to hexadecimal, all CBOR data items and sequences are given in CBOR diagnostic notation. The test vectors use the default mapping to CoAP where the Initiator acts as CoAP client (this means that corr = 1). 
 
 A more extensive test vector suite covering more combinations of authentication method used between Initiator and Responder and related code to generate them can be found at https://github.com/lake-wg/edhoc/tree/master/test-vectors-05.
 
@@ -1571,7 +1571,7 @@ NOTE 2. If not clear from the context, remember that CBOR sequences and CBOR arr
 
 <!-- Test vector index (int) 22900 -->
 
-EDHOC with signature authentication and X.509 certificates is used. In this test vector, the hash value 'x5t' is used to identify the certificate. No auxiliary data is sent in the message exchange.
+EDHOC with signature authentication and X.509 certificates is used. In this test vector, the hash value 'x5t' is used to identify the certificate. The optional C_1 in message_1 is omitted. No auxiliary data is sent in the message exchange.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 method (Signature Authentication)
@@ -2525,7 +2525,7 @@ OSCORE Hash Algorithm (int)
 
 <!-- Test vector index (int) 34900 -->
 
-EDHOC with static Diffie-Hellman keys and raw public keys is used. In this test vector, a key identifier is used to identify the raw public key. No auxiliary data is sent in the message exchange.
+EDHOC with static Diffie-Hellman keys and raw public keys is used. In this test vector, a key identifier is used to identify the raw public key. The optional C_1 in message_1 is omitted. No auxiliary data is sent in the message exchange.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 method (Static DH Based Authentication)
