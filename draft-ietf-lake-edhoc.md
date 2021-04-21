@@ -652,15 +652,11 @@ This section outlines the message processing of EDHOC.
 
 For each protocol instance, the endpoints are assumed to keep an associated protocol state containing connection identifiers, keys, etc. used for subsequent processing of protocol related data. The protocol state is associated to an applicability statement ({{applicability}}) which provides the context for how messages are transported, identified and processed. 
 
-EDHOC messages SHALL be processed according to the current protocol state. 
+EDHOC messages SHALL be processed according to the current protocol state. The following steps are expected to be performed at reception of an EDHOC message:
 
-If there is no protocol state, in the case of message_1, a new protocol state is created. An initial C_1 = `null` byte in message_1 ({{asym-msg1-form}}) can be used to distinguish message_1 from other messages. The Responder endpoint needs to make use of available Denial-of-Service mitigation ({{dos}}).
+1. Detect that an EDHOC message has been received, for example by means of port number, URI, or media type ({{applicability}}).
 
-Except for message_1, the following steps are expected to be performed at reception of an EDHOC message:
-
-1. Detect that an EDHOC message has been received, for example by means of URI or media type ({{applicability}}).
-
-2. Retrieve the protocol state, e.g. using the received connection identifier ({{ci}}) or with the help of message correlation provided by the transport protocol ({{corr}}). 
+2. Retrieve the protocol state, e.g. using the received connection identifier ({{ci}}) or with the help of message correlation provided by the transport protocol ({{corr}}). If there is no protocol state, in the case of message_1, a new protocol state is created. An initial C_1 = `null` byte in message_1 ({{asym-msg1-form}}) can be used to distinguish message_1 from other messages. The Responder endpoint needs to make use of available Denial-of-Service mitigation ({{dos}}).
 
 3. If the message received is an error message then process according to {{error}}, else process as the expected next message according to the protocol state. 
 
