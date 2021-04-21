@@ -3426,6 +3426,20 @@ Note that the requirements in {{proc-outline}} still apply because duplicate mes
 
 Main changes:
 
+* From -05 to -06:
+   * New section 5.2 "Message Processing Outline"
+   * Optional inital byte C_1 = null in message_1
+   * New format of error messages, table of error codes, IANA registry
+   * Change of recommendation transport of error in CoAP
+   * Merge of content in 3.7 and appendix C into new section 3.7 "Applicability Statement"
+   * Requiring use of deterministic CBOR
+   * New section on message deduplication
+   * New appendix containin all CDDL definitions
+   * New appendix with change log
+   * Removed section "Other Documents Referncing EDHOC"
+   * Clarifications based on review comments
+
+
 * From -04 to -05:
    * EDHOC-Rekey-FS -> EDHOC-KeyUpdate
    * Clarification of cipher suite negotiation
