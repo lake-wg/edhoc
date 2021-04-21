@@ -3409,13 +3409,13 @@ For use of EDHOC in the XX protocol, the following assumptions are made on the p
 
 # EDHOC Message Deduplication {#duplication}
 
-EDHOC by default assumes that message duplication due to re-transmissions is handled by the transport, in this section exemplified with CoAP.
+EDHOC by default assumes that message duplication is handled by the transport, in this section exemplified with CoAP.
 
 Deduplication of CoAP messages is described in Section 4.5 of {{RFC7252}}. This handles the case when the same Confirmable (CON) message is received multiple times due to missing acknowledgement on CoAP messaging layer. The recommended processing in {{RFC7252}} is that the duplicate message is acknowledged (ACK), but the received message is only processed once by the CoAP stack.
 
-Message deduplication is resource demanding and therefore not supported in all CoAP implementations. Since EDHOC is targeting constrained environments, it is desirable that EDHOC can support transport layers which does not handle message duplication. Special care is needed to avoid issues with duplicate messages, see {{proc-outline}}.
+Message deduplication is resource demanding and therefore not supported in all CoAP implementations. Since EDHOC is targeting constrained environments, it is desirable that EDHOC can optinally support transport layers which does not handle message duplication. Special care is needed to avoid issues with duplicate messages, see {{proc-outline}}.
 
-The guiding principle here is derived from the deduplication processing on CoAP messaging layer: a received duplicate EDHOC message should result in the same response as the first time - in this case a duplicate EDHOC message is sent - but the received message must not be processed more than once by the EDHOC implementation. This is called "EDHOC message deduplication".
+The guiding principle here is derived from the deduplication processing on CoAP messaging layer: a received duplicate EDHOC message should result in the same response as the first time - in this case a duplicate EDHOC message is sent - but the received message must not be processed more than once by the same EDHOC instance. This is called "EDHOC message deduplication".
 
 An EDHOC implementation MAY store the previously sent EDHOC message to be able to resend it. An EDHOC implementation MAY keep the protocol state to be able to recreate the previously sent EDHOC message and resend it. The previous message or protocol state MUST NOT be kept longer than what is required for retransmission, for example, in the case of CoAP transport, no longer than the EXCHANGE_LIFETIME (see Section 4.8.2 of {{RFC7252}}).
 
