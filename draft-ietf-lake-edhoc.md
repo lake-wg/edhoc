@@ -222,7 +222,7 @@ The parties exchanging messages are called Initiator (I) and Responder (R). They
 
 * CRED_I and CRED_R are the credentials containing the public authentication keys of I and R, respectively.
 
-* ID_CRED_I and ID_CRED_R are data enabling the recipient party to retrieve the credential of I and R, respectively.
+* ID_CRED_I and ID_CRED_R are credential identifiers enabling the recipient party to retrieve the credential of I and R, respectively.
 
 * Sig(I; . ) and Sig(R; . ) denote signatures made with the private authentication key of I and R, respectively.
 
@@ -699,7 +699,7 @@ The Initiator SHALL compose message_1 as follows:
 
 * The supported cipher suites and the order of preference MUST NOT be changed based on previous error messages. However, the list SUITES_I sent to the Responder MAY be truncated such that cipher suites which are the least preferred are omitted. The amount of truncation MAY be changed between sessions, e.g. based on previous error messages (see next bullet), but all cipher suites which are more preferred than the least preferred cipher suite in the list MUST be included in the list.
 
-* The Initiator MUST select its most preferred cipher suite, conditioned on what it can assume to be supported by the Responder. If the Initiator previously received from the Responder an error message with error code 1 (see {{wrong-selected}}) indicating cipher suites supported by the Responder which also are supported by the Initiator, then the Initiator SHALL select the most preferred cipher suite of those.
+* The Initiator MUST select its most preferred cipher suite, conditioned on what it can assume to be supported by the Responder. If the Initiator previously received from the Responder an error message with error code 1 (see {{wrong-selected}}) indicating cipher suites supported by the Responder which also are supported by the Initiator, then the Initiator SHOULD select the most preferred cipher suite of those (note that error messages are not authenticated and may be forged).
 
 * Generate an ephemeral ECDH key pair as specified in Section 5 of {{SP-800-56A}} using the curve in the selected cipher suite and format it as a COSE_Key. Let G_X be the 'x' parameter of the COSE_Key.
    
@@ -717,7 +717,7 @@ The Responder SHALL process message_1 as follows:
 
 * Pass AD_1 to the security application.
 
-If any verification step fails, the Responder MUST send an EDHOC error message back, formatted as defined in {{error}}, and the protocol MUST be discontinued. If the Responder does not support the selected cipher suite, then SUITES_R MUST include one or more supported cipher suites. If the Responder does not support the selected cipher suite, but supports another cipher suite in SUITES_I, then SUITES_R MUST include the first supported cipher suite in SUITES_I.
+If any verification step fails, the Responder MUST send an EDHOC error message back, formatted as defined in {{error}}, and the protocol MUST be discontinued. 
 
 ## EDHOC Message 2 {#m2}
 
@@ -979,20 +979,20 @@ The remainder of this section specifies the currently defined error codes, see {
 
 
 
-## Success (ERR_CODE == -1)
+## Success
 
 TBD
 
-## Unspecified (ERR_CODE == 0)
+## Unspecified
 
 Error code 0 is used for unspecified errors and contain a diagnostic message.
 
 For error messages with ERR_CODE == 0, ERR_INFO MUST be a text string containing a human-readable diagnostic message written in English. The diagnostic text message is mainly intended for software engineers that during debugging need to interpret it in the context of the EDHOC specification. The diagnostic message SHOULD be provided to the calling application where it SHOULD be logged.
 
 
-## Wrong Selected Cipher Suite (ERR_CODE == 1) {#wrong-selected}
+## Wrong Selected Cipher Suite {#wrong-selected}
 
-Error code 1 MUST only be used in a response to message_1 in case the cipher suite selected by the Initiator is not supported by the Responder, or if the Responder supports a cipher suite more preferred by the Initiator than the selected cipher suite, see {{m1}}.
+Error code 1 MUST only be used in a response to message_1 in case the cipher suite selected by the Initiator is not supported by the Responder, or if the Responder supports a cipher suite more preferred by the Initiator than the selected cipher suite, see {{resp-proc-msg1}}.
 
 ERR_INFO is of type SUITES_R:
 
@@ -1000,16 +1000,13 @@ ERR_INFO is of type SUITES_R:
 SUITES_R : [ supported : 2* suite ] / suite
 ~~~~~~~~~~~
 
-SUITES_R contains all cipher suites which the Responder supports, not restricted to SUITES_I. If a single supported cipher suite is conveyed with SUITES_R then the supported cipher suite is encoded as an int instead of an array.
-
+If the Responder does not support the selected cipher suite, then SUITES_R MUST include one or more supported cipher suites. If the Responder does not support the selected cipher suite, but supports another cipher suite in SUITES_I, then SUITES_R MUST include the first supported cipher suite in SUITES_I.
 
 ### Cipher Suite Negotiation
 
 After receiving SUITES_R, the Initiator can determine which cipher suite to select for the next EDHOC run with the Responder.
 
 If the Initiator intends to contact the Responder in the future, the Initiator SHOULD remember which selected cipher suite to use until the next message_1 has been sent, otherwise the Initiator and Responder will likely run into an infinite loop. After a successful run of EDHOC, the Initiator MAY remember the selected cipher suite to use in future EDHOC runs. Note that if the Initiator or Responder is updated with new cipher suite policies, any cached information may be outdated.
-
-
 
 ### Examples {#ex-neg}
 
@@ -1052,7 +1049,6 @@ Initiator                                                   Responder
 ~~~~~~~~~~~
 {: #fig-error2 title="Example of Responder supporting suites 8 and 9 but not 5, 6 or 7."}
 {: artwork-align="center"}
-
 
 Note that the Initiator's list of supported cipher suites and order of preference is fixed (see {{asym-msg1-form}} and {{init-proc-msg1}}). Furthermore, the Responder shall only accept message_1 if the selected cipher suite is the first cipher suite in SUITES_I that the Responder supports (see {{resp-proc-msg1}}). Following this procedure ensures that the selected cipher suite is the most preferred (by the Initiator) cipher suite supported by both parties.
 
