@@ -3409,7 +3409,7 @@ EDHOC by default assumes that message duplication is handled by the transport, i
 
 Deduplication of CoAP messages is described in Section 4.5 of {{RFC7252}}. This handles the case when the same Confirmable (CON) message is received multiple times due to missing acknowledgement on CoAP messaging layer. The recommended processing in {{RFC7252}} is that the duplicate message is acknowledged (ACK), but the received message is only processed once by the CoAP stack.
 
-Message deduplication is resource demanding and therefore not supported in all CoAP implementations. Since EDHOC is targeting constrained environments, it is desirable that EDHOC can optinally support transport layers which does not handle message duplication. Special care is needed to avoid issues with duplicate messages, see {{proc-outline}}.
+Message deduplication is resource demanding and therefore not supported in all CoAP implementations. Since EDHOC is targeting constrained environments, it is desirable that EDHOC can optionally support transport layers which does not handle message duplication. Special care is needed to avoid issues with duplicate messages, see {{proc-outline}}.
 
 The guiding principle here is derived from the deduplication processing on CoAP messaging layer: a received duplicate EDHOC message should result in the same response as the first time - in this case a duplicate EDHOC message is sent - but the received message must not be processed more than once by the same EDHOC instance. This is called "EDHOC message deduplication".
 
