@@ -307,7 +307,7 @@ An implementation may support only a single method. The Initiator and the Respon
 
 ### Connection Identifiers {#ci}
 
-EDHOC includes optinal connection identifiers (C_1, C_I, C_R). The connection identifiers C_1, C_I, and C_R do not have any cryptographic purpose in EDHOC. They contain information facilitating retrieval of the protocol state and may therefore be very short. C_1 is always set to `null`, while  C_I and C_R are chosen by I and R, respectively. One byte connection identifiers are realistic in many scenarios as most constrained devices only have a few connections. In cases where a node only has one connection, the identifiers may even be the empty byte string. 
+EDHOC includes optional connection identifiers (C_1, C_I, C_R). The connection identifiers C_1, C_I, and C_R do not have any cryptographic purpose in EDHOC. They contain information facilitating retrieval of the protocol state and may therefore be very short. C_1 is always set to `null`, while  C_I and C_R are chosen by I and R, respectively. One byte connection identifiers are realistic in many scenarios as most constrained devices only have a few connections. In cases where a node only has one connection, the identifiers may even be the empty byte string. 
 
 The connection identifier MAY be used with an application protocol (e.g. OSCORE) for which EDHOC establishes keys, in which case the connection identifiers SHALL adhere to the requirements for that protocol. Each party choses a connection identifier it desires the other party to use in outgoing messages. (For OSCORE this results in the endpoint selecting its Recipient ID, see Section 3.1 of {{RFC8613}}).
 
