@@ -1197,9 +1197,9 @@ To protect against denial-of-service attacks, the CoAP server MAY respond to the
 
 ### Deriving an OSCORE Context from EDHOC {#oscore}
 
-When EDHOC is used to derive parameters for OSCORE {{RFC8613}}, the parties  make sure that the EDHOC connection identifiers are unique, i.e. C_R MUST NOT be equal to C_I. The CoAP client and server MUST be able to retrieve the OSCORE protocol state using its chosen connection identifier and optionally other information such as the 5-tuple. In case that the CoAP client is the Initiator and the CoAP server is the Responder:
+When EDHOC is used to derive parameters for OSCORE {{RFC8613}}, the parties  make sure that the EDHOC connection identifiers are unique, i.e. C_R MUST NOT result in the same OSCORE sender/recipient ID as C_I. The CoAP client and server MUST be able to retrieve the OSCORE protocol state using its chosen connection identifier and optionally other information such as the 5-tuple. In case that the CoAP client is the Initiator and the CoAP server is the Responder:
 
-* The client's OSCORE Sender ID is C_R and the server's OSCORE Sender ID is C_I, as defined in this document
+* If C_R is a bstr, then the client's OSCORE Sender ID is the value of C_R. If C_R is an int, then the client's OSCORE Sender ID is the CBOR encoding of C_R. I.e if C_R is 0x40 the client's OSCORE Sender ID is 0x (the empty string), if C_R is 0x4169 the client's OSCORE Sender ID is 0x69, and if C_R is 0x37 then the client's OSCORE Sender ID is 0x37. The server's OSCORE Sender ID is derived from C_I in the same way.
 
 * The AEAD Algorithm and the hash algorithm are the application AEAD and hash algorithms in the selected cipher suite.
 
