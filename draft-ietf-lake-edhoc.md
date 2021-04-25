@@ -425,57 +425,57 @@ One byte credential identifiers are realistic in many scenarios as most constrai
 
 ## Cipher Suites {#cs}
 
-An EDHOC cipher suite consists of an ordered set of COSE code points from the "COSE Algorithms" and "COSE Elliptic Curves" registries: 
+An EDHOC cipher suite consists of an ordered set of Algorithms from the "COSE Algorithms" and "COSE Elliptic Curves" registries. Each algorithm is represented by a 
+COSE code point from the "COSE Algorithms" and "COSE Elliptic Curves" registries. Algorithms need to be specified with enough parameters to make them completely determined. Currently, only some ECC signature algorithms require parameters. EDHOC is only specified for use with key exchange algorithms of type ECDH curves. Use with other types of key exchange algorithms would likely require a specification updating EDHOC.
 
 * EDHOC AEAD algorithm
 * EDHOC hash algorithm
-* EDHOC ECDH curve
-* EDHOC signature algorithm 
-* EDHOC signature algorithm curve
+* EDHOC ECDH curve (key exchange algorithm)
+* EDHOC signature algorithm
 * Application AEAD algorithm 
 * Application hash algorithm 
 
 Each cipher suite is identified with a pre-defined int label.
 
-EDHOC can be used with all algorithms and curves defined for COSE. Implementation can either use one of the pre-defined cipher suites ({{suites-registry}}) or use any combination of COSE algorithms to define their own private cipher suite. Private cipher suites can be identified with any of the four values -24, -23, -22, -21.
+EDHOC can be used with all algorithms and curves defined for COSE. Implementation can either use one of the pre-defined cipher suites ({{suites-registry}}) or use any combination of COSE algorithms and parameters to define their own private cipher suite. Private cipher suites can be identified with any of the four values -24, -23, -22, -21.
 
 The following cipher suites are for constrained IoT where message overhead is a very important factor:
 
 ~~~~~~~~~~~
-   0. ( 10, -16, 4, -8, 6, 10, -16 )
-      (AES-CCM-16-64-128, SHA-256, X25519, EdDSA, Ed25519,
+   0. ( 10, -16, 4, -8 with 6, 10, -16 )
+      (AES-CCM-16-64-128, SHA-256, X25519, EdDSA with Ed25519,
        AES-CCM-16-64-128, SHA-256)
 
-   1. ( 30, -16, 4, -8, 6, 10, -16 )
-      (AES-CCM-16-128-128, SHA-256, X25519, EdDSA, Ed25519,
+   1. ( 30, -16, 4, -8 with 6, 10, -16 )
+      (AES-CCM-16-128-128, SHA-256, X25519, EdDSA with Ed25519,
        AES-CCM-16-64-128, SHA-256)
 
-   2. ( 10, -16, 1, -7, 1, 10, -16 )
-      (AES-CCM-16-64-128, SHA-256, P-256, ES256, P-256,
+   2. ( 10, -16, 1, -7 with 1, 10, -16 )
+      (AES-CCM-16-64-128, SHA-256, P-256, ES256 with P-256,
        AES-CCM-16-64-128, SHA-256)
 
-   3. ( 30, -16, 1, -7, 1, 10, -16 )
-      (AES-CCM-16-128-128, SHA-256, P-256, ES256, P-256,
+   3. ( 30, -16, 1, -7 with 1, 10, -16 )
+      (AES-CCM-16-128-128, SHA-256, P-256, ES256 with P-256,
        AES-CCM-16-64-128, SHA-256)
 ~~~~~~~~~~~
 
 The following cipher suite is for general non-constrained applications. It uses very high performance algorithms that also are widely supported:
 
 ~~~~~~~~~~~
-   4. ( 1, -16, 4, -7, 1, 1, -16 )
-      (A128GCM, SHA-256, X25519, ES256, P-256,
+   4. ( 1, -16, 4, -7 with 1, 1, -16 )
+      (A128GCM, SHA-256, X25519, ES256 with P-256,
        A128GCM, SHA-256)
 ~~~~~~~~~~~
 
 The following cipher suite is for high security application such as government use and financial applications. It is compatible with the CNSA suite {{CNSA}}.
 
 ~~~~~~~~~~~
-   5. ( 3, -43, 2, -35, 2, 3, -43 )
-      (A256GCM, SHA-384, P-384, ES384, P-384,
+   5. ( 3, -43, 2, -35 with 2, 3, -43 )
+      (A256GCM, SHA-384, P-384, ES384 with P-384,
        A256GCM, SHA-384)
 ~~~~~~~~~~~
 
-The different methods use the same cipher suites, but some algorithms are not used in some methods. The EDHOC signature algorithm and the EDHOC signature algorithm curve are not used in methods without signature authentication.
+The different methods use the same cipher suites, but some algorithms are not used in some methods. The EDHOC signature algorithm is not used in methods without signature authentication.
 
 The Initiator needs to have a list of cipher suites it supports in order of preference. The Responder needs to have a list of cipher suites it supports. SUITES_I is a CBOR array containing cipher suites that the Initiator supports. SUITES_I is formatted and processed as detailed in {{asym-msg1-form}} to secure the cipher suite negotiation. Examples of cipher suite negotiation are given in {{ex-neg}}.
 
