@@ -1313,7 +1313,7 @@ Reference: [[this document]]
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 Value: 0
-Array: 10, 5, 4, -8, 10, 5
+Array: 10, -16, 4, -8, 10, -16
 Desc: AES-CCM-16-64-128, SHA-256, X25519, EdDSA,
       AES-CCM-16-64-128, SHA-256
 Reference: [[this document]]
@@ -1321,7 +1321,7 @@ Reference: [[this document]]
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 Value: 1
-Array: 30, 5, 4, -8, 10, 5
+Array: 30, -16, 4, -8, 10, -16
 Desc: AES-CCM-16-128-128, SHA-256, X25519, EdDSA,
       AES-CCM-16-64-128, SHA-256
 Reference: [[this document]]
@@ -1329,7 +1329,7 @@ Reference: [[this document]]
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 Value: 2
-Array: 10, 5, 1, -7, 10, 5
+Array: 10, -16, 1, -7, 10, -16
 Desc: AES-CCM-16-64-128, SHA-256, P-256, ES256,
       AES-CCM-16-64-128, SHA-256
 Reference: [[this document]]
@@ -1337,7 +1337,7 @@ Reference: [[this document]]
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 Value: 3
-Array: 30, 5, 1, -7, 10, 5
+Array: 30, -16, 1, -7, 10, -16
 Desc: AES-CCM-16-128-128, SHA-256, P-256, ES256,
       AES-CCM-16-64-128, SHA-256
 Reference: [[this document]]
