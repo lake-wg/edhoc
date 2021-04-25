@@ -426,7 +426,7 @@ One byte credential identifiers are realistic in many scenarios as most constrai
 ## Cipher Suites {#cs}
 
 An EDHOC cipher suite consists of an ordered set of Algorithms from the "COSE Algorithms" and "COSE Elliptic Curves" registries. Each algorithm is represented by a 
-COSE code point from the "COSE Algorithms" and "COSE Elliptic Curves" registries. Algorithms need to be specified with enough parameters to make them completely determined. Currently, only some ECC signature algorithms require parameters. EDHOC is only specified for use with key exchange algorithms of type ECDH curves. Use with other types of key exchange algorithms would likely require a specification updating EDHOC.
+COSE code point from the "COSE Algorithms" and "COSE Elliptic Curves" registries. Algorithms need to be specified with enough parameters to make them completely determined. Currently, none of the algorithms require parameters.  Note that the curve used in the signature algorithm is determined by the authentication key algorithm. EDHOC is only specified for use with key exchange algorithms of type ECDH curves. Use with other types of key exchange algorithms would likely require a specification updating EDHOC.
 
 * EDHOC AEAD algorithm
 * EDHOC hash algorithm
@@ -443,19 +443,19 @@ The following cipher suites are for constrained IoT where message overhead is a 
 
 ~~~~~~~~~~~
    0. ( 10, -16, 4, -8 with 6, 10, -16 )
-      (AES-CCM-16-64-128, SHA-256, X25519, EdDSA with Ed25519,
+      (AES-CCM-16-64-128, SHA-256, X25519, EdDSA,
        AES-CCM-16-64-128, SHA-256)
 
    1. ( 30, -16, 4, -8 with 6, 10, -16 )
-      (AES-CCM-16-128-128, SHA-256, X25519, EdDSA with Ed25519,
+      (AES-CCM-16-128-128, SHA-256, X25519, EdDSA,
        AES-CCM-16-64-128, SHA-256)
 
    2. ( 10, -16, 1, -7 with 1, 10, -16 )
-      (AES-CCM-16-64-128, SHA-256, P-256, ES256 with P-256,
+      (AES-CCM-16-64-128, SHA-256, P-256, ES256,
        AES-CCM-16-64-128, SHA-256)
 
    3. ( 30, -16, 1, -7 with 1, 10, -16 )
-      (AES-CCM-16-128-128, SHA-256, P-256, ES256 with P-256,
+      (AES-CCM-16-128-128, SHA-256, P-256, ES256,
        AES-CCM-16-64-128, SHA-256)
 ~~~~~~~~~~~
 
@@ -463,7 +463,7 @@ The following cipher suite is for general non-constrained applications. It uses 
 
 ~~~~~~~~~~~
    4. ( 1, -16, 4, -7 with 1, 1, -16 )
-      (A128GCM, SHA-256, X25519, ES256 with P-256,
+      (A128GCM, SHA-256, X25519, ES256,
        A128GCM, SHA-256)
 ~~~~~~~~~~~
 
@@ -471,7 +471,7 @@ The following cipher suite is for high security application such as government u
 
 ~~~~~~~~~~~
    5. ( 3, -43, 2, -35 with 2, 3, -43 )
-      (A256GCM, SHA-384, P-384, ES384 with P-384,
+      (A256GCM, SHA-384, P-384, ES384,
        A256GCM, SHA-384)
 ~~~~~~~~~~~
 
@@ -1313,48 +1313,48 @@ Reference: [[this document]]
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 Value: 0
-Array: 10, 5, 4, -8, 6, 10, 5
-Desc: AES-CCM-16-64-128, SHA-256, X25519, EdDSA, Ed25519,
+Array: 10, 5, 4, -8, 10, 5
+Desc: AES-CCM-16-64-128, SHA-256, X25519, EdDSA,
       AES-CCM-16-64-128, SHA-256
 Reference: [[this document]]
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 Value: 1
-Array: 30, 5, 4, -8, 6, 10, 5
-Desc: AES-CCM-16-128-128, SHA-256, X25519, EdDSA, Ed25519,
+Array: 30, 5, 4, -8, 10, 5
+Desc: AES-CCM-16-128-128, SHA-256, X25519, EdDSA,
       AES-CCM-16-64-128, SHA-256
 Reference: [[this document]]
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 Value: 2
-Array: 10, 5, 1, -7, 1, 10, 5
-Desc: AES-CCM-16-64-128, SHA-256, P-256, ES256, P-256,
+Array: 10, 5, 1, -7, 10, 5
+Desc: AES-CCM-16-64-128, SHA-256, P-256, ES256,
       AES-CCM-16-64-128, SHA-256
 Reference: [[this document]]
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 Value: 3
-Array: 30, 5, 1, -7, 1, 10, 5
-Desc: AES-CCM-16-128-128, SHA-256, P-256, ES256, P-256,
+Array: 30, 5, 1, -7, 10, 5
+Desc: AES-CCM-16-128-128, SHA-256, P-256, ES256,
       AES-CCM-16-64-128, SHA-256
 Reference: [[this document]]
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 Value: 4
-Array: 1, -16, 4, -7, 1, 1, -16
-Desc: A128GCM, SHA-256, X25519, ES256, P-256,
+Array: 1, -16, 4, -7, 1, -16
+Desc: A128GCM, SHA-256, X25519, ES256,
       A128GCM, SHA-256
 Reference: [[this document]]
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 Value: 5
-Array: 3, -43, 2, -35, 2, 3, -43 
-Desc: A256GCM, SHA-384, P-384, ES384, P-384,
+Array: 3, -43, 2, -35, 3, -43 
+Desc: A256GCM, SHA-384, P-384, ES384,
       A256GCM, SHA-384
 Reference: [[this document]]
 ~~~~~~~~~~~~~~~~~~~~~~~
