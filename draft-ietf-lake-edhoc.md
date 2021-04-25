@@ -442,19 +442,19 @@ EDHOC can be used with all algorithms and curves defined for COSE. Implementatio
 The following cipher suites are for constrained IoT where message overhead is a very important factor:
 
 ~~~~~~~~~~~
-   0. ( 10, -16, 4, -8 with 6, 10, -16 )
+   0. ( 10, -16, 4, -8, 10, -16 )
       (AES-CCM-16-64-128, SHA-256, X25519, EdDSA,
        AES-CCM-16-64-128, SHA-256)
 
-   1. ( 30, -16, 4, -8 with 6, 10, -16 )
+   1. ( 30, -16, 4, -8, 10, -16 )
       (AES-CCM-16-128-128, SHA-256, X25519, EdDSA,
        AES-CCM-16-64-128, SHA-256)
 
-   2. ( 10, -16, 1, -7 with 1, 10, -16 )
+   2. ( 10, -16, 1, -7, 10, -16 )
       (AES-CCM-16-64-128, SHA-256, P-256, ES256,
        AES-CCM-16-64-128, SHA-256)
 
-   3. ( 30, -16, 1, -7 with 1, 10, -16 )
+   3. ( 30, -16, 1, -7, 10, -16 )
       (AES-CCM-16-128-128, SHA-256, P-256, ES256,
        AES-CCM-16-64-128, SHA-256)
 ~~~~~~~~~~~
@@ -462,7 +462,7 @@ The following cipher suites are for constrained IoT where message overhead is a 
 The following cipher suite is for general non-constrained applications. It uses very high performance algorithms that also are widely supported:
 
 ~~~~~~~~~~~
-   4. ( 1, -16, 4, -7 with 1, 1, -16 )
+   4. ( 1, -16, 4, -7, 1, -16 )
       (A128GCM, SHA-256, X25519, ES256,
        A128GCM, SHA-256)
 ~~~~~~~~~~~
@@ -470,7 +470,7 @@ The following cipher suite is for general non-constrained applications. It uses 
 The following cipher suite is for high security application such as government use and financial applications. It is compatible with the CNSA suite {{CNSA}}.
 
 ~~~~~~~~~~~
-   5. ( 3, -43, 2, -35 with 2, 3, -43 )
+   5. ( 3, -43, 2, -35, 3, -43 )
       (A256GCM, SHA-384, P-384, ES384,
        A256GCM, SHA-384)
 ~~~~~~~~~~~
