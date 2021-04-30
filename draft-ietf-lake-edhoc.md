@@ -1456,7 +1456,7 @@ Expert reviewers should take into consideration the following points:
 
 # Compact Representation {#comrep}
 
-As described in Section 4.2 of {{RFC6090}} the x-coordinate of an elliptic curve public key is a suitable representative for the entire point whenever exponentiation is used as a one-way function. One example is ECDH with compact output, where only the x-coordinate of the computed value is used as the shared secret.
+As described in Section 4.2 of {{RFC6090}} the x-coordinate of an elliptic curve public key is a suitable representative for the entire point whenever scalar multiplication is used as a one-way function. One example is ECDH with compact output, where only the x-coordinate of the computed value is used as the shared secret.
 
 This section defines a format for compact representation based on the Elliptic-Curve-Point-to-Octet-String Conversion defined in Section 2.3.3 of {{SECG}}. Usign the notation from {{SECG}}, the output is an octet string of length ceil( (log2 q) / 8 ). The steps in Section 2.3.3 of {{SECG}} are replaced by:
 
