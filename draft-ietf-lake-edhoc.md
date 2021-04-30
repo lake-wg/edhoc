@@ -313,7 +313,7 @@ The connection identifier MAY be used with an application protocol (e.g. OSCORE)
 
 ### Transport {#transport}
 
-Cryptographically, EDHOC does not put requirements on the lower layers. EDHOC is not bound to a particular transport layer, and can be used in environments without IP. The transport is responsible to handle message loss, reordering, message duplication, fragmentation, and denial of service protection, where necessary.
+Cryptographically, EDHOC does not put requirements on the lower layers. EDHOC is not bound to a particular transport layer, and can be used in environments without IP. The application using EDHOC tis responsible to handle message loss, reordering, message duplication, fragmentation, demultiplex EDHOC messages from other types of messages, and denial of service protection, where necessary.
 
 The Initiator and the Responder need to have agreed on a transport to be used for EDHOC, see {{applicability}}. It is recommended to transport EDHOC in CoAP payloads, see {{transfer}}.
 
@@ -717,7 +717,7 @@ The Responder SHALL process message_1 as follows:
 
 * Pass AD_1 to the security application.
 
-If any verification step fails, the Responder MUST send an EDHOC error message back, formatted as defined in {{error}}, and the protocol MUST be discontinued. 
+If any processing step fails, the Responder SHOULD send an EDHOC error message back, formatted as defined in {{error}}, and the protocol MUST be discontinued. Sending error messages is essential for debugging but MAY be skipped due to denial of service reasons, see {{security}}.
 
 ## EDHOC Message 2 {#m2}
 
@@ -824,7 +824,7 @@ The Initiator SHALL process message_2 as follows:
 
 * Pass AD_2 to the security application.
 
-If any verification step fails, the Initiator MUST send an EDHOC error message back, formatted as defined in {{error}}, and the protocol MUST be discontinued.
+If any processing step fails, the Initiator SHOULD send an EDHOC error message back, formatted as defined in {{error}}. Sending error messages is essential for debugging but MAY be skipped due to denial of service reasons, see {{security}}. If an error message is sent, the protocol MUST be discontinued.
 
 ## EDHOC Message 3 {#m3}
 
@@ -933,7 +933,7 @@ The Responder SHALL process message_3 as follows:
 
 *  Pass AD_3, the connection identifiers (C_I, C_R), and the application algorithms in the selected cipher suite to the security application. The application can now derive application keys using the EDHOC-Exporter interface.
 
-If any verification step fails, the Responder MUST send an EDHOC error message back, formatted as defined in {{error}}, and the protocol MUST be discontinued.
+If any processing step fails, the Responder SHOULD send an EDHOC error message back, formatted as defined in {{error}}. Sending error messages is essential for debugging but MAY be skipped due to denial of service reasons, see {{security}}. If an error message is sent, the protocol MUST be discontinued.
 
 After verifying message_3, the Responder is assured that the Initiator has calculated the key PRK_4x3m (explicit key confirmation) and that no other party than the Responder can compute the key. The Responder can securely send protected application data and store the keying material PRK_4x3m and TH_4.
 
@@ -943,7 +943,7 @@ This section defines the format for error messages.
 
 An EDHOC error message can be sent by either endpoint as a reply to any non-error EDHOC message. How errors at the EDHOC layer are transported depends on lower layers, which need to enable error messages to be sent and processed as intended.
 
-All error messages in EDHOC are fatal. After sending an error message, the sender MUST discontinue the protocol. The receiver SHOULD treat an error message as an indication that the other party likely has discontinued the protocol. But as the error message is not authenticated, a received error messages might also have been sent by an attacker and the receiver MAY therefore try to continue the protocol. 
+Errors in EDHOC are fatal. After sending an error message, the sender MUST discontinue the protocol. The receiver SHOULD treat an error message as an indication that the other party likely has discontinued the protocol. But as the error message is not authenticated, a received error message might also have been sent by an attacker and the receiver MAY therefore try to continue the protocol.
 
 error SHALL be a CBOR Sequence (see {{CBOR}}) as defined below
 
