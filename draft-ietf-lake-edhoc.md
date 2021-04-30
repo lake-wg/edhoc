@@ -1466,6 +1466,8 @@ This section defines a format for compact representation based on the Elliptic-C
 
 The encoding of the point at infinity is not supported. Compact representation does not change any requirements on validation. If a y-coordinate is required for validation or compatibily with APIs the value ~yp SHALL be set to zero. For such usages the compact representation can be transformed into the SECG point compressed format by prepending it with the single byte 0x02 (i.e. M = 0x02 \|\| M).
 
+Using compact representation have some security benefits. An implementation does not need to check that the point is not the point at infinity (the identity element). Similarly, as not even the sign of the y-coordinate is encoded, compact representation trivially avoids so called "benign malleability" attacks where an attacker changes the sign, see {{SECG}}.
+
 # Use of CBOR, CDDL and COSE in EDHOC {#CBORandCOSE}
 
 This Appendix is intended to simplify for implementors not familiar with CBOR {{RFC8949}}, CDDL {{RFC8610}}, COSE {{I-D.ietf-cose-rfc8152bis-struct}}, and HKDF {{RFC5869}}.
