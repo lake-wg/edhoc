@@ -64,7 +64,7 @@ informative:
   I-D.ietf-lwig-security-protocol-comparison:
   I-D.ietf-tls-dtls13:
   I-D.selander-ace-ake-authz:
-  I-D.palombini-core-oscore-edhoc:
+  I-D.ietf-core-oscore-edhoc:
   I-D.mattsson-cose-cbor-cert-compress:
   I-D.mattsson-cfrg-det-sigs-with-noise:
 
@@ -1201,7 +1201,7 @@ When EDHOC is used to derive parameters for OSCORE {{RFC8613}}, the parties  mak
 ### Error Messages with CoAP Transport
 
 EDHOC does not restrict how error messages are transported with CoAP, as long as the appropriate error message can to be transported in response to a message that failed (see {{error}}).
-In case of combining EDHOC and OSCORE as specified in {{I-D.palombini-core-oscore-edhoc}}, an error message following a combined EDHOC message_3/OSCORE request MUST be sent with a CoAP error code and SHALL contain the ERR_INFO as payload (see {{error}}).
+In case of combining EDHOC and OSCORE as specified in {{I-D.ietf-core-oscore-edhoc}}, an error message following a combined EDHOC message_3/OSCORE request MUST be sent with a CoAP error code and SHALL contain the ERR_INFO as payload (see {{error}}).
 
 
 
