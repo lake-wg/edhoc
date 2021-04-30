@@ -425,12 +425,11 @@ One byte credential identifiers are realistic in many scenarios as most constrai
 
 ## Cipher Suites {#cs}
 
-An EDHOC cipher suite consists of an ordered set of Algorithms from the "COSE Algorithms" and "COSE Elliptic Curves" registries. Each algorithm is represented by a 
-COSE code point from the "COSE Algorithms" and "COSE Elliptic Curves" registries. Algorithms need to be specified with enough parameters to make them completely determined. Currently, none of the algorithms require parameters.  Note that the curve used in the signature algorithm is determined by the authentication key algorithm. EDHOC is only specified for use with key exchange algorithms of type ECDH curves. Use with other types of key exchange algorithms would likely require a specification updating EDHOC.
+An EDHOC cipher suite consists of an ordered set of algorithms from the "COSE Algorithms" and "COSE Elliptic Curves" registries. Algorithms need to be specified with enough parameters to make them completely determined. Currently, none of the algorithms require parameters.  Note that the curve used in the signature algorithm is determined by the authentication key algorithm. EDHOC is only specified for use with key exchange algorithms of type ECDH curves. Use with other types of key exchange algorithms would likely require a specification updating EDHOC.
 
 * EDHOC AEAD algorithm
 * EDHOC hash algorithm
-* EDHOC ECDH curve (key exchange algorithm)
+* EDHOC key exchange algorithm (ECDH curve)
 * EDHOC signature algorithm
 * Application AEAD algorithm 
 * Application hash algorithm 
