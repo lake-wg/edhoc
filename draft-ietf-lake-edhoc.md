@@ -313,7 +313,7 @@ The connection identifier MAY be used with an application protocol (e.g. OSCORE)
 
 ### Transport {#transport}
 
-Cryptographically, EDHOC does not put requirements on the lower layers. EDHOC is not bound to a particular transport layer, and can be used in environments without IP. The application using EDHOC tis responsible to handle message loss, reordering, message duplication, fragmentation, demultiplex EDHOC messages from other types of messages, and denial of service protection, where necessary.
+Cryptographically, EDHOC does not put requirements on the lower layers. EDHOC is not bound to a particular transport layer, and can be used in environments without IP. The application using EDHOC is responsible to handle message loss, reordering, message duplication, fragmentation, demultiplex EDHOC messages from other types of messages, and denial of service protection, where necessary.
 
 The Initiator and the Responder need to have agreed on a transport to be used for EDHOC, see {{applicability}}. It is recommended to transport EDHOC in CoAP payloads, see {{transfer}}.
 
