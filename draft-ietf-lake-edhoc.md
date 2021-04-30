@@ -705,7 +705,7 @@ The Initiator SHALL compose message_1 as follows:
 
 * The Initiator MUST select its most preferred cipher suite, conditioned on what it can assume to be supported by the Responder. If the Initiator previously received from the Responder an error message with error code 1 (see {{wrong-selected}}) indicating cipher suites supported by the Responder which also are supported by the Initiator, then the Initiator SHOULD select the most preferred cipher suite of those (note that error messages are not authenticated and may be forged).
 
-* Generate an ephemeral ECDH key pair as specified in Section 5 of {{SP-800-56A}} using the curve in the selected cipher suite and format it as a COSE_Key. Let G_X be the 'x' parameter of the COSE_Key.
+* Generate an ephemeral ECDH key pair using the curve in the selected cipher suite and format it as a COSE_Key. Let G_X be the 'x' parameter of the COSE_Key.
    
 * Choose a connection identifier C_I and store it for the length of the protocol.
 
@@ -755,7 +755,7 @@ The Responder SHALL compose message_2 as follows:
 
 * If corr (METHOD_CORR mod 4) equals 1 or 3, C_I is omitted, otherwise C_I is not omitted.
 
-* Generate an ephemeral ECDH key pair as specified in Section 5 of {{SP-800-56A}} using the curve in the selected cipher suite and format it as a COSE_Key. Let G_Y be the 'x' parameter of the COSE_Key.
+* Generate an ephemeral ECDH key pair using the curve in the selected cipher suite and format it as a COSE_Key. Let G_X be the 'x' parameter of the COSE_Key.
 
 * Choose a connection identifier C_R and store it for the length of the protocol.
 
