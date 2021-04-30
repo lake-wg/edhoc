@@ -610,7 +610,7 @@ where label is a tstr defined by the application and length is a uint defined by
    TH_4 = H( TH_3, CIPHERTEXT_3 )
 ~~~~~~~~~~~
 
-where H() is the hash function in the selected cipher suite. Example use of the EDHOC-Exporter is given in Sections {{oscore}}{: format="counter"}.
+where H() is the hash function in the selected cipher suite. Example use of the EDHOC-Exporter is given in {{I-D.ietf-core-oscore-edhoc}}.
 
 To provide forward secrecy in an even more efficient way than re-running EDHOC, EDHOC provides the function EDHOC-KeyUpdate. When EDHOC-KeyUpdate is called the old PRK_4x3m is deleted and the new PRk_4x3m is calculated as a "hash" of the old key using the Extract function as illustrated by the following pseudocode:
 
@@ -1058,7 +1058,7 @@ If the selected cipher suite is not the first cipher suite which the Responder s
 
 ## EDHOC Message 4 {#m4}
 
-This section specifies message_4 which is OPTIONAL to support. Key confirmation is normally provided by sending an application message from the Responder to the Initiator protected with a key derived with the EDHOC-Exporter, e.g., using OSCORE (see {{oscore}}). In deployments where no protected application message is sent from the Responder to the Initiator, the Responder MUST send message_4. Two examples of such deployments:
+This section specifies message_4 which is OPTIONAL to support. Key confirmation is normally provided by sending an application message from the Responder to the Initiator protected with a key derived with the EDHOC-Exporter, e.g., using OSCORE (see {{I-D.ietf-core-oscore-edhoc}}). In deployments where no protected application message is sent from the Responder to the Initiator, the Responder MUST send message_4. Two examples of such deployments:
 
 1. When EDHOC is only used for authentication and no application data is sent.
 2. When application data is only sent from the Initiator to the Responder.
@@ -1181,28 +1181,7 @@ Client    Server
 {: #fig-coap2 title="Transferring EDHOC in CoAP when the Initiator is CoAP Server"}
 {: artwork-align="center"}
 
-To protect against denial-of-service attacks, the CoAP server MAY respond to the first POST request with a 4.01 (Unauthorized) containing an Echo option {{I-D.ietf-core-echo-request-tag}}. This forces the initiator to demonstrate its reachability at its apparent network address. If message fragmentation is needed, the EDHOC messages may be fragmented using the CoAP Block-Wise Transfer mechanism {{RFC7959}}.
-
-### Deriving an OSCORE Context from EDHOC {#oscore}
-
-When EDHOC is used to derive parameters for OSCORE {{RFC8613}}, the parties  make sure that the EDHOC connection identifiers are unique, i.e. C_R MUST NOT be equal to C_I. The CoAP client and server MUST be able to retrieve the OSCORE protocol state using its chosen connection identifier and optionally other information such as the 5-tuple. In case that the CoAP client is the Initiator and the CoAP server is the Responder:
-
-* The client's OSCORE Sender ID is C_R and the server's OSCORE Sender ID is C_I, as defined in this document
-
-* The AEAD Algorithm and the hash algorithm are the application AEAD and hash algorithms in the selected cipher suite.
-
-* The Master Secret and Master Salt are derived as follows. By default key_length is the key length (in bytes) of the application AEAD Algorithm and salt_length is 8 bytes. The Initiator and Responder MAY agree out-of-band on a longer key_length than the default and a different salt_length. 
-
-~~~~~~~~~~~~~~~~~~~~~~~
-   Master Secret = EDHOC-Exporter( "OSCORE Master Secret", key_length )
-   Master Salt   = EDHOC-Exporter( "OSCORE Master Salt", salt_length )
-~~~~~~~~~~~~~~~~~~~~~~~
-
-### Error Messages with CoAP Transport
-
-EDHOC does not restrict how error messages are transported with CoAP, as long as the appropriate error message can to be transported in response to a message that failed (see {{error}}).
-In case of combining EDHOC and OSCORE as specified in {{I-D.ietf-core-oscore-edhoc}}, an error message following a combined EDHOC message_3/OSCORE request MUST be sent with a CoAP error code and SHALL contain the ERR_INFO as payload (see {{error}}).
-
+To protect against denial-of-service attacks, the CoAP server MAY respond to the first POST request with a 4.01 (Unauthorized) containing an Echo option {{I-D.ietf-core-echo-request-tag}}. This forces the initiator to demonstrate its reachability at its apparent network address. If message fragmentation is needed, the EDHOC messages may be fragmented using the CoAP Block-Wise Transfer mechanism {{RFC7959}}. EDHOC does not restrict how error messages are transported with CoAP, as long as the appropriate error message can to be transported in response to a message that failed (see {{error}}). The use of EDHOC with OSCORE is specified in {{I-D.ietf-core-oscore-edhoc}}.
 
 
 # Security Considerations {#security}
