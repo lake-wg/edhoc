@@ -678,7 +678,7 @@ message_1 = (
   SUITES_I : [ selected : suite, supported : 2* suite ] / suite,
   G_X : bstr,
   C_I : bstr_identifier,  
-  ? EAD_1 : bstr,
+  ? EAD_1 : any,
 )
 
 suite = int
@@ -691,7 +691,7 @@ where:
 * SUITES_I - cipher suites which the Initiator supports in order of (decreasing) preference. The list of supported cipher suites can be truncated at the end, as is detailed in the processing steps below and {{wrong-selected}}. One of the supported cipher suites is selected. The selected suite is the first suite in the SUITES_I CBOR array. If a single supported cipher suite is conveyed then that cipher suite is selected and SUITES_I is encoded as an int instead of an array.
 * G_X - the ephemeral public key of the Initiator
 * C_I - variable length connection identifier, encoded as a bstr_identifier (see {{bstr_id}}).
-* EAD_1 - bstr containing unprotected opaque auxiliary data
+* EAD_1 - any containing unprotected opaque auxiliary data
 
 ### Initiator Processing of Message 1 {#init-proc-msg1}
 
@@ -767,7 +767,7 @@ The Responder SHALL compose message_2 as follows:
 
       * CRED_R - bstr containing the credential of the Responder, see {{id_cred}}. 
 
-      * EAD_2 = bstr containing opaque unprotected auxiliary data
+      * EAD_2 = any containing opaque unprotected auxiliary data
 
    * plaintext = h''
 
@@ -863,7 +863,7 @@ The Initiator  SHALL compose message_3 as follows:
 
       * CRED_I - bstr containing the credential of the Initiator, see {{id_cred}}. 
 
-      * EAD_3 = bstr containing opaque protected auxiliary data
+      * EAD_3 = any containing opaque protected auxiliary data
 
    * plaintext = h''
 
