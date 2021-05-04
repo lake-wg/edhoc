@@ -489,9 +489,9 @@ The ECDH ephemeral public keys are formatted as a COSE_Key of type EC2 or OKP ac
 
 In order to reduce round trips and number of messages, and in some cases also streamline processing, certain security applications may be integrated into EDHOC by transporting auxiliary data together with the messages. One example is the transport of third-party authorization information protected outside of EDHOC {{I-D.selander-ace-ake-authz}}. Another example is the embedding of a certificate enrolment request or a newly issued certificate.
 
-EDHOC allows opaque external authorization data (EAD) to be sent in the EDHOC messages. Unprotected External Authorization Data (EAD_1, EAD_2) may be sent in message_1 and message_2, respectively. Protected External Authorization Data (EAD_3) may be sent in message_3.
+EDHOC allows opaque external authorization data (EAD) to be sent in the EDHOC messages. Unprotected External Authorization Data (EAD_1, EAD_2) may be sent in message_1 and message_2, respectively. Protected External Authorization Data (EAD_3, EAD_4) may be sent in message_3 and message_4.
 
-Since data carried in EAD_1 and EAD_2 may not be protected, and the content of EAD_3 is available to both the Initiator and the Responder, special considerations need to be made such that the availability of the data a) does not violate security and privacy requirements of the service which uses this data, and b) does not violate the security properties of EDHOC.
+Since data carried in EAD_1 and EAD_2 may not be protected, special considerations need to be made such that the availability of the data a) does not violate security and privacy requirements of the service which uses this data, and b) does not violate the security properties of EDHOC.
 
 
 ## Applicability Statement {#applicability}
@@ -505,7 +505,7 @@ The purpose of the applicability statement is describe the intended use of EDHOC
 2. How message_1 is identified, in particular if the optional initial C_1 = `null` of message_1 is present; see {{asym-msg1-form}}
 3. Authentication credentials (CRED_I, CRED_R; see {{auth-cred}}).
 4. Type used to identify authentication credentials (ID_CRED_I, ID_CRED_R; see {{id_cred}}).
-5. Use and type of External Authorization Data (EAD_1, EAD_2, EAD_3; see {{AD}}).
+5. Use and type of External Authorization Data (EAD_1, EAD_2, EAD_3, EAD_4; see {{AD}}).
 6. Identifier used as identity of endpoint; see {{identities}}.
 7. If message_4 shall be sent/expected, and if not, how to ensure a protected application message is sent from the Responder to the Initiator; see {{m4}}.
 
@@ -1074,7 +1074,7 @@ message_4 and data_4 SHALL be CBOR Sequences (see {{CBOR}}) as defined below
 ~~~~~~~~~~~ CDDL
 message_4 = (
   data_4,
-  MAC_4 : bstr,
+  CIPHERTEXT_4 : bstr,
 )
 ~~~~~~~~~~~
 
@@ -1090,24 +1090,22 @@ The Responder SHALL compose message_4 as follows:
 
 * If corr (METHOD_CORR mod 4) equals 1 or 3, C_I is omitted, otherwise C_I is not omitted.
 
-* Compute an inner COSE_Encrypt0 as defined in Section 5.3 of {{I-D.ietf-cose-rfc8152bis-struct}}, with the EDHOC AEAD algorithm in the selected cipher suite, and the following parameters:
+* Compute a COSE_Encrypt0 as defined in Section 5.3 of {{I-D.ietf-cose-rfc8152bis-struct}}, with the EDHOC AEAD algorithm in the selected cipher suite, and the following parameters. The protected header SHALL be empty.
 
    * protected = h''
 
-   * external_aad = << TH_4 >>
+   * external_aad = TH_4
 
-   * plaintext = h''
+   * plaintext = ( ? EAD_4 )
 
    COSE constructs the input to the AEAD {{RFC5116}} as follows: 
 
    * Key K = EDHOC-Exporter( "EDHOC_message_4_Key", length ) 
    * Nonce N = EDHOC-Exporter( "EDHOC_message_4_Nonce", length )
-   * Plaintext P = 0x (the empty string)
-   * Associated data A =
+   * Plaintext P = ( ? EAD_4 )
+   * Associated data A = \[ "Encrypt0", h'', TH_4 \]
 
-     \[ "Encrypt0", h'', << TH_4 >> \]
-
-   MAC_4 is the 'ciphertext' of the COSE_Encrypt0.
+  CIPHERTEXT_4 is the 'ciphertext' of the COSE_Encrypt0.
 
 * Encode message_4 as a sequence of CBOR encoded data items as specified in {{asym-msg4-form}}.
 
@@ -1119,7 +1117,9 @@ The Initiator SHALL process message_4 as follows:
 
 * Retrieve the protocol state using the connection identifier C_I and/or other external information such as the CoAP Token and the 5-tuple.
 
-* Verify MAC_4 as defined in Section 5.3 of {{I-D.ietf-cose-rfc8152bis-struct}}, with the EDHOC AEAD algorithm in the selected cipher suite, and the parameters defined in {{asym-msg4-proc}}.
+* Decrypt and verify the outer COSE_Encrypt0 as defined in Section 5.3 of {{I-D.ietf-cose-rfc8152bis-struct}}, with the EDHOC AEAD algorithm in the selected cipher suite,  and the parameters defined in {{asym-msg4-proc}}.
+
+* Pass EAD_4 to the security application.
 
 If any verification step fails the Initiator MUST send an EDHOC error message back, formatted as defined in {{error}}, and the protocol MUST be discontinued.
 
@@ -1500,7 +1500,7 @@ data_3 = (
 
 message_4 = (
   data_4,
-  MAC_4 : bstr,
+  CIPHERTEXT_4 : bstr,
 )
 
 data_4 = (
