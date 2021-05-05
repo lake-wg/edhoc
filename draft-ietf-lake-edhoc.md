@@ -395,7 +395,7 @@ CRED_x = {
 
 ### Identification of Credentials {#id_cred}
 
-ID_CRED_I and ID_CRED_R are identifiers of the public authentication keys of the Initiator and the Responder, respectively. 
+ID_CRED_I and ID_CRED_R are used to identify and optionally transport the public authentication keys of the Initiator and the Responder, respectively. 
 ID_CRED_I and ID_CRED_R do not have any cryptographic purpose in EDHOC.
 
 * ID_CRED_R is intended to facilitate for the Initiator to retrieve the Responder's public authentication key.
