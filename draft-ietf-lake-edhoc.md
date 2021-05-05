@@ -339,10 +339,11 @@ For example, if the key exchange is transported over CoAP, the CoAP Token can be
 
 ## Authentication Parameters {#auth-key-id}
 
-### Authentication Keys
+### Authentication Keys {#auth-keys}
 
 The authentication key MUST be a signature key or static Diffie-Hellman key. The Initiator and the Responder
- MAY use different types of authentication keys, e.g. one uses a signature key and the other uses a static Diffie-Hellman key. When using a signature key, the authentication is provided by a signature. When using a static Diffie-Hellman key the authentication is provided by a Message Authentication Code (MAC) computed from an ephemeral-static ECDH shared secret which enables significant reductions in message sizes. The MAC is implemented with an AEAD algorithm. When using static Diffie-Hellman keys the Initiator's and Responder's private authentication keys are called I and R, respectively, and the public authentication keys are called G_I and G_R, respectively.
+ MAY use different types of authentication keys, e.g. one uses a signature key and the other uses a static Diffie-Hellman key. When using a signature key, the authentication is provided by a signature. When using a static Diffie-Hellman key the authentication is provided by a Message Authentication Code (MAC) computed from an ephemeral-static ECDH shared secret which enables significant reductions in message sizes. The MAC is implemented with an AEAD algorithm. When using static Diffie-Hellman keys the Initiator's and Responder's private authentication keys are called I and R, respectively, and the public authentication keys are called G_I and G_R, respectively. The authentication key algorithm needs to specified with enough parameters to make it completely determined. Note that for most signature algorithms, the signature is detemined by the signature algorithm and the authentication key algorithm together. For example, the curve used in the signature is typically determined by the authentication key parameters. 
+
 
 * Only the Responder SHALL have access to the Responder's private authentication key.
 
@@ -430,57 +431,56 @@ One byte credential identifiers are realistic in many scenarios as most constrai
 
 ## Cipher Suites {#cs}
 
-An EDHOC cipher suite consists of an ordered set of COSE code points from the "COSE Algorithms" and "COSE Elliptic Curves" registries: 
+An EDHOC cipher suite consists of an ordered set of algorithms from the "COSE Algorithms" and "COSE Elliptic Curves" registries. Algorithms need to be specified with enough parameters to make them completely determined. Currently, none of the algorithms require parameters. EDHOC is only specified for use with key exchange algorithms of type ECDH curves. Use with other types of key exchange algorithms would likely require a specification updating EDHOC. Note that for most signature algorithms, the signature is detemined by the signature algorithm and the authentication key algorithm together, see {{auth-keys}}. 
 
 * EDHOC AEAD algorithm
 * EDHOC hash algorithm
-* EDHOC ECDH curve
-* EDHOC signature algorithm 
-* EDHOC signature algorithm curve
+* EDHOC key exchange algorithm (ECDH curve)
+* EDHOC signature algorithm
 * Application AEAD algorithm 
 * Application hash algorithm 
 
 Each cipher suite is identified with a pre-defined int label.
 
-EDHOC can be used with all algorithms and curves defined for COSE. Implementation can either use one of the pre-defined cipher suites ({{suites-registry}}) or use any combination of COSE algorithms to define their own private cipher suite. Private cipher suites can be identified with any of the four values -24, -23, -22, -21.
+EDHOC can be used with all algorithms and curves defined for COSE. Implementation can either use one of the pre-defined cipher suites ({{suites-registry}}) or use any combination of COSE algorithms and parameters to define their own private cipher suite. Private cipher suites can be identified with any of the four values -24, -23, -22, -21.
 
 The following cipher suites are for constrained IoT where message overhead is a very important factor:
 
 ~~~~~~~~~~~
-   0. ( 10, -16, 4, -8, 6, 10, -16 )
-      (AES-CCM-16-64-128, SHA-256, X25519, EdDSA, Ed25519,
+   0. ( 10, -16, 4, -8, 10, -16 )
+      (AES-CCM-16-64-128, SHA-256, X25519, EdDSA,
        AES-CCM-16-64-128, SHA-256)
 
-   1. ( 30, -16, 4, -8, 6, 10, -16 )
-      (AES-CCM-16-128-128, SHA-256, X25519, EdDSA, Ed25519,
+   1. ( 30, -16, 4, -8, 10, -16 )
+      (AES-CCM-16-128-128, SHA-256, X25519, EdDSA,
        AES-CCM-16-64-128, SHA-256)
 
-   2. ( 10, -16, 1, -7, 1, 10, -16 )
-      (AES-CCM-16-64-128, SHA-256, P-256, ES256, P-256,
+   2. ( 10, -16, 1, -7, 10, -16 )
+      (AES-CCM-16-64-128, SHA-256, P-256, ES256,
        AES-CCM-16-64-128, SHA-256)
 
-   3. ( 30, -16, 1, -7, 1, 10, -16 )
-      (AES-CCM-16-128-128, SHA-256, P-256, ES256, P-256,
+   3. ( 30, -16, 1, -7, 10, -16 )
+      (AES-CCM-16-128-128, SHA-256, P-256, ES256,
        AES-CCM-16-64-128, SHA-256)
 ~~~~~~~~~~~
 
 The following cipher suite is for general non-constrained applications. It uses very high performance algorithms that also are widely supported:
 
 ~~~~~~~~~~~
-   4. ( 1, -16, 4, -7, 1, 1, -16 )
-      (A128GCM, SHA-256, X25519, ES256, P-256,
+   4. ( 1, -16, 4, -7, 1, -16 )
+      (A128GCM, SHA-256, X25519, ES256,
        A128GCM, SHA-256)
 ~~~~~~~~~~~
 
 The following cipher suite is for high security application such as government use and financial applications. It is compatible with the CNSA suite {{CNSA}}.
 
 ~~~~~~~~~~~
-   5. ( 3, -43, 2, -35, 2, 3, -43 )
-      (A256GCM, SHA-384, P-384, ES384, P-384,
+   5. ( 3, -43, 2, -35, 3, -43 )
+      (A256GCM, SHA-384, P-384, ES384,
        A256GCM, SHA-384)
 ~~~~~~~~~~~
 
-The different methods use the same cipher suites, but some algorithms are not used in some methods. The EDHOC signature algorithm and the EDHOC signature algorithm curve are not used in methods without signature authentication.
+The different methods use the same cipher suites, but some algorithms are not used in some methods. The EDHOC signature algorithm is not used in methods without signature authentication.
 
 The Initiator needs to have a list of cipher suites it supports in order of preference. The Responder needs to have a list of cipher suites it supports. SUITES_I is a CBOR array containing cipher suites that the Initiator supports. SUITES_I is formatted and processed as detailed in {{asym-msg1-form}} to secure the cipher suite negotiation. Examples of cipher suite negotiation are given in {{ex-neg}}.
 
@@ -507,7 +507,7 @@ The purpose of the applicability statement is describe the intended use of EDHOC
 1. How the endpoint detects that an EDHOC message is received. This includes how EDHOC messages are transported, for example in the payload of a CoAP message with a certain Uri-Path or Content-Format; see {{coap}}.
 1. Method and correlation of underlying transport messages (METHOD_CORR; see {{method}} and {{corr}}). This gives information about the optional connection identifier fields.
 2. How message_1 is identified, in particular if the optional initial C_1 = `null` of message_1 is present; see {{asym-msg1-form}}
-3. Authentication credentials (CRED_I, CRED_R; see {{auth-cred}}).
+3. Profile for authentication credentials (CRED_I, CRED_R; see {{auth-cred}}), e.g., profile for certificate or COSE_key, including supported authentication key algorithms (subject public key algorithm in X.509 certificate).
 4. Type used to identify authentication credentials (ID_CRED_I, ID_CRED_R; see {{id_cred}}).
 5. Use and type of Auxiliary Data (AD_1, AD_2, AD_3; see {{AD}}).
 6. Identifier used as identity of endpoint; see {{identities}}.
@@ -1299,48 +1299,48 @@ Reference: [[this document]]
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 Value: 0
-Array: 10, 5, 4, -8, 6, 10, 5
-Desc: AES-CCM-16-64-128, SHA-256, X25519, EdDSA, Ed25519,
+Array: 10, -16, 4, -8, 10, -16
+Desc: AES-CCM-16-64-128, SHA-256, X25519, EdDSA,
       AES-CCM-16-64-128, SHA-256
 Reference: [[this document]]
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 Value: 1
-Array: 30, 5, 4, -8, 6, 10, 5
-Desc: AES-CCM-16-128-128, SHA-256, X25519, EdDSA, Ed25519,
+Array: 30, -16, 4, -8, 10, -16
+Desc: AES-CCM-16-128-128, SHA-256, X25519, EdDSA,
       AES-CCM-16-64-128, SHA-256
 Reference: [[this document]]
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 Value: 2
-Array: 10, 5, 1, -7, 1, 10, 5
-Desc: AES-CCM-16-64-128, SHA-256, P-256, ES256, P-256,
+Array: 10, -16, 1, -7, 10, -16
+Desc: AES-CCM-16-64-128, SHA-256, P-256, ES256,
       AES-CCM-16-64-128, SHA-256
 Reference: [[this document]]
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 Value: 3
-Array: 30, 5, 1, -7, 1, 10, 5
-Desc: AES-CCM-16-128-128, SHA-256, P-256, ES256, P-256,
+Array: 30, -16, 1, -7, 10, -16
+Desc: AES-CCM-16-128-128, SHA-256, P-256, ES256,
       AES-CCM-16-64-128, SHA-256
 Reference: [[this document]]
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 Value: 4
-Array: 1, -16, 4, -7, 1, 1, -16
-Desc: A128GCM, SHA-256, X25519, ES256, P-256,
+Array: 1, -16, 4, -7, 1, -16
+Desc: A128GCM, SHA-256, X25519, ES256,
       A128GCM, SHA-256
 Reference: [[this document]]
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 Value: 5
-Array: 3, -43, 2, -35, 2, 3, -43 
-Desc: A256GCM, SHA-384, P-384, ES384, P-384,
+Array: 3, -43, 2, -35, 3, -43 
+Desc: A256GCM, SHA-384, P-384, ES384,
       A256GCM, SHA-384
 Reference: [[this document]]
 ~~~~~~~~~~~~~~~~~~~~~~~
