@@ -605,10 +605,19 @@ Application keys and other application specific data can be derived using the ED
 
 ~~~~~~~~~~~
    EDHOC-Exporter(label, length)
-     = EDHOC-KDF(PRK_4x3m, TH_4, label, length) 
+     = EDHOC-KDF(PRK_4x3m, TH_4, label_context, length) 
 ~~~~~~~~~~~
 
-where label is a tstr defined by the application and length is a uint defined by the application. The label SHALL be different for each different exporter value. The transcript hash TH_4 is a CBOR encoded bstr and the input to the hash function is a CBOR Sequence.
+where label_context is a CBOR sequence:
+
+~~~~~~~~~~~ CDDL
+label_context = (
+  label : tstr,
+  context : bstr,
+)
+~~~~~~~~~~~
+
+and where label is a registered tstr from the EDHOC-Exporter registry, context is a bstr defined by the application, and length is a uint defined by the application. The (label, context) pair must be unique, i.e. a (label, context) MUST NOT be used for two different pursoses, however an application can re-derive the same key several times as long as it is done in a secure way. For example reuse of the same (key, nonce) pair needs to be avoided in most encryption algorithms. The transcript hash TH_4 is a CBOR encoded bstr and the input to the hash function is a CBOR Sequence.
 
 ~~~~~~~~~~~
    TH_4 = H( TH_3, CIPHERTEXT_3 )
@@ -1263,6 +1272,22 @@ If two nodes unintentionally initiate two simultaneous EDHOC message exchanges w
 If supported by the device, it is RECOMMENDED that at least the long-term private keys are stored in a Trusted Execution Environment (TEE) and that sensitive operations using these keys are performed inside the TEE. To achieve even higher security it is RECOMMENDED that in additional operations such as ephemeral key generation, all computations of shared secrets, and storage of the pseudorandom keys (PRK) can be done inside the TEE. The use of a TEE enforces that code within that environment cannot be tampered with, and that any data used by such code cannot be read or tampered with by code outside that environment. Note that non-EDHOC code inside the TEE might still be able to read EDHOC data and tamper with EDHOC code, to protect against such attacks EDHOC needs to be in its own zone. To provide better protection against some forms of physical attacks, sensitive EDHOC data should be stored inside the SoC or encrypted and integrity protected when sent on a data bus (e.g. between the CPU and RAM or Flash). Secure boot can be used to increase the security of code and data in the Rich Execution Environment (REE) by validating the REE image.
  
 # IANA Considerations {#iana}
+
+## EDHOC Cipher Suites Registry {#suites-registry}
+
+IANA has created a new registry titled "EDHOC Cipher Suites" under the new heading "EDHOC". The registration procedure is "Expert Review". The columns of the registry are Label, Description, and Reference. All columns are text strings. The initial contents of the registry are:
+
+~~~~~~~~~~~~~~~~~~~~~~~
+Label: EDHOC_message_4_Key
+Description: Key used to protect EDHOC message_4
+Reference: [[this document]]
+~~~~~~~~~~~~~~~~~~~~~~~
+
+~~~~~~~~~~~~~~~~~~~~~~~
+Label: EDHOC_message_4_Nonce
+Description: Nonce used to protect EDHOC message_4
+Reference: [[this document]]
+~~~~~~~~~~~~~~~~~~~~~~~
 
 ## EDHOC Cipher Suites Registry {#suites-registry}
 
