@@ -608,7 +608,7 @@ Application keys and other application specific data can be derived using the ED
      = EDHOC-KDF(PRK_4x3m, TH_4, label_context, length) 
 ~~~~~~~~~~~
 
-where label_context is a CBOR sequence:
+label_context is a CBOR sequence:
 
 ~~~~~~~~~~~ CDDL
 label_context = (
@@ -617,15 +617,16 @@ label_context = (
 )
 ~~~~~~~~~~~
 
-and where label is a registered tstr from the EDHOC-Exporter registry, context is a bstr defined by the application, and length is a uint defined by the application. The (label, context) pair must be unique, i.e. a (label, context) MUST NOT be used for two different pursoses, however an application can re-derive the same key several times as long as it is done in a secure way. For example reuse of the same (key, nonce) pair needs to be avoided in most encryption algorithms. The transcript hash TH_4 is a CBOR encoded bstr and the input to the hash function is a CBOR Sequence.
+where label is a registered tstr from the EDHOC Exporter Label registry ({{exporter-label}}), context is a bstr defined by the application, and length is a uint defined by the application. The (label, context) pair must be unique, i.e. a (label, context) MUST NOT be used for two different purposes. However an application can re-derive the same key several times as long as it is done in a secure way. For example, in most encryption algorithms the same (key, nonce) pair must not be reused. 
+
+The transcript hash TH_4 is a CBOR encoded bstr and the input to the hash function is a CBOR Sequence.
 
 ~~~~~~~~~~~
    TH_4 = H( TH_3, CIPHERTEXT_3 )
 ~~~~~~~~~~~
+where H() is the hash function in the selected cipher suite. Examples of use of the EDHOC-Exporter are given in {{asym-msg4-proc}} and {{I-D.ietf-core-oscore-edhoc}}.
 
-where H() is the hash function in the selected cipher suite. Example use of the EDHOC-Exporter is given in {{I-D.ietf-core-oscore-edhoc}}.
-
-To provide forward secrecy in an even more efficient way than re-running EDHOC, EDHOC provides the function EDHOC-KeyUpdate. When EDHOC-KeyUpdate is called the old PRK_4x3m is deleted and the new PRk_4x3m is calculated as a "hash" of the old key using the Extract function as illustrated by the following pseudocode:
+To provide forward secrecy in an even more efficient way than re-running EDHOC, EDHOC provides the function EDHOC-KeyUpdate. When EDHOC-KeyUpdate is called the old PRK_4x3m is deleted and the new PRK_4x3m is calculated as a "hash" of the old key using the Extract function as illustrated by the following pseudocode:
 
 ~~~~~~~~~~~
    EDHOC-KeyUpdate( nonce ):
@@ -1273,9 +1274,9 @@ If supported by the device, it is RECOMMENDED that at least the long-term privat
  
 # IANA Considerations {#iana}
 
-## EDHOC Cipher Suites Registry {#suites-registry}
+## EDHOC Exporter Label {#exporter-label}
 
-IANA has created a new registry titled "EDHOC Cipher Suites" under the new heading "EDHOC". The registration procedure is "Expert Review". The columns of the registry are Label, Description, and Reference. All columns are text strings. The initial contents of the registry are:
+IANA has created a new registry titled "EDHOC Exporter Label" under the new heading "EDHOC". The registration procedure is "Expert Review". The columns of the registry are Label, Description, and Reference. All columns are text strings. The initial contents of the registry are:
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 Label: EDHOC_message_4_Key
