@@ -525,7 +525,7 @@ Note that it is not necessary for the endpoints to specify a single transport fo
 
 The applicability statement may be dependent on the identity of the other endpoint, but this applies only to the later phases of the protocol when identities are known. (Initiator does not know identity of Responder before having verified message_2, and Responder does not know identity of Initiator before having verified message_3.)
 
-Other conditions may be part of the applicability statement, such as target application or use (if there is more than one application/use) to the extent that EDHOC can distinguish between them. In case multiple applicability statements are used, the receiver needs to be able to determine which is applicable for a given session, for example based on URI or Auxiliary Data type.
+Other conditions may be part of the applicability statement, such as target application or use (if there is more than one application/use) to the extent that EDHOC can distinguish between them. In case multiple applicability statements are used, the receiver needs to be able to determine which is applicable for a given protocol instance, for example based on URI or Auxiliary Data type.
 
 
 
@@ -664,7 +664,7 @@ Note that, despite what could be interpreted by the CDDL definition only, bstr_i
 
 This section outlines the message processing of EDHOC. 
 
-For each session, the endpoints are assumed to keep an associated protocol state containing connection identifiers, keys, etc. used for subsequent processing of protocol related data. The protocol state is assumed to be associated to an applicability statement ({{applicability}}) which provides the context for how messages are transported, identified and processed. 
+For each protocol instance, the endpoints are assumed to keep an associated protocol state containing connection identifiers, keys, etc. used for subsequent processing of protocol related data. The protocol state is assumed to be associated to an applicability statement ({{applicability}}) which provides the context for how messages are transported, identified and processed. 
 
 EDHOC messages SHALL be processed according to the current protocol state. The following steps are expected to be performed at reception of an EDHOC message:
 
@@ -676,7 +676,7 @@ EDHOC messages SHALL be processed according to the current protocol state. The f
 
 If the processing fails, then the protocol is discontinued, an error message sent, and the protocol state erased. Further details are provided in the following subsections.
 
-Different instances of the same message MUST NOT be processed in one session. Note that processing will fail if the same message appears a second time for EDHOC processing because the state of the protocol has moved on and now expects something else. This assumes that message duplication due to re-transmissions is handled by the transport protocol, see {{transport}}. The case when the transport does not support message deduplication is addressed in {{duplication}}.
+Different instances of the same message MUST NOT be processed in one protocol instance.  Note that processing will fail if the same message appears a second time for EDHOC processing because the state of the protocol has moved on and now expects something else. This assumes that message duplication due to re-transmissions is handled by the transport protocol, see {{transport}}. The case when the transport does not support message deduplication is addressed in {{duplication}}.
 
 
 ## EDHOC Message 1 {#m1}
@@ -3432,7 +3432,7 @@ Deduplication of CoAP messages is described in Section 4.5 of {{RFC7252}}. This 
 
 Message deduplication is resource demanding and therefore not supported in all CoAP implementations. Since EDHOC is targeting constrained environments, it is desirable that EDHOC can optionally support transport layers which does not handle message duplication. Special care is needed to avoid issues with duplicate messages, see {{proc-outline}}.
 
-The guiding principle here is similar to the deduplication processing on CoAP messaging layer: a received duplicate EDHOC message SHALL NOT result in a response consisting of another instance of the next EDHOC message. The result MAY be that a duplicate EDHOC response is sent, provided it is still relevant with respect the current protocol state. In any case, the received message MUST NOT be processed more than once by the same EDHOC session. This is called "EDHOC message deduplication".
+The guiding principle here is similar to the deduplication processing on CoAP messaging layer: a received duplicate EDHOC message SHALL NOT result in a response consisting of another instance of the next EDHOC message. The result MAY be   that a duplicate EDHOC response is sent, provided it is still relevant with respect the current protocol state. In any case, the received message MUST NOT be processed more than once by the same EDHOC instance. This is called "EDHOC message deduplication".
 
 An EDHOC implementation MAY store the previously sent EDHOC message to be able to resend it. An EDHOC implementation MAY keep the protocol state to be able to recreate the previously sent EDHOC message and resend it. The previous message or protocol state MUST NOT be kept longer than what is required for retransmission, for example, in the case of CoAP transport, no longer than the EXCHANGE_LIFETIME (see Section 4.8.2 of {{RFC7252}}).
 
@@ -3440,7 +3440,7 @@ Note that the requirements in {{proc-outline}} still apply because duplicate mes
 
 * EDHOC messages SHALL be processed according to the current protocol state.
 
-* Different instances of the same message MUST NOT be processed in one session.
+* Different instances of the same message MUST NOT be processed in one protocol instance.
 
 
 # Change Log
