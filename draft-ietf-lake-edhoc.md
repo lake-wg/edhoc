@@ -487,22 +487,22 @@ The ECDH ephemeral public keys are formatted as a COSE_Key of type EC2 or OKP ac
 
 ## External Authorization Data {#AD}
 
-In order to reduce round trips and number of messages or to simplify processing, external security applications may be integrated into EDHOC by transporting authorization related data together with the messages. One example is the transport of third-party authorization information protected outside of EDHOC {{I-D.selander-ace-ake-authz}}. Another example is the embedding of a certificate enrolment request or a newly issued certificate.
+In order to reduce round trips and number of messages or to simplify processing, external security applications may be integrated into EDHOC by transporting authorization related data together with the messages. One example is the transport third-party identity and authorization information protected out of scope of EDHOC {{I-D.selander-ace-ake-authz}}. Another example is the embedding of a certificate enrolment request or a newly issued certificate.
 
 EDHOC allows opaque external authorization data (EAD) to be sent in the EDHOC messages. External authorization data sent in message_1 (EAD_1) or message_2 (EAD_2) must be considered unprotected by EDHOC, see {{unprot-data}}. External authorization data sent in message_3 (EAD_3) or message_4 (EAD_4) is protected between Initiator and Responder.
 
-External authorization data is a CBOR array (see {{CBOR}}) as defined below:
+External authorization data is a CBOR sequence (see {{CBOR}}) as defined below:
 
 ~~~~~~~~~~~ CDDL
-EAD_x = (
+EAD = (
   type : int,
-  ext_authz_data : any,
+  1* ext_authz_data : any,
 )
 ~~~~~~~~~~~ 
 
-The type is an int and ext_authz_data is defined in a separate specification. Current EAD types are listed in an IANA register, see {{iana-ead}}.
+type is an int and is followed by one or more ext_authz_data depending on type as defined in a separate specification. Current EAD types are listed in an IANA register, see {{iana-ead}}.
 
-The EAD fields of EDHOC are not intended for generic application data. Since data carried in EAD_1 and EAD_2 fields may not be protected, special considerations need to be made such that a) it does not violate security and privacy requirements of the service which uses this data, and b) it does not violate the security properties of EDHOC. Security applications making use of the EAD fields must perform the necessary security analysis.
+The EAD fields of EDHOC are not intended for generic application data. Since data carried in EAD_1 and EAD_2 fields may not be protected, special considerations need to be made such that a) it does not violate security, privacy etc. requirements of the service which uses this data, and b) it does not violate the security properties of EDHOC. Security applications making use of the EAD fields must perform the necessary security analysis.
 
 
 ## Applicability Statement {#applicability}
@@ -524,7 +524,7 @@ The applicability statement may also contain information about supported cipher 
 
 An example of an applicability statement is shown in {{appl-temp}}. 
 
-For some parameters, like METHOD_CORR, ID_CRED_x, type of EAD_x, the receiver is able to verify compliance with applicability statement, and if it needs to fail because of incompliance, to infer the reason why the protocol failed.
+For some parameters, like METHOD_CORR, ID_CRED_x, type of EAD, the receiver is able to verify compliance with applicability statement, and if it needs to fail because of incompliance, to infer the reason why the protocol failed.
 
 For other parameters, like CRED_x in the case that it is not transported, it may not be possible to verify that incompliance with applicability statement was the reason for failure: Integrity verification in message_2 or message_3 may fail not only because of wrong authentication credential. For example, in case the Initiator uses public key certificate by reference (i.e. not transported within the protocol) then both endpoints need to use an identical data structure as CRED_I or else the integrity verification will fail.
 
@@ -689,7 +689,7 @@ message_1 = (
   SUITES_I : [ selected : suite, supported : 2* suite ] / suite,
   G_X : bstr,
   C_I : bstr_identifier,  
-  ? EAD_1 : any,
+  ? EAD ; EAD_1 
 )
 
 suite = int
@@ -702,7 +702,7 @@ where:
 * SUITES_I - cipher suites which the Initiator supports in order of (decreasing) preference. The list of supported cipher suites can be truncated at the end, as is detailed in the processing steps below and {{wrong-selected}}. One of the supported cipher suites is selected. The selected suite is the first suite in the SUITES_I CBOR array. If a single supported cipher suite is conveyed then that cipher suite is selected and SUITES_I is encoded as an int instead of an array.
 * G_X - the ephemeral public key of the Initiator
 * C_I - variable length connection identifier, encoded as a bstr_identifier (see {{bstr_id}}).
-* EAD_1 - unprotected external authorization data
+* EAD_1 - unprotected external authorization data, see {{AD}}.
 
 ### Initiator Processing of Message 1 {#init-proc-msg1}
 
@@ -776,9 +776,9 @@ The Responder SHALL compose message_2 as follows:
 
    * external_aad = << TH_2, CRED_R, ? EAD_2 >>
 
-      * CRED_R - bstr containing the credential of the Responder, see {{id_cred}}. 
+      * CRED_R - bstr containing the credential of the Responder, see {{id_cred}} 
 
-      * EAD_2 = unprotected external authorization data
+      * EAD_2 = unprotected external authorization data, see {{AD}}
 
    * plaintext = h''
 
@@ -874,7 +874,7 @@ The Initiator  SHALL compose message_3 as follows:
 
       * CRED_I - bstr containing the credential of the Initiator, see {{id_cred}}. 
 
-      * EAD_3 = protected external authorization data
+      * EAD_3 = protected external authorization data, see {{AD}}
 
    * plaintext = h''
 
@@ -1109,7 +1109,7 @@ The Responder SHALL compose message_4 as follows:
 
    * plaintext = ( ? EAD_4 )
 
-   where EAD_4 is protected external authorization data. COSE constructs the input to the AEAD {{RFC5116}} as follows: 
+   where EAD_4 is protected external authorization data, see {{AD}}. COSE constructs the input to the AEAD {{RFC5116}} as follows: 
 
    * Key K = EDHOC-Exporter( "EDHOC_message_4_Key", length ) 
    * Nonce N = EDHOC-Exporter( "EDHOC_message_4_Nonce", length )
@@ -1491,7 +1491,7 @@ message_1 = (
   SUITES_I : [ selected : suite, supported : 2* suite ] / suite,
   G_X : bstr,
   C_I : bstr_identifier,
-  ? EAD_1 : bstr,
+  ? EAD ; EAD_1
 )
 
 message_2 = (
