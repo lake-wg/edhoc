@@ -604,7 +604,7 @@ KEYSTREAM_2 are derived using the transcript hash TH_2 and the pseudorandom key 
 Application keys and other application specific data can be derived using the EDHOC-Exporter interface defined as:
 
 ~~~~~~~~~~~
-   EDHOC-Exporter(label, length)
+   EDHOC-Exporter(label, context, length)
      = EDHOC-KDF(PRK_4x3m, TH_4, label_context, length) 
 ~~~~~~~~~~~
 
