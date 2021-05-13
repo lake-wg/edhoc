@@ -43,10 +43,12 @@ normative:
   RFC7959:
   RFC8174:
   RFC8376:
+  RFC8392:
   RFC8610:
   RFC8613:
   RFC8724:
   RFC8742:
+  RFC8747:
   I-D.ietf-cose-rfc8152bis-struct:
   I-D.ietf-cose-rfc8152bis-algs:
   I-D.ietf-cose-x509:
