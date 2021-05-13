@@ -1,0 +1,122 @@
+Security Levels and Design Goals of EDHOC
+by John Preuß Mattsson, not officially desiced by IETF LAKE WG
+------------------------------------------------------------------------------------------
+
+EDHOC inherits most of its security properties from the theoretical SIGMA-I protocol [SIGMA].
+
+EDHOC design goals are to provide a minimum of 64-bit security against online brute force attacks and a minimum of 128-bit security against offline brute force attacks.  This is in line with IPsec, TLS, and COSE.  To break 64-bit security against online brute force an attacker would on average have to send 4.3 billion messages per second for 68 years, which is infeasible in constrained IoT radio technologies.
+
+The security level depends heavily on the choice algorithms and method. Note that EDHOC with private cipher suites can be used with any combination of COSE algorithms, not just the registered cipher suites. The registered COSE algorithms have different key lengths, tag lengths, nonce lengths, output size, etc. In COSE and X.509, the signature algorithm together with the public key algorithm determines the parameters used in the signature.
+https://www.iana.org/assignments/cose/cose.xhtml
+
+The following COSE algorithms are currently defined (or planned):
+
+EDHOC AEAD algorithm:
+---------------------------
+AES-CCM-16-64-128
+AES-CCM-64-64-128
+AES-CCM-16-128-128
+AES-CCM-64-128-128
+
+AES-CCM-16-64-256
+AES-CCM-64-64-256
+AES-CCM-16-128-256
+AES-CCM-64-128-256
+
+A128GCM
+A192GCM
+A256GCM
+
+ChaCha20/Poly1305
+
+EDHOC hash algorithm
+---------------------------
+SHAKE128
+SHAKE256
+SHA-512
+SHA-384
+SHA-512/256
+SHA-256
+[SHA-1 and SHA-256/64 not allowed]
+
+EDHOC ECDH curve
+---------------------------
+P-256
+P-384
+P-521
+X25519
+X448
+Wei25519 (expected to be registered soon)
+[Ed25519, Ed448, secp256k1 are not allowed] 
+
+EDHOC signature algorithm
+---------------------------
+ES256
+ES512
+ES384
+EdDSA
+ES256K
+
+RS512
+RS384
+RS256
+PS512
+PS384
+PS256
+
+HSS-LMS
+
+ECC Authentication Key Algorithm Parameters (COSE)
+------------------------------------------------------
+P-256 (ECDSA only)
+P-384 (ECDSA only)
+P-521 (ECDSA only)
+Ed25519 (EdDSA only)
+Ed448 (EdDSA only)
+secp256k1 (ECDSA only)
+Wei25519 (expected to be registered soon)
+[X25519, X448 are not allowed] 
+
+EDHOC can also be used with non-ECC COSE_Key, X.509, and C509 certificates. In general any
+public key algorithm defined for COSE or X.509 that are compatible with the COSE signature
+algorithms can be used.
+
+
+
+The following methods are currently defined:
+
+   +-------+-------------------+-------------------+-------------------+
+   | Value | Initiator         | Responder         | Reference         |
+   +-------+-------------------+-------------------+-------------------+
+   |     0 | Signature Key     | Signature Key     | [[this document]] |
+   |     1 | Signature Key     | Static DH Key     | [[this document]] |
+   |     2 | Static DH Key     | Signature Key     | [[this document]] |
+   |     3 | Static DH Key     | Static DH Key     | [[this document]] |
+   +-------+-------------------+-------------------+-------------------+
+
+                           Figure 4: Method Types
+
+
+
+Comparison of Method 0 with Other SIGMA-based Protocols
+------------------------------------------------------------------------------------------
+
+IKEv2 and TLS 1.3 are also based on SIGMA. EDHOC aim to have comparable security as IKEv2 and TLS 1.3 (where it matters) but with as small message sizes as possible. Method 0 with Signature Key authentication is on high level similar to TLS 1.3 handshake and IKEv2. Below is a comparison of Method 0 with TLS 1.3
+
+- EDHOC uses MAC-then-Sign (like IKEv2), TLS 1.3 use Sign-then-MAC. SIGMA paper states that both variants as well as Sign-and-MAC are secure.
+- EDHOC does not provide any extra randomness in addition to the randomness in the ephemeral public keys. The proof in the SIGMA is without extra randomness. Compared to TLS 1.3 this lowers the complexity against theoretic pre-computation attacks. We estimate that EHDOC still have enough (or more than enough) randomness.
+- EDHOC uses the same AEAD scheme as TLS 1.3 where the IV contains as much randomness as possible and the IV is kept secret.
+- EDHOC uses compact representation of ephemeral ECC public keys compared to the uncompressed format in TLS.
+- The possible MAC lengths in EDHOC are smaller than the MAC lengths in the TLS 1.3 handshake. EDHOC uses 64-128 bit MAC. While TLS handshake use 256-512 bit + 8-16 bit MACs. For data authentication TLS 1.3 uses 64-128 bit MACs. TLS 1.3 is likely a bit overkill but the 64 bit MACs might be a bit low.
+- Algorithm negotiation, bidding-down protection, reflection, and identity-misbinding protection are quite different.
+- Transcript hashes and key derivation are a bit different but should cover the same things except that EHDOC includes message_3 in the exporter binding it to the exported application key.
+- EHDOC includes a nonce in the KeyUpdate to (theoretically) avoid short cycles and bind it to the round-trip in OSCORE that triggered the KeyUpdate.
+
+EDHOC Method 3 with Static DH authentication
+------------------------------------------------------------------------------------------
+
+Method 3 is not directly SIGMA, but can be seen as SIGMA where the signature authentication has been replaced by Static DH authentication. In was originally inspired by OPTLS but is not identical to OPTLS which only has server authentication. Based on comments on the LAKE list, the key derivation has since changed to be more similar to instances in the Noise protocol framework, but no exact mapping to Noise has been done. Method 3 cannot directly be compared with TLS 1.3. If it is, it's security properties lies somewhere between those of PSK authentication and Signature authentication. 
+
+- Method 3 calculates 3 Diffie-Hellman secrets and calculates a key from all three of them. This only increases security with 2 bits.
+- Due to the inclusion of the 3 Diffie-Hellman secrets, Method 3 theoretically offers better protection against key leakage, but in practice is might be hard to see a situation where the private ephemeral keys leak but not the shared secrets G_IY, G_RX.
+- Method 3 with AES-CCM-16-64-128 has the weakest authentication of all the combinations, using a 64-bit tag without any signature. This is an intentional choice as it seems like the only possibility to reach the optimal size goal for message_2 with asymmetric authentication. The 64-bit matches the minimum data authentication given by OSCORE and TLS 1.3.
