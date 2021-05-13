@@ -1,5 +1,6 @@
 Security Levels and Design Goals of EDHOC
 by John Preuß Mattsson, not officially decided by IETF LAKE WG
+This document was created to help formal verification of EHDOC
 ------------------------------------------------------------------------------------------
 
 EDHOC inherits most of its security properties from the theoretical SIGMA-I protocol [SIGMA].
