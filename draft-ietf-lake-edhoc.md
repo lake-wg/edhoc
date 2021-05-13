@@ -65,7 +65,7 @@ informative:
   I-D.ietf-tls-dtls13:
   I-D.selander-ace-ake-authz:
   I-D.ietf-core-oscore-edhoc:
-  I-D.mattsson-cose-cbor-cert-compress:
+  I-D.ietf-cose-cbor-encoded-cert:
   I-D.mattsson-cfrg-det-sigs-with-noise:
 
   SP-800-56A:
@@ -408,7 +408,7 @@ Raw public keys are most optimally stored as COSE_Key objects and identified wit
 
 * ID_CRED_x = { 4 : kid_x }, where kid_x : bstr, for x = I or R.
 
-Public key certificates can be identified in different ways. Header parameters for identifying C509 certificates and X.509 certificates are defined in {{I-D.mattsson-cose-cbor-cert-compress}} and {{I-D.ietf-cose-x509}}, for example:
+Public key certificates can be identified in different ways. Header parameters for identifying C509 certificates and X.509 certificates are defined in {{I-D.ietf-cose-cbor-encoded-cert}} and {{I-D.ietf-cose-x509}}, for example:
 
 * by a hash value with the 'c5t' or 'x5t' parameters;
 
@@ -422,7 +422,7 @@ Public key certificates can be identified in different ways. Header parameters f
 
    * ID_CRED_x = { TBD4 : uri }, for x = I or R,
 
-* ID_CRED_x MAY contain the actual credential used for authentication, CRED_x. For example, a certificate chain can be transported in ID_CRED_x with COSE header parameter c5c or x5chain, defined in {{I-D.mattsson-cose-cbor-cert-compress}} and {{I-D.ietf-cose-x509}}.
+* ID_CRED_x MAY contain the actual credential used for authentication, CRED_x. For example, a certificate chain can be transported in ID_CRED_x with COSE header parameter c5c or x5chain, defined in {{I-D.ietf-cose-cbor-encoded-cert}} and {{I-D.ietf-cose-x509}}.
 
 It is RECOMMENDED that ID_CRED_x uniquely identify the public authentication key as the recipient may otherwise have to try several keys. ID_CRED_I and ID_CRED_R are transported in the 'ciphertext', see {{m3}} and {{m2}}.
 
@@ -3381,7 +3381,7 @@ For use of EDHOC in the XX protocol, the following assumptions are made on the p
 
 * C_1 = `null` is present to identify message_1
 
-* CRED_I is an 802.1AR IDevID encoded as a C509 Certificate of type 0 {{I-D.mattsson-cose-cbor-cert-compress}}.
+* CRED_I is an 802.1AR IDevID encoded as a C509 Certificate of type 0 {{I-D.ietf-cose-cbor-encoded-cert}}.
     * R acquires CRED_I out-of-band, indicated in AD_1
     * ID_CRED_I = {4: h''} is a kid with value empty byte string
 
