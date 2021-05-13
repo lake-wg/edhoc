@@ -1353,6 +1353,17 @@ IANA has created a new registry entitled "EDHOC Method Type" under the new headi
 
 IANA has created a new registry entitled "EDHOC Error Codes" under the new heading "EDHOC". The registration procedure is "Specification Required". The columns of the registry are ERR_CODE, ERR_INFO Type and Description, where ERR_CODE is an integer, ERR_INFO is a CDDL defined type, and Description is a text string. The initial contents of the registry is shown in {{fig-error-codes}}.
 
+## COSE Header Parameters Registry {#cose}
+
+This document registers the following entries in the "COSE Header Parameters" registry under the "CBOR Object Signing and Encryption (COSE)" heading.
+
+~~~~~~~~~~~
++-----------+-------+----------------+------------------------------+
+| Name      | Label | Value Type     | Description                  |
++===========+=======+================+==============================+
+| cwt       |  TBD1 | OSE_Messages   | A CBOR Web Token (CWT)       |
++-----------+-------+----------------+------------------------------+
+~~~~~~~~~~~
 
 ## The Well-Known URI Registry
 
