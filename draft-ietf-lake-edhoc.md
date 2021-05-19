@@ -312,7 +312,7 @@ An implementation may support only a single method. The Initiator and the Respon
 
 ### Connection Identifiers {#ci}
 
-EDHOC includes optional connection identifiers (C_1, C_I, C_R). The connection identifiers C_1, C_I, and C_R do not have any cryptographic purpose in EDHOC. They contain information facilitating retrieval of the protocol state and may therefore be very short. C_1 is always set to `null`, while  C_I and C_R are chosen by I and R, respectively. One byte connection identifiers are realistic in many scenarios as most constrained devices only have a few connections. In cases where a node only has one connection, the identifiers may even be the empty byte string. 
+EDHOC includes optional connection identifiers (C_1, C_I, C_R). The connection identifiers C_1, C_I, and C_R do not have any cryptographic purpose in EDHOC. They contain information facilitating retrieval of the protocol state and may therefore be very short. C_1 is always set to `null`, while  C_I and C_R are chosen by I and R, respectively. Identifiers can be byte strings or integers. One byte connection identifiers are realistic in many scenarios as most constrained devices only have a few connections; these are the numbers -24 to 23 and the empty bytestring (h'').
 
 The connection identifier MAY be used with an application protocol (e.g. OSCORE) for which EDHOC establishes keys, in which case the connection identifiers SHALL adhere to the requirements for that protocol. Each party choses a connection identifier it desires the other party to use in outgoing messages. (For OSCORE this results in the endpoint selecting its Recipient ID, see Section 3.1 of {{RFC8613}}).
 
@@ -632,24 +632,6 @@ Additional optimizations are made to reduce message overhead.
 
 While EDHOC uses the COSE_Key, COSE_Sign1, and COSE_Encrypt0 structures, only a subset of the parameters is included in the EDHOC messages. The unprotected COSE header in COSE_Sign1, and COSE_Encrypt0 (not included in the EDHOC message) MAY contain parameters (e.g. 'alg'). 
 
-## Encoding of bstr_identifier {#bstr_id}
-
-Byte strings are encoded in CBOR as two or more bytes, whereas integers in the interval -24 to 23 are encoded in CBOR as one byte.
-
-bstr_identifier is a special encoding of byte strings, used throughout the protocol to enable the encoding of the shortest byte strings as integers that only require one byte of CBOR encoding.
-
-The bstr_identifier encoding is defined as follows: Byte strings in the interval h'00' to h'2f' are encoded as the corresponding integer minus 24, which are all represented by one byte CBOR ints. Other byte strings are encoded as CBOR byte strings.
-
-For example, the byte string h'59e9' encoded as a bstr_identifier is equal to h'59e9', while the byte string h'2a' is encoded as the integer 18.
-
-The CDDL definition of the bstr_identifier is given below:
-
-~~~~~~~~~~~ CDDL
-bstr_identifier = bstr / int
-~~~~~~~~~~~
-
-Note that, despite what could be interpreted by the CDDL definition only, bstr_identifier once decoded are always byte strings.
-
 ## Message Processing Outline {#proc-outline}
 
 This section outlines the message processing of EDHOC. 
@@ -681,7 +663,7 @@ message_1 = (
   METHOD_CORR : int,
   SUITES_I : [ selected : suite, supported : 2* suite ] / suite,
   G_X : bstr,
-  C_I : bstr_identifier,  
+  C_I : bstr / int,  
   ? AD_1 : bstr,
 )
 
@@ -694,7 +676,7 @@ where:
 * METHOD_CORR = 4 * method + corr, where method = 0, 1, 2, or 3 (see {{fig-method-types}}) and the correlation parameter corr is chosen based on the transport and determines which connection identifiers that are omitted (see {{corr}}).
 * SUITES_I - cipher suites which the Initiator supports in order of (decreasing) preference. The list of supported cipher suites can be truncated at the end, as is detailed in the processing steps below and {{wrong-selected}}. One of the supported cipher suites is selected. The selected suite is the first suite in the SUITES_I CBOR array. If a single supported cipher suite is conveyed then that cipher suite is selected and SUITES_I is encoded as an int instead of an array.
 * G_X - the ephemeral public key of the Initiator
-* C_I - variable length connection identifier, encoded as a bstr_identifier (see {{bstr_id}}).
+* C_I - variable length connection identifier
 * AD_1 - bstr containing unprotected opaque auxiliary data
 
 ### Initiator Processing of Message 1 {#init-proc-msg1}
@@ -738,16 +720,16 @@ message_2 = (
 
 ~~~~~~~~~~~ CDDL
 data_2 = (
-  ? C_I : bstr_identifier,
+  ? C_I : bstr / int,
   G_Y : bstr,
-  C_R : bstr_identifier,
+  C_R : bstr / int,
 )
 ~~~~~~~~~~~
 
 where:
 
 * G_Y - the ephemeral public key of the Responder
-* C_R - variable length connection identifier, encoded as a bstr_identifier (see {{bstr_id}}).
+* C_R - variable length connection identifier
 
 ### Responder Processing of Message 2 {#asym-msg2-proc}
 
@@ -804,9 +786,9 @@ The Responder SHALL compose message_2 as follows:
 
 * CIPHERTEXT_2 is encrypted by using the Expand function as a binary additive stream cipher.
 
-   * plaintext = ( ID_CRED_R / bstr_identifier, Signature_or_MAC_2, ? AD_2 )
+   * plaintext = ( ID_CRED_R / bstr / int, Signature_or_MAC_2, ? AD_2 )
 
-      * Note that if ID_CRED_R contains a single 'kid' parameter, i.e., ID_CRED_R = { 4 : kid_R }, only the byte string kid_R is conveyed in the plaintext encoded as a bstr_identifier, see {{id_cred}} and {{bstr_id}}.
+      * Note that if ID_CRED_R contains a single 'kid' parameter, i.e., ID_CRED_R = { 4 : kid_R }, only the byte string kid_R is conveyed in the plaintext encoded as a bstr. Likewise, a single [ yet to be defined ] 'kid-int' parameter is conveyed as the int value itself.
 
    * CIPHERTEXT_2 = plaintext XOR KEYSTREAM_2
 
@@ -845,7 +827,7 @@ message_3 = (
 
 ~~~~~~~~~~~ CDDL
 data_3 = (
-  ? C_R : bstr_identifier,
+  ? C_R : bstr / int,
 )
 ~~~~~~~~~~~
 
@@ -902,15 +884,15 @@ The Initiator  SHALL compose message_3 as follows:
 
    * external_aad = TH_3
 
-   * plaintext = ( ID_CRED_I / bstr_identifier, Signature_or_MAC_3, ? AD_3 )
+   * plaintext = ( ID_CRED_I / bstr / int, Signature_or_MAC_3, ? AD_3 )
 
-      * Note that if ID_CRED_I contains a single 'kid' parameter, i.e., ID_CRED_I = { 4 : kid_I }, only the byte string kid_I is conveyed in the plaintext encoded as a bstr_identifier, see {{id_cred}} and {{bstr_id}}.
+      * Note that if ID_CRED_I contains a single 'kid' parameter, i.e., ID_CRED_I = { 4 : kid_I }, only the byte string kid_I is conveyed in the plaintext encoded as a bstr. Likewise, a single [ yet to be defined ] 'kid-int' parameter is conveyed by the int value itself.
 
    COSE constructs the input to the AEAD {{RFC5116}} as follows: 
 
    * Key K = EDHOC-KDF( PRK_3e2m, TH_3, "K_3ae", length ) 
    * Nonce N = EDHOC-KDF( PRK_3e2m, TH_3, "IV_3ae", length )
-   * Plaintext P = ( ID_CRED_I / bstr_identifier, Signature_or_MAC_3, ? AD_3 )
+   * Plaintext P = ( ID_CRED_I / bstr / int, Signature_or_MAC_3, ? AD_3 )
    * Associated data A = \[ "Encrypt0", h'', TH_3 \]
 
    CIPHERTEXT_3 is the 'ciphertext' of the outer COSE_Encrypt0.
@@ -953,7 +935,7 @@ error SHALL be a CBOR Sequence (see {{CBOR}}) as defined below
 
 ~~~~~~~~~~~ CDDL
 error = (
-  ? C_x : bstr_identifier,
+  ? C_x : bstr / int,
   ERR_CODE : int,
   ERR_INFO : any
 )
@@ -962,7 +944,7 @@ error = (
 
 where:
 
-* C_x - (optional) variable length connection identifier, encoded as a bstr_identifier (see {{bstr_id}}). If error is sent by the Responder and corr (METHOD_CORR mod 4) equals 0 or 2 then C_x is set to C_I, else if error is sent by the Initiator and corr (METHOD_CORR mod 4) equals 0 or 1 then C_x is set to C_R, else C_x is omitted.
+* C_x - (optional) variable length connection identifier. If error is sent by the Responder and corr (METHOD_CORR mod 4) equals 0 or 2 then C_x is set to C_I, else if error is sent by the Initiator and corr (METHOD_CORR mod 4) equals 0 or 1 then C_x is set to C_R, else C_x is omitted.
 * ERR_CODE - error code encoded as an integer.
 * ERR_INFO - error information. Content and encoding depend on error code.
 
@@ -1082,7 +1064,7 @@ message_4 = (
 
 ~~~~~~~~~~~ CDDL
 data_4 = (
-  ? C_I : bstr_identifier,
+  ? C_I : bstr / int,
 )
 ~~~~~~~~~~~
 
@@ -1482,8 +1464,6 @@ This sections compiles the CDDL definitions for ease of reference.
 
 
 ~~~~~~~~~~~ CDDL
-bstr_identifier = bstr / int
-
 suite = int
 
 SUITES_R : [ supported : 2* suite ] / suite
@@ -1493,7 +1473,7 @@ message_1 = (
   METHOD_CORR : int,
   SUITES_I : [ selected : suite, supported : 2* suite ] / suite,
   G_X : bstr,
-  C_I : bstr_identifier,
+  C_I : bstr / int,
   ? AD_1 : bstr,
 )
 
@@ -1503,9 +1483,9 @@ message_2 = (
 )
 
 data_2 = (
-  ? C_I : bstr_identifier,
+  ? C_I : bstr / int,
   G_Y : bstr,
-  C_R : bstr_identifier,
+  C_R : bstr / int,
 )
 
 message_3 = (
@@ -1514,7 +1494,7 @@ message_3 = (
 )
 
 data_3 = (
-  ? C_R : bstr_identifier,
+  ? C_R : bstr / int,
 )
 
 message_4 = (
@@ -1523,11 +1503,11 @@ message_4 = (
 )
 
 data_4 = (
-  ? C_I : bstr_identifier,
+  ? C_I : bstr / int,
 )
 
 error = (
-  ? C_x : bstr_identifier,
+  ? C_x : bstr / int,
   ERR_CODE : int,
   ERR_INFO : any
 )
@@ -3420,6 +3400,10 @@ Note that the requirements in {{proc-outline}} still apply because duplicate mes
 # Change Log
 
 Main changes:
+
+* pending:
+   * bstr_identifier removed; C_x can now be int or bstr
+     without any implied bstr semantics.
 
 * From -05 to -06:
    * New section 5.2 "Message Processing Outline"
