@@ -342,7 +342,7 @@ For example, if the key exchange is transported over CoAP, the CoAP Token can be
 ### Authentication Keys {#auth-keys}
 
 The authentication key MUST be a signature key or static Diffie-Hellman key. The Initiator and the Responder
- MAY use different types of authentication keys, e.g. one uses a signature key and the other uses a static Diffie-Hellman key. When using a signature key, the authentication is provided by a signature. When using a static Diffie-Hellman key the authentication is provided by a Message Authentication Code (MAC) computed from an ephemeral-static ECDH shared secret which enables significant reductions in message sizes. The MAC is implemented with an AEAD algorithm. When using static Diffie-Hellman keys the Initiator's and Responder's private authentication keys are called I and R, respectively, and the public authentication keys are called G_I and G_R, respectively. The authentication key algorithm needs to specified with enough parameters to make it completely determined. Note that for most signature algorithms, the signature is detemined by the signature algorithm and the authentication key algorithm together. For example, the curve used in the signature is typically determined by the authentication key parameters. 
+ MAY use different types of authentication keys, e.g. one uses a signature key and the other uses a static Diffie-Hellman key. When using a signature key, the authentication is provided by a signature. When using a static Diffie-Hellman key the authentication is provided by a Message Authentication Code (MAC) computed from an ephemeral-static ECDH shared secret which enables significant reductions in message sizes. The MAC is implemented with an AEAD algorithm. When using static Diffie-Hellman keys the Initiator's and Responder's private authentication keys are called I and R, respectively, and the public authentication keys are called G_I and G_R, respectively. The authentication key algorithm needs to specified with enough parameters to make it completely determined. Note that for most signature algorithms, the signature is determined by the signature algorithm and the authentication key algorithm together. For example, the curve used in the signature is typically determined by the authentication key parameters. 
 
 
 * Only the Responder SHALL have access to the Responder's private authentication key.
@@ -431,7 +431,7 @@ One byte credential identifiers are realistic in many scenarios as most constrai
 
 ## Cipher Suites {#cs}
 
-An EDHOC cipher suite consists of an ordered set of algorithms from the "COSE Algorithms" and "COSE Elliptic Curves" registries. Algorithms need to be specified with enough parameters to make them completely determined. Currently, none of the algorithms require parameters. EDHOC is only specified for use with key exchange algorithms of type ECDH curves. Use with other types of key exchange algorithms would likely require a specification updating EDHOC. Note that for most signature algorithms, the signature is detemined by the signature algorithm and the authentication key algorithm together, see {{auth-keys}}. 
+An EDHOC cipher suite consists of an ordered set of algorithms from the "COSE Algorithms" and "COSE Elliptic Curves" registries. Algorithms need to be specified with enough parameters to make them completely determined. Currently, none of the algorithms require parameters. EDHOC is only specified for use with key exchange algorithms of type ECDH curves. Use with other types of key exchange algorithms would likely require a specification updating EDHOC. Note that for most signature algorithms, the signature is determined by the signature algorithm and the authentication key algorithm together, see {{auth-keys}}. 
 
 * EDHOC AEAD algorithm
 * EDHOC hash algorithm
@@ -769,7 +769,7 @@ The Responder SHALL compose message_2 as follows:
 
 * Choose a connection identifier C_R and store it for the length of the protocol.
 
-* Compute the transcript hash TH_2 = H( H(message_1), data_2 ) where H() is the hash function in the selected cipher suite. The transcript hash TH_2 is a CBOR encoded bstr and the input to the hash function is a CBOR Sequence. Note that H(message_1) can be computed and cached alredy in the processing of message_1.
+* Compute the transcript hash TH_2 = H( H(message_1), data_2 ) where H() is the hash function in the selected cipher suite. The transcript hash TH_2 is a CBOR encoded bstr and the input to the hash function is a CBOR Sequence. Note that H(message_1) can be computed and cached already in the processing of message_1.
 
 * Compute an inner COSE_Encrypt0 as defined in Section 5.3 of {{I-D.ietf-cose-rfc8152bis-struct}}, with the EDHOC AEAD algorithm in the selected cipher suite, K_2m, IV_2m, and the following parameters:
 
@@ -865,7 +865,7 @@ The Initiator  SHALL compose message_3 as follows:
 
 * If corr (METHOD_CORR mod 4) equals 2 or 3, C_R is omitted, otherwise C_R is not omitted.
 
-* Compute the transcript hash TH_3 = H( H(TH_2, CIPHERTEXT_2), data_3 ) where H() is the hash function in the selected cipher suite. The transcript hash TH_3 is a CBOR encoded bstr and the input to the hash function is a CBOR Sequence.  Note that H(TH_2, CIPHERTEXT_2) can be computed and cached alredy in the processing of message_2.
+* Compute the transcript hash TH_3 = H( H(TH_2, CIPHERTEXT_2), data_3 ) where H() is the hash function in the selected cipher suite. The transcript hash TH_3 is a CBOR encoded bstr and the input to the hash function is a CBOR Sequence.  Note that H(TH_2, CIPHERTEXT_2) can be computed and cached already in the processing of message_2.
 
 * Compute an inner COSE_Encrypt0 as defined in Section 5.3 of {{I-D.ietf-cose-rfc8152bis-struct}}, with the EDHOC AEAD algorithm in the selected cipher suite, K_3m, IV_3m, and the following parameters:
 
@@ -1061,7 +1061,7 @@ Initiator                                                   Responder
 
 Note that the Initiator's list of supported cipher suites and order of preference is fixed (see {{asym-msg1-form}} and {{init-proc-msg1}}). Furthermore, the Responder shall only accept message_1 if the selected cipher suite is the first cipher suite in SUITES_I that the Responder supports (see {{resp-proc-msg1}}). Following this procedure ensures that the selected cipher suite is the most preferred (by the Initiator) cipher suite supported by both parties.
 
-If the selected cipher suite is not the first cipher suite which the Responder supports in SUITES_I received in message_1, then Responder MUST discontinue the protocol, see {{resp-proc-msg1}}. If SUITES_I in message_1 is manipulated then the integrity verification of message_2 containing the transcript hash TH_2 = H( message_1, data_2 ) will fail and the Initiator will discontinue the protocol.
+If the selected cipher suite is not the first cipher suite which the Responder supports in SUITES_I received in message_1, then Responder MUST discontinue the protocol, see {{resp-proc-msg1}}. If SUITES_I in message_1 is manipulated then the integrity verification of message_2 containing the transcript hash TH_2 will fail and the Initiator will discontinue the protocol.
 
 # Transferring EDHOC and Deriving an OSCORE Context {#transfer}
 
@@ -1787,7 +1787,7 @@ data_2 (CBOR Sequence) (35 bytes)
 19 52 81 75 4c 5e bc af 30 1e 37 
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-From data_2 and message_1, compute the input to the transcript hash TH_2 = H( message_1, data_2 ), as a CBOR Sequence of these 2 data items.
+From data_2 and message_1, compute the input to the transcript hash TH_2 = H( H(message_1), data_2 ), as a CBOR Sequence of these 2 data items.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 Input to calculate TH_2 (CBOR Sequence) (72 bytes)
@@ -1796,7 +1796,7 @@ ec 07 6b ba 02 59 d9 04 b7 ec 8b 0c 2e 58 20 71 a3 d5 99 c2 1d a1 89 02
 a1 ae a8 10 b2 b6 38 2c cd 8d 5f 9b f0 19 52 81 75 4c 5e bc af 30 1e 37 
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-And from there, compute the transcript hash TH_2 = SHA-256( message_1, data_2 )
+And from there, compute the transcript hash TH_2 = SHA-256( H(message_1), data_2 )
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 TH_2 (CBOR unencoded) (32 bytes)
@@ -2110,7 +2110,7 @@ data_3 (CBOR Sequence) (1 byte)
 37
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-From data_3, CIPHERTEXT_2, and TH_2, compute the input to the transcript hash TH_3 = H(TH_2 , CIPHERTEXT_2, data_3), as a CBOR Sequence of these 3 data items.
+From data_3, CIPHERTEXT_2, and TH_2, compute the input to the transcript hash TH_3 = H( H(TH_2 , CIPHERTEXT_2), data_3), as a CBOR Sequence of 2 data items.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 Input to calculate TH_3 (CBOR Sequence) (117 bytes)
@@ -2121,7 +2121,7 @@ d2 c2 c1 53 c1 7f 8e 96 29 ff 58 50 0f f2 ac 2d 7e 87 ae 34 0e 50 bb de
 81 07 f4 0f 21 46 3b a8 11 bf 03 97 19 e7 cf fa a7 f2 f4 40 37 
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-And from there, compute the transcript hash TH_3 = SHA-256(TH_2 , CIPHERTEXT_2, data_3)
+And from there, compute the transcript hash TH_3 = SHA-256( H(TH_2 , CIPHERTEXT_2), data_3)
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 TH_3 (CBOR unencoded) (32 bytes)
@@ -2749,7 +2749,7 @@ data_2 (CBOR Sequence) (35 bytes)
 fc 33 01 04 70 69 45 1b af 35 37 
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-From data_2 and message_1, compute the input to the transcript hash TH_2 = H( message_1, data_2 ), as a CBOR Sequence of these 2 data items.
+From data_2 and message_1, compute the input to the transcript hash TH_2 = H( H(message_1), data_2 ), as a CBOR Sequence of these 2 data items.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 Input to calculate TH_2 (CBOR Sequence) (72 bytes)
@@ -2758,7 +2758,7 @@ a5 38 a4 44 ee 9e 2b 57 e2 44 1a 7c 21 58 20 52 fb a0 bd c8 d9 53 dd 86
 ce 1a b2 fd 7c 05 a4 65 8c 7c 30 af db fc 33 01 04 70 69 45 1b af 35 37  
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-And from there, compute the transcript hash TH_2 = SHA-256( message_1, data_2 )
+And from there, compute the transcript hash TH_2 = SHA-256( H(message_1), data_2 )
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 TH_2 (CBOR unencoded) (32 bytes)
@@ -3030,7 +3030,7 @@ data_3 (CBOR Sequence) (1 byte)
 37 
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-From data_3, CIPHERTEXT_2, and TH_2, compute the input to the transcript hash TH_3 = H(TH_2 , CIPHERTEXT_2, data_3), as a CBOR Sequence of these 3 data items.
+From data_3, CIPHERTEXT_2, and TH_2, compute the input to the transcript hash TH_3 = H( H(TH_2 , CIPHERTEXT_2), data_3), as a CBOR Sequence of these 2 data items.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 Input to calculate TH_3 (CBOR Sequence) (46 bytes)
@@ -3038,7 +3038,7 @@ Input to calculate TH_3 (CBOR Sequence) (46 bytes)
 cf 8c 73 a6 e8 a7 c3 62 1e 26 4a a3 f1 bd 5d 02 8d 19 cf 3c 99 37  
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-And from there, compute the transcript hash TH_3 = SHA-256(TH_2 , CIPHERTEXT_2, data_3)
+And from there, compute the transcript hash TH_3 = SHA-256( H(TH_2 , CIPHERTEXT_2), data_3)
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 TH_3 (CBOR unencoded) (32 bytes)
@@ -3445,6 +3445,23 @@ Note that the requirements in {{proc-outline}} still apply because duplicate mes
 
 Main changes:
 
+* From -06 to -07:
+
+   * Changed transcript hash definition for TH_2 and TH_3
+   * Removed "EDHOC signature algorithm curve" from cipher suite
+   * New IANA registry "EDHOC Exporter Label" 
+   * New application defined parameter "context" in EDHOC-Exporter
+   * Changed normative language for failure from MUST to SHOULD send error
+   * Made error codes non-negative and 0 for success
+   * Added detail on success error code
+   * Aligned terminology "protocol instance" ->  "session"
+   * New appendix on compact EC point representation
+   * Added detail on use of ephemeral public keys
+   * Moved key derivation for OSCORE to draft-ietf-core-oscore-edhoc
+   * Additional security considerations 
+   
+
+
 * From -05 to -06:
    * New section 5.2 "Message Processing Outline"
    * Optional inital byte C_1 = null in message_1
@@ -3455,7 +3472,7 @@ Main changes:
    * New section on message deduplication
    * New appendix containin all CDDL definitions
    * New appendix with change log
-   * Removed section "Other Documents Referncing EDHOC"
+   * Removed section "Other Documents Referencing EDHOC"
    * Clarifications based on review comments
 
 
