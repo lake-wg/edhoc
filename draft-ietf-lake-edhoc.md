@@ -21,7 +21,7 @@ author:
       -
         ins: J. Mattsson
         name: John Preuß Mattsson
-        org: Ericsson ABt
+        org: Ericsson AB
         email: john.mattsson@ericsson.com
       -
         ins: F. Palombini
