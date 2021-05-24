@@ -3470,7 +3470,9 @@ Main changes:
    * New appendix on compact EC point representation
    * Added detail on use of ephemeral public keys
    * Moved key derivation for OSCORE to draft-ietf-core-oscore-edhoc
-   * Additional security considerations 
+   * Additional security considerations
+   * Renamed "Auxililary Data" as "External Authorization Data"
+   * Added encrypted EAD_4 to message_4
    
 
 
