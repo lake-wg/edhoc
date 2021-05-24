@@ -500,7 +500,7 @@ EAD = (
 )
 ~~~~~~~~~~~ 
 
-type is an int and is followed by one or more ext_authz_data depending on type as defined in a separate specification. Current EAD types are listed in an IANA register, see {{iana-ead}}.
+where type is an int and is followed by one or more ext_authz_data depending on type as defined in a separate specification. 
 
 The EAD fields of EDHOC are not intended for generic application data. Since data carried in EAD_1 and EAD_2 fields may not be protected, special considerations need to be made such that a) it does not violate security, privacy etc. requirements of the service which uses this data, and b) it does not violate the security properties of EDHOC. Security applications making use of the EAD fields must perform the necessary security analysis.
 
@@ -1425,10 +1425,6 @@ IANA has added the media type 'application/edhoc' to the CoAP Content-Formats re
 -  ID: TBD42
 
 -  Reference: \[\[this document\]\]
-
-## EDHOC External Authorization Data {#iana-ead}
-
-IANA has created a new registry entitled "EDHOC External Authorization Data" under the new heading "EDHOC". The registration procedure is "Expert Review". The columns of the registry are Value, Description, and Reference, where Value is an integer and the other columns are text strings. 
 
 
 ## Expert Review Instructions
