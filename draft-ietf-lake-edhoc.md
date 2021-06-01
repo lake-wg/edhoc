@@ -464,18 +464,26 @@ The following cipher suites are for constrained IoT where message overhead is a 
        AES-CCM-16-64-128, SHA-256)
 ~~~~~~~~~~~
 
-The following cipher suite is for general non-constrained applications. It uses very high performance algorithms that also are widely supported:
+The following cipher suites are for general non-constrained applications. They use high performance algorithms that are widely supported:
 
 ~~~~~~~~~~~
    4. ( 1, -16, 4, -7, 1, -16 )
       (A128GCM, SHA-256, X25519, ES256,
        A128GCM, SHA-256)
+
+   5. ( 24, -16, 4, -8, 24, -16 )
+      (ChaCha20/Poly1305, SHA-256, X25519, EdDSA,
+       ChaCha20/Poly1305, SHA-256)
+
+   6. ( 24, -16, 1, -7, 24, -16 )
+      (ChaCha20/Poly1305, SHA-256, P-256, ES256,
+       ChaCha20/Poly1305, SHA-256)
 ~~~~~~~~~~~
 
 The following cipher suite is for high security application such as government use and financial applications. It is compatible with the CNSA suite {{CNSA}}.
 
 ~~~~~~~~~~~
-   5. ( 3, -43, 2, -35, 3, -43 )
+  24. ( 3, -43, 2, -35, 3, -43 )
       (A256GCM, SHA-384, P-384, ES384,
        A256GCM, SHA-384)
 ~~~~~~~~~~~
