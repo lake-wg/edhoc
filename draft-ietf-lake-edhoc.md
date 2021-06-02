@@ -479,7 +479,7 @@ The following ChaCha20 cipher suites are for less constrained applications and o
 The following GCM cipher suite is for general non-constrained applications. It uses high performance algorithms that are widely supported:
 
 ~~~~~~~~~~~
-   4. ( 1, -16, 4, -7, 1, -16 )
+   6. ( 1, -16, 4, -7, 1, -16 )
       (A128GCM, SHA-256, X25519, ES256,
        A128GCM, SHA-256)
 ~~~~~~~~~~~
