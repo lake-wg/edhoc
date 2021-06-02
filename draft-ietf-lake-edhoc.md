@@ -490,9 +490,7 @@ The following two cipher suites are for high security application such as govern
   24. ( 3, -43, 2, -35, 3, -43 )
       (A256GCM, SHA-384, P-384, ES384,
        A256GCM, SHA-384)
-~~~~~~~~~~~
 
-~~~~~~~~~~~
   25. ( 24, -45, 5, -8, 24, -45 )
       (ChaCha20/Poly1305, SHAKE256, X448, EdDSA,
        ChaCha20/Poly1305, SHAKE256)
