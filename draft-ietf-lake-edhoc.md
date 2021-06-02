@@ -444,7 +444,7 @@ Each cipher suite is identified with a pre-defined int label.
 
 EDHOC can be used with all algorithms and curves defined for COSE. Implementation can either use one of the pre-defined cipher suites ({{suites-registry}}) or use any combination of COSE algorithms and parameters to define their own private cipher suite. Private cipher suites can be identified with any of the four values -24, -23, -22, -21.
 
-The following cipher suites are for constrained IoT where message overhead is a very important factor:
+TThe following CCM cipher suites are for constrained IoT where message overhead is a very important factor. Cipher suites 1 and 3 use a larger tag length (128-bit) in the EDHOC AEAD algorithm than the Application AEAD algorithm (64-bit):
 
 ~~~~~~~~~~~
    0. ( 10, -16, 4, -8, 10, -16 )
@@ -464,28 +464,38 @@ The following cipher suites are for constrained IoT where message overhead is a 
        AES-CCM-16-64-128, SHA-256)
 ~~~~~~~~~~~
 
-The following cipher suites are for general non-constrained applications. They use high performance algorithms that are widely supported:
+The following ChaCha20 cipher suites are for less constrained applications and only use 128-bit tag lengths.
+
+~~~~~~~~~~~
+   4. ( 24, -16, 4, -8, 24, -16 )
+      (ChaCha20/Poly1305, SHA-256, X25519, EdDSA,
+       ChaCha20/Poly1305, SHA-256)
+
+   5. ( 24, -16, 1, -7, 24, -16 )
+      (ChaCha20/Poly1305, SHA-256, P-256, ES256,
+       ChaCha20/Poly1305, SHA-256)
+~~~~~~~~~~~
+
+The following GCM cipher suite is for general non-constrained applications. It uses high performance algorithms that are widely supported:
 
 ~~~~~~~~~~~
    4. ( 1, -16, 4, -7, 1, -16 )
       (A128GCM, SHA-256, X25519, ES256,
        A128GCM, SHA-256)
-
-   5. ( 24, -16, 4, -8, 24, -16 )
-      (ChaCha20/Poly1305, SHA-256, X25519, EdDSA,
-       ChaCha20/Poly1305, SHA-256)
-
-   6. ( 24, -16, 1, -7, 24, -16 )
-      (ChaCha20/Poly1305, SHA-256, P-256, ES256,
-       ChaCha20/Poly1305, SHA-256)
 ~~~~~~~~~~~
 
-The following cipher suite is for high security application such as government use and financial applications. It is compatible with the CNSA suite {{CNSA}}.
+The following two cipher suites are for high security application such as government use and financial applications. The two cipher suites do not share any algorithms. The first of the two cipher suites is compatible with the CNSA suite {{CNSA}}.
 
 ~~~~~~~~~~~
   24. ( 3, -43, 2, -35, 3, -43 )
       (A256GCM, SHA-384, P-384, ES384,
        A256GCM, SHA-384)
+~~~~~~~~~~~
+
+~~~~~~~~~~~
+  25. ( 24, -45, 5, -8, 24, -45 )
+      (ChaCha20/Poly1305, SHAKE256, X448, EdDSA,
+       ChaCha20/Poly1305, SHAKE256)
 ~~~~~~~~~~~
 
 The different methods use the same cipher suites, but some algorithms are not used in some methods. The EDHOC signature algorithm is not used in methods without signature authentication.
