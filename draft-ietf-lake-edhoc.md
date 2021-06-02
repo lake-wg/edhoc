@@ -1385,6 +1385,22 @@ Reference: [[this document]]
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 Value: 4
+Array: 24, -16, 4, -8, 24, -16
+Desc: ChaCha20/Poly1305, SHA-256, X25519, EdDSA,
+      ChaCha20/Poly1305, SHA-256
+Reference: [[this document]]
+~~~~~~~~~~~~~~~~~~~~~~~
+
+~~~~~~~~~~~~~~~~~~~~~~~
+Value: 5
+Array: 24, -16, 1, -7, 24, -16
+Desc: ChaCha20/Poly1305, SHA-256, P-256, ES256,
+      ChaCha20/Poly1305, SHA-256
+Reference: [[this document]]
+~~~~~~~~~~~~~~~~~~~~~~~
+
+~~~~~~~~~~~~~~~~~~~~~~~
+Value: 6
 Array: 1, -16, 4, -7, 1, -16
 Desc: A128GCM, SHA-256, X25519, ES256,
       A128GCM, SHA-256
@@ -1392,13 +1408,20 @@ Reference: [[this document]]
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 ~~~~~~~~~~~~~~~~~~~~~~~
-Value: 5
+Value: 24
 Array: 3, -43, 2, -35, 3, -43 
 Desc: A256GCM, SHA-384, P-384, ES384,
       A256GCM, SHA-384
 Reference: [[this document]]
 ~~~~~~~~~~~~~~~~~~~~~~~
 
+~~~~~~~~~~~~~~~~~~~~~~~
+Value: 25
+Array: 24, -45, 5, -8, 24, -45
+Desc: ChaCha20/Poly1305, SHAKE256, X448, EdDSA,
+      ChaCha20/Poly1305, SHAKE256
+Reference: [[this document]]
+~~~~~~~~~~~~~~~~~~~~~~~
 
 ## EDHOC Method Type Registry {#method-types}
 
