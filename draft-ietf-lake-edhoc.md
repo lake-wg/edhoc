@@ -444,7 +444,7 @@ Each cipher suite is identified with a pre-defined int label.
 
 EDHOC can be used with all algorithms and curves defined for COSE. Implementation can either use one of the pre-defined cipher suites ({{suites-registry}}) or use any combination of COSE algorithms and parameters to define their own private cipher suite. Private cipher suites can be identified with any of the four values -24, -23, -22, -21.
 
-TThe following CCM cipher suites are for constrained IoT where message overhead is a very important factor. Cipher suites 1 and 3 use a larger tag length (128-bit) in the EDHOC AEAD algorithm than the Application AEAD algorithm (64-bit):
+The following CCM cipher suites are for constrained IoT where message overhead is a very important factor. Cipher suites 1 and 3 use a larger tag length (128-bit) in the EDHOC AEAD algorithm than the Application AEAD algorithm (64-bit):
 
 ~~~~~~~~~~~
    0. ( 10, -16, 4, -8, 10, -16 )
