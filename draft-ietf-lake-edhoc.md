@@ -271,15 +271,15 @@ The Initiator can derive symmetric application keys after creating EDHOC message
 
 ~~~~~~~~~~~
 Initiator                                                   Responder
-|            C_1, METHOD_CORR, SUITES_I, G_X, C_I, EAD_1            |
+|                   METHOD, SUITES_I, G_X, C_I, EAD_1               |
 +------------------------------------------------------------------>|
 |                             message_1                             |
 |                                                                   |
-|      C_I, G_Y, C_R, Enc(ID_CRED_R, Signature_or_MAC_2, EAD_2)     |
+|          G_Y, C_R, Enc(ID_CRED_R, Signature_or_MAC_2, EAD_2)      |
 |<------------------------------------------------------------------+
 |                             message_2                             |
 |                                                                   |
-|       C_R, AEAD(K_3ae; ID_CRED_I, Signature_or_MAC_3, EAD_3)      |
+|           AEAD(K_3ae; ID_CRED_I, Signature_or_MAC_3, EAD_3)       |
 +------------------------------------------------------------------>|
 |                             message_3                             |
 ~~~~~~~~~~~
@@ -512,7 +512,7 @@ EDHOC requires certain parameters to be agreed upon between Initiator and Respon
 The purpose of the applicability statement is describe the intended use of EDHOC to allow for the relevant processing and verifications to be made, including things like:
 
 1. How the endpoint detects that an EDHOC message is received. This includes how EDHOC messages are transported, for example in the payload of a CoAP message with a certain Uri-Path or Content-Format; see {{coap}}.
- * The method of transporting EDHOC messages may also describe data carried along with the messages that are needed for the transport to satisfy the requirements of {{transport}}, e.g., connection identifiers used in certain messages.
+ * The method of transporting EDHOC messages may also describe data carried along with the messages that are needed for the transport to satisfy the requirements of {{transport}}, e.g., connection identifiers used with certain messages, see {{coap}}.
 1. Authentication method (METHOD; see {{method}}).
 3. Profile for authentication credentials (CRED_I, CRED_R; see {{auth-cred}}), e.g., profile for certificate or COSE_key, including supported authentication key algorithms (subject public key algorithm in X.509 certificate).
 4. Type used to identify authentication credentials (ID_CRED_I, ID_CRED_R; see {{id_cred}}).
@@ -3467,7 +3467,7 @@ may need ... no, they don't need anything special: after an error, the next thin
 Main changes:
 
 * Pending:
-   * Prepended C_x moved from the EDHOC protocol itself to the mapping over CoAP; METHOD_CORR renamed to METHOD, corr removed.
+   * Prepended C_x moved from the EDHOC protocol itself to the transport mapping; METHOD_CORR renamed to METHOD, corr removed.
 
 * From -06 to -07:
 
