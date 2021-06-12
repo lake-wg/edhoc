@@ -307,6 +307,7 @@ An implementation may support only a single method. The Initiator and the Respon
 {: artwork-align="center"}
 
 ## Connection Identifiers and Transport
+
 ### Connection Identifiers {#ci}
 
 EDHOC includes the negotiation of connection identifiers (C_I, C_R) which may be used to identify a connection for which EDHOC has established keys. The connection identifiers C_I and C_R do not have any cryptographic purpose in EDHOC.
