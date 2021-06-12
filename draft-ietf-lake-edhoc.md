@@ -265,7 +265,7 @@ To simplify for implementors, the use of CBOR and COSE in EDHOC is summarized in
 
 An EDHOC message flow consists of three mandatory messages (message_1, message_2, message_3) between Initiator and Responder, an optional fourth message (message_4), plus an EDHOC error message. EDHOC messages are CBOR Sequences {{RFC8742}}, see {{fig-flow}}. The protocol elements in the figure are introduced in the following sections. Message formatting and processing is specified in {{asym}} and {{error}}. An implementation may support only Initiator or only Responder. 
 
-Application data is protected using the agreed application algorithms (AEAD, hash) in the selected cipher suite (see {{cs}}) and the application can make use of the established connection identifiers C_1, C_I, and C_R (see {{corr}}). EDHOC may be used with the media type application/edhoc defined in {{iana}}.
+Application data is protected using the agreed application algorithms (AEAD, hash) in the selected cipher suite (see {{cs}}) and the application can make use of the established connection identifiers C_I and C_R (see {{corr}}). EDHOC may be used with the media type application/edhoc defined in {{iana}}.
 
 The Initiator can derive symmetric application keys after creating EDHOC message_3, see {{exporter}}. Application protected data can therefore be sent in parallel or together with EDHOC message_3.
 
@@ -289,7 +289,9 @@ Initiator                                                   Responder
 
 ## Method and Correlation
 
-The data item METHOD_CORR in message_1 (see {{asym-msg1-form}}), is an integer specifying the method and the correlation properties of the transport, which are described in this section.
+The data item METHOD in message_1 (see {{asym-msg1-form}}), is an integer specifying the method, which are described in this section.
+
+[ Correlation is described in this section purely for historical reasons to make the initial change towards C_x being outside the message easier to read as a diff. ]
 
 ### Method {#method}
 
@@ -312,29 +314,17 @@ An implementation may support only a single method. The Initiator and the Respon
 
 ### Connection Identifiers {#ci}
 
-EDHOC includes optional connection identifiers (C_1, C_I, C_R). The connection identifiers C_1, C_I, and C_R do not have any cryptographic purpose in EDHOC. They contain information facilitating retrieval of the protocol state and may therefore be very short. C_1 is always set to `null`, while  C_I and C_R are chosen by I and R, respectively. One byte connection identifiers are realistic in many scenarios as most constrained devices only have a few connections. In cases where a node only has one connection, the identifiers may even be the empty byte string. 
+EDHOC negotiates (but does not on its own use) connection identifiers (C_I, C_R). The connection identifiers C_I, and C_R do not have any cryptographic purpose in EDHOC. They contain information facilitating retrieval of the protocol state and may therefore be very short. C_I and C_R are chosen by I and R, respectively. One byte connection identifiers are realistic in many scenarios as most constrained devices only have a few connections. In cases where a node only has one connection, the identifiers may even be the empty byte string. 
+
+EDHOC transports that do not inherently provide correlation across all messages of an exchange can send them along with EDHOC messages to gain that capability required in {{transport}}.
 
 The connection identifier MAY be used with an application protocol (e.g. OSCORE) for which EDHOC establishes keys, in which case the connection identifiers SHALL adhere to the requirements for that protocol. Each party choses a connection identifier it desires the other party to use in outgoing messages. (For OSCORE this results in the endpoint selecting its Recipient ID, see Section 3.1 of {{RFC8613}}).
 
 ### Transport {#transport}
 
-Cryptographically, EDHOC does not put requirements on the lower layers. EDHOC is not bound to a particular transport layer, and can be used in environments without IP. The application using EDHOC is responsible to handle message loss, reordering, message duplication, fragmentation, demultiplex EDHOC messages from other types of messages, and denial of service protection, where necessary.
+Cryptographically, EDHOC does not put requirements on the lower layers. EDHOC is not bound to a particular transport layer, and can be used in environments without IP. The application using EDHOC is responsible to handle message loss, reordering, message duplication, correlation of all messages (which includes indication of a message being a message 1, as it is not correlated to earlier messages), fragmentation, and denial of service protection, where necessary.
 
 The Initiator and the Responder need to have agreed on a transport to be used for EDHOC, see {{applicability}}. It is recommended to transport EDHOC in CoAP payloads, see {{transfer}}.
-
-### Message Correlation {#corr}
-
-If the whole transport path provides a mechanism for correlating messages received with messages previously sent, then some of the connection identifiers may be omitted. There are four cases:
-
-   * corr = 0, the transport does not provide a correlation mechanism.
-
-   * corr = 1, the transport provides a correlation mechanism that enables the Responder to correlate message_2 and message_1 as well as message_4 and message_3.
-
-   * corr = 2, the transport provides a correlation mechanism that enables the Initiator to correlate message_3 and message_2.
-
-   * corr = 3, the transport provides a correlation mechanism that enables both parties to correlate all three messages.
-
-For example, if the key exchange is transported over CoAP, the CoAP Token can be used to correlate messages, see {{coap}}. 
 
 
 ## Authentication Parameters {#auth-key-id}
@@ -516,8 +506,8 @@ EDHOC requires certain parameters to be agreed upon between Initiator and Respon
 The purpose of the applicability statement is describe the intended use of EDHOC to allow for the relevant processing and verifications to be made, including things like:
 
 1. How the endpoint detects that an EDHOC message is received. This includes how EDHOC messages are transported, for example in the payload of a CoAP message with a certain Uri-Path or Content-Format; see {{coap}}.
-1. Method and correlation of underlying transport messages (METHOD_CORR; see {{method}} and {{corr}}). This gives information about the optional connection identifier fields.
-2. How message_1 is identified, in particular if the optional initial C_1 = `null` of message_1 is present; see {{asym-msg1-form}}
+   The method of transporting EDHOC messages may also describe data transported along with the messages that are needed for the transport to satisfy the requirements of {{transport}}.
+1. Method (METHOD; see {{method}}).
 3. Profile for authentication credentials (CRED_I, CRED_R; see {{auth-cred}}), e.g., profile for certificate or COSE_key, including supported authentication key algorithms (subject public key algorithm in X.509 certificate).
 4. Type used to identify authentication credentials (ID_CRED_I, ID_CRED_R; see {{id_cred}}).
 5. Use and type of external authorization data (EAD_1, EAD_2, EAD_3, EAD_4; see {{AD}}).
@@ -528,7 +518,7 @@ The applicability statement may also contain information about supported cipher 
 
 An example of an applicability statement is shown in {{appl-temp}}. 
 
-For some parameters, like METHOD_CORR, ID_CRED_x, type of EAD, the receiver is able to verify compliance with applicability statement, and if it needs to fail because of incompliance, to infer the reason why the protocol failed.
+For some parameters, like METHOD, ID_CRED_x, type of EAD, the receiver is able to verify compliance with applicability statement, and if it needs to fail because of incompliance, to infer the reason why the protocol failed.
 
 For other parameters, like CRED_x in the case that it is not transported, it may not be possible to verify that incompliance with applicability statement was the reason for failure: Integrity verification in message_2 or message_3 may fail not only because of wrong authentication credential. For example, in case the Initiator uses public key certificate by reference (i.e. not transported within the protocol) then both endpoints need to use an identical data structure as CRED_I or else the integrity verification will fail.
 
@@ -682,7 +672,7 @@ EDHOC messages SHALL be processed according to the current protocol state. The f
 
 1. Detect that an EDHOC message has been received, for example by means of port number, URI, or media type ({{applicability}}).
 
-2. Retrieve the protocol state, e.g. using the received connection identifier ({{ci}}) or with the help of message correlation provided by the transport protocol ({{corr}}). If there is no protocol state, in the case of message_1, a new protocol state is created. An initial C_1 = `null` byte in message_1 ({{asym-msg1-form}}) can be used to distinguish message_1 from other messages. The Responder endpoint needs to make use of available Denial-of-Service mitigation ({{dos}}).
+2. Retrieve the protocol state according to the message correlation provided by the transport as required by {{transport}}. If there is no protocol state, in the case of message_1, a new protocol state is created. The Responder endpoint needs to make use of available Denial-of-Service mitigation ({{dos}}).
 
 3. If the message received is an error message then process according to {{error}}, else process as the expected next message according to the protocol state. 
 
@@ -699,8 +689,7 @@ message_1 SHALL be a CBOR Sequence (see {{CBOR}}) as defined below
 
 ~~~~~~~~~~~ CDDL
 message_1 = (
-  ? C_1 : null,
-  METHOD_CORR : int,
+  METHOD : int,
   SUITES_I : [ selected : suite, supported : 2* suite ] / suite,
   G_X : bstr,
   C_I : bstr_identifier,  
@@ -712,8 +701,7 @@ suite = int
 
 where:
 
-* C_1 - an initial CBOR simple value `null` (= 0xf6) MAY be used to distinguish message_1 from other messages.
-* METHOD_CORR = 4 * method + corr, where method = 0, 1, 2, or 3 (see {{fig-method-types}}) and the correlation parameter corr is chosen based on the transport and determines which connection identifiers that are omitted (see {{corr}}).
+* METHOD = 0, 1, 2, or 3 (see {{fig-method-types}}).
 * SUITES_I - cipher suites which the Initiator supports in order of (decreasing) preference. The list of supported cipher suites can be truncated at the end, as is detailed in the processing steps below and {{wrong-selected}}. One of the supported cipher suites is selected. The selected suite is the first suite in the SUITES_I CBOR array. If a single supported cipher suite is conveyed then that cipher suite is selected and SUITES_I is encoded as an int instead of an array.
 * G_X - the ephemeral public key of the Initiator
 * C_I - variable length connection identifier, encoded as a bstr_identifier (see {{bstr_id}}).
@@ -760,7 +748,6 @@ message_2 = (
 
 ~~~~~~~~~~~ CDDL
 data_2 = (
-  ? C_I : bstr_identifier,
   G_Y : bstr,
   C_R : bstr_identifier,
 )
@@ -774,8 +761,6 @@ where:
 ### Responder Processing of Message 2 {#asym-msg2-proc}
 
 The Responder SHALL compose message_2 as follows:
-
-* If corr (METHOD_CORR mod 4) equals 1 or 3, C_I is omitted, otherwise C_I is not omitted.
 
 * Generate an ephemeral ECDH key pair using the curve in the selected cipher suite and format it as a COSE_Key. Let G_Y be the 'x' parameter of the COSE_Key.
 
@@ -840,7 +825,7 @@ The Initiator SHALL process message_2 as follows:
 
 * Decode message_2 (see {{CBOR}}).
 
-* Retrieve the protocol state using the connection identifier C_I and/or other external information such as the CoAP Token and the 5-tuple.
+* Retrieve the protocol state from the transport's correlation (e.g., the CoAP Token and the 5-tuple as a client, or the prepended C_I as a server).
 
 * Decrypt CIPHERTEXT_2, see {{asym-msg2-proc}}.
 
@@ -866,17 +851,16 @@ message_3 = (
 )
 ~~~~~~~~~~~
 
+[ The data_3 is left empty for the time being to not overly interfere with the transcript calculation while initially moving C_x outside. ]
+
 ~~~~~~~~~~~ CDDL
 data_3 = (
-  ? C_R : bstr_identifier,
 )
 ~~~~~~~~~~~
 
 ### Initiator Processing of Message 3 {#asym-msg3-proc}
 
 The Initiator  SHALL compose message_3 as follows:
-
-* If corr (METHOD_CORR mod 4) equals 2 or 3, C_R is omitted, otherwise C_R is not omitted.
 
 * Compute the transcript hash TH_3 = H( H(TH_2, CIPHERTEXT_2), data_3 ) where H() is the hash function in the selected cipher suite. The transcript hash TH_3 is a CBOR encoded bstr and the input to the hash function is a CBOR Sequence.  Note that H(TH_2, CIPHERTEXT_2) can be computed and cached already in the processing of message_2.
 
@@ -950,7 +934,7 @@ The Responder SHALL process message_3 as follows:
 
 * Decode message_3 (see {{CBOR}}).
 
-* Retrieve the protocol state using the connection identifier C_R and/or other external information such as the CoAP Token and the 5-tuple.
+* Retrieve the protocol state from the transport's correlation (e.g., the CoAP Token and the 5-tuple as a client, or the prepended C_R as a server).
 
 * Decrypt and verify the outer COSE_Encrypt0 as defined in Section 5.3 of {{I-D.ietf-cose-rfc8152bis-struct}}, with the EDHOC AEAD algorithm in the selected cipher suite, K_3ae, and IV_3ae.
 
@@ -978,7 +962,6 @@ error SHALL be a CBOR Sequence (see {{CBOR}}) as defined below
 
 ~~~~~~~~~~~ CDDL
 error = (
-  ? C_x : bstr_identifier,
   ERR_CODE : int,
   ERR_INFO : any
 )
@@ -987,7 +970,6 @@ error = (
 
 where:
 
-* C_x - (optional) variable length connection identifier, encoded as a bstr_identifier (see {{bstr_id}}). If error is sent by the Responder and corr (METHOD_CORR mod 4) equals 0 or 2 then C_x is set to C_I, else if error is sent by the Initiator and corr (METHOD_CORR mod 4) equals 0 or 1 then C_x is set to C_R, else C_x is omitted.
 * ERR_CODE - error code encoded as an integer. The value 0 is used for success, all other values (negative or positive) indicate errors.
 * ERR_INFO - error information. Content and encoding depend on error code.
 
@@ -1040,15 +1022,15 @@ In the first example ({{fig-error1}}), the Responder supports cipher suite 6 but
 
 ~~~~~~~~~~~
 Initiator                                                   Responder
-|             METHOD_CORR, SUITES_I = 5, G_X, C_I, EAD_1            |
+|              METHOD, SUITES_I = 5, G_X, C_I, EAD_1                |
 +------------------------------------------------------------------>|
 |                             message_1                             |
 |                                                                   |
-|                    C_I, DIAG_MSG, SUITES_R = 6                    |
+|                      DIAG_MSG, SUITES_R = 6                       |
 |<------------------------------------------------------------------+
 |                               error                               |
 |                                                                   |
-|         METHOD_CORR, SUITES_I = [6, 5, 6], G_X, C_I, EAD_1        |
+|           METHOD, SUITES_I = [6, 5, 6], G_X, C_I, EAD_1           |
 +------------------------------------------------------------------>|
 |                             message_1                             |
 ~~~~~~~~~~~
@@ -1059,15 +1041,15 @@ In the second example ({{fig-error2}}), the Responder supports cipher suites 8 a
 
 ~~~~~~~~~~~
 Initiator                                                   Responder
-|        METHOD_CORR, SUITES_I = [6, 5, 6], G_X, C_I, EAD_1         |
+|          METHOD, SUITES_I = [6, 5, 6], G_X, C_I, EAD_1            |
 +------------------------------------------------------------------>|
 |                             message_1                             |
 |                                                                   |
-|                  C_I, DIAG_MSG, SUITES_R = [9, 8]                 |
+|                     DIAG_MSG, SUITES_R = [9, 8]                   |
 |<------------------------------------------------------------------+
 |                               error                               |
 |                                                                   |
-|      METHOD_CORR, SUITES_I = [8, 5, 6, 7, 8], G_X, C_I, EAD_1     |
+|         METHOD, SUITES_I = [8, 5, 6, 7, 8], G_X, C_I, EAD_1       |
 +------------------------------------------------------------------>|
 |                             message_1                             |
 ~~~~~~~~~~~
@@ -1100,9 +1082,10 @@ message_4 = (
 )
 ~~~~~~~~~~~
 
+[ The data_4 is left empty for the time being to not overly interfere with the transcript calculation while initially moving C_x outside. ]
+
 ~~~~~~~~~~~ CDDL
 data_4 = (
-  ? C_I : bstr_identifier,
 )
 ~~~~~~~~~~~
 
@@ -1110,7 +1093,6 @@ data_4 = (
 
 The Responder SHALL compose message_4 as follows:
 
-* If corr (METHOD_CORR mod 4) equals 1 or 3, C_I is omitted, otherwise C_I is not omitted.
 
 * Compute a COSE_Encrypt0 as defined in Section 5.3 of {{I-D.ietf-cose-rfc8152bis-struct}}, with the EDHOC AEAD algorithm in the selected cipher suite, and the following parameters. The protected header SHALL be empty.
 
@@ -1137,7 +1119,7 @@ The Initiator SHALL process message_4 as follows:
 
 * Decode message_4 (see {{CBOR}}).
 
-* Retrieve the protocol state using the connection identifier C_I and/or other external information such as the CoAP Token and the 5-tuple.
+* Retrieve the protocol state from the transport's correlation (e.g., the CoAP Token and the 5-tuple as a client, or the prepended C_I as a server).
 
 * Decrypt and verify the outer COSE_Encrypt0 as defined in Section 5.3 of {{I-D.ietf-cose-rfc8152bis-struct}}, with the EDHOC AEAD algorithm in the selected cipher suite,  and the parameters defined in {{asym-msg4-proc}}.
 
@@ -1154,15 +1136,30 @@ By default, the CoAP client is the Initiator and the CoAP server is the Responde
 
 By default, the message flow is as follows: EDHOC message_1 is sent in the payload of a POST request from the client to the server's resource for EDHOC. EDHOC message_2 or the EDHOC error message is sent from the server to the client in the payload of a 2.04 (Changed) response. EDHOC message_3 or the EDHOC error message is sent from the client to the server's resource in the payload of a POST request. If needed, an EDHOC error message is sent from the server to the client in the payload of a 2.04 (Changed) response. Alternatively, if EDHOC message_4 is used, it is sent from the server to the client in the payload of a 2.04 (Changed) response analogously to message_2.
 
-An example of a successful EDHOC exchange using CoAP is shown in {{fig-coap1}}. In this case the CoAP Token enables the Initiator to correlate message_1 and message_2 so the correlation parameter corr = 1.
+Messages sent from the client to the server,
+no matter the roles,
+the CBOR serialization of the C_x the server has chosen
+(this is usually C_R, but is C_I if the server is the initiator)
+is prepended to the EDHOC message.
+If a message 1 is sent to the server,
+a CBOR `null` (0xf6) is sent in its place
+(given that the server has not picked a value C_R yet).
+
+These identifiers are self-delimiting.
+They are sent in front of the actual EDHOC message,
+and only the part of the body following the identifier is used for EDHOC processing.
+
+Consequently, the application/edhoc media type does not apply to these messages;
+their media type is unnamed.
+
+An example of a successful EDHOC exchange using CoAP is shown in {{fig-coap1}}. In this case the CoAP Token enable correlation on the initiator side, and the prepended C_R enables correlation on the responder (server) side.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 Client    Server
   |          |
   +--------->| Header: POST (Code=0.02)
   |   POST   | Uri-Path: "/.well-known/edhoc"
-  |          | Content-Format: application/edhoc
-  |          | Payload: EDHOC message_1
+  |          | Payload: null, EDHOC message_1
   |          |
   |<---------+ Header: 2.04 Changed
   |   2.04   | Content-Format: application/edhoc
@@ -1170,8 +1167,7 @@ Client    Server
   |          |
   +--------->| Header: POST (Code=0.02)
   |   POST   | Uri-Path: "/.well-known/edhoc"
-  |          | Content-Format: application/edhoc
-  |          | Payload: EDHOC message_3
+  |          | Payload: C_R, EDHOC message_3
   |          |
   |<---------+ Header: 2.04 Changed
   |   2.04   | 
@@ -1180,7 +1176,7 @@ Client    Server
 {: #fig-coap1 title="Transferring EDHOC in CoAP when the Initiator is CoAP Client"}
 {: artwork-align="center"}
 
-The exchange in {{fig-coap1}} protects the client identity against active attackers and the server identity against passive attackers. An alternative exchange that protects the server identity against active attackers and the client identity against passive attackers is shown in {{fig-coap2}}. In this case the CoAP Token enables the Responder to correlate message_2 and message_3 so the correlation parameter corr = 2. If EDHOC message_4 is used, it is transported with CoAP in the payload of a POST request with a 2.04 (Changed) response.
+The exchange in {{fig-coap1}} protects the client identity against active attackers and the server identity against passive attackers. An alternative exchange that protects the server identity against active attackers and the client identity against passive attackers is shown in {{fig-coap2}}. In this case the CoAP Token enables the Responder to correlate message_2 and message_3, and the prepended C_I enables correlation on the initiator (server) side. If EDHOC message_4 is used, C_I is prepended, and it is transported with CoAP in the payload of a POST request with a 2.04 (Changed) response.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 Client    Server
@@ -1194,8 +1190,7 @@ Client    Server
   |          |
   +--------->| Header: POST (Code=0.02)
   |   POST   | Uri-Path: "/.well-known/edhoc"
-  |          | Content-Format: application/edhoc
-  |          | Payload: EDHOC message_2
+  |          | Payload: C_I, EDHOC message_2
   |          |
   |<---------+ Header: 2.04 Changed
   |   2.04   | Content-Format: application/edhoc
@@ -1533,8 +1528,7 @@ suite = int
 SUITES_R : [ supported : 2* suite ] / suite
 
 message_1 = (
-  ? C_1 : null,
-  METHOD_CORR : int,
+  METHOD : int,
   SUITES_I : [ selected : suite, supported : 2* suite ] / suite,
   G_X : bstr,
   C_I : bstr_identifier,
@@ -1547,7 +1541,6 @@ message_2 = (
 )
 
 data_2 = (
-  ? C_I : bstr_identifier,
   G_Y : bstr,
   C_R : bstr_identifier,
 )
@@ -1558,7 +1551,6 @@ message_3 = (
 )
 
 data_3 = (
-  ? C_R : bstr_identifier,
 )
 
 message_4 = (
@@ -1567,11 +1559,9 @@ message_4 = (
 )
 
 data_4 = (
-  ? C_I : bstr_identifier,
 )
 
 error = (
-  ? C_x : bstr_identifier,
   ERR_CODE : int,
   ERR_INFO : any
 )
@@ -3420,13 +3410,10 @@ This appendix contains an example of an applicability statement, see {{applicabi
 
 For use of EDHOC in the XX protocol, the following assumptions are made on the parameters:  
 
-* METHOD_CORR = 5
+* METHOD = 4
    * method = 1 (I uses signature key, R uses static DH key.)
-   * corr = 1 (CoAP Token or other transport data enables correlation between message_1 and message_2.)
 
 * EDHOC requests are expected by the server at /app1-edh, no Content-Format needed.
-
-* C_1 = `null` is present to identify message_1
 
 * CRED_I is an 802.1AR IDevID encoded as a C509 Certificate of type 0 {{I-D.ietf-cose-cbor-encoded-cert}}.
     * R acquires CRED_I out-of-band, indicated in EAD_1
@@ -3461,10 +3448,27 @@ Note that the requirements in {{proc-outline}} still apply because duplicate mes
 
 * Different instances of the same message MUST NOT be processed in one session.
 
+# Use of EDHOC on transports that do not natively provide correlation
+
+Protocols that do not natively provide full correlation between a series of messages can send the C_I and C_R identifiers along as needed.
+
+The transport over CoAP ({{coap}}) can serve as a blueprint for other server-client protocols:
+The client prepends the C_x which the server picked (or, for message 1, a sentinel null value which is not a valid C_x) to any request message it sends.
+The server does not send any such indicator, as responses are matched to request by the client-server protocol design.
+
+Protocols that do not provide any correlation at all can prescribe prepending the peer's chosen C_x to all messages.
+
+<!--
+Protocols that can provide all the necessary correlation but do not have any short-lived component to it
+may need ... no, they don't need anything special: after an error, the next thing is a message 1 again.
+-->
 
 # Change Log
 
 Main changes:
+
+* Pending:
+   * Prepended C_x moved from the EDHOC protocol itself to the mapping over CoAP; METHOD_CORR renamed to METHOD, corr removed.
 
 * From -06 to -07:
 
@@ -3482,8 +3486,6 @@ Main changes:
    * Additional security considerations
    * Renamed "Auxililary Data" as "External Authorization Data"
    * Added encrypted EAD_4 to message_4
-   
-
 
 * From -05 to -06:
    * New section 5.2 "Message Processing Outline"
