@@ -54,6 +54,7 @@ normative:
   I-D.ietf-cose-x509:
   I-D.ietf-core-echo-request-tag:
   I-D.ietf-lake-reqs:
+  I-D.ietf-rats-uccs:
 
 informative:
 
@@ -1357,13 +1358,14 @@ IANA has created a new registry entitled "EDHOC Error Codes" under the new headi
 
 ## COSE Header Parameters Registry {#cose}
 
-This document registers the following entries in the "COSE Header Parameters" registry under the "CBOR Object Signing and Encryption (COSE)" heading.
+This document registers the following entries in the "COSE Header Parameters" registry under the "CBOR Object Signing and Encryption (COSE)" heading. The value of the 'cwt' header parameter is a CWT {{RFC8392}} or an unprotected CWT Claims Set {{I-D.ietf-rats-uccs}}.
 
 ~~~~~~~~~~~
 +-----------+-------+----------------+------------------------------+
 | Name      | Label | Value Type     | Description                  |
 +===========+=======+================+==============================+
-| cwt       |  TBD1 | OSE_Messages   | A CBOR Web Token (CWT)       |
+| cwt       |  TBD1 | COSE_Messages  | A CBOR Web Token (CWT) or an |
+|           |       | / map          | unprotected CWT Claims Set   |
 +-----------+-------+----------------+------------------------------+
 ~~~~~~~~~~~
 
