@@ -1372,7 +1372,7 @@ IANA has created a new registry entitled "EDHOC Error Codes" under the new headi
 
 ## COSE Header Parameters Registry {#kid2}
 
-IANA has added the COSE header parameter 'kid2' to the COSE Header Parameters registry.
+IANA has added the COSE header parameter 'kid2' to the COSE Header Parameters registry. The kid2 parameter can be used to identity a key stored in a "raw" COSE_Key, in a CWT, or in a certificate.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 +-----------+-------+----------------+-------------+----------------+-------------------+
