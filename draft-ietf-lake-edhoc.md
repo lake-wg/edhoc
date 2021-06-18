@@ -21,7 +21,7 @@ author:
       -
         ins: J. Mattsson
         name: John Preuß Mattsson
-        org: Ericsson ABt
+        org: Ericsson AB
         email: john.mattsson@ericsson.com
       -
         ins: F. Palombini
@@ -178,7 +178,7 @@ Compared to the DTLS 1.3 handshake {{I-D.ietf-tls-dtls13}} with ECDHE and connec
                     kid       x5t                     
 ---------------------------------
 message_1            37        37                     
-message_2            46       117       
+message_2            45       116       
 message_3            20        91        
 ---------------------------------
 Total               103       245      
@@ -235,8 +235,6 @@ The parties exchanging messages are called Initiator (I) and Responder (R). They
 
 In order to create a "full-fledged" protocol some additional protocol elements are needed. EDHOC adds:
 
-* Explicit connection identifiers C_I, C_R chosen by I and R, respectively, enabling the recipient to find the protocol state.
-
 * Transcript hashes (hashes of message data) TH_2, TH_3, TH_4 used for key derivation and as additional authenticated data.
 
 * Computationally independent keys derived from the ECDH shared secret and used for authenticated encryption of different messages.
@@ -253,7 +251,9 @@ In order to create a "full-fledged" protocol some additional protocol elements a
 
 * Method types and error handling.
 
-* Transport of opaque auxiliary data.
+* Negotiation of connection identifiers C_I and C_R which may be used to identify established keys or protocol state.
+
+* Transport of external authorization data.
 
 EDHOC is designed to encrypt and integrity protect as much information as possible, and all symmetric keys are derived using as much previous information as possible. EDHOC is furthermore designed to be as compact and lightweight as possible, in terms of message sizes, processing, and the ability to reuse already existing CBOR, COSE, and CoAP libraries.
 
@@ -265,21 +265,21 @@ To simplify for implementors, the use of CBOR and COSE in EDHOC is summarized in
 
 An EDHOC message flow consists of three mandatory messages (message_1, message_2, message_3) between Initiator and Responder, an optional fourth message (message_4), plus an EDHOC error message. EDHOC messages are CBOR Sequences {{RFC8742}}, see {{fig-flow}}. The protocol elements in the figure are introduced in the following sections. Message formatting and processing is specified in {{asym}} and {{error}}. An implementation may support only Initiator or only Responder. 
 
-Application data is protected using the agreed application algorithms (AEAD, hash) in the selected cipher suite (see {{cs}}) and the application can make use of the established connection identifiers C_1, C_I, and C_R (see {{corr}}). EDHOC may be used with the media type application/edhoc defined in {{iana}}.
+Application data is protected using the agreed application algorithms (AEAD, hash) in the selected cipher suite (see {{cs}}) and the application can make use of the established connection identifiers C_I and C_R (see {{ci}}). EDHOC may be used with the media type application/edhoc defined in {{iana}}.
 
 The Initiator can derive symmetric application keys after creating EDHOC message_3, see {{exporter}}. Application protected data can therefore be sent in parallel or together with EDHOC message_3.
 
 ~~~~~~~~~~~
 Initiator                                                   Responder
-|            C_1, METHOD_CORR, SUITES_I, G_X, C_I, AD_1             |
+|                   METHOD, SUITES_I, G_X, C_I, EAD_1               |
 +------------------------------------------------------------------>|
 |                             message_1                             |
 |                                                                   |
-|      C_I, G_Y, C_R, Enc(ID_CRED_R, Signature_or_MAC_2, AD_2)      |
+|          G_Y, C_R, Enc(ID_CRED_R, Signature_or_MAC_2, EAD_2)      |
 |<------------------------------------------------------------------+
 |                             message_2                             |
 |                                                                   |
-|       C_R, AEAD(K_3ae; ID_CRED_I, Signature_or_MAC_3, AD_3)       |
+|           AEAD(K_3ae; ID_CRED_I, Signature_or_MAC_3, EAD_3)       |
 +------------------------------------------------------------------>|
 |                             message_3                             |
 ~~~~~~~~~~~
@@ -287,13 +287,9 @@ Initiator                                                   Responder
 {: artwork-align="center"}
 
 
-## Method and Correlation
+## Method {#method}
 
-The data item METHOD_CORR in message_1 (see {{asym-msg1-form}}), is an integer specifying the method and the correlation properties of the transport, which are described in this section.
-
-### Method {#method}
-
-EDHOC supports authentication with signature or static Diffie-Hellman keys, as defined in the four authentication methods: 0, 1, 2, and 3, see {{fig-method-types}}. (Method 0 corresponds to the case outlined in {{background}} where both Initiator and Responder authenticate with signature keys.)
++The data item METHOD in message_1 (see {{asym-msg1-form}}), is an integer specifying the authentication method. EDHOC supports authentication with signature or static Diffie-Hellman keys, as defined in the four authentication methods: 0, 1, 2, and 3, see {{fig-method-types}}. (Method 0 corresponds to the case outlined in {{background}} where both Initiator and Responder authenticate with signature keys.)
 
 An implementation may support only a single method. The Initiator and the Responder need to have agreed on a single method to be used for EDHOC, see {{applicability}}.
 
@@ -310,31 +306,31 @@ An implementation may support only a single method. The Initiator and the Respon
 {: #fig-method-types title="Method Types"}
 {: artwork-align="center"}
 
+## Connection Identifiers and Transport
+
 ### Connection Identifiers {#ci}
 
-EDHOC includes optional connection identifiers (C_1, C_I, C_R). The connection identifiers C_1, C_I, and C_R do not have any cryptographic purpose in EDHOC. They contain information facilitating retrieval of the protocol state and may therefore be very short. C_1 is always set to `null`, while  C_I and C_R are chosen by I and R, respectively. One byte connection identifiers are realistic in many scenarios as most constrained devices only have a few connections. In cases where a node only has one connection, the identifiers may even be the empty byte string. 
+EDHOC includes the negotiation of connection identifiers (C_I, C_R) which may be used to identify a connection for which EDHOC has established keys. The connection identifiers C_I and C_R do not have any cryptographic purpose in EDHOC.
 
-The connection identifier MAY be used with an application protocol (e.g. OSCORE) for which EDHOC establishes keys, in which case the connection identifiers SHALL adhere to the requirements for that protocol. Each party choses a connection identifier it desires the other party to use in outgoing messages. (For OSCORE this results in the endpoint selecting its Recipient ID, see Section 3.1 of {{RFC8613}}).
+C_I and C_R are chosen by I and R, respectively. Each party chooses a connection identifier it wants the other party to use in its outgoing messages. Connection identifiers can be byte strings or integers encoded in CBOR. One byte connection identifiers (the integers -24 to 23 and the empty bytestring h'') are realistic in many scenarios as most constrained devices only have a few connections.
+
+If a connection identifier is used with an application protocol for which EDHOC establishes keys (such as OSCORE) then the connection identifiers SHALL adhere to the requirements for that protocol.  For OSCORE the choice of connection identifier results in the endpoint selecting its Recipient ID, see Section 3.1 of {{RFC8613}}), for which certain uniqueness requirements apply, see Section 3.3 of {{RFC8613}}).
+
+Connection identifiers may be used to facilitate the retrieval of protocol state during EDHOC protocol execution. EDHOC transports that do not inherently provide correlation across all messages of an exchange can send connection identifiers along with EDHOC messages to gain that required capability, see {{transport}}). For an example when CoAP is used as transport, see {{coap}}.
 
 ### Transport {#transport}
 
-Cryptographically, EDHOC does not put requirements on the lower layers. EDHOC is not bound to a particular transport layer, and can be used in environments without IP. The transport is responsible to handle message loss, reordering, message duplication, fragmentation, and denial of service protection, where necessary.
+Cryptographically, EDHOC does not put requirements on the lower layers. EDHOC is not bound to a particular transport layer, and can be used in environments without IP. The transport is responsible, where necessary, to handle:
 
-The Initiator and the Responder need to have agreed on a transport to be used for EDHOC, see {{applicability}}. It is recommended to transport EDHOC in CoAP payloads, see {{transfer}}.
+* message loss,
+* message reordering,
+* message duplication,
+* correlation of messages, including an indication of a message being message_1,
+* fragmentation, 
+* demultiplex EDHOC messages from other types of messages, and 
+* denial of service protection.
 
-### Message Correlation {#corr}
-
-If the whole transport path provides a mechanism for correlating messages received with messages previously sent, then some of the connection identifiers may be omitted. There are four cases:
-
-   * corr = 0, the transport does not provide a correlation mechanism.
-
-   * corr = 1, the transport provides a correlation mechanism that enables the Responder to correlate message_2 and message_1 as well as message_4 and message_3.
-
-   * corr = 2, the transport provides a correlation mechanism that enables the Initiator to correlate message_3 and message_2.
-
-   * corr = 3, the transport provides a correlation mechanism that enables both parties to correlate all three messages.
-
-For example, if the key exchange is transported over CoAP, the CoAP Token can be used to correlate messages, see {{coap}}. 
+The Initiator and the Responder need to have agreed on a transport to be used for EDHOC, see {{applicability}}. It is recommended to transport EDHOC in CoAP payloads, see {{coap}}.
 
 
 ## Authentication Parameters {#auth-key-id}
@@ -342,7 +338,7 @@ For example, if the key exchange is transported over CoAP, the CoAP Token can be
 ### Authentication Keys {#auth-keys}
 
 The authentication key MUST be a signature key or static Diffie-Hellman key. The Initiator and the Responder
- MAY use different types of authentication keys, e.g. one uses a signature key and the other uses a static Diffie-Hellman key. When using a signature key, the authentication is provided by a signature. When using a static Diffie-Hellman key the authentication is provided by a Message Authentication Code (MAC) computed from an ephemeral-static ECDH shared secret which enables significant reductions in message sizes. The MAC is implemented with an AEAD algorithm. When using static Diffie-Hellman keys the Initiator's and Responder's private authentication keys are called I and R, respectively, and the public authentication keys are called G_I and G_R, respectively. The authentication key algorithm needs to specified with enough parameters to make it completely determined. Note that for most signature algorithms, the signature is detemined by the signature algorithm and the authentication key algorithm together. For example, the curve used in the signature is typically determined by the authentication key parameters. 
+ MAY use different types of authentication keys, e.g. one uses a signature key and the other uses a static Diffie-Hellman key. When using a signature key, the authentication is provided by a signature. When using a static Diffie-Hellman key the authentication is provided by a Message Authentication Code (MAC) computed from an ephemeral-static ECDH shared secret which enables significant reductions in message sizes. The MAC is implemented with an AEAD algorithm. When using static Diffie-Hellman keys the Initiator's and Responder's private authentication keys are called I and R, respectively, and the public authentication keys are called G_I and G_R, respectively. The authentication key algorithm needs to specified with enough parameters to make it completely determined. Note that for most signature algorithms, the signature is determined by the signature algorithm and the authentication key algorithm together. For example, the curve used in the signature is typically determined by the authentication key parameters. 
 
 
 * Only the Responder SHALL have access to the Responder's private authentication key.
@@ -352,7 +348,7 @@ The authentication key MUST be a signature key or static Diffie-Hellman key. The
 
 ### Identities {#identities}
 
-EDHOC assumes the existence of mechanisms (certification authority, trusted third party, manual distribution, etc.) for specifying and distributing authentication keys and identities. Policies are set based on the identity of the other party, and parties typically only allow connections from a specific identity or a small restricted set of identities. For example, in the case of a device connecting to a network, the network may only allow connections from devices which authenticate with certificates having a particular range of serial numbers in the subject field and signed by a particular CA. On the other side, the device may only be allowed to connect to a network which authenticates with a particular public key (information of which may be provisioned, e.g., out of band or in the Auxiliary Data, see {{AD}}).
+EDHOC assumes the existence of mechanisms (certification authority, trusted third party, manual distribution, etc.) for specifying and distributing authentication keys and identities. Policies are set based on the identity of the other party, and parties typically only allow connections from a specific identity or a small restricted set of identities. For example, in the case of a device connecting to a network, the network may only allow connections from devices which authenticate with certificates having a particular range of serial numbers in the subject field and signed by a particular CA. On the other side, the device may only be allowed to connect to a network which authenticates with a particular public key (information of which may be provisioned, e.g., out of band or in the external authorization data, see {{AD}}).
  
 The EDHOC implementation must be able to receive and enforce information from the application about what is the intended endpoint, and in particular whether it is a specific identity or a set of identities.
 
@@ -404,9 +400,11 @@ ID_CRED_I and ID_CRED_R do not have any cryptographic purpose in EDHOC.
 
 The identifiers ID_CRED_I and ID_CRED_R are COSE header_maps, i.e. CBOR maps containing Common COSE Header Parameters, see Section 3.1 of {{I-D.ietf-cose-rfc8152bis-struct}}). In the following we give some examples of COSE header_maps.
 
-Raw public keys are most optimally stored as COSE_Key objects and identified with a 'kid' parameter:
+Raw public keys are most optimally stored as COSE_Key objects and identified with a 'kid2' parameter (see {{kid2-header-param}} and {{kid2-key-common-param}}):
 
-* ID_CRED_x = { 4 : kid_x }, where kid_x : bstr, for x = I or R.
+* ID_CRED_x = { 4 : kid_x }, where kid_x : bstr / int, for x = I or R.
+
+Note that the integers -24 to 23 and the empty bytestring h'' are encoded as one byte.
 
 Public key certificates can be identified in different ways. Header parameters for identifying C509 certificates and X.509 certificates are defined in {{I-D.ietf-cose-cbor-encoded-cert}} and {{I-D.ietf-cose-x509}}, for example:
 
@@ -431,7 +429,7 @@ One byte credential identifiers are realistic in many scenarios as most constrai
 
 ## Cipher Suites {#cs}
 
-An EDHOC cipher suite consists of an ordered set of algorithms from the "COSE Algorithms" and "COSE Elliptic Curves" registries. Algorithms need to be specified with enough parameters to make them completely determined. Currently, none of the algorithms require parameters. EDHOC is only specified for use with key exchange algorithms of type ECDH curves. Use with other types of key exchange algorithms would likely require a specification updating EDHOC. Note that for most signature algorithms, the signature is detemined by the signature algorithm and the authentication key algorithm together, see {{auth-keys}}. 
+An EDHOC cipher suite consists of an ordered set of algorithms from the "COSE Algorithms" and "COSE Elliptic Curves" registries. Algorithms need to be specified with enough parameters to make them completely determined. Currently, none of the algorithms require parameters. EDHOC is only specified for use with key exchange algorithms of type ECDH curves. Use with other types of key exchange algorithms would likely require a specification updating EDHOC. Note that for most signature algorithms, the signature is determined by the signature algorithm and the authentication key algorithm together, see {{auth-keys}}. 
 
 * EDHOC AEAD algorithm
 * EDHOC hash algorithm
@@ -444,7 +442,7 @@ Each cipher suite is identified with a pre-defined int label.
 
 EDHOC can be used with all algorithms and curves defined for COSE. Implementation can either use one of the pre-defined cipher suites ({{suites-registry}}) or use any combination of COSE algorithms and parameters to define their own private cipher suite. Private cipher suites can be identified with any of the four values -24, -23, -22, -21.
 
-The following cipher suites are for constrained IoT where message overhead is a very important factor:
+The following CCM cipher suites are for constrained IoT where message overhead is a very important factor. Cipher suites 1 and 3 use a larger tag length (128-bit) in the EDHOC AEAD algorithm than the Application AEAD algorithm (64-bit):
 
 ~~~~~~~~~~~
    0. ( 10, -16, 4, -8, 10, -16 )
@@ -464,20 +462,36 @@ The following cipher suites are for constrained IoT where message overhead is a 
        AES-CCM-16-64-128, SHA-256)
 ~~~~~~~~~~~
 
-The following cipher suite is for general non-constrained applications. It uses very high performance algorithms that also are widely supported:
+The following ChaCha20 cipher suites are for less constrained applications and only use 128-bit tag lengths.
 
 ~~~~~~~~~~~
-   4. ( 1, -16, 4, -7, 1, -16 )
+   4. ( 24, -16, 4, -8, 24, -16 )
+      (ChaCha20/Poly1305, SHA-256, X25519, EdDSA,
+       ChaCha20/Poly1305, SHA-256)
+
+   5. ( 24, -16, 1, -7, 24, -16 )
+      (ChaCha20/Poly1305, SHA-256, P-256, ES256,
+       ChaCha20/Poly1305, SHA-256)
+~~~~~~~~~~~
+
+The following GCM cipher suite is for general non-constrained applications. It uses high performance algorithms that are widely supported:
+
+~~~~~~~~~~~
+   6. ( 1, -16, 4, -7, 1, -16 )
       (A128GCM, SHA-256, X25519, ES256,
        A128GCM, SHA-256)
 ~~~~~~~~~~~
 
-The following cipher suite is for high security application such as government use and financial applications. It is compatible with the CNSA suite {{CNSA}}.
+The following two cipher suites are for high security application such as government use and financial applications. The two cipher suites do not share any algorithms. The first of the two cipher suites is compatible with the CNSA suite {{CNSA}}.
 
 ~~~~~~~~~~~
-   5. ( 3, -43, 2, -35, 3, -43 )
+  24. ( 3, -43, 2, -35, 3, -43 )
       (A256GCM, SHA-384, P-384, ES384,
        A256GCM, SHA-384)
+
+  25. ( 24, -45, 5, -8, 24, -45 )
+      (ChaCha20/Poly1305, SHAKE256, X448, EdDSA,
+       ChaCha20/Poly1305, SHAKE256)
 ~~~~~~~~~~~
 
 The different methods use the same cipher suites, but some algorithms are not used in some methods. The EDHOC signature algorithm is not used in methods without signature authentication.
@@ -489,13 +503,24 @@ The Initiator needs to have a list of cipher suites it supports in order of pref
 
 EDHOC always uses compact representation of elliptic curve points, see {{comrep}}. In COSE compact representation is achieved by formatting the ECDH ephemeral public keys as COSE_Keys of type EC2 or OKP according to Sections 7.1 and 7.2 of [I-D.ietf-cose-rfc8152bis-algs], but only including the 'x' parameter in G_X and G_Y. For Elliptic Curve Keys of type EC2, compact representation MAY be used also in the COSE_Key.  If the COSE implementation requires an 'y' parameter, the value y = false SHALL be used. COSE always use compact output for Elliptic Curve Keys of type EC2.
 
-## Auxiliary Data {#AD}
+## External Authorization Data {#AD}
 
-In order to reduce round trips and number of messages, and in some cases also streamline processing, certain security applications may be integrated into EDHOC by transporting auxiliary data together with the messages. One example is the transport of third-party authorization information protected outside of EDHOC {{I-D.selander-ace-ake-authz}}. Another example is the embedding of a certificate enrolment request or a newly issued certificate.
+In order to reduce round trips and number of messages or to simplify processing, external security applications may be integrated into EDHOC by transporting authorization related data together with the messages. One example is the transport third-party identity and authorization information protected out of scope of EDHOC {{I-D.selander-ace-ake-authz}}. Another example is the embedding of a certificate enrolment request or a newly issued certificate.
 
-EDHOC allows opaque auxiliary data (AD) to be sent in the EDHOC messages. Unprotected Auxiliary Data (AD_1, AD_2) may be sent in message_1 and message_2, respectively. Protected Auxiliary Data (AD_3) may be sent in message_3.
+EDHOC allows opaque external authorization data (EAD) to be sent in the EDHOC messages. External authorization data sent in message_1 (EAD_1) or message_2 (EAD_2) must be considered unprotected by EDHOC, see {{unprot-data}}. External authorization data sent in message_3 (EAD_3) or message_4 (EAD_4) is protected between Initiator and Responder.
 
-Since data carried in AD_1 and AD_2 may not be protected, and the content of AD_3 is available to both the Initiator and the Responder, special considerations need to be made such that the availability of the data a) does not violate security and privacy requirements of the service which uses this data, and b) does not violate the security properties of EDHOC.
+External authorization data is a CBOR sequence (see {{CBOR}}) as defined below:
+
+~~~~~~~~~~~ CDDL
+EAD = (
+  type : int,
+  1* ext_authz_data : any,
+)
+~~~~~~~~~~~ 
+
+where type is an int and is followed by one or more ext_authz_data depending on type as defined in a separate specification. 
+
+The EAD fields of EDHOC are not intended for generic application data. Since data carried in EAD_1 and EAD_2 fields may not be protected, special considerations need to be made such that a) it does not violate security, privacy etc. requirements of the service which uses this data, and b) it does not violate the security properties of EDHOC. Security applications making use of the EAD fields must perform the necessary security analysis.
 
 
 ## Applicability Statement {#applicability}
@@ -505,11 +530,11 @@ EDHOC requires certain parameters to be agreed upon between Initiator and Respon
 The purpose of the applicability statement is describe the intended use of EDHOC to allow for the relevant processing and verifications to be made, including things like:
 
 1. How the endpoint detects that an EDHOC message is received. This includes how EDHOC messages are transported, for example in the payload of a CoAP message with a certain Uri-Path or Content-Format; see {{coap}}.
-1. Method and correlation of underlying transport messages (METHOD_CORR; see {{method}} and {{corr}}). This gives information about the optional connection identifier fields.
-2. How message_1 is identified, in particular if the optional initial C_1 = `null` of message_1 is present; see {{asym-msg1-form}}
+ * The method of transporting EDHOC messages may also describe data carried along with the messages that are needed for the transport to satisfy the requirements of {{transport}}, e.g., connection identifiers used with certain messages, see {{coap}}.
+1. Authentication method (METHOD; see {{method}}).
 3. Profile for authentication credentials (CRED_I, CRED_R; see {{auth-cred}}), e.g., profile for certificate or COSE_key, including supported authentication key algorithms (subject public key algorithm in X.509 certificate).
 4. Type used to identify authentication credentials (ID_CRED_I, ID_CRED_R; see {{id_cred}}).
-5. Use and type of Auxiliary Data (AD_1, AD_2, AD_3; see {{AD}}).
+5. Use and type of external authorization data (EAD_1, EAD_2, EAD_3, EAD_4; see {{AD}}).
 6. Identifier used as identity of endpoint; see {{identities}}.
 7. If message_4 shall be sent/expected, and if not, how to ensure a protected application message is sent from the Responder to the Initiator; see {{m4}}.
 
@@ -517,7 +542,7 @@ The applicability statement may also contain information about supported cipher 
 
 An example of an applicability statement is shown in {{appl-temp}}. 
 
-For some parameters, like METHOD_CORR, ID_CRED_x, type of AD_x, the receiver is able to verify compliance with applicability statement, and if it needs to fail because of incompliance, to infer the reason why the protocol failed.
+For some parameters, like METHOD, ID_CRED_x, type of EAD, the receiver is able to verify compliance with applicability statement, and if it needs to fail because of incompliance, to infer the reason why the protocol failed.
 
 For other parameters, like CRED_x in the case that it is not transported, it may not be possible to verify that incompliance with applicability statement was the reason for failure: Integrity verification in message_2 or message_3 may fail not only because of wrong authentication credential. For example, in case the Initiator uses public key certificate by reference (i.e. not transported within the protocol) then both endpoints need to use an identical data structure as CRED_I or else the integrity verification will fail.
 
@@ -525,7 +550,8 @@ Note that it is not necessary for the endpoints to specify a single transport fo
 
 The applicability statement may be dependent on the identity of the other endpoint, but this applies only to the later phases of the protocol when identities are known. (Initiator does not know identity of Responder before having verified message_2, and Responder does not know identity of Initiator before having verified message_3.)
 
-Other conditions may be part of the applicability statement, such as target application or use (if there is more than one application/use) to the extent that EDHOC can distinguish between them. In case multiple applicability statements are used, the receiver needs to be able to determine which is applicable for a given session, for example based on URI or Auxiliary Data type.
+Other conditions may be part of the applicability statement, such as target application or use (if there is more than one application/use) to the extent that EDHOC can distinguish between them. In case multiple applicability statements are used, the receiver needs to be able to determine which is applicable for a given session, for example based on URI or external authorization data type.
+
 
 
 
@@ -604,19 +630,29 @@ KEYSTREAM_2 are derived using the transcript hash TH_2 and the pseudorandom key 
 Application keys and other application specific data can be derived using the EDHOC-Exporter interface defined as:
 
 ~~~~~~~~~~~
-   EDHOC-Exporter(label, length)
-     = EDHOC-KDF(PRK_4x3m, TH_4, label, length) 
+   EDHOC-Exporter(label, context, length)
+     = EDHOC-KDF(PRK_4x3m, TH_4, label_context, length) 
 ~~~~~~~~~~~
 
-where label is a tstr defined by the application and length is a uint defined by the application. The label SHALL be different for each different exporter value. The transcript hash TH_4 is a CBOR encoded bstr and the input to the hash function is a CBOR Sequence.
+label_context is a CBOR sequence:
+
+~~~~~~~~~~~ CDDL
+label_context = (
+  label : tstr,
+  context : bstr,
+)
+~~~~~~~~~~~
+
+where label is a registered tstr from the EDHOC Exporter Label registry ({{exporter-label}}), context is a bstr defined by the application, and length is a uint defined by the application. The (label, context) pair must be unique, i.e. a (label, context) MUST NOT be used for two different purposes. However an application can re-derive the same key several times as long as it is done in a secure way. For example, in most encryption algorithms the same (key, nonce) pair must not be reused. 
+
+The transcript hash TH_4 is a CBOR encoded bstr and the input to the hash function is a CBOR Sequence.
 
 ~~~~~~~~~~~
    TH_4 = H( TH_3, CIPHERTEXT_3 )
 ~~~~~~~~~~~
+where H() is the hash function in the selected cipher suite. Examples of use of the EDHOC-Exporter are given in {{asym-msg4-proc}} and {{I-D.ietf-core-oscore-edhoc}}.
 
-where H() is the hash function in the selected cipher suite. Example use of the EDHOC-Exporter is given in {{I-D.ietf-core-oscore-edhoc}}.
-
-To provide forward secrecy in an even more efficient way than re-running EDHOC, EDHOC provides the function EDHOC-KeyUpdate. When EDHOC-KeyUpdate is called the old PRK_4x3m is deleted and the new PRk_4x3m is calculated as a "hash" of the old key using the Extract function as illustrated by the following pseudocode:
+To provide forward secrecy in an even more efficient way than re-running EDHOC, EDHOC provides the function EDHOC-KeyUpdate. When EDHOC-KeyUpdate is called the old PRK_4x3m is deleted and the new PRK_4x3m is calculated as a "hash" of the old key using the Extract function as illustrated by the following pseudocode:
 
 ~~~~~~~~~~~
    EDHOC-KeyUpdate( nonce ):
@@ -632,35 +668,17 @@ Additional optimizations are made to reduce message overhead.
 
 While EDHOC uses the COSE_Key, COSE_Sign1, and COSE_Encrypt0 structures, only a subset of the parameters is included in the EDHOC messages. The unprotected COSE header in COSE_Sign1, and COSE_Encrypt0 (not included in the EDHOC message) MAY contain parameters (e.g. 'alg'). 
 
-## Encoding of bstr_identifier {#bstr_id}
-
-Byte strings are encoded in CBOR as two or more bytes, whereas integers in the interval -24 to 23 are encoded in CBOR as one byte.
-
-bstr_identifier is a special encoding of byte strings, used throughout the protocol to enable the encoding of the shortest byte strings as integers that only require one byte of CBOR encoding.
-
-The bstr_identifier encoding is defined as follows: Byte strings in the interval h'00' to h'2f' are encoded as the corresponding integer minus 24, which are all represented by one byte CBOR ints. Other byte strings are encoded as CBOR byte strings.
-
-For example, the byte string h'59e9' encoded as a bstr_identifier is equal to h'59e9', while the byte string h'2a' is encoded as the integer 18.
-
-The CDDL definition of the bstr_identifier is given below:
-
-~~~~~~~~~~~ CDDL
-bstr_identifier = bstr / int
-~~~~~~~~~~~
-
-Note that, despite what could be interpreted by the CDDL definition only, bstr_identifier once decoded are always byte strings.
-
 ## Message Processing Outline {#proc-outline}
 
 This section outlines the message processing of EDHOC. 
 
-For each session, the endpoints are assumed to keep an associated protocol state containing connection identifiers, keys, etc. used for subsequent processing of protocol related data. The protocol state is assumed to be associated to an applicability statement ({{applicability}}) which provides the context for how messages are transported, identified and processed. 
+For each session, the endpoints are assumed to keep an associated protocol state containing identifiers, keys, etc. used for subsequent processing of protocol related data. The protocol state is assumed to be associated to an applicability statement ({{applicability}}) which provides the context for how messages are transported, identified and processed.
 
 EDHOC messages SHALL be processed according to the current protocol state. The following steps are expected to be performed at reception of an EDHOC message:
 
 1. Detect that an EDHOC message has been received, for example by means of port number, URI, or media type ({{applicability}}).
 
-2. Retrieve the protocol state, e.g. using the received connection identifier ({{ci}}) or with the help of message correlation provided by the transport protocol ({{corr}}). If there is no protocol state, in the case of message_1, a new protocol state is created. An initial C_1 = `null` byte in message_1 ({{asym-msg1-form}}) can be used to distinguish message_1 from other messages. The Responder endpoint needs to make use of available Denial-of-Service mitigation ({{dos}}).
+2. Retrieve the protocol state according to the message correlation provided by the transport, see {{transport}}. If there is no protocol state, in the case of message_1, a new protocol state is created. The Responder endpoint needs to make use of available Denial-of-Service mitigation ({{dos}}).
 
 3. If the message received is an error message then process according to {{error}}, else process as the expected next message according to the protocol state. 
 
@@ -677,12 +695,11 @@ message_1 SHALL be a CBOR Sequence (see {{CBOR}}) as defined below
 
 ~~~~~~~~~~~ CDDL
 message_1 = (
-  ? C_1 : null,
-  METHOD_CORR : int,
+  METHOD : int,
   SUITES_I : [ selected : suite, supported : 2* suite ] / suite,
   G_X : bstr,
-  C_I : bstr_identifier,  
-  ? AD_1 : bstr,
+  C_I : bstr / int,  
+  ? EAD ; EAD_1 
 )
 
 suite = int
@@ -690,12 +707,11 @@ suite = int
 
 where:
 
-* C_1 - an initial CBOR simple value `null` (= 0xf6) MAY be used to distinguish message_1 from other messages.
-* METHOD_CORR = 4 * method + corr, where method = 0, 1, 2, or 3 (see {{fig-method-types}}) and the correlation parameter corr is chosen based on the transport and determines which connection identifiers that are omitted (see {{corr}}).
+* METHOD = 0, 1, 2, or 3 (see {{fig-method-types}}).
 * SUITES_I - cipher suites which the Initiator supports in order of (decreasing) preference. The list of supported cipher suites can be truncated at the end, as is detailed in the processing steps below and {{wrong-selected}}. One of the supported cipher suites is selected. The selected suite is the first suite in the SUITES_I CBOR array. If a single supported cipher suite is conveyed then that cipher suite is selected and SUITES_I is encoded as an int instead of an array.
 * G_X - the ephemeral public key of the Initiator
-* C_I - variable length connection identifier, encoded as a bstr_identifier (see {{bstr_id}}).
-* AD_1 - bstr containing unprotected opaque auxiliary data
+* C_I - variable length connection identifier
+* EAD_1 - unprotected external authorization data, see {{AD}}.
 
 ### Initiator Processing of Message 1 {#init-proc-msg1}
 
@@ -703,7 +719,7 @@ The Initiator SHALL compose message_1 as follows:
 
 * The supported cipher suites and the order of preference MUST NOT be changed based on previous error messages. However, the list SUITES_I sent to the Responder MAY be truncated such that cipher suites which are the least preferred are omitted. The amount of truncation MAY be changed between sessions, e.g. based on previous error messages (see next bullet), but all cipher suites which are more preferred than the least preferred cipher suite in the list MUST be included in the list.
 
-* The Initiator MUST select its most preferred cipher suite, conditioned on what it can assume to be supported by the Responder. If the Initiator previously received from the Responder an error message with error code 1 (see {{wrong-selected}}) indicating cipher suites supported by the Responder which also are supported by the Initiator, then the Initiator SHOULD select the most preferred cipher suite of those (note that error messages are not authenticated and may be forged).
+* The Initiator MUST select its most preferred cipher suite, conditioned on what it can assume to be supported by the Responder. If the Initiator previously received from the Responder an error message with error code 2 (see {{wrong-selected}}) indicating cipher suites supported by the Responder which also are supported by the Initiator, then the Initiator SHOULD select the most preferred cipher suite of those (note that error messages are not authenticated and may be forged).
 
 * Generate an ephemeral ECDH key pair using the curve in the selected cipher suite and format it as a COSE_Key. Let G_X be the 'x' parameter of the COSE_Key.
    
@@ -719,9 +735,9 @@ The Responder SHALL process message_1 as follows:
 
 * Verify that the selected cipher suite is supported and that no prior cipher suite in SUITES_I is supported.
 
-* Pass AD_1 to the security application.
+* Pass EAD_1 to the security application.
 
-If any verification step fails, the Responder MUST send an EDHOC error message back, formatted as defined in {{error}}, and the protocol MUST be discontinued. 
+If any processing step fails, the Responder SHOULD send an EDHOC error message back, formatted as defined in {{error}}, and the session MUST be discontinued. Sending error messages is essential for debugging but MAY e.g. be skipped due to denial of service reasons, see {{security}}.
 
 ## EDHOC Message 2 {#m2}
 
@@ -738,42 +754,39 @@ message_2 = (
 
 ~~~~~~~~~~~ CDDL
 data_2 = (
-  ? C_I : bstr_identifier,
   G_Y : bstr,
-  C_R : bstr_identifier,
+  C_R : bstr / int,
 )
 ~~~~~~~~~~~
 
 where:
 
 * G_Y - the ephemeral public key of the Responder
-* C_R - variable length connection identifier, encoded as a bstr_identifier (see {{bstr_id}}).
+* C_R - variable length connection identifier
 
 ### Responder Processing of Message 2 {#asym-msg2-proc}
 
 The Responder SHALL compose message_2 as follows:
 
-* If corr (METHOD_CORR mod 4) equals 1 or 3, C_I is omitted, otherwise C_I is not omitted.
-
 * Generate an ephemeral ECDH key pair using the curve in the selected cipher suite and format it as a COSE_Key. Let G_Y be the 'x' parameter of the COSE_Key.
 
 * Choose a connection identifier C_R and store it for the length of the protocol.
 
-* Compute the transcript hash TH_2 = H( H(message_1), data_2 ) where H() is the hash function in the selected cipher suite. The transcript hash TH_2 is a CBOR encoded bstr and the input to the hash function is a CBOR Sequence. Note that H(message_1) can be computed and cached alredy in the processing of message_1.
+* Compute the transcript hash TH_2 = H( H(message_1), data_2 ) where H() is the hash function in the selected cipher suite. The transcript hash TH_2 is a CBOR encoded bstr and the input to the hash function is a CBOR Sequence. Note that H(message_1) can be computed and cached already in the processing of message_1.
 
 * Compute MAC_2 = EDHOC-KDF( PRK_3x2m, TH_2, ( ID_CRED_R, CRED_R, ? AD_2 ), mac_length ). If the Responder authenticates with a static Diffie-Hellman key (method equals 1 or 3), then mac_length is equal to the tag length of the EDHOC AEAD algorithm. If the Responder authenticates with a signature key (method equals 0 or 2), then mac_length is equal to the output size of the EDHOC hash algorithm.
 
       * ID_CRED_R - identifier to facilitate retrieval of CRED_R, see {{id_cred}}
 
-      * CRED_R - bstr containing the credential of the Responder, see {{id_cred}}. 
+      * CRED_R - bstr containing the credential of the Responder, see {{id_cred}} 
 
-      * AD_2 = bstr containing opaque unprotected auxiliary data
+      * EAD_2 = unprotected external authorization data, see {{AD}}
 
 * If the Responder authenticates with a static Diffie-Hellman key (method equals 1 or 3), then Signature_or_MAC_2 is MAC_2. If the Responder authenticates with a signature key (method equals 0 or 2), then Signature_or_MAC_2 is the 'signature' of a COSE_Sign1 object as defined in Section 4.4 of {{I-D.ietf-cose-rfc8152bis-struct}} using the signature algorithm in the selected cipher suite, the private authentication key of the Responder, and the following parameters:
 
    * protected =  << ID_CRED_R >>
 
-   * external_aad = << TH_2, CRED_R, ? AD_2 >>
+   * external_aad = << TH_2, CRED_R, ? EAD_2 >>
 
    * payload = MAC_2
 
@@ -783,13 +796,13 @@ The Responder SHALL compose message_2 as follows:
 
    * The message M to be signed =
 
-     \[ "Signature1", << ID_CRED_R >>, << TH_2, CRED_R, ? AD_2 >>, MAC_2 \]
+     \[ "Signature1", << ID_CRED_R >>, << TH_2, CRED_R, ? EAD_2 >>, MAC_2 \]
 
 * CIPHERTEXT_2 is encrypted by using the Expand function as a binary additive stream cipher.
 
-   * plaintext = ( ID_CRED_R / bstr_identifier, Signature_or_MAC_2, ? AD_2 )
+   * plaintext = ( ID_CRED_R / bstr / int, Signature_or_MAC_2, ? EAD_2 )
 
-      * Note that if ID_CRED_R contains a single 'kid' parameter, i.e., ID_CRED_R = { 4 : kid_R }, only the byte string kid_R is conveyed in the plaintext encoded as a bstr_identifier, see {{id_cred}} and {{bstr_id}}.
+       * Note that if ID_CRED_R contains a single 'kid2' parameter, i.e., ID_CRED_R = { 4 : kid_R }, only the byte string or integer kid_R is conveyed in the plaintext encoded as a bstr / int.
 
    * CIPHERTEXT_2 = plaintext XOR KEYSTREAM_2
 
@@ -801,17 +814,18 @@ The Initiator SHALL process message_2 as follows:
 
 * Decode message_2 (see {{CBOR}}).
 
-* Retrieve the protocol state using the connection identifier C_I and/or other external information such as the CoAP Token and the 5-tuple.
+* Retrieve the protocol state using the message correlation provided by the transport (e.g., the CoAP Token and the 5-tuple as a client, or the prepended C_I as a server).
 
 * Decrypt CIPHERTEXT_2, see {{asym-msg2-proc}}.
+
+* Pass EAD_2 to the security application.
 
 * Verify that the identity of the Responder is an allowed identity for this connection, see {{auth-key-id}}.
 
 * Verify Signature_or_MAC_2 using the algorithm in the selected cipher suite. The verification process depends on the method, see {{asym-msg2-proc}}.
 
-* Pass AD_2 to the security application.
+If any processing step fails, the Initiator SHOULD send an EDHOC error message back, formatted as defined in {{error}}. Sending error messages is essential for debugging but MAY e.g.be skipped if a session cannot be found or due to denial of service reasons, see {{security}}. If an error message is sent, the session MUST be discontinued.
 
-If any verification step fails, the Initiator MUST send an EDHOC error message back, formatted as defined in {{error}}, and the protocol MUST be discontinued.
 
 ## EDHOC Message 3 {#m3}
 
@@ -826,9 +840,10 @@ message_3 = (
 )
 ~~~~~~~~~~~
 
+[ The data_3 is left empty for the time being to not overly interfere with the transcript calculation while initially moving C_x outside. ]
+
 ~~~~~~~~~~~ CDDL
 data_3 = (
-  ? C_R : bstr_identifier,
 )
 ~~~~~~~~~~~
 
@@ -836,23 +851,21 @@ data_3 = (
 
 The Initiator  SHALL compose message_3 as follows:
 
-* If corr (METHOD_CORR mod 4) equals 2 or 3, C_R is omitted, otherwise C_R is not omitted.
-
-* Compute the transcript hash TH_3 = H( H(TH_2, CIPHERTEXT_2), data_3 ) where H() is the hash function in the selected cipher suite. The transcript hash TH_3 is a CBOR encoded bstr and the input to the hash function is a CBOR Sequence.  Note that H(TH_2, CIPHERTEXT_2) can be computed and cached alredy in the processing of message_2.
+* Compute the transcript hash TH_3 = H( H(TH_2, CIPHERTEXT_2), data_3 ) where H() is the hash function in the selected cipher suite. The transcript hash TH_3 is a CBOR encoded bstr and the input to the hash function is a CBOR Sequence.  Note that H(TH_2, CIPHERTEXT_2) can be computed and cached already in the processing of message_2.
 
 * Compute MAC_3 = EDHOC-KDF( PRK_4x3m, TH_3, ( ID_CRED_I, CRED_I, ? AD_3 ), mac_length ). If the Initiator authenticates with a static Diffie-Hellman key (method equals 1 or 3), then mac_length is equal to the tag length of the EDHOC AEAD algorithm. If the Initiator authenticates with a signature key (method equals 0 or 2), then mac_length is equal to the output size of the EDHOC hash algorithm.
 
       * ID_CRED_I - identifier to facilitate retrieval of CRED_I, see {{id_cred}}
 
-      * CRED_I - bstr containing the credential of the Initiator, see {{id_cred}}. 
+      * CRED_I - bstr containing the credential of the Initiator, see {{id_cred}}
 
-      * AD_3 = bstr containing opaque unprotected auxiliary data
+      * EAD_3 = protected external authorization data, see {{AD}}
 
 * If the Initiator authenticates with a static Diffie-Hellman key (method equals 2 or 3), then Signature_or_MAC_3 is MAC_3. If the Initiator authenticates with a signature key (method equals 0 or 1), then Signature_or_MAC_3 is the 'signature' of a COSE_Sign1 object as defined in Section 4.4 of {{I-D.ietf-cose-rfc8152bis-struct}} using the signature algorithm in the selected cipher suite, the private authentication key of the Initiator, and the following parameters:
 
    * protected =  << ID_CRED_I >>
 
-   * external_aad = << TH_3, CRED_I, ? AD_3 >>
+   * external_aad = << TH_3, CRED_I, ? EAD_3 >>
 
    * payload = MAC_3
 
@@ -862,21 +875,21 @@ The Initiator  SHALL compose message_3 as follows:
 
    * The message M to be signed =
 
-     \[ "Signature1", << ID_CRED_I >>, << TH_3, CRED_I, ? AD_3 >>, MAC_3 \]
+     \[ "Signature1", << ID_CRED_I >>, << TH_3, CRED_I, ? EAD_3 >>, MAC_3 \]
 
 * Compute an outer COSE_Encrypt0 as defined in Section 5.3 of {{I-D.ietf-cose-rfc8152bis-struct}}, with the EDHOC AEAD algorithm in the selected cipher suite, K_3ae, IV_3ae, and the following parameters. The protected header SHALL be empty.
 
    * external_aad = TH_3
 
-   * plaintext = ( ID_CRED_I / bstr_identifier, Signature_or_MAC_3, ? AD_3 )
+   * plaintext = ( ID_CRED_I / bstr / int, Signature_or_MAC_3, ? EAD_3 )
 
-      * Note that if ID_CRED_I contains a single 'kid' parameter, i.e., ID_CRED_I = { 4 : kid_I }, only the byte string kid_I is conveyed in the plaintext encoded as a bstr_identifier, see {{id_cred}} and {{bstr_id}}.
+      * Note that if ID_CRED_I contains a single 'kid2' parameter, i.e., ID_CRED_I = { 4 : kid_I }, only the byte string or integer kid_I is conveyed in the plaintext encoded as a bstr or int.
 
    COSE constructs the input to the AEAD {{RFC5116}} as follows: 
 
    * Key K = EDHOC-KDF( PRK_3e2m, TH_3, "K_3ae", length ) 
    * Nonce N = EDHOC-KDF( PRK_3e2m, TH_3, "IV_3ae", length )
-   * Plaintext P = ( ID_CRED_I / bstr_identifier, Signature_or_MAC_3, ? AD_3 )
+   * Plaintext P = ( ID_CRED_I / bstr / int, Signature_or_MAC_3, ? EAD_3 )
    * Associated data A = \[ "Encrypt0", h'', TH_3 \]
 
    CIPHERTEXT_3 is the 'ciphertext' of the outer COSE_Encrypt0.
@@ -893,17 +906,19 @@ The Responder SHALL process message_3 as follows:
 
 * Decode message_3 (see {{CBOR}}).
 
-* Retrieve the protocol state using the connection identifier C_R and/or other external information such as the CoAP Token and the 5-tuple.
+* Retrieve the protocol state using the message correlation provided by the transport (e.g., the CoAP Token and the 5-tuple as a client, or the prepended C_R as a server).
 
 * Decrypt and verify the outer COSE_Encrypt0 as defined in Section 5.3 of {{I-D.ietf-cose-rfc8152bis-struct}}, with the EDHOC AEAD algorithm in the selected cipher suite, K_3ae, and IV_3ae.
+
+* Pass EAD_3 to the security application.
 
 * Verify that the identity of the Initiator is an allowed identity for this connection, see {{auth-key-id}}.
 
 * Verify Signature_or_MAC_3 using the algorithm in the selected cipher suite. The verification process depends on the method, see {{asym-msg3-proc}}.
 
-*  Pass AD_3, the connection identifiers (C_I, C_R), and the application algorithms in the selected cipher suite to the security application. The application can now derive application keys using the EDHOC-Exporter interface.
+*  Pass the connection identifiers (C_I, C_R), and the application algorithms in the selected cipher suite to the security application. The application can now derive application keys using the EDHOC-Exporter interface.
 
-If any verification step fails, the Responder MUST send an EDHOC error message back, formatted as defined in {{error}}, and the protocol MUST be discontinued.
+If any processing step fails, the Responder SHOULD send an EDHOC error message back, formatted as defined in {{error}}. Sending error messages is essential for debugging but MAY e.g.be skipped if a session cannot be found or due to denial of service reasons, see {{security}}. If an error message is sent, the session MUST be discontinued.
 
 After verifying message_3, the Responder is assured that the Initiator has calculated the key PRK_4x3m (explicit key confirmation) and that no other party than the Responder can compute the key. The Responder can securely send protected application data and store the keying material PRK_4x3m and TH_4.
 
@@ -913,13 +928,12 @@ This section defines the format for error messages.
 
 An EDHOC error message can be sent by either endpoint as a reply to any non-error EDHOC message. How errors at the EDHOC layer are transported depends on lower layers, which need to enable error messages to be sent and processed as intended.
 
-All error messages in EDHOC are fatal. After sending an error message, the sender MUST discontinue the protocol. The receiver SHOULD treat an error message as an indication that the other party likely has discontinued the protocol. But as the error message is not authenticated, a received error messages might also have been sent by an attacker and the receiver MAY therefore try to continue the protocol. 
+Errors in EDHOC are fatal. After sending an error message, the sender MUST discontinue the protocol. The receiver SHOULD treat an error message as an indication that the other party likely has discontinued the protocol. But as the error message is not authenticated, a received error message might also have been sent by an attacker and the receiver MAY therefore try to continue the protocol.
 
 error SHALL be a CBOR Sequence (see {{CBOR}}) as defined below
 
 ~~~~~~~~~~~ CDDL
 error = (
-  ? C_x : bstr_identifier,
   ERR_CODE : int,
   ERR_INFO : any
 )
@@ -928,21 +942,20 @@ error = (
 
 where:
 
-* C_x - (optional) variable length connection identifier, encoded as a bstr_identifier (see {{bstr_id}}). If error is sent by the Responder and corr (METHOD_CORR mod 4) equals 0 or 2 then C_x is set to C_I, else if error is sent by the Initiator and corr (METHOD_CORR mod 4) equals 0 or 1 then C_x is set to C_R, else C_x is omitted.
-* ERR_CODE - error code encoded as an integer.
+* ERR_CODE - error code encoded as an integer. The value 0 is used for success, all other values (negative or positive) indicate errors.
 * ERR_INFO - error information. Content and encoding depend on error code.
 
-The remainder of this section specifies the currently defined error codes, see {{fig-error-codes}}. Error codes 1, 0 and -1 MUST be supported. Additional error codes and corresponding error information may be specified.
+The remainder of this section specifies the currently defined error codes, see {{fig-error-codes}}. Error codes 1 and 2 MUST be supported. Additional error codes and corresponding error information may be specified.
 
 ~~~~~~~~~~~
 +----------+---------------+----------------------------------------+
 | ERR_CODE | ERR_INFO Type | Description                            |
 +==========+===============+========================================+
-|       -1 | TBD           | Success                                |
+|        0 | any           | Success                                |
 +----------+---------------+----------------------------------------+
-|        0 | tstr          | Unspecified                            |
+|        1 | tstr          | Unspecified                            |
 +----------+---------------+----------------------------------------+
-|        1 | SUITES_R      | Wrong selected cipher suite            |
+|        2 | SUITES_R      | Wrong selected cipher suite            |
 +----------+---------------+----------------------------------------+
 ~~~~~~~~~~~
 {: #fig-error-codes title="Error Codes and Error Information"}
@@ -951,20 +964,15 @@ The remainder of this section specifies the currently defined error codes, see {
 
 ## Success
 
-TBD
+Error code 0 MAY be used internally in an application to indicate success, e.g. in log files. ERR_INFO can contain any type of CBOR item. Error code 0 MUST NOT be used as part of the EDHOC message exchange flow.
 
 ## Unspecified
 
-Error code 0 is used for unspecified errors and contain a diagnostic message.
-
-For error messages with ERR_CODE == 0, ERR_INFO MUST be a text string containing a human-readable diagnostic message written in English. The diagnostic text message is mainly intended for software engineers that during debugging need to interpret it in the context of the EDHOC specification. The diagnostic message SHOULD be provided to the calling application where it SHOULD be logged.
-
+Error code 1 is used for errors that do not have a specific error code defined. ERR_INFO MUST be a text string containing a human-readable diagnostic message written in English. The diagnostic text message is mainly intended for software engineers that during debugging need to interpret it in the context of the EDHOC specification. The diagnostic message SHOULD be provided to the calling application where it SHOULD be logged.
 
 ## Wrong Selected Cipher Suite {#wrong-selected}
 
-Error code 1 MUST only be used in a response to message_1 in case the cipher suite selected by the Initiator is not supported by the Responder, or if the Responder supports a cipher suite more preferred by the Initiator than the selected cipher suite, see {{resp-proc-msg1}}.
-
-ERR_INFO is of type SUITES_R:
+Error code 2 MUST only be used in a response to message_1 in case the cipher suite selected by the Initiator is not supported by the Responder, or if the Responder supports a cipher suite more preferred by the Initiator than the selected cipher suite, see {{resp-proc-msg1}}. ERR_INFO is of type SUITES_R:
 
 ~~~~~~~~~~ CDDL
 SUITES_R : [ supported : 2* suite ] / suite
@@ -986,15 +994,15 @@ In the first example ({{fig-error1}}), the Responder supports cipher suite 6 but
 
 ~~~~~~~~~~~
 Initiator                                                   Responder
-|            METHOD_CORR, SUITES_I = 5, G_X, C_I, AD_1              |
+|              METHOD, SUITES_I = 5, G_X, C_I, EAD_1                |
 +------------------------------------------------------------------>|
 |                             message_1                             |
 |                                                                   |
-|                    C_I, DIAG_MSG, SUITES_R = 6                    |
+|                      DIAG_MSG, SUITES_R = 6                       |
 |<------------------------------------------------------------------+
 |                               error                               |
 |                                                                   |
-|         METHOD_CORR, SUITES_I = [6, 5, 6], G_X, C_I, AD_1         |
+|           METHOD, SUITES_I = [6, 5, 6], G_X, C_I, EAD_1           |
 +------------------------------------------------------------------>|
 |                             message_1                             |
 ~~~~~~~~~~~
@@ -1005,15 +1013,15 @@ In the second example ({{fig-error2}}), the Responder supports cipher suites 8 a
 
 ~~~~~~~~~~~
 Initiator                                                   Responder
-|        METHOD_CORR, SUITES_I = [6, 5, 6], G_X, C_I, AD_1          |
+|          METHOD, SUITES_I = [6, 5, 6], G_X, C_I, EAD_1            |
 +------------------------------------------------------------------>|
 |                             message_1                             |
 |                                                                   |
-|                  C_I, DIAG_MSG, SUITES_R = [9, 8]                 |
+|                     DIAG_MSG, SUITES_R = [9, 8]                   |
 |<------------------------------------------------------------------+
 |                               error                               |
 |                                                                   |
-|       METHOD_CORR, SUITES_I = [8, 5, 6, 7, 8], G_X, C_I, AD_1     |
+|         METHOD, SUITES_I = [8, 5, 6, 7, 8], G_X, C_I, EAD_1       |
 +------------------------------------------------------------------>|
 |                             message_1                             |
 ~~~~~~~~~~~
@@ -1022,7 +1030,7 @@ Initiator                                                   Responder
 
 Note that the Initiator's list of supported cipher suites and order of preference is fixed (see {{asym-msg1-form}} and {{init-proc-msg1}}). Furthermore, the Responder shall only accept message_1 if the selected cipher suite is the first cipher suite in SUITES_I that the Responder supports (see {{resp-proc-msg1}}). Following this procedure ensures that the selected cipher suite is the most preferred (by the Initiator) cipher suite supported by both parties.
 
-If the selected cipher suite is not the first cipher suite which the Responder supports in SUITES_I received in message_1, then Responder MUST discontinue the protocol, see {{resp-proc-msg1}}. If SUITES_I in message_1 is manipulated then the integrity verification of message_2 containing the transcript hash TH_2 = H( message_1, data_2 ) will fail and the Initiator will discontinue the protocol.
+If the selected cipher suite is not the first cipher suite which the Responder supports in SUITES_I received in message_1, then Responder MUST discontinue the protocol, see {{resp-proc-msg1}}. If SUITES_I in message_1 is manipulated then the integrity verification of message_2 containing the transcript hash TH_2 will fail and the Initiator will discontinue the protocol.
 
 # Transferring EDHOC and Deriving an OSCORE Context {#transfer}
 
@@ -1042,13 +1050,14 @@ message_4 and data_4 SHALL be CBOR Sequences (see {{CBOR}}) as defined below
 ~~~~~~~~~~~ CDDL
 message_4 = (
   data_4,
-  MAC_4 : bstr,
+  CIPHERTEXT_4 : bstr,
 )
 ~~~~~~~~~~~
 
+[ The data_4 is left empty for the time being to not overly interfere with the transcript calculation while initially moving C_x outside. ]
+
 ~~~~~~~~~~~ CDDL
 data_4 = (
-  ? C_I : bstr_identifier,
 )
 ~~~~~~~~~~~
 
@@ -1056,26 +1065,23 @@ data_4 = (
 
 The Responder SHALL compose message_4 as follows:
 
-* If corr (METHOD_CORR mod 4) equals 1 or 3, C_I is omitted, otherwise C_I is not omitted.
 
-* Compute an inner COSE_Encrypt0 as defined in Section 5.3 of {{I-D.ietf-cose-rfc8152bis-struct}}, with the EDHOC AEAD algorithm in the selected cipher suite, and the following parameters:
+* Compute a COSE_Encrypt0 as defined in Section 5.3 of {{I-D.ietf-cose-rfc8152bis-struct}}, with the EDHOC AEAD algorithm in the selected cipher suite, and the following parameters. The protected header SHALL be empty.
 
    * protected = h''
 
-   * external_aad = << TH_4 >>
+   * external_aad = TH_4
 
-   * plaintext = h''
+   * plaintext = ( ? EAD_4 )
 
-   COSE constructs the input to the AEAD {{RFC5116}} as follows: 
+   where EAD_4 is protected external authorization data, see {{AD}}. COSE constructs the input to the AEAD {{RFC5116}} as follows: 
 
    * Key K = EDHOC-Exporter( "EDHOC_message_4_Key", length ) 
    * Nonce N = EDHOC-Exporter( "EDHOC_message_4_Nonce", length )
-   * Plaintext P = 0x (the empty string)
-   * Associated data A =
+   * Plaintext P = ( ? EAD_4 )
+   * Associated data A = \[ "Encrypt0", h'', TH_4 \]
 
-     \[ "Encrypt0", h'', << TH_4 >> \]
-
-   MAC_4 is the 'ciphertext' of the COSE_Encrypt0.
+  CIPHERTEXT_4 is the 'ciphertext' of the COSE_Encrypt0.
 
 * Encode message_4 as a sequence of CBOR encoded data items as specified in {{asym-msg4-form}}.
 
@@ -1085,11 +1091,13 @@ The Initiator SHALL process message_4 as follows:
 
 * Decode message_4 (see {{CBOR}}).
 
-* Retrieve the protocol state using the connection identifier C_I and/or other external information such as the CoAP Token and the 5-tuple.
+* Retrieve the protocol state using the message correlation provided by the transport (e.g., the CoAP Token and the 5-tuple as a client, or the prepended C_I as a server).
 
-* Verify MAC_4 as defined in Section 5.3 of {{I-D.ietf-cose-rfc8152bis-struct}}, with the EDHOC AEAD algorithm in the selected cipher suite, and the parameters defined in {{asym-msg4-proc}}.
+* Decrypt and verify the outer COSE_Encrypt0 as defined in Section 5.3 of {{I-D.ietf-cose-rfc8152bis-struct}}, with the EDHOC AEAD algorithm in the selected cipher suite,  and the parameters defined in {{asym-msg4-proc}}.
 
-If any verification step fails the Initiator MUST send an EDHOC error message back, formatted as defined in {{error}}, and the protocol MUST be discontinued.
+* Pass EAD_4 to the security application.
+
+If any verification step fails the Initiator MUST send an EDHOC error message back, formatted as defined in {{error}}, and the session MUST be discontinued.
 
 
 ## Transferring EDHOC in CoAP {#coap}
@@ -1100,15 +1108,23 @@ By default, the CoAP client is the Initiator and the CoAP server is the Responde
 
 By default, the message flow is as follows: EDHOC message_1 is sent in the payload of a POST request from the client to the server's resource for EDHOC. EDHOC message_2 or the EDHOC error message is sent from the server to the client in the payload of a 2.04 (Changed) response. EDHOC message_3 or the EDHOC error message is sent from the client to the server's resource in the payload of a POST request. If needed, an EDHOC error message is sent from the server to the client in the payload of a 2.04 (Changed) response. Alternatively, if EDHOC message_4 is used, it is sent from the server to the client in the payload of a 2.04 (Changed) response analogously to message_2.
 
-An example of a successful EDHOC exchange using CoAP is shown in {{fig-coap1}}. In this case the CoAP Token enables the Initiator to correlate message_1 and message_2 so the correlation parameter corr = 1.
+In order to correlate a message received from a client to a message previously sent by the server, messages sent by the client are prepended with the CBOR serialization of the connection identifier which the server has chosen. This applies independently of if the CoAP server is Responder or Initiator. For the default case when the server is Responder, the prepended connection identifier is C_R, and C_I if the server is Initiator. If message_1 is sent to the server, the CBOR simple value `null` (0xf6) is sent in its place (given that the server has not selected C_R yet).
+
+These identifiers are encoded in CBOR and thus self-delimiting.
+They are sent in front of the actual EDHOC message,
+and only the part of the body following the identifier is used for EDHOC processing.
+
+Consequently, the application/edhoc media type does not apply to these messages;
+their media type is unnamed.
+
+An example of a successful EDHOC exchange using CoAP is shown in {{fig-coap1}}. In this case the CoAP Token enable correlation on the Initiator side, and the prepended C_R enables correlation on the Responder (server) side.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 Client    Server
   |          |
   +--------->| Header: POST (Code=0.02)
   |   POST   | Uri-Path: "/.well-known/edhoc"
-  |          | Content-Format: application/edhoc
-  |          | Payload: EDHOC message_1
+  |          | Payload: null, EDHOC message_1
   |          |
   |<---------+ Header: 2.04 Changed
   |   2.04   | Content-Format: application/edhoc
@@ -1116,8 +1132,7 @@ Client    Server
   |          |
   +--------->| Header: POST (Code=0.02)
   |   POST   | Uri-Path: "/.well-known/edhoc"
-  |          | Content-Format: application/edhoc
-  |          | Payload: EDHOC message_3
+  |          | Payload: C_R, EDHOC message_3
   |          |
   |<---------+ Header: 2.04 Changed
   |   2.04   | 
@@ -1126,7 +1141,8 @@ Client    Server
 {: #fig-coap1 title="Transferring EDHOC in CoAP when the Initiator is CoAP Client"}
 {: artwork-align="center"}
 
-The exchange in {{fig-coap1}} protects the client identity against active attackers and the server identity against passive attackers. An alternative exchange that protects the server identity against active attackers and the client identity against passive attackers is shown in {{fig-coap2}}. In this case the CoAP Token enables the Responder to correlate message_2 and message_3 so the correlation parameter corr = 2. If EDHOC message_4 is used, it is transported with CoAP in the payload of a POST request with a 2.04 (Changed) response.
+The exchange in {{fig-coap1}} protects the client identity against active attackers and the server identity against passive attackers. An alternative exchange that protects the server identity against active attackers and the client identity against passive attackers is shown in {{fig-coap2}}. In this case the CoAP Token enables the Responder to correlate message_2 and message_3, and the prepended C_I enables correlation on the Initiator (server) side. If EDHOC message_4 is used, C_I is prepended, and it is transported with CoAP in the payload of a POST request with a 2.04 (Changed) response.
+ 
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 Client    Server
@@ -1140,8 +1156,7 @@ Client    Server
   |          |
   +--------->| Header: POST (Code=0.02)
   |   POST   | Uri-Path: "/.well-known/edhoc"
-  |          | Content-Format: application/edhoc
-  |          | Payload: EDHOC message_2
+  |          | Payload: C_I, EDHOC message_2
   |          |
   |<---------+ Header: 2.04 Changed
   |   2.04   | Content-Format: application/edhoc
@@ -1162,7 +1177,7 @@ EDHOC inherits its security properties from the theoretical SIGMA-I protocol {{S
 
 EDHOC protects the credential identifier of the Initiator against active attacks and the credential identifier of the Responder against passive attacks. The roles should be assigned to protect the most sensitive identity/identifier, typically that which is not possible to infer from routing information in the lower layers. 
 
-Compared to {{SIGMA}}, EDHOC adds an explicit method type and expands the message authentication coverage to additional elements such as algorithms, auxiliary data, and previous messages. This protects against an attacker replaying messages or injecting messages from another session.
+Compared to {{SIGMA}}, EDHOC adds an explicit method type and expands the message authentication coverage to additional elements such as algorithms, external authorization data, and previous messages. This protects against an attacker replaying messages or injecting messages from another session.
 
 EDHOC also adds negotiation of connection identifiers and downgrade protected negotiation of cryptographic parameters, i.e. an attacker cannot affect the negotiated parameters. A single session of EDHOC does not include negotiation of cipher suites, but it enables the Responder to verify that the selected cipher suite is the most preferred cipher suite by the Initiator which is supported by both the Initiator and the Responder.
 
@@ -1199,15 +1214,18 @@ When using private cipher suite or registering new cipher suites, the choice of 
 
 The hash algorithms SHA-1 and SHA-256/64 (256-bit Hash truncated to 64-bits) SHALL NOT be supported for use in EDHOC except for certificate identification with x5u and c5u. Note that secp256k1 is only defined for use with ECDSA and not for ECDH.
 
-## Unprotected Data
+## Unprotected Data {#unprot-data}
 
-The Initiator and the Responder must make sure that unprotected data and metadata do not reveal any sensitive information. This also applies for encrypted data sent to an unauthenticated party. In particular, it applies to AD_1, ID_CRED_R, AD_2, and ERR_MSG. Using the same AD_1 in several EDHOC sessions allows passive eavesdroppers to correlate the different sessions. Another consideration is that the list of supported cipher suites may potentially be used to identify the application.
+The Initiator and the Responder must make sure that unprotected data and metadata do not reveal any sensitive information. This also applies for encrypted data sent to an unauthenticated party. In particular, it applies to EAD_1, ID_CRED_R, EAD_2, and error messages. Using the same EAD_1 in several EDHOC sessions allows passive eavesdroppers to correlate the different sessions. Another consideration is that the list of supported cipher suites may potentially be used to identify the application.
 
-The Initiator and the Responder must also make sure that unauthenticated data does not trigger any harmful actions. In particular, this applies to AD_1 and ERR_MSG.
+The Initiator and the Responder must also make sure that unauthenticated data does not trigger any harmful actions. In particular, this applies to EAD_1 and error messages.
 
 ## Denial-of-Service {#dos}
 
 EDHOC itself does not provide countermeasures against Denial-of-Service attacks. By sending a number of new or replayed message_1 an attacker may cause the Responder to allocate state, perform cryptographic operations, and amplify messages. To mitigate such attacks, an implementation SHOULD rely on lower layer mechanisms such as the Echo option in CoAP {{I-D.ietf-core-echo-request-tag}} that forces the initiator to demonstrate reachability at its apparent network address.
+
+An attacker can also send faked message_2, message_3, message_4, or error in an attempt to trick the receiving party to send an error message and discontinue the session. EDHOC implementations MAY evaluate if a received message is likely to have be forged by and attacker and ignore it without sending an error message or discontinuing the session.
+
 
 ## Implementation Considerations
 
@@ -1222,13 +1240,27 @@ The Initiator and the Responder are responsible for verifying the integrity of c
 
 The Initiator and the Responder are allowed to select the connection identifiers C_I and C_R, respectively, for the other party to use in the ongoing EDHOC protocol as well as in a subsequent application protocol (e.g. OSCORE {{RFC8613}}). The choice of connection identifier is not security critical in EDHOC but intended to simplify the retrieval of the right security context in combination with using short identifiers. If the wrong connection identifier of the other party is used in a protocol message it will result in the receiving party not being able to retrieve a security context (which will terminate the protocol) or retrieve the wrong security context (which also terminates the protocol as the message cannot be verified).
 
-The Responder MUST finish the verification step of message_3 before passing AD_3 to the application.
-
 If two nodes unintentionally initiate two simultaneous EDHOC message exchanges with each other even if they only want to complete a single EDHOC message exchange, they MAY terminate the exchange with the lexicographically smallest G_X. If the two G_X values are equal, the received message_1 MUST be discarded to mitigate reflection attacks. Note that in the case of two simultaneous EDHOC exchanges where the nodes only complete one and where the nodes have different preferred cipher suites, an attacker can affect which of the two nodes’ preferred cipher suites will be used by blocking the other exchange.
 
 If supported by the device, it is RECOMMENDED that at least the long-term private keys are stored in a Trusted Execution Environment (TEE) and that sensitive operations using these keys are performed inside the TEE. To achieve even higher security it is RECOMMENDED that in additional operations such as ephemeral key generation, all computations of shared secrets, and storage of the pseudorandom keys (PRK) can be done inside the TEE. The use of a TEE enforces that code within that environment cannot be tampered with, and that any data used by such code cannot be read or tampered with by code outside that environment. Note that non-EDHOC code inside the TEE might still be able to read EDHOC data and tamper with EDHOC code, to protect against such attacks EDHOC needs to be in its own zone. To provide better protection against some forms of physical attacks, sensitive EDHOC data should be stored inside the SoC or encrypted and integrity protected when sent on a data bus (e.g. between the CPU and RAM or Flash). Secure boot can be used to increase the security of code and data in the Rich Execution Environment (REE) by validating the REE image.
  
 # IANA Considerations {#iana}
+
+## EDHOC Exporter Label {#exporter-label}
+
+IANA has created a new registry titled "EDHOC Exporter Label" under the new heading "EDHOC". The registration procedure is "Expert Review". The columns of the registry are Label, Description, and Reference. All columns are text strings. The initial contents of the registry are:
+
+~~~~~~~~~~~~~~~~~~~~~~~
+Label: EDHOC_message_4_Key
+Description: Key used to protect EDHOC message_4
+Reference: [[this document]]
+~~~~~~~~~~~~~~~~~~~~~~~
+
+~~~~~~~~~~~~~~~~~~~~~~~
+Label: EDHOC_message_4_Nonce
+Description: Nonce used to protect EDHOC message_4
+Reference: [[this document]]
+~~~~~~~~~~~~~~~~~~~~~~~
 
 ## EDHOC Cipher Suites Registry {#suites-registry}
 
@@ -1296,6 +1328,22 @@ Reference: [[this document]]
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 Value: 4
+Array: 24, -16, 4, -8, 24, -16
+Desc: ChaCha20/Poly1305, SHA-256, X25519, EdDSA,
+      ChaCha20/Poly1305, SHA-256
+Reference: [[this document]]
+~~~~~~~~~~~~~~~~~~~~~~~
+
+~~~~~~~~~~~~~~~~~~~~~~~
+Value: 5
+Array: 24, -16, 1, -7, 24, -16
+Desc: ChaCha20/Poly1305, SHA-256, P-256, ES256,
+      ChaCha20/Poly1305, SHA-256
+Reference: [[this document]]
+~~~~~~~~~~~~~~~~~~~~~~~
+
+~~~~~~~~~~~~~~~~~~~~~~~
+Value: 6
 Array: 1, -16, 4, -7, 1, -16
 Desc: A128GCM, SHA-256, X25519, ES256,
       A128GCM, SHA-256
@@ -1303,13 +1351,20 @@ Reference: [[this document]]
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 ~~~~~~~~~~~~~~~~~~~~~~~
-Value: 5
+Value: 24
 Array: 3, -43, 2, -35, 3, -43 
 Desc: A256GCM, SHA-384, P-384, ES384,
       A256GCM, SHA-384
 Reference: [[this document]]
 ~~~~~~~~~~~~~~~~~~~~~~~
 
+~~~~~~~~~~~~~~~~~~~~~~~
+Value: 25
+Array: 24, -45, 5, -8, 24, -45
+Desc: ChaCha20/Poly1305, SHAKE256, X448, EdDSA,
+      ChaCha20/Poly1305, SHAKE256
+Reference: [[this document]]
+~~~~~~~~~~~~~~~~~~~~~~~
 
 ## EDHOC Method Type Registry {#method-types}
 
@@ -1319,6 +1374,37 @@ IANA has created a new registry entitled "EDHOC Method Type" under the new headi
 
 IANA has created a new registry entitled "EDHOC Error Codes" under the new heading "EDHOC". The registration procedure is "Specification Required". The columns of the registry are ERR_CODE, ERR_INFO Type and Description, where ERR_CODE is an integer, ERR_INFO is a CDDL defined type, and Description is a text string. The initial contents of the registry is shown in {{fig-error-codes}}.
 
+
+## COSE Header Parameters Registry {#kid2-header-param}
+
+IANA has added the COSE header parameter 'kid2' to the COSE Header Parameters registry. The kid2 parameter may point to a COSE key common parameter 'kid' or 'kid2'. The kid2 parameter can be used to identity a key stored in a "raw" COSE_Key, in a CWT, or in a certificate.
+
+~~~~~~~~~~~~~~~~~~~~~~~
++------+-------+------------+-----------+----------------+-------------------+
+| Name | Label | Value Type | Value     | Description    | Reference         |
+|      |       |            | Reference |                |                   |
++------+-------+------------+-----------+----------------+-------------------+
+| kid2 | TBD   | bstr / int |           | Key identifier | [[This document]] |
++------+-------+------------+-----------+----------------+-------------------+
+~~~~~~~~~~~~~~~~~~~~~~~
+{: artwork-align="center"}
+
+## COSE Key Common Parameters Registry {#kid2-key-common-param}
+
+IANA has added the COSE key common parameter 'kid2' to the COSE Key Common Parameters registry. 
+
+~~~~~~~~~~~~~~~~~~~~~~~
++------+-------+------------+-----------+----------------+-------------------+
+| Name | Label | Value Type | Value     | Description    | Reference         |
+|      |       |            | Reference |                |                   |
++------+-------+------------+-----------+----------------+-------------------+
+| kid2 | TBD   | bstr / int |           | Key identifi-  | [[This document]] |
+|      |       |            |           | cation value - |                   |
+|      |       |            |           | match to kid2  |                   |
+|      |       |            |           | in message     |                   |
++------+-------+------------+-----------+----------------+-------------------+
+~~~~~~~~~~~~~~~~~~~~~~~
+{: artwork-align="center"}
 
 ## The Well-Known URI Registry
 
@@ -1386,6 +1472,14 @@ IANA has added the media type 'application/edhoc' to the CoAP Content-Formats re
 
 -  Reference: \[\[this document\]\]
 
+## EDHOC External Authorization Data {#iana-ead}
+
+IANA has created a new registry entitled "EDHOC External Authorization Data" 
+under the new heading "EDHOC". The registration procedure is "Expert Review". 
+The columns of the registry are Value, Description, and Reference, where Value is 
+an integer and the other columns are text strings. 
+
+
 ## Expert Review Instructions
 
 The IANA Registries established in this document is defined as "Expert Review". This section gives some general guidelines for what the experts should be looking for, but they are being designated as experts for a reason so they should be given substantial latitude.
@@ -1448,19 +1542,16 @@ This sections compiles the CDDL definitions for ease of reference.
 
 
 ~~~~~~~~~~~ CDDL
-bstr_identifier = bstr / int
-
 suite = int
 
 SUITES_R : [ supported : 2* suite ] / suite
 
 message_1 = (
-  ? C_1 : null,
-  METHOD_CORR : int,
+  METHOD : int,
   SUITES_I : [ selected : suite, supported : 2* suite ] / suite,
   G_X : bstr,
-  C_I : bstr_identifier,
-  ? AD_1 : bstr,
+  C_I : bstr / int,
+  ? EAD ; EAD_1
 )
 
 message_2 = (
@@ -1469,9 +1560,8 @@ message_2 = (
 )
 
 data_2 = (
-  ? C_I : bstr_identifier,
   G_Y : bstr,
-  C_R : bstr_identifier,
+  C_R : bstr / int,
 )
 
 message_3 = (
@@ -1480,20 +1570,17 @@ message_3 = (
 )
 
 data_3 = (
-  ? C_R : bstr_identifier,
 )
 
 message_4 = (
   data_4,
-  MAC_4 : bstr,
+  CIPHERTEXT_4 : bstr,
 )
 
 data_4 = (
-  ? C_I : bstr_identifier,
 )
 
 error = (
-  ? C_x : bstr_identifier,
   ERR_CODE : int,
   ERR_INFO : any
 )
@@ -1513,7 +1600,10 @@ CBOR Object Signing and Encryption (COSE) {{I-D.ietf-cose-rfc8152bis-struct}} de
 
 # Test Vectors {#vectors}
 
-This appendix provides detailed test vectors compatible with versions -05 and -06 of this specification, to ease implementation and ensure interoperability. In addition to hexadecimal, all CBOR data items and sequences are given in CBOR diagnostic notation. The test vectors use the default mapping to CoAP where the Initiator acts as CoAP client (this means that corr = 1). 
+Note: The test vectors are not updated to version -07 of the draft. More changes affecting the test vectors are anticipated for -08.
+
+This appendix provides detailed test vectors to ease implementation and ensure interoperability. The test vectors in this version are compatible with versions -05 and -06 of the specification.
+In addition to hexadecimal, all CBOR data items and sequences are given in CBOR diagnostic notation. The test vectors use the default mapping to CoAP where the Initiator acts as CoAP client (this means that corr = 1). 
 
 A more extensive test vector suite covering more combinations of authentication method used between Initiator and Responder and related code to generate them can be found at https://github.com/lake-wg/edhoc/tree/master/test-vectors-05.
 
@@ -1526,7 +1616,7 @@ NOTE 2. If not clear from the context, remember that CBOR sequences and CBOR arr
 
 <!-- Test vector index (int) 22900 -->
 
-EDHOC with signature authentication and X.509 certificates is used. In this test vector, the hash value 'x5t' is used to identify the certificate. The optional C_1 in message_1 is omitted. No auxiliary data is sent in the message exchange.
+EDHOC with signature authentication and X.509 certificates is used. In this test vector, the hash value 'x5t' is used to identify the certificate. The optional C_1 in message_1 is omitted. No external authorization data is sent in the message exchange.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 method (Signature Authentication)
@@ -1586,17 +1676,17 @@ Connection identifier chosen by Initiator (1 byte)
 09
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-Note that since C_I is a byte string in the interval h'00' to h'2f', it is encoded as the corresponding integer subtracted by 24 (see bstr_identifier in {{bstr_id}}). Thus 0x09 = 09, 9 - 24 = -15, and -15 in CBOR encoding is equal to 0x2e.
+Note that since C_I is a byte string in the interval h'00' to h'2f', it is encoded as the corresponding integer subtracted by 24. Thus 0x09 = 09, 9 - 24 = -15, and -15 in CBOR encoding is equal to 0x2e.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 C_I (1 byte)
 2e
 ~~~~~~~~~~~~~~~~~~~~~~~ 
 
-Since no auxiliary data is sent:
+Since no external authorization data is sent:
 
 ~~~~~~~~~~~~~~~~~~~~~~~
-AD_1 (0 bytes)
+EAD_1 (0 bytes)
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 The list of supported cipher suites needs to contain the selected cipher suite. The initiator truncates the list of supported cipher suites to one cipher suite only. In this case there is only one supported cipher suite indicated, 00. 
@@ -1704,7 +1794,7 @@ Connection identifier chosen by Responder (1 byte)
 00
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-Note that since C_R is a byte string in the interval h'00' to h'2f', it is encoded as the corresponding integer subtracted by 24 (see bstr_identifier in {{bstr_id}}). Thus 0x00 = 0, 0 - 24 = -24, and -24 in CBOR encoding is equal to 0x37.
+Note that since C_R is a byte string in the interval h'00' to h'2f', it is encoded as the corresponding integer subtracted by 24. Thus 0x00 = 0, 0 - 24 = -24, and -24 in CBOR encoding is equal to 0x37.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 C_R (1 byte)
@@ -1729,7 +1819,7 @@ data_2 (CBOR Sequence) (35 bytes)
 19 52 81 75 4c 5e bc af 30 1e 37 
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-From data_2 and message_1, compute the input to the transcript hash TH_2 = H( message_1, data_2 ), as a CBOR Sequence of these 2 data items.
+From data_2 and message_1, compute the input to the transcript hash TH_2 = H( H(message_1), data_2 ), as a CBOR Sequence of these 2 data items.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 Input to calculate TH_2 (CBOR Sequence) (72 bytes)
@@ -1738,7 +1828,7 @@ ec 07 6b ba 02 59 d9 04 b7 ec 8b 0c 2e 58 20 71 a3 d5 99 c2 1d a1 89 02
 a1 ae a8 10 b2 b6 38 2c cd 8d 5f 9b f0 19 52 81 75 4c 5e bc af 30 1e 37 
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-And from there, compute the transcript hash TH_2 = SHA-256( message_1, data_2 )
+And from there, compute the transcript hash TH_2 = SHA-256( H(message_1), data_2 )
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 TH_2 (CBOR unencoded) (32 bytes)
@@ -1793,10 +1883,10 @@ ID_CRED_R (14 bytes)
 a1 18 22 82 2e 48 68 44 07 8a 53 f3 12 f5 
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-Since no auxiliary data is sent:
+Since no external authorization data is sent:
 
 ~~~~~~~~~~~~~~~~~~~~~~~
-AD_2  (0 bytes)
+EAD_2  (0 bytes)
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 The plaintext is defined as the empty string:
@@ -1900,7 +1990,7 @@ fa bb a4 7e 56 71 a1 82
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 To compute the Signature_or_MAC_2, the key is the private authentication key of the Responder and 
-the message M_2 to be signed = \[ "Signature1", << ID_CRED_R >>, << TH_2, CRED_R, ? AD_2 >>, MAC_2 \]. ID_CRED_R is encoded as a CBOR byte string, the concatenation of the CBOR byte strings TH_2 and CRED_R is wrapped as a CBOR bstr, and MAC_2 is encoded as a CBOR bstr.
+the message M_2 to be signed = \[ "Signature1", << ID_CRED_R >>, << TH_2, CRED_R, ? EAD_2 >>, MAC_2 \]. ID_CRED_R is encoded as a CBOR byte string, the concatenation of the CBOR byte strings TH_2 and CRED_R is wrapped as a CBOR bstr, and MAC_2 is encoded as a CBOR bstr.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 M_2 = 
@@ -1940,7 +2030,7 @@ c2 1c f5 e9 a0 e6 03 9f 54 fd 2a 6c 3a 11 18 f2 b9 d8 eb cd 48 23 48 b9
 
 CIPHERTEXT_2 is the ciphertext resulting from XOR between plaintext and KEYSTREAM_2 which is derived from TH_2 and the pseudorandom key PRK_2e.
 
-* plaintext = CBOR Sequence of the items ID_CRED_R and Signature_or_MAC_2 encoded as CBOR byte strings, in this order (AD_2 is empty).
+* plaintext = CBOR Sequence of the items ID_CRED_R and Signature_or_MAC_2 encoded as CBOR byte strings, in this order (EAD_2 is empty).
 
 
 The plaintext is the following:
@@ -2052,7 +2142,7 @@ data_3 (CBOR Sequence) (1 byte)
 37
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-From data_3, CIPHERTEXT_2, and TH_2, compute the input to the transcript hash TH_3 = H(TH_2 , CIPHERTEXT_2, data_3), as a CBOR Sequence of these 3 data items.
+From data_3, CIPHERTEXT_2, and TH_2, compute the input to the transcript hash TH_3 = H( H(TH_2 , CIPHERTEXT_2), data_3), as a CBOR Sequence of 2 data items.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 Input to calculate TH_3 (CBOR Sequence) (117 bytes)
@@ -2063,7 +2153,7 @@ d2 c2 c1 53 c1 7f 8e 96 29 ff 58 50 0f f2 ac 2d 7e 87 ae 34 0e 50 bb de
 81 07 f4 0f 21 46 3b a8 11 bf 03 97 19 e7 cf fa a7 f2 f4 40 37 
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-And from there, compute the transcript hash TH_3 = SHA-256(TH_2 , CIPHERTEXT_2, data_3)
+And from there, compute the transcript hash TH_3 = SHA-256( H(TH_2 , CIPHERTEXT_2), data_3)
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 TH_3 (CBOR unencoded) (32 bytes)
@@ -2119,10 +2209,10 @@ ID_CRED_I (14 bytes)
 a1 18 22 82 2e 48 70 5d 58 45 f3 6f c6 a6 
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-Since no auxiliary data is exchanged:
+Since no external authorization data is exchanged:
 
 ~~~~~~~~~~~~~~~~~~~~~~~
-AD_3 (0 bytes)
+EAD_3 (0 bytes)
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 The plaintext of the COSE_Encrypt is the empty string:
@@ -2132,7 +2222,7 @@ P_3m (0 bytes)
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 The associated data is the following:
-\[ "Encrypt0", << ID_CRED_I >>, << TH_3, CRED_I, ? AD_3 >> \].
+\[ "Encrypt0", << ID_CRED_I >>, << TH_3, CRED_I, ? EAD_3 >> \].
 
 
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -2253,7 +2343,7 @@ b2 be af 0a 59 a4 15 84 37 2f 43 2e 6b f4 7b 04
 
 Finally, the outer COSE_Encrypt0 is computed.
 
-The plaintext is the CBOR Sequence of the items ID_CRED_I and the CBOR encoded Signature_or_MAC_3, in this order (AD_3 is empty).
+The plaintext is the CBOR Sequence of the items ID_CRED_I and the CBOR encoded Signature_or_MAC_3, in this order (EAD_3 is empty).
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 P_3ae (CBOR Sequence) (80 bytes)
@@ -2480,7 +2570,7 @@ OSCORE Hash Algorithm (int)
 
 <!-- Test vector index (int) 34900 -->
 
-EDHOC with static Diffie-Hellman keys and raw public keys is used. In this test vector, a key identifier is used to identify the raw public key. The optional C_1 in message_1 is omitted. No auxiliary data is sent in the message exchange.
+EDHOC with static Diffie-Hellman keys and raw public keys is used. In this test vector, a key identifier is used to identify the raw public key. The optional C_1 in message_1 is omitted. No external authorization data is sent in the message exchange.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 method (Static DH Based Authentication)
@@ -2540,17 +2630,17 @@ Connection identifier chosen by Initiator (1 byte)
 16
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-Note that since C_I is a byte string in the interval h'00' to h'2f', it is encoded as the corresponding integer - 24 (see bstr_identifier in {{bstr_id}}), i.e. 0x16 = 22, 22 - 24 = -2, and -2 in CBOR encoding is equal to 0x21.
+Note that since C_I is a byte string in the interval h'00' to h'2f', it is encoded as the corresponding integer - 24, i.e. 0x16 = 22, 22 - 24 = -2, and -2 in CBOR encoding is equal to 0x21.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 C_I (1 byte)
 21
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-Since no auxiliary data is sent:
+Since no external authorization data is sent:
 
 ~~~~~~~~~~~~~~~~~~~~~~~
-AD_1 (0 bytes)
+EAD_1 (0 bytes)
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 Since the list of supported cipher suites needs to contain the selected cipher suite, the initiator truncates the list of supported cipher suites to one cipher suite only, 00. 
@@ -2666,7 +2756,7 @@ Connection identifier chosen by Responder (1 byte)
 00
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-Note that since C_R is a byte string in the interval h'00' to h'2f', it is encoded as the corresponding integer - 24 (see bstr_identifier in {{bstr_id}}), i.e. 0x00 = 0, 0 - 24 = -24, and -24 in CBOR encoding is equal to 0x37.
+Note that since C_R is a byte string in the interval h'00' to h'2f', it is encoded as the corresponding integer - 24, i.e. 0x00 = 0, 0 - 24 = -24, and -24 in CBOR encoding is equal to 0x37.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 C_R (1 byte)
@@ -2691,7 +2781,7 @@ data_2 (CBOR Sequence) (35 bytes)
 fc 33 01 04 70 69 45 1b af 35 37 
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-From data_2 and message_1, compute the input to the transcript hash TH_2 = H( message_1, data_2 ), as a CBOR Sequence of these 2 data items.
+From data_2 and message_1, compute the input to the transcript hash TH_2 = H( H(message_1), data_2 ), as a CBOR Sequence of these 2 data items.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 Input to calculate TH_2 (CBOR Sequence) (72 bytes)
@@ -2700,7 +2790,7 @@ a5 38 a4 44 ee 9e 2b 57 e2 44 1a 7c 21 58 20 52 fb a0 bd c8 d9 53 dd 86
 ce 1a b2 fd 7c 05 a4 65 8c 7c 30 af db fc 33 01 04 70 69 45 1b af 35 37  
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-And from there, compute the transcript hash TH_2 = SHA-256( message_1, data_2 )
+And from there, compute the transcript hash TH_2 = SHA-256( H(message_1), data_2 )
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 TH_2 (CBOR unencoded) (32 bytes)
@@ -2749,10 +2839,10 @@ a4 01 01 20 04 21 58 20 a3 ff 26 35 95 be b3 77 d1 a0 ce 1d 04 da d2 d4
 20 6e 61 6d 65 60 
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-Since no auxiliary data is sent:
+Since no external authorization data is sent:
 
 ~~~~~~~~~~~~~~~~~~~~~~~
-AD_2  (0 bytes)
+EAD_2  (0 bytes)
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 The plaintext is defined as the empty string:
@@ -2865,9 +2955,9 @@ Signature_or_MAC_2 (CBOR unencoded) (8 bytes)
 
 CIPHERTEXT_2 is the ciphertext resulting from XOR between plaintext and KEYSTREAM_2 which is derived from TH_2 and the pseudorandom key PRK_2e.
 
-The plaintext is the CBOR Sequence of the items ID_CRED_R and the CBOR encoded Signature_or_MAC_2, in this order (AD_2 is empty). 
+The plaintext is the CBOR Sequence of the items ID_CRED_R and the CBOR encoded Signature_or_MAC_2, in this order (EAD_2 is empty). 
 
-Note that since ID_CRED_R contains a single 'kid' parameter, i.e., ID_CRED_R = { 4 : kid_R }, only the byte string kid_R is conveyed in the plaintext encoded as a bstr_identifier. kid_R is encoded as the corresponding integer - 24 (see bstr_identifier in {{bstr_id}}), i.e. 0x05 = 5, 5 - 24 = -19, and -19 in CBOR encoding is equal to 0x32.
+Note that since ID_CRED_R contains a single 'kid' parameter, i.e., ID_CRED_R = { 4 : kid_R }, only the byte string kid_R is conveyed in the plaintext encoded as a bstr_identifier. kid_R is encoded as the corresponding integer - 24, i.e. 0x05 = 5, 5 - 24 = -19, and -19 in CBOR encoding is equal to 0x32.
 
 The plaintext is the following:
 
@@ -2972,7 +3062,7 @@ data_3 (CBOR Sequence) (1 byte)
 37 
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-From data_3, CIPHERTEXT_2, and TH_2, compute the input to the transcript hash TH_3 = H(TH_2 , CIPHERTEXT_2, data_3), as a CBOR Sequence of these 3 data items.
+From data_3, CIPHERTEXT_2, and TH_2, compute the input to the transcript hash TH_3 = H( H(TH_2 , CIPHERTEXT_2), data_3), as a CBOR Sequence of these 2 data items.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 Input to calculate TH_3 (CBOR Sequence) (46 bytes)
@@ -2980,7 +3070,7 @@ Input to calculate TH_3 (CBOR Sequence) (46 bytes)
 cf 8c 73 a6 e8 a7 c3 62 1e 26 4a a3 f1 bd 5d 02 8d 19 cf 3c 99 37  
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-And from there, compute the transcript hash TH_3 = SHA-256(TH_2 , CIPHERTEXT_2, data_3)
+And from there, compute the transcript hash TH_3 = SHA-256( H(TH_2 , CIPHERTEXT_2), data_3)
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 TH_3 (CBOR unencoded) (32 bytes)
@@ -3029,10 +3119,10 @@ aa 4f 4e 7a bb 83 5e c3 0f 1d e8 8a db 96 ff 71 6c 73 75 62 6a 65 63 74
 20 6e 61 6d 65 60 
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-Since no auxiliary data is exchanged:
+Since no external authorization data is exchanged:
 
 ~~~~~~~~~~~~~~~~~~~~~~~
-AD_3 (0 bytes)
+EAD_3 (0 bytes)
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 The plaintext of the COSE_Encrypt is the empty string:
@@ -3042,7 +3132,7 @@ P_3m (0 bytes)
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 The associated data is the following: 
-\[ "Encrypt0", << ID_CRED_I >>, << TH_3, CRED_I, ? AD_3 >> \].
+\[ "Encrypt0", << ID_CRED_I >>, << TH_3, CRED_I, ? EAD_3 >> \].
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 A_3m (CBOR-encoded) (105 bytes)
@@ -3125,9 +3215,9 @@ ee 59 8e a6 61 17 dc c3
 
 Finally, the outer COSE_Encrypt0 is computed.
 
-The plaintext is the CBOR Sequence of the items ID_CRED_I and the CBOR encoded Signature_or_MAC_3, in this order (AD_3 is empty). 
+The plaintext is the CBOR Sequence of the items ID_CRED_I and the CBOR encoded Signature_or_MAC_3, in this order (EAD_3 is empty). 
 
-Note that since ID_CRED_I contains a single 'kid' parameter, i.e., ID_CRED_I = { 4 : kid_I }, only the byte string kid_I is conveyed in the plaintext encoded as a bstr_identifier. kid_I is encoded as the corresponding integer - 24 (see bstr_identifier in {{bstr_id}}), i.e. 0x23 = 35, 35 - 24 = 11, and 11 in CBOR encoding is equal to 0x0b.
+Note that since ID_CRED_I contains a single 'kid' parameter, i.e., ID_CRED_I = { 4 : kid_I }, only the byte string kid_I is conveyed in the plaintext encoded as a bstr_identifier. kid_I is encoded as the corresponding integer - 24, i.e. 0x23 = 35, 35 - 24 = 11, and 11 in CBOR encoding is equal to 0x0b.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 P_3ae (CBOR Sequence) (10 bytes)
@@ -3339,28 +3429,22 @@ This appendix contains an example of an applicability statement, see {{applicabi
 
 For use of EDHOC in the XX protocol, the following assumptions are made on the parameters:  
 
-* METHOD_CORR = 5
-   * method = 1 (I uses signature key, R uses static DH key.)
-   * corr = 1 (CoAP Token or other transport data enables correlation between message_1 and message_2.)
+* METHOD = 1 (I uses signature key, R uses static DH key.)
 
 * EDHOC requests are expected by the server at /app1-edh, no Content-Format needed.
 
-* C_1 = `null` is present to identify message_1
-
 * CRED_I is an 802.1AR IDevID encoded as a C509 Certificate of type 0 {{I-D.ietf-cose-cbor-encoded-cert}}.
-    * R acquires CRED_I out-of-band, indicated in AD_1
+    * R acquires CRED_I out-of-band, indicated in EAD_1
+
     * ID_CRED_I = {4: h''} is a kid with value empty byte string
 
 * CRED_R is a COSE_Key of type OKP as specified in {{id_cred}}.
    * The CBOR map has parameters 1 (kty), -1 (crv), and -2 (x-coordinate).
 * ID_CRED_R = CRED_R
 
-* AD_1 contains Auxiliary Data of type A (TBD)
-* AD_2 contains Auxiliary Data of type B (TBD)
-
 * No use of message_4: the application sends protected messages from R to I.
 
-* Auxiliary Data is processed as specified in {{I-D.selander-ace-ake-authz}}.
+* External authorization data is defined and processed as specified in {{I-D.selander-ace-ake-authz}}.
 
 
 
@@ -3382,10 +3466,46 @@ Note that the requirements in {{proc-outline}} still apply because duplicate mes
 
 * Different instances of the same message MUST NOT be processed in one session.
 
+# Transports Not Natively Providing Correlation
+
+Protocols that do not natively provide full correlation between a series of messages can send the C_I and C_R identifiers along as needed.
+
+The transport over CoAP ({{coap}}) can serve as a blueprint for other server-client protocols:
+The client prepends the C_x which the server selected (or, for message 1, a sentinel null value which is not a valid C_x) to any request message it sends.
+The server does not send any such indicator, as responses are matched to request by the client-server protocol design.
+
+Protocols that do not provide any correlation at all can prescribe prepending of the peer's chosen C_x to all messages.
+
+<!--
+Protocols that can provide all the necessary correlation but do not have any short-lived component to it
+may need ... no, they don't need anything special: after an error, the next thing is a message 1 again.
+-->
 
 # Change Log
 
 Main changes:
+
+* Pending:
+   * Prepended C_x moved from the EDHOC protocol itself to the transport mapping; METHOD_CORR renamed to METHOD, corr removed.
+   * Removed bstr_identifier and use bstr / int instead. C_x can now be int without any implied bstr semantics. Defined COSE header parameter and COSE key common parameter 'kid2' as bstr / int for use with ID_CRED_x.
+
+
+* From -06 to -07:
+
+   * Changed transcript hash definition for TH_2 and TH_3
+   * Removed "EDHOC signature algorithm curve" from cipher suite
+   * New IANA registry "EDHOC Exporter Label" 
+   * New application defined parameter "context" in EDHOC-Exporter
+   * Changed normative language for failure from MUST to SHOULD send error
+   * Made error codes non-negative and 0 for success
+   * Added detail on success error code
+   * Aligned terminology "protocol instance" ->  "session"
+   * New appendix on compact EC point representation
+   * Added detail on use of ephemeral public keys
+   * Moved key derivation for OSCORE to draft-ietf-core-oscore-edhoc
+   * Additional security considerations
+   * Renamed "Auxililary Data" as "External Authorization Data"
+   * Added encrypted EAD_4 to message_4
 
 * From -05 to -06:
    * New section 5.2 "Message Processing Outline"
@@ -3397,7 +3517,7 @@ Main changes:
    * New section on message deduplication
    * New appendix containin all CDDL definitions
    * New appendix with change log
-   * Removed section "Other Documents Referncing EDHOC"
+   * Removed section "Other Documents Referencing EDHOC"
    * Clarifications based on review comments
 
 
@@ -3447,7 +3567,7 @@ Main changes:
 # Acknowledgments
 {: numbered="no"}
 
-The authors want to thank Alessandro Bruni, Karthikeyan Bhargavan, Timothy Claeys, Martin Disch, Theis Grønbech Petersen, Dan Harkins, Klaus Hartke, Russ Housley, Stefan Hristozov, Alexandros Krontiris, Ilari Liusvaara, Karl Norrman, Salvador Pérez, Eric Rescorla, Michael Richardson, Thorvald Sahl Jørgensen, Jim Schaad, Carsten Schürmann, Ludwig Seitz, Stanislav Smyshlyaev, Valery Smyslov, Peter van der Stok, Rene Struik, Vaishnavi Sundararajan, Erik Thormarker, Marco Tiloca, Michel Veillette, and Malisa Vucinic for reviewing and commenting on intermediate versions of the draft. We are especially indebted to Jim Schaad for his continuous reviewing and implementation of different versions of the draft.
+The authors want to thank Christian Amsüss, Alessandro Bruni, Karthikeyan Bhargavan, Timothy Claeys, Martin Disch, Theis Grønbech Petersen, Dan Harkins, Klaus Hartke, Russ Housley, Stefan Hristozov, Alexandros Krontiris, Ilari Liusvaara, Karl Norrman, Salvador Pérez, Eric Rescorla, Michael Richardson, Thorvald Sahl Jørgensen, Jim Schaad, Carsten Schürmann, Ludwig Seitz, Stanislav Smyshlyaev, Valery Smyslov, Peter van der Stok, Rene Struik, Vaishnavi Sundararajan, Erik Thormarker, Marco Tiloca, Michel Veillette, and Malisa Vucinic for reviewing and commenting on intermediate versions of the draft. We are especially indebted to Jim Schaad for his continuous reviewing and implementation of different versions of the draft.
 
 Work on this document has in part been supported by the H2020 project SIFIS-Home (grant agreement 952652).
 
