@@ -43,15 +43,18 @@ normative:
   RFC7959:
   RFC8174:
   RFC8376:
+  RFC8392:
   RFC8610:
   RFC8613:
   RFC8724:
   RFC8742:
+  RFC8747:
   I-D.ietf-cose-rfc8152bis-struct:
   I-D.ietf-cose-rfc8152bis-algs:
   I-D.ietf-cose-x509:
   I-D.ietf-core-echo-request-tag:
   I-D.ietf-lake-reqs:
+  I-D.ietf-rats-uccs:
 
 informative:
 
@@ -1408,6 +1411,18 @@ IANA has created a new registry entitled "EDHOC Method Type" under the new headi
 
 IANA has created a new registry entitled "EDHOC Error Codes" under the new heading "EDHOC". The registration procedure is "Specification Required". The columns of the registry are ERR_CODE, ERR_INFO Type and Description, where ERR_CODE is an integer, ERR_INFO is a CDDL defined type, and Description is a text string. The initial contents of the registry is shown in {{fig-error-codes}}.
 
+## COSE Header Parameters Registry {#cose}
+
+This document registers the following entries in the "COSE Header Parameters" registry under the "CBOR Object Signing and Encryption (COSE)" heading. The value of the 'cwt' header parameter is a CWT {{RFC8392}} or an unprotected CWT Claims Set {{I-D.ietf-rats-uccs}}.
+
+~~~~~~~~~~~
++-----------+-------+----------------+------------------------------+
+| Name      | Label | Value Type     | Description                  |
++===========+=======+================+==============================+
+| cwt       |  TBD1 | COSE_Messages  | A CBOR Web Token (CWT) or an |
+|           |       | / map          | unprotected CWT Claims Set   |
++-----------+-------+----------------+------------------------------+
+~~~~~~~~~~~
 
 ## COSE Header Parameters Registry {#kid2-header-param}
 
