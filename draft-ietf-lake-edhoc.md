@@ -1400,7 +1400,6 @@ IANA has added the COSE key common parameter 'kid2' to the COSE Key Common Param
 |      |       |            |           | match to kid2  |                   |
 |      |       |            |           | in message     |                   |
 +------+-------+------------+-----------+----------------+-------------------+
-
 ~~~~~~~~~~~~~~~~~~~~~~~
 {: artwork-align="center"}
 
