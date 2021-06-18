@@ -1375,12 +1375,12 @@ IANA has created a new registry entitled "EDHOC Error Codes" under the new headi
 IANA has added the COSE header parameter 'kid2' to the COSE Header Parameters registry. The kid2 parameter may point to a COSE key common parameter 'kid' or 'kid2'. The kid2 parameter can be used to identity a key stored in a "raw" COSE_Key, in a CWT, or in a certificate.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
-+-----------+-------+----------------+-------------+----------------+-------------------+
-| Name      | Label | Value Type     | Value       | Description    | Reference         |
-|           |       |                | Reference   |                |                   |
-+-----------+-------+----------------+-------------+----------------+-------------------+
-| kid2      | TBD   | bstr / int     |             | Key identifier | [[This document]] |
-+-----------+-------+----------------+-------------+----------------+-------------------+
++------+-------+------------+-----------+----------------+-------------------+
+| Name | Label | Value Type | Value     | Description    | Reference         |
+|      |       |            | Reference |                |                   |
++------+-------+------------+-----------+----------------+-------------------+
+| kid2 | TBD   | bstr / int |           | Key identifier | [[This document]] |
++------+-------+------------+-----------+----------------+-------------------+
 ~~~~~~~~~~~~~~~~~~~~~~~
 {: artwork-align="center"}
 
@@ -1391,15 +1391,16 @@ IANA has added the COSE header parameter 'kid2' to the COSE Header Parameters re
 IANA has added the COSE key common parameter 'kid2' to the COSE Key Common Parameters registry. 
 
 ~~~~~~~~~~~~~~~~~~~~~~~
-+-----------+-------+----------------+-------------+----------------+-------------------+
-| Name      | Label | Value Type     | Value       | Description    | Reference         |
-|           |       |                | Reference   |                |                   |
-+-----------+-------+----------------+-------------+----------------+-------------------+
-| kid2      | TBD   | bstr / int     |             | Key identifi-  | [[This document]] |
-|           |       |                |             | cation value - |                   |
-|           |       |                |             | match to kid2  |                   |
-|           |       |                |             | in message     |                   |
-+-----------+-------+----------------+-------------+----------------+-------------------+
++------+-------+------------+-----------+----------------+-------------------+
+| Name | Label | Value Type | Value     | Description    | Reference         |
+|      |       |            | Reference |                |                   |
++------+-------+------------+-----------+----------------+-------------------+
+| kid2 | TBD   | bstr / int |           | Key identifi-  | [[This document]] |
+|      |       |            |           | cation value - |                   |
+|      |       |            |           | match to kid2  |                   |
+|      |       |            |           | in message     |                   |
++------+-------+------------+-----------+----------------+-------------------+
+
 ~~~~~~~~~~~~~~~~~~~~~~~
 {: artwork-align="center"}
 
