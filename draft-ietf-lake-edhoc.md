@@ -312,7 +312,7 @@ An implementation may support only a single method. The Initiator and the Respon
 
 EDHOC includes the negotiation of connection identifiers (C_I, C_R) which may be used to identify a connection for which EDHOC has established keys. The connection identifiers C_I and C_R do not have any cryptographic purpose in EDHOC.
 
-C_I and C_R are chosen by I and R, respectively. Each party chooses a connection identifier it wants the other party to use in its outgoing messages. One byte connection identifiers are realistic in many scenarios as most constrained devices only have a few connections. In cases where a node has only one connection, the identifier may even be the empty byte string.
+C_I and C_R are chosen by I and R, respectively. Each party chooses a connection identifier it wants the other party to use in its outgoing messages. Connection identifiers can be byte strings or integers encoded in CBOR. One byte connection identifiers (the integers -24 to 23 and the empty bytestring h'') are realistic in many scenarios as most constrained devices only have a few connections.
 
 If a connection identifier is used with an application protocol for which EDHOC establishes keys (such as OSCORE) then the connection identifiers SHALL adhere to the requirements for that protocol.  For OSCORE the choice of connection identifier results in the endpoint selecting its Recipient ID, see Section 3.1 of {{RFC8613}}), for which certain uniqueness requirements apply, see Section 3.3 of {{RFC8613}}).
 
@@ -400,9 +400,11 @@ ID_CRED_I and ID_CRED_R do not have any cryptographic purpose in EDHOC.
 
 The identifiers ID_CRED_I and ID_CRED_R are COSE header_maps, i.e. CBOR maps containing Common COSE Header Parameters, see Section 3.1 of {{I-D.ietf-cose-rfc8152bis-struct}}). In the following we give some examples of COSE header_maps.
 
-Raw public keys are most optimally stored as COSE_Key objects and identified with a 'kid' parameter:
+Raw public keys are most optimally stored as COSE_Key objects and identified with a 'kid2' parameter (see {{kid2-header-param}} and {{kid2-key-common-param}}):
 
-* ID_CRED_x = { 4 : kid_x }, where kid_x : bstr, for x = I or R.
+* ID_CRED_x = { 4 : kid_x }, where kid_x : bstr / int, for x = I or R.
+
+Note that the integers -24 to 23 and the empty bytestring h'' are encoded as one byte.
 
 Public key certificates can be identified in different ways. Header parameters for identifying C509 certificates and X.509 certificates are defined in {{I-D.ietf-cose-cbor-encoded-cert}} and {{I-D.ietf-cose-x509}}, for example:
 
@@ -666,24 +668,6 @@ Additional optimizations are made to reduce message overhead.
 
 While EDHOC uses the COSE_Key, COSE_Sign1, and COSE_Encrypt0 structures, only a subset of the parameters is included in the EDHOC messages. The unprotected COSE header in COSE_Sign1, and COSE_Encrypt0 (not included in the EDHOC message) MAY contain parameters (e.g. 'alg'). 
 
-## Encoding of bstr_identifier {#bstr_id}
-
-Byte strings are encoded in CBOR as two or more bytes, whereas integers in the interval -24 to 23 are encoded in CBOR as one byte.
-
-bstr_identifier is a special encoding of byte strings, used throughout the protocol to enable the encoding of the shortest byte strings as integers that only require one byte of CBOR encoding.
-
-The bstr_identifier encoding is defined as follows: Byte strings in the interval h'00' to h'2f' are encoded as the corresponding integer minus 24, which are all represented by one byte CBOR ints. Other byte strings are encoded as CBOR byte strings.
-
-For example, the byte string h'59e9' encoded as a bstr_identifier is equal to h'59e9', while the byte string h'2a' is encoded as the integer 18.
-
-The CDDL definition of the bstr_identifier is given below:
-
-~~~~~~~~~~~ CDDL
-bstr_identifier = bstr / int
-~~~~~~~~~~~
-
-Note that, despite what could be interpreted by the CDDL definition only, bstr_identifier once decoded are always byte strings.
-
 ## Message Processing Outline {#proc-outline}
 
 This section outlines the message processing of EDHOC. 
@@ -714,7 +698,7 @@ message_1 = (
   METHOD : int,
   SUITES_I : [ selected : suite, supported : 2* suite ] / suite,
   G_X : bstr,
-  C_I : bstr_identifier,  
+  C_I : bstr / int,  
   ? EAD ; EAD_1 
 )
 
@@ -726,7 +710,7 @@ where:
 * METHOD = 0, 1, 2, or 3 (see {{fig-method-types}}).
 * SUITES_I - cipher suites which the Initiator supports in order of (decreasing) preference. The list of supported cipher suites can be truncated at the end, as is detailed in the processing steps below and {{wrong-selected}}. One of the supported cipher suites is selected. The selected suite is the first suite in the SUITES_I CBOR array. If a single supported cipher suite is conveyed then that cipher suite is selected and SUITES_I is encoded as an int instead of an array.
 * G_X - the ephemeral public key of the Initiator
-* C_I - variable length connection identifier, encoded as a bstr_identifier (see {{bstr_id}}).
+* C_I - variable length connection identifier
 * EAD_1 - unprotected external authorization data, see {{AD}}.
 
 ### Initiator Processing of Message 1 {#init-proc-msg1}
@@ -771,14 +755,14 @@ message_2 = (
 ~~~~~~~~~~~ CDDL
 data_2 = (
   G_Y : bstr,
-  C_R : bstr_identifier,
+  C_R : bstr / int,
 )
 ~~~~~~~~~~~
 
 where:
 
 * G_Y - the ephemeral public key of the Responder
-* C_R - variable length connection identifier, encoded as a bstr_identifier (see {{bstr_id}}).
+* C_R - variable length connection identifier
 
 ### Responder Processing of Message 2 {#asym-msg2-proc}
 
@@ -833,9 +817,9 @@ The Responder SHALL compose message_2 as follows:
 
 * CIPHERTEXT_2 is encrypted by using the Expand function as a binary additive stream cipher.
 
-   * plaintext = ( ID_CRED_R / bstr_identifier, Signature_or_MAC_2, ? EAD_2 )
+   * plaintext = ( ID_CRED_R / bstr / int, Signature_or_MAC_2, ? EAD_2 )
 
-      * Note that if ID_CRED_R contains a single 'kid' parameter, i.e., ID_CRED_R = { 4 : kid_R }, only the byte string kid_R is conveyed in the plaintext encoded as a bstr_identifier, see {{id_cred}} and {{bstr_id}}.
+       * Note that if ID_CRED_R contains a single 'kid2' parameter, i.e., ID_CRED_R = { 4 : kid_R }, only the byte string or integer kid_R is conveyed in the plaintext encoded as a bstr / int.
 
    * CIPHERTEXT_2 = plaintext XOR KEYSTREAM_2
 
@@ -931,15 +915,15 @@ The Initiator  SHALL compose message_3 as follows:
 
    * external_aad = TH_3
 
-   * plaintext = ( ID_CRED_I / bstr_identifier, Signature_or_MAC_3, ? EAD_3 )
+   * plaintext = ( ID_CRED_I / bstr / int, Signature_or_MAC_3, ? EAD_3 )
 
-      * Note that if ID_CRED_I contains a single 'kid' parameter, i.e., ID_CRED_I = { 4 : kid_I }, only the byte string kid_I is conveyed in the plaintext encoded as a bstr_identifier, see {{id_cred}} and {{bstr_id}}.
+      * Note that if ID_CRED_I contains a single 'kid2' parameter, i.e., ID_CRED_I = { 4 : kid_I }, only the byte string or integer kid_I is conveyed in the plaintext encoded as a bstr or int.
 
    COSE constructs the input to the AEAD {{RFC5116}} as follows: 
 
    * Key K = EDHOC-KDF( PRK_3e2m, TH_3, "K_3ae", length ) 
    * Nonce N = EDHOC-KDF( PRK_3e2m, TH_3, "IV_3ae", length )
-   * Plaintext P = ( ID_CRED_I / bstr_identifier, Signature_or_MAC_3, ? EAD_3 )
+   * Plaintext P = ( ID_CRED_I / bstr / int, Signature_or_MAC_3, ? EAD_3 )
    * Associated data A = \[ "Encrypt0", h'', TH_3 \]
 
    CIPHERTEXT_3 is the 'ciphertext' of the outer COSE_Encrypt0.
@@ -1424,6 +1408,38 @@ IANA has created a new registry entitled "EDHOC Method Type" under the new headi
 
 IANA has created a new registry entitled "EDHOC Error Codes" under the new heading "EDHOC". The registration procedure is "Specification Required". The columns of the registry are ERR_CODE, ERR_INFO Type and Description, where ERR_CODE is an integer, ERR_INFO is a CDDL defined type, and Description is a text string. The initial contents of the registry is shown in {{fig-error-codes}}.
 
+
+## COSE Header Parameters Registry {#kid2-header-param}
+
+IANA has added the COSE header parameter 'kid2' to the COSE Header Parameters registry. The kid2 parameter may point to a COSE key common parameter 'kid' or 'kid2'. The kid2 parameter can be used to identity a key stored in a "raw" COSE_Key, in a CWT, or in a certificate.
+
+~~~~~~~~~~~~~~~~~~~~~~~
++------+-------+------------+-----------+----------------+-------------------+
+| Name | Label | Value Type | Value     | Description    | Reference         |
+|      |       |            | Reference |                |                   |
++------+-------+------------+-----------+----------------+-------------------+
+| kid2 | TBD   | bstr / int |           | Key identifier | [[This document]] |
++------+-------+------------+-----------+----------------+-------------------+
+~~~~~~~~~~~~~~~~~~~~~~~
+{: artwork-align="center"}
+
+## COSE Key Common Parameters Registry {#kid2-key-common-param}
+
+IANA has added the COSE key common parameter 'kid2' to the COSE Key Common Parameters registry. 
+
+~~~~~~~~~~~~~~~~~~~~~~~
++------+-------+------------+-----------+----------------+-------------------+
+| Name | Label | Value Type | Value     | Description    | Reference         |
+|      |       |            | Reference |                |                   |
++------+-------+------------+-----------+----------------+-------------------+
+| kid2 | TBD   | bstr / int |           | Key identifi-  | [[This document]] |
+|      |       |            |           | cation value - |                   |
+|      |       |            |           | match to kid2  |                   |
+|      |       |            |           | in message     |                   |
++------+-------+------------+-----------+----------------+-------------------+
+~~~~~~~~~~~~~~~~~~~~~~~
+{: artwork-align="center"}
+
 ## The Well-Known URI Registry
 
 IANA has added the well-known URI 'edhoc' to the Well-Known URIs registry.
@@ -1560,8 +1576,6 @@ This sections compiles the CDDL definitions for ease of reference.
 
 
 ~~~~~~~~~~~ CDDL
-bstr_identifier = bstr / int
-
 suite = int
 
 SUITES_R : [ supported : 2* suite ] / suite
@@ -1570,7 +1584,7 @@ message_1 = (
   METHOD : int,
   SUITES_I : [ selected : suite, supported : 2* suite ] / suite,
   G_X : bstr,
-  C_I : bstr_identifier,
+  C_I : bstr / int,
   ? EAD ; EAD_1
 )
 
@@ -1581,7 +1595,7 @@ message_2 = (
 
 data_2 = (
   G_Y : bstr,
-  C_R : bstr_identifier,
+  C_R : bstr / int,
 )
 
 message_3 = (
@@ -1696,7 +1710,7 @@ Connection identifier chosen by Initiator (1 byte)
 09
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-Note that since C_I is a byte string in the interval h'00' to h'2f', it is encoded as the corresponding integer subtracted by 24 (see bstr_identifier in {{bstr_id}}). Thus 0x09 = 09, 9 - 24 = -15, and -15 in CBOR encoding is equal to 0x2e.
+Note that since C_I is a byte string in the interval h'00' to h'2f', it is encoded as the corresponding integer subtracted by 24. Thus 0x09 = 09, 9 - 24 = -15, and -15 in CBOR encoding is equal to 0x2e.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 C_I (1 byte)
@@ -1814,7 +1828,7 @@ Connection identifier chosen by Responder (1 byte)
 00
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-Note that since C_R is a byte string in the interval h'00' to h'2f', it is encoded as the corresponding integer subtracted by 24 (see bstr_identifier in {{bstr_id}}). Thus 0x00 = 0, 0 - 24 = -24, and -24 in CBOR encoding is equal to 0x37.
+Note that since C_R is a byte string in the interval h'00' to h'2f', it is encoded as the corresponding integer subtracted by 24. Thus 0x00 = 0, 0 - 24 = -24, and -24 in CBOR encoding is equal to 0x37.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 C_R (1 byte)
@@ -2650,7 +2664,7 @@ Connection identifier chosen by Initiator (1 byte)
 16
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-Note that since C_I is a byte string in the interval h'00' to h'2f', it is encoded as the corresponding integer - 24 (see bstr_identifier in {{bstr_id}}), i.e. 0x16 = 22, 22 - 24 = -2, and -2 in CBOR encoding is equal to 0x21.
+Note that since C_I is a byte string in the interval h'00' to h'2f', it is encoded as the corresponding integer - 24, i.e. 0x16 = 22, 22 - 24 = -2, and -2 in CBOR encoding is equal to 0x21.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 C_I (1 byte)
@@ -2776,7 +2790,7 @@ Connection identifier chosen by Responder (1 byte)
 00
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-Note that since C_R is a byte string in the interval h'00' to h'2f', it is encoded as the corresponding integer - 24 (see bstr_identifier in {{bstr_id}}), i.e. 0x00 = 0, 0 - 24 = -24, and -24 in CBOR encoding is equal to 0x37.
+Note that since C_R is a byte string in the interval h'00' to h'2f', it is encoded as the corresponding integer - 24, i.e. 0x00 = 0, 0 - 24 = -24, and -24 in CBOR encoding is equal to 0x37.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 C_R (1 byte)
@@ -2977,7 +2991,7 @@ CIPHERTEXT_2 is the ciphertext resulting from XOR between plaintext and KEYSTREA
 
 The plaintext is the CBOR Sequence of the items ID_CRED_R and the CBOR encoded Signature_or_MAC_2, in this order (EAD_2 is empty). 
 
-Note that since ID_CRED_R contains a single 'kid' parameter, i.e., ID_CRED_R = { 4 : kid_R }, only the byte string kid_R is conveyed in the plaintext encoded as a bstr_identifier. kid_R is encoded as the corresponding integer - 24 (see bstr_identifier in {{bstr_id}}), i.e. 0x05 = 5, 5 - 24 = -19, and -19 in CBOR encoding is equal to 0x32.
+Note that since ID_CRED_R contains a single 'kid' parameter, i.e., ID_CRED_R = { 4 : kid_R }, only the byte string kid_R is conveyed in the plaintext encoded as a bstr_identifier. kid_R is encoded as the corresponding integer - 24, i.e. 0x05 = 5, 5 - 24 = -19, and -19 in CBOR encoding is equal to 0x32.
 
 The plaintext is the following:
 
@@ -3237,7 +3251,7 @@ Finally, the outer COSE_Encrypt0 is computed.
 
 The plaintext is the CBOR Sequence of the items ID_CRED_I and the CBOR encoded Signature_or_MAC_3, in this order (EAD_3 is empty). 
 
-Note that since ID_CRED_I contains a single 'kid' parameter, i.e., ID_CRED_I = { 4 : kid_I }, only the byte string kid_I is conveyed in the plaintext encoded as a bstr_identifier. kid_I is encoded as the corresponding integer - 24 (see bstr_identifier in {{bstr_id}}), i.e. 0x23 = 35, 35 - 24 = 11, and 11 in CBOR encoding is equal to 0x0b.
+Note that since ID_CRED_I contains a single 'kid' parameter, i.e., ID_CRED_I = { 4 : kid_I }, only the byte string kid_I is conveyed in the plaintext encoded as a bstr_identifier. kid_I is encoded as the corresponding integer - 24, i.e. 0x23 = 35, 35 - 24 = 11, and 11 in CBOR encoding is equal to 0x0b.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 P_3ae (CBOR Sequence) (10 bytes)
@@ -3507,6 +3521,8 @@ Main changes:
 
 * Pending:
    * Prepended C_x moved from the EDHOC protocol itself to the transport mapping; METHOD_CORR renamed to METHOD, corr removed.
+   * Removed bstr_identifier and use bstr / int instead. C_x can now be int without any implied bstr semantics. Defined COSE header parameter and COSE key common parameter 'kid2' as bstr / int for use with ID_CRED_x.
+
 
 * From -06 to -07:
 
