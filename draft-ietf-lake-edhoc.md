@@ -400,7 +400,7 @@ ID_CRED_I and ID_CRED_R do not have any cryptographic purpose in EDHOC.
 
 The identifiers ID_CRED_I and ID_CRED_R are COSE header_maps, i.e. CBOR maps containing Common COSE Header Parameters, see Section 3.1 of {{I-D.ietf-cose-rfc8152bis-struct}}). In the following we give some examples of COSE header_maps.
 
-Raw public keys are most optimally stored as COSE_Key objects and identified with a 'kid2' parameter (see {{kid2}}):
+Raw public keys are most optimally stored as COSE_Key objects and identified with a 'kid2' parameter (see {{kid2-header-param}} and {{kid2-key-common-param}}):
 
 * ID_CRED_x = { 4 : kid_x }, where kid_x : bstr / int, for x = I or R.
 
@@ -1370,9 +1370,9 @@ IANA has created a new registry entitled "EDHOC Method Type" under the new headi
 IANA has created a new registry entitled "EDHOC Error Codes" under the new heading "EDHOC". The registration procedure is "Specification Required". The columns of the registry are ERR_CODE, ERR_INFO Type and Description, where ERR_CODE is an integer, ERR_INFO is a CDDL defined type, and Description is a text string. The initial contents of the registry is shown in {{fig-error-codes}}.
 
 
-## COSE Header Parameters Registry {#kid2}
+## COSE Header Parameters Registry {#kid2-header-param}
 
-IANA has added the COSE header parameter 'kid2' to the COSE Header Parameters registry. The kid2 parameter can be used to identity a key stored in a "raw" COSE_Key, in a CWT, or in a certificate.
+IANA has added the COSE header parameter 'kid2' to the COSE Header Parameters registry. The kid2 parameter may point to a COSE key common parameter 'kid' or 'kid2'. The kid2 parameter can be used to identity a key stored in a "raw" COSE_Key, in a CWT, or in a certificate.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 +-----------+-------+----------------+-------------+----------------+-------------------+
@@ -1383,6 +1383,27 @@ IANA has added the COSE header parameter 'kid2' to the COSE Header Parameters re
 +-----------+-------+----------------+-------------+----------------+-------------------+
 ~~~~~~~~~~~~~~~~~~~~~~~
 {: artwork-align="center"}
+
+
+
+## COSE Key Common Parameters Registry {#kid2-key-common-param}
+
+IANA has added the COSE key common parameter 'kid2' to the COSE Key Common Parameters registry. 
+
+~~~~~~~~~~~~~~~~~~~~~~~
++-----------+-------+----------------+-------------+----------------+-------------------+
+| Name      | Label | Value Type     | Value       | Description    | Reference         |
+|           |       |                | Reference   |                |                   |
++-----------+-------+----------------+-------------+----------------+-------------------+
+| kid2      | TBD   | bstr / int     |             | Key identifi-  | [[This document]] |
+|           |       |                |             | cation value - |                   |
+|           |       |                |             | match to kid2  |                   |
+|           |       |                |             | in message     |                   |
++-----------+-------+----------------+-------------+----------------+-------------------+
+~~~~~~~~~~~~~~~~~~~~~~~
+{: artwork-align="center"}
+
+
 
 ## The Well-Known URI Registry
 
@@ -3465,7 +3486,7 @@ Main changes:
 
 * Pending:
    * Prepended C_x moved from the EDHOC protocol itself to the transport mapping; METHOD_CORR renamed to METHOD, corr removed.
-   * Removed bstr_identifier and use bstr / int instead. C_x can now be int without any implied bstr semantics. Defined COSE header parameter 'kid2' as bstr / int for use with ID_CRED_x.
+   * Removed bstr_identifier and use bstr / int instead. C_x can now be int without any implied bstr semantics. Defined COSE header parameter and COSE key common parameter 'kid2' as bstr / int for use with ID_CRED_x.
 
 
 * From -06 to -07:
