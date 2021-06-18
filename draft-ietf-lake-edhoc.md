@@ -1426,7 +1426,7 @@ This document registers the following entries in the "COSE Header Parameters" re
 
 ## COSE Header Parameters Registry {#kid2-header-param}
 
-IANA has added the COSE header parameter 'kid2' to the COSE Header Parameters registry. The kid2 parameter may point to a COSE key common parameter 'kid' or 'kid2'. The kid2 parameter can be used to identity a key stored in a "raw" COSE_Key, in a CWT, or in a certificate.
+IANA has added the COSE header parameter 'kid2' to the COSE Header Parameters registry. The kid2 parameter may point to a COSE key common parameter 'kid' or 'kid2'. The kid2 parameter can be used to identify a key stored in a "raw" COSE_Key, in a CWT, or in a certificate.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 +------+-------+------------+-----------+----------------+-------------------+
@@ -1436,7 +1436,6 @@ IANA has added the COSE header parameter 'kid2' to the COSE Header Parameters re
 | kid2 | TBD   | bstr / int |           | Key identifier | [[This document]] |
 +------+-------+------------+-----------+----------------+-------------------+
 ~~~~~~~~~~~~~~~~~~~~~~~
-{: artwork-align="center"}
 
 ## COSE Key Common Parameters Registry {#kid2-key-common-param}
 
@@ -1453,7 +1452,7 @@ IANA has added the COSE key common parameter 'kid2' to the COSE Key Common Param
 |      |       |            |           | in message     |                   |
 +------+-------+------------+-----------+----------------+-------------------+
 ~~~~~~~~~~~~~~~~~~~~~~~
-{: artwork-align="center"}
+
 
 ## The Well-Known URI Registry
 
