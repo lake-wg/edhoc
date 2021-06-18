@@ -850,27 +850,20 @@ If any processing step fails, the Initiator SHOULD send an EDHOC error message b
 
 ### Formatting of Message 3 {#asym-msg3-form}
 
-message_3 and data_3 SHALL be CBOR Sequences (see {{CBOR}}) as defined below
+message_3 SHALL be a CBOR Sequence (see {{CBOR}}) as defined below
 
 ~~~~~~~~~~~ CDDL
 message_3 = (
-  data_3,
   CIPHERTEXT_3 : bstr,
 )
 ~~~~~~~~~~~
 
-[ The data_3 is left empty for the time being to not overly interfere with the transcript calculation while initially moving C_x outside. ]
-
-~~~~~~~~~~~ CDDL
-data_3 = (
-)
-~~~~~~~~~~~
 
 ### Initiator Processing of Message 3 {#asym-msg3-proc}
 
-The Initiator  SHALL compose message_3 as follows:
+The Initiator SHALL compose message_3 as follows:
 
-* Compute the transcript hash TH_3 = H( H(TH_2, CIPHERTEXT_2), data_3 ) where H() is the hash function in the selected cipher suite. The transcript hash TH_3 is a CBOR encoded bstr and the input to the hash function is a CBOR Sequence.  Note that H(TH_2, CIPHERTEXT_2) can be computed and cached already in the processing of message_2.
+* Compute the transcript hash TH_3 = H(TH_2, CIPHERTEXT_2) where H() is the hash function in the selected cipher suite. The transcript hash TH_3 is a CBOR encoded bstr and the input to the hash function is a CBOR Sequence.  Note that H(TH_2, CIPHERTEXT_2) can be computed and cached already in the processing of message_2.
 
 * Compute an inner COSE_Encrypt0 as defined in Section 5.3 of {{I-D.ietf-cose-rfc8152bis-struct}}, with the EDHOC AEAD algorithm in the selected cipher suite, K_3m, IV_3m, and the following parameters:
 
@@ -1081,19 +1074,11 @@ Further considerations are provided in {{applicability}}.
 
 ### Formatting of Message 4 {#asym-msg4-form}
 
-message_4 and data_4 SHALL be CBOR Sequences (see {{CBOR}}) as defined below
+message_4 SHALL be a CBOR Sequence (see {{CBOR}}) as defined below
 
 ~~~~~~~~~~~ CDDL
 message_4 = (
-  data_4,
   CIPHERTEXT_4 : bstr,
-)
-~~~~~~~~~~~
-
-[ The data_4 is left empty for the time being to not overly interfere with the transcript calculation while initially moving C_x outside. ]
-
-~~~~~~~~~~~ CDDL
-data_4 = (
 )
 ~~~~~~~~~~~
 
@@ -1610,19 +1595,11 @@ data_2 = (
 )
 
 message_3 = (
-  data_3,
   CIPHERTEXT_3 : bstr,
 )
 
-data_3 = (
-)
-
 message_4 = (
-  data_4,
   CIPHERTEXT_4 : bstr,
-)
-
-data_4 = (
 )
 
 error = (
