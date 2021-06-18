@@ -2869,8 +2869,8 @@ CRED_R is the following COSE_Key:
 ~~~~~~~~~~~~~~~~~~~~~~~
 {
   1: 1,
-  -1: 4,
-  -2: h'A3FF263595BEB377D1A0CE1D04DAD2D40966AC6BCB622051B84659184D5D9A32,
+ -1: 4,
+ -2: h'A3FF263595BEB377D1A0CE1D04DAD2D40966AC6BCB622051B84659184D5D9A32,
   "subject name": ""
 }
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -3148,10 +3148,10 @@ CRED_I is the following COSE_Key:
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 {
-  1: 1, 
-  -1: 4,
-   -2: h'2C440CC121F8D7F24C3B0E41AEDAFE9CAA4F4E7ABB835EC30F1DE88ADB96FF71', 
-   "subject name": ""
+ 1:1, 
+ -1:4,
+ -2:h'2C440CC121F8D7F24C3B0E41AEDAFE9CAA4F4E7ABB835EC30F1DE88ADB96FF71', 
+ "subject name":""
  }
 ~~~~~~~~~~~~~~~~~~~~~~~
 
