@@ -1384,8 +1384,6 @@ IANA has added the COSE header parameter 'kid2' to the COSE Header Parameters re
 ~~~~~~~~~~~~~~~~~~~~~~~
 {: artwork-align="center"}
 
-
-
 ## COSE Key Common Parameters Registry {#kid2-key-common-param}
 
 IANA has added the COSE key common parameter 'kid2' to the COSE Key Common Parameters registry. 
@@ -1402,8 +1400,6 @@ IANA has added the COSE key common parameter 'kid2' to the COSE Key Common Param
 +------+-------+------------+-----------+----------------+-------------------+
 ~~~~~~~~~~~~~~~~~~~~~~~
 {: artwork-align="center"}
-
-
 
 ## The Well-Known URI Registry
 
