@@ -1426,32 +1426,30 @@ This document registers the following entries in the "COSE Header Parameters" re
 
 ## COSE Header Parameters Registry {#kid2-header-param}
 
-IANA has added the COSE header parameter 'kid2' to the COSE Header Parameters registry. The kid2 parameter may point to a COSE key common parameter 'kid' or 'kid2'. The kid2 parameter can be used to identify a key stored in a "raw" COSE_Key, in a CWT, or in a certificate.
+IANA has added the COSE header parameter 'kid2' to the COSE Header Parameters registry. The kid2 parameter may point to a COSE key common parameter 'kid' or 'kid2'. The kid2 parameter can be used to identify a key stored in a "raw" COSE_Key, in a CWT, or in a certificate. The Value Reference for this item is empty and omitted from the table below.
 
-~~~~~~~~~~~~~~~~~~~~~~~
-+------+-------+------------+-----------+----------------+-------------------+
-| Name | Label | Value Type | Value     | Description    | Reference         |
-|      |       |            | Reference |                |                   |
-+------+-------+------------+-----------+----------------+-------------------+
-| kid2 | TBD   | bstr / int |           | Key identifier | [[This document]] |
-+------+-------+------------+-----------+----------------+-------------------+
-~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~
++------+-------+------------+----------------+-------------------+
+| Name | Label | Value Type | Description    | Reference         |
++------+-------+------------+----------------+-------------------+
+| kid2 | TBD   | bstr / int | Key identifier | [[This document]] |
++------+-------+------------+----------------+-------------------+
+~~~~~~~~~~~
 
 ## COSE Key Common Parameters Registry {#kid2-key-common-param}
 
-IANA has added the COSE key common parameter 'kid2' to the COSE Key Common Parameters registry. 
+IANA has added the COSE key common parameter 'kid2' to the COSE Key Common Parameters registry. The Value Reference for this item is empty and omitted from the table below.
 
-~~~~~~~~~~~~~~~~~~~~~~~
-+------+-------+------------+-----------+----------------+-------------------+
-| Name | Label | Value Type | Value     | Description    | Reference         |
-|      |       |            | Reference |                |                   |
-+------+-------+------------+-----------+----------------+-------------------+
-| kid2 | TBD   | bstr / int |           | Key identifi-  | [[This document]] |
-|      |       |            |           | cation value - |                   |
-|      |       |            |           | match to kid2  |                   |
-|      |       |            |           | in message     |                   |
-+------+-------+------------+-----------+----------------+-------------------+
-~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~
++------+-------+------------+----------------+-------------------+
+| Name | Label | Value Type | Description    | Reference         |
++------+-------+------------+----------------+-------------------+
+| kid2 | TBD   | bstr / int | Key identifi-  | [[This document]] |
+|      |       |            | cation value - |                   |
+|      |       |            | match to kid2  |                   |
+|      |       |            | in message     |                   |
++------+-------+------------+----------------+-------------------+
+~~~~~~~~~~~
 
 
 ## The Well-Known URI Registry
