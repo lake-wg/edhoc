@@ -316,7 +316,7 @@ EDHOC includes the negotiation of connection identifiers (C_I, C_R) which may be
 
 C_I and C_R are chosen by I and R, respectively. Each party chooses a connection identifier it wants the other party to use in its outgoing messages. Connection identifiers can be byte strings or integers encoded in CBOR. One byte connection identifiers (the integers -24 to 23 and the empty bytestring h'') are realistic in many scenarios as most constrained devices only have a few connections.
 
-If a connection identifier is used with an application protocol for which EDHOC establishes keys (such as OSCORE) then the connection identifiers SHALL adhere to the requirements for that protocol.  For OSCORE the choice of connection identifier results in the endpoint selecting its Recipient ID, see Section 3.1 of {{RFC8613}}), for which certain uniqueness requirements apply, see Section 3.3 of {{RFC8613}}).
+If connection identifiers are used by an application protocol for which EDHOC establishes keys (such as OSCORE) then the selected connection identifiers SHALL adhere to the requirements for that protocol.  For OSCORE, the choice of a connection identifier results in the endpoint selecting its Recipient ID, see Section 3.1 of {{RFC8613}}), for which certain uniqueness requirements apply, see Section 3.3 of {{RFC8613}}).
 
 Connection identifiers may be used to facilitate the retrieval of protocol state during EDHOC protocol execution. EDHOC transports that do not inherently provide correlation across all messages of an exchange can send connection identifiers along with EDHOC messages to gain that required capability, see {{transport}}). For an example when CoAP is used as transport, see {{coap}}.
 
@@ -1138,7 +1138,7 @@ and only the part of the body following the identifier is used for EDHOC process
 Consequently, the application/edhoc media type does not apply to these messages;
 their media type is unnamed.
 
-An example of a successful EDHOC exchange using CoAP is shown in {{fig-coap1}}. In this case the CoAP Token enable correlation on the Initiator side, and the prepended C_R enables correlation on the Responder (server) side.
+An example of a successful EDHOC exchange using CoAP is shown in {{fig-coap1}}. In this case the CoAP Token enables correlation on the Initiator side, and the prepended C_R enables correlation on the Responder (server) side.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 Client    Server
