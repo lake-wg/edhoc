@@ -339,10 +339,10 @@ Cryptographically, EDHOC does not put requirements on the lower layers. EDHOC is
 * demultiplex EDHOC messages from other types of messages, and 
 * denial of service protection.
 
-Besides these common transport oriented properties, EDHOC transport  additionally needs to support the correlation between EDHOC messages, including an indication of a message being message_1. The correlation may reuse existing mechanisms in the transport protocol. For example, the Token in CoAP may be used to correlate EDHOC messages in a CoAP response and an associated CoAP request. In the absense of correlation between a message received and a message previously sent inherent to the transport, the EDHOC connection identifiers may be added, e.g. by prepending the appropriate connection identifier (when available from the EDHOC protocol) to the EDHOC message. {{coap}} describes how to use connection identifiers and message_1 indication with CoAP.
+Besides these common transport oriented properties, EDHOC transport additionally needs to support the correlation between EDHOC messages, including an indication of a message being message_1. The correlation may reuse existing mechanisms in the transport protocol. For example, the CoAP Token may be used to correlate EDHOC messages in a CoAP response and an associated CoAP request. In the absense of correlation between a message received and a message previously sent inherent to the transport, the EDHOC connection identifiers may be added, e.g. by prepending the appropriate connection identifier (when available from the EDHOC protocol) to the EDHOC message. Transport of EDHOC in CoAP payloads is described in {{coap}}, which also 
+shows how to use connection identifiers and message_1 indication with CoAP.
 
-The Initiator and the Responder need to have agreed on a transport to be used for EDHOC, see {{applicability}}. Transport of EDHOC in CoAP payloads is described in {{coap}}.
-
+The Initiator and the Responder need to have agreed on a transport to be used for EDHOC, see {{applicability}}.
 
 ## Authentication Parameters {#auth-key-id}
 
@@ -3588,8 +3588,9 @@ Main changes:
    * METHOD_CORR renamed to METHOD, corr removed
    * Removed bstr_identifier and use bstr / int instead; C_x can now be int without any implied bstr semantics
    * Defined COSE header parameter 'kid2' with value type bstr / int for use with ID_CRED_x
-   * Ciphersuites for AES-GCM and ChaCha20/Poly1305
-   * Changed number of non-constrained CNSA suite from 5 to 24
+   * Updated message sizes
+   * New cipher suites with AES-GCM and ChaCha20 / Poly1305
+   * Changed from one- to two-byte identifier of CNSA compliant suite 
    * Separate sections on transport and connection id with further sub-structure
    * Moved back key derivation for OSCORE from draft-ietf-core-oscore-edhoc
    * OSCORE and CoAP specific processing moved to new appendix
