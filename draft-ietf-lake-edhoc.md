@@ -253,7 +253,7 @@ In order to create a "full-fledged" protocol some additional protocol elements a
 
 * Method types and error handling.
 
-* Negotiation of connection identifiers C_I and C_R which may be used to identify established keys or protocol state.
+* Selection of connection identifiers C_I and C_R which may be used to identify established keys or protocol state.
 
 * Transport of external authorization data.
 
@@ -308,29 +308,38 @@ An implementation may support only a single method. The Initiator and the Respon
 {: #fig-method-types title="Method Types"}
 {: artwork-align="center"}
 
-## Connection Identifiers and Transport
+## Connection Identifiers {#ci}
 
-### Connection Identifiers {#ci}
+EDHOC includes the selection of connection identifiers (C_I, C_R) identifying a connection for which keys are agreed. Connection identifiers may be used in the ongoing EDHOC protocol (see {{ci-edhoc}}) or in a subsequent application protocol, e.g., OSCORE (see {{ci-oscore}}). The connection identifiers do not have any cryptographic purpose in EDHOC.
 
-EDHOC includes the negotiation of connection identifiers (C_I, C_R) which may be used to identify a connection for which EDHOC has established keys. The connection identifiers C_I and C_R do not have any cryptographic purpose in EDHOC.
+Connection identifiers in EDHOC are byte strings or integers, encoded in CBOR. One byte connection identifiers (the integers -24 to 23 and the empty bytestring h'') are realistic in many scenarios as most constrained devices only have a few connections. 
 
-C_I and C_R are chosen by I and R, respectively. Each party chooses a connection identifier it wants the other party to use in its outgoing messages. Connection identifiers can be byte strings or integers encoded in CBOR. One byte connection identifiers (the integers -24 to 23 and the empty bytestring h'') are realistic in many scenarios as most constrained devices only have a few connections.
+### Selection of Connection Identifiers
 
-If connection identifiers are used by an application protocol for which EDHOC establishes keys (such as OSCORE) then the selected connection identifiers SHALL adhere to the requirements for that protocol.  For OSCORE, the choice of a connection identifier results in the endpoint selecting its Recipient ID, see Section 3.1 of {{RFC8613}}), for which certain uniqueness requirements apply, see Section 3.3 of {{RFC8613}}).
+C_I and C_R are chosen by I and R, respectively. The Initiator selects C_I and sends it in message_1 for the Responder to use as a reference to the connection in communications with the Initiator. The Responder selects C_R and sends in message_2 for the Initiator to use as a reference to the connection in communications with the Responder.
 
-Connection identifiers may be used to facilitate the retrieval of protocol state during EDHOC protocol execution. EDHOC transports that do not inherently provide correlation across all messages of an exchange can send connection identifiers along with EDHOC messages to gain that required capability, see {{transport}}). For an example when CoAP is used as transport, see {{coap}}.
+If connection identifiers are used by an application protocol for which EDHOC establishes keys then the selected connection identifiers SHALL adhere to the requirements for that protocol, see {{ci-oscore}} for an example.
 
-### Transport {#transport}
+### Use of Connection Identifiers in EDHOC {#ci-edhoc}
 
-Cryptographically, EDHOC does not put requirements on the lower layers. EDHOC is not bound to a particular transport layer, and can be used in environments without IP. The transport is responsible, where necessary, to handle:
+Connection identifiers may be used to correlate EDHOC messages and facilitate the retrieval of protocol state during EDHOC protocol execution. EDHOC transports that do not inherently provide correlation across all messages of an exchange can send connection identifiers along with EDHOC messages to gain that required capability, see {{transport}}). For an example when CoAP is used as transport, see {{coap}}.
+
+### Use of Connection Identifiers in OSCORE {#ci-oscore}
+
+For OSCORE, the choice of a connection identifier results in the endpoint selecting its Recipient ID, see Section 3.1 of {{RFC8613}}), for which certain uniqueness requirements apply, see Section 3.3 of {{RFC8613}}). As a consequence, the connection identifers C_I and C_R MUST NOT result to the same OSCORE Recipient ID in the Initiator and Responder. Since the Recipient ID is a byte string and a EDHOC connection identifier is either a CBOR byte string or a CBOR integer, care must be taken when selecting the connection identifiers and converting them to Recipient IDs.
+
+## Transport {#transport}
+
+Cryptographically, EDHOC does not put requirements on the lower layers. EDHOC is not bound to a particular transport layer, and can even be used in environments without IP. The transport is responsible, where necessary, to handle:
 
 * message loss,
 * message reordering,
 * message duplication,
-* correlation of messages, including an indication of a message being message_1,
 * fragmentation, 
 * demultiplex EDHOC messages from other types of messages, and 
 * denial of service protection.
+
+Besides these common transport oriented properties, EDHOC transport  additionally needs to support the correlation between EDHOC messages, including an indication of a message being message_1. The correlation may reuse existing mechanisms in the transport protocol. For example, the Token in CoAP may be used to correlate EDHOC messages in a CoAP response and an associated CoAP request. In the absense of correlation between a message received and a message previously sent inherent to the transport, the EDHOC connection identifiers may be added, e.g. by prepending the appropriate connection identifier (when available from the EDHOC protocol) to the EDHOC message. {{coap}} describes how to use connection identifiers and message_1 indication with CoAP.
 
 The Initiator and the Responder need to have agreed on a transport to be used for EDHOC, see {{applicability}}. It is recommended to transport EDHOC in CoAP payloads, see {{coap}}.
 
@@ -1200,7 +1209,7 @@ EDHOC protects the credential identifier of the Initiator against active attacks
 
 Compared to {{SIGMA}}, EDHOC adds an explicit method type and expands the message authentication coverage to additional elements such as algorithms, external authorization data, and previous messages. This protects against an attacker replaying messages or injecting messages from another session.
 
-EDHOC also adds negotiation of connection identifiers and downgrade protected negotiation of cryptographic parameters, i.e. an attacker cannot affect the negotiated parameters. A single session of EDHOC does not include negotiation of cipher suites, but it enables the Responder to verify that the selected cipher suite is the most preferred cipher suite by the Initiator which is supported by both the Initiator and the Responder.
+EDHOC also adds selection of connection identifiers and downgrade protected negotiation of cryptographic parameters, i.e. an attacker cannot affect the negotiated parameters. A single session of EDHOC does not include negotiation of cipher suites, but it enables the Responder to verify that the selected cipher suite is the most preferred cipher suite by the Initiator which is supported by both the Initiator and the Responder.
 
 As required by {{RFC7258}}, IETF protocols need to mitigate pervasive monitoring when possible. One way to mitigate pervasive monitoring is to use a key exchange that provides perfect forward secrecy. EDHOC therefore only supports methods with perfect forward secrecy. To limit the effect of breaches, it is important to limit the use of symmetrical group keys for bootstrapping. EDHOC therefore strives to make the additional cost of using raw public keys and self-signed certificates as small as possible. Raw public keys and self-signed certificates are not a replacement for a public key infrastructure, but SHOULD be used instead of symmetrical group keys for bootstrapping.
 
