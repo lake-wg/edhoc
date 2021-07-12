@@ -3581,13 +3581,19 @@ may need ... no, they don't need anything special: after an error, the next thin
 
 Main changes:
 
-* Pending:
-   * Prepended C_x moved from the EDHOC protocol itself to the transport mapping; METHOD_CORR renamed to METHOD, corr removed.
-   * Removed bstr_identifier and use bstr / int instead. C_x can now be int without any implied bstr semantics. Defined COSE header parameter and COSE key common parameter 'kid2' as bstr / int for use with ID_CRED_x.
+* From -07 to -08:
+   * Prepended C_x moved from the EDHOC protocol itself to the transport mapping
+   * METHOD_CORR renamed to METHOD, corr removed
+   * Removed bstr_identifier and use bstr / int instead; C_x can now be int without any implied bstr semantics
+   * Defined COSE header parameter 'kid2' with value type bstr / int for use with ID_CRED_x
+   * Ciphersuites for AES-GCM and ChaCha20/Poly1305
+   * Changed number of non-constrained CNSA suite from 5 to 24
+   * Separate sections on transport and connection id with further sub-structure
+   * Moved back key derivation for OSCORE from draft-ietf-core-oscore-edhoc
+   * OSCORE and CoAP specific processing moved to new appendix
 
 
 * From -06 to -07:
-
    * Changed transcript hash definition for TH_2 and TH_3
    * Removed "EDHOC signature algorithm curve" from cipher suite
    * New IANA registry "EDHOC Exporter Label" 
