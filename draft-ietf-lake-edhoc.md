@@ -960,6 +960,63 @@ If any processing step fails, the Responder SHOULD send an EDHOC error message b
 
 After verifying message_3, the Responder is assured that the Initiator has calculated the key PRK_4x3m (explicit key confirmation) and that no other party than the Responder can compute the key. The Responder can securely send protected application data and store the keying material PRK_4x3m and TH_4.
 
+## EDHOC Message 4 {#m4}
+
+This section specifies message_4 which is OPTIONAL to support. Key confirmation is normally provided by sending an application message from the Responder to the Initiator protected with a key derived with the EDHOC-Exporter, e.g., using OSCORE (see {{transfer}}). In deployments where no protected application message is sent from the Responder to the Initiator, the Responder MUST send message_4. Two examples of such deployments:
+
+1. When EDHOC is only used for authentication and no application data is sent.
+2. When application data is only sent from the Initiator to the Responder.
+
+Further considerations are provided in {{applicability}}.
+
+### Formatting of Message 4 {#asym-msg4-form}
+
+message_4 SHALL be a CBOR Sequence (see {{CBOR}}) as defined below
+
+~~~~~~~~~~~ CDDL
+message_4 = (
+  CIPHERTEXT_4 : bstr,
+)
+~~~~~~~~~~~
+
+### Responder Processing of Message 4 {#asym-msg4-proc}
+
+The Responder SHALL compose message_4 as follows:
+
+
+* Compute a COSE_Encrypt0 as defined in Section 5.3 of {{I-D.ietf-cose-rfc8152bis-struct}}, with the EDHOC AEAD algorithm in the selected cipher suite, and the following parameters. The protected header SHALL be empty.
+
+   * protected = h''
+
+   * external_aad = TH_4
+
+   * plaintext = ( ? EAD_4 )
+
+   where EAD_4 is protected external authorization data, see {{AD}}. COSE constructs the input to the AEAD {{RFC5116}} as follows:
+
+   * Key K = EDHOC-Exporter( "EDHOC_message_4_Key", h'', length )
+   * Nonce N = EDHOC-Exporter( "EDHOC_message_4_Nonce", h'', length )
+   * Plaintext P = ( ? EAD_4 )
+   * Associated data A = \[ "Encrypt0", h'', TH_4 \]
+
+  CIPHERTEXT_4 is the 'ciphertext' of the COSE_Encrypt0.
+
+* Encode message_4 as a sequence of CBOR encoded data items as specified in {{asym-msg4-form}}.
+
+### Initiator Processing of Message 4
+
+The Initiator SHALL process message_4 as follows:
+
+* Decode message_4 (see {{CBOR}}).
+
+* Retrieve the protocol state using the message correlation provided by the transport (e.g., the CoAP Token and the 5-tuple as a client, or the prepended C_I as a server).
+
+* Decrypt and verify the outer COSE_Encrypt0 as defined in Section 5.3 of {{I-D.ietf-cose-rfc8152bis-struct}}, with the EDHOC AEAD algorithm in the selected cipher suite,  and the parameters defined in {{asym-msg4-proc}}.
+
+* Pass EAD_4 to the security application.
+
+If any verification step fails the Initiator MUST send an EDHOC error message back, formatted as defined in {{error}}, and the session MUST be discontinued.
+
 # Error Handling {#error}
 
 This section defines the format for error messages.
@@ -1069,64 +1126,6 @@ Initiator                                                   Responder
 Note that the Initiator's list of supported cipher suites and order of preference is fixed (see {{asym-msg1-form}} and {{init-proc-msg1}}). Furthermore, the Responder shall only accept message_1 if the selected cipher suite is the first cipher suite in SUITES_I that the Responder supports (see {{resp-proc-msg1}}). Following this procedure ensures that the selected cipher suite is the most preferred (by the Initiator) cipher suite supported by both parties.
 
 If the selected cipher suite is not the first cipher suite which the Responder supports in SUITES_I received in message_1, then Responder MUST discontinue the protocol, see {{resp-proc-msg1}}. If SUITES_I in message_1 is manipulated then the integrity verification of message_2 containing the transcript hash TH_2 will fail and the Initiator will discontinue the protocol.
-
-
-# EDHOC Message 4 {#m4}
-
-This section specifies message_4 which is OPTIONAL to support. Key confirmation is normally provided by sending an application message from the Responder to the Initiator protected with a key derived with the EDHOC-Exporter, e.g., using OSCORE (see {{transfer}}). In deployments where no protected application message is sent from the Responder to the Initiator, the Responder MUST send message_4. Two examples of such deployments:
-
-1. When EDHOC is only used for authentication and no application data is sent.
-2. When application data is only sent from the Initiator to the Responder.
-
-Further considerations are provided in {{applicability}}.
-
-## Formatting of Message 4 {#asym-msg4-form}
-
-message_4 SHALL be a CBOR Sequence (see {{CBOR}}) as defined below
-
-~~~~~~~~~~~ CDDL
-message_4 = (
-  CIPHERTEXT_4 : bstr,
-)
-~~~~~~~~~~~
-
-## Responder Processing of Message 4 {#asym-msg4-proc}
-
-The Responder SHALL compose message_4 as follows:
-
-
-* Compute a COSE_Encrypt0 as defined in Section 5.3 of {{I-D.ietf-cose-rfc8152bis-struct}}, with the EDHOC AEAD algorithm in the selected cipher suite, and the following parameters. The protected header SHALL be empty.
-
-   * protected = h''
-
-   * external_aad = TH_4
-
-   * plaintext = ( ? EAD_4 )
-
-   where EAD_4 is protected external authorization data, see {{AD}}. COSE constructs the input to the AEAD {{RFC5116}} as follows: 
-
-   * Key K = EDHOC-Exporter( "EDHOC_message_4_Key", h'', length ) 
-   * Nonce N = EDHOC-Exporter( "EDHOC_message_4_Nonce", h'', length )
-   * Plaintext P = ( ? EAD_4 )
-   * Associated data A = \[ "Encrypt0", h'', TH_4 \]
-
-  CIPHERTEXT_4 is the 'ciphertext' of the COSE_Encrypt0.
-
-* Encode message_4 as a sequence of CBOR encoded data items as specified in {{asym-msg4-form}}.
-
-## Initiator Processing of Message 4
-
-The Initiator SHALL process message_4 as follows:
-
-* Decode message_4 (see {{CBOR}}).
-
-* Retrieve the protocol state using the message correlation provided by the transport (e.g., the CoAP Token and the 5-tuple as a client, or the prepended C_I as a server).
-
-* Decrypt and verify the outer COSE_Encrypt0 as defined in Section 5.3 of {{I-D.ietf-cose-rfc8152bis-struct}}, with the EDHOC AEAD algorithm in the selected cipher suite,  and the parameters defined in {{asym-msg4-proc}}.
-
-* Pass EAD_4 to the security application.
-
-If any verification step fails the Initiator MUST send an EDHOC error message back, formatted as defined in {{error}}, and the session MUST be discontinued.
 
 # Security Considerations {#security}
 
@@ -3594,6 +3593,7 @@ Main changes:
    * Separate sections on transport and connection id with further sub-structure
    * Moved back key derivation for OSCORE from draft-ietf-core-oscore-edhoc
    * OSCORE and CoAP specific processing moved to new appendix
+   * Message 4 section moved to message processing section
 
 
 * From -06 to -07:
