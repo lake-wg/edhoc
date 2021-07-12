@@ -661,7 +661,7 @@ The transcript hash TH_4 is a CBOR encoded bstr and the input to the hash functi
 ~~~~~~~~~~~
    TH_4 = H( TH_3, CIPHERTEXT_3 )
 ~~~~~~~~~~~
-where H() is the hash function in the selected cipher suite. Examples of use of the EDHOC-Exporter are given in {{asym-msg4-proc}} and {{I-D.ietf-core-oscore-edhoc}}.
+where H() is the hash function in the selected cipher suite. Examples of use of the EDHOC-Exporter are given in {{asym-msg4-proc}} and {{transfer}}.
 
 To provide forward secrecy in an even more efficient way than re-running EDHOC, EDHOC provides the function EDHOC-KeyUpdate. When EDHOC-KeyUpdate is called the old PRK_4x3m is deleted and the new PRK_4x3m is calculated as a "hash" of the old key using the Extract function as illustrated by the following pseudocode:
 
@@ -1073,7 +1073,7 @@ If the selected cipher suite is not the first cipher suite which the Responder s
 
 # EDHOC Message 4 {#m4}
 
-This section specifies message_4 which is OPTIONAL to support. Key confirmation is normally provided by sending an application message from the Responder to the Initiator protected with a key derived with the EDHOC-Exporter, e.g., using OSCORE (see {{I-D.ietf-core-oscore-edhoc}}). In deployments where no protected application message is sent from the Responder to the Initiator, the Responder MUST send message_4. Two examples of such deployments:
+This section specifies message_4 which is OPTIONAL to support. Key confirmation is normally provided by sending an application message from the Responder to the Initiator protected with a key derived with the EDHOC-Exporter, e.g., using OSCORE (see {{transfer}}). In deployments where no protected application message is sent from the Responder to the Initiator, the Responder MUST send message_4. Two examples of such deployments:
 
 1. When EDHOC is only used for authentication and no application data is sent.
 2. When application data is only sent from the Initiator to the Responder.
@@ -1105,8 +1105,8 @@ The Responder SHALL compose message_4 as follows:
 
    where EAD_4 is protected external authorization data, see {{AD}}. COSE constructs the input to the AEAD {{RFC5116}} as follows: 
 
-   * Key K = EDHOC-Exporter( "EDHOC_message_4_Key", length ) 
-   * Nonce N = EDHOC-Exporter( "EDHOC_message_4_Nonce", length )
+   * Key K = EDHOC-Exporter( "EDHOC_message_4_Key", h'', length ) 
+   * Nonce N = EDHOC-Exporter( "EDHOC_message_4_Nonce", h'', length )
    * Plaintext P = ( ? EAD_4 )
    * Associated data A = \[ "Encrypt0", h'', TH_4 \]
 
