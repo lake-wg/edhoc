@@ -322,7 +322,7 @@ If connection identifiers are used by an application protocol for which EDHOC es
 
 ### Use of Connection Identifiers in EDHOC {#ci-edhoc}
 
-Connection identifiers may be used to correlate EDHOC messages and facilitate the retrieval of protocol state during EDHOC protocol execution. EDHOC transports that do not inherently provide correlation across all messages of an exchange can send connection identifiers along with EDHOC messages to gain that required capability, see {{transport}}). For an example when CoAP is used as transport, see {{coap}}.
+Connection identifiers may be used to correlate EDHOC messages and facilitate the retrieval of protocol state during EDHOC protocol execution. EDHOC transports that do not inherently provide correlation across all messages of an exchange can send connection identifiers along with EDHOC messages to gain that required capability, see {{transport}}. For an example when CoAP is used as transport, see {{coap}}.
 
 ### Use of Connection Identifiers in OSCORE {#ci-oscore}
 
