@@ -326,7 +326,7 @@ Connection identifiers may be used to correlate EDHOC messages and facilitate th
 
 ### Use of Connection Identifiers in OSCORE {#ci-oscore}
 
-For OSCORE, the choice of a connection identifier results in the endpoint selecting its Recipient ID, see Section 3.1 of {{RFC8613}}), for which certain uniqueness requirements apply, see Section 3.3 of {{RFC8613}}). As a consequence, the connection identifers C_I and C_R MUST NOT result to the same OSCORE Recipient ID in the Initiator and Responder. Since the Recipient ID is a byte string and a EDHOC connection identifier is either a CBOR byte string or a CBOR integer, care must be taken when selecting the connection identifiers and converting them to Recipient IDs.
+For OSCORE, the choice of a connection identifier results in the endpoint selecting its Recipient ID, see Section 3.1 of {{RFC8613}}), for which certain uniqueness requirements apply, see Section 3.3 of {{RFC8613}}). Therefore the Initiator and the Responder MUST NOT select connection identifiers such that it results in same OSCORE Recipient ID. Since the Recipient ID is a byte string and a EDHOC connection identifier is either a CBOR byte string or a CBOR integer, care must be taken when selecting the connection identifiers and converting them to Recipient IDs.
 
 ## Transport {#transport}
 
