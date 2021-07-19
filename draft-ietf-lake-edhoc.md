@@ -561,7 +561,7 @@ For other parameters, like CRED_x in the case that it is not transported, it may
 
 Note that it is not necessary for the endpoints to specify a single transport for the EDHOC messages. For example, a mix of CoAP and HTTP may be used along the path, and this may still allow correlation between messages.
 
-The applicability statement may be dependent on the identity of the other endpoint, but this applies only to the later phases of the protocol when identities are known. (Initiator does not know identity of Responder before having verified message_2, and Responder does not know identity of Initiator before having verified message_3.)
+The applicability statement may be dependent on the identity of the other endpoint, or other information carried in an EDHOC message, but it then applies only to the later phases of the protocol when such information is known. (The Initiator does not know identity of Responder before having verified message_2, and the Responder does not know identity of the Initiator before having verified message_3.)
 
 Other conditions may be part of the applicability statement, such as target application or use (if there is more than one application/use) to the extent that EDHOC can distinguish between them. In case multiple applicability statements are used, the receiver needs to be able to determine which is applicable for a given session, for example based on URI or external authorization data type.
 
