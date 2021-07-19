@@ -411,7 +411,7 @@ ID_CRED_I and ID_CRED_R do not have any cryptographic purpose in EDHOC.
 
 * ID_CRED_I is intended to facilitate for the Responder to retrieve the Initiator's public authentication key.
 
-The identifiers ID_CRED_I and ID_CRED_R are COSE header_maps, i.e. CBOR maps containing Common COSE Header Parameters, see Section 3.1 of {{I-D.ietf-cose-rfc8152bis-struct}}). In the following we give some examples of COSE header_maps.
+The identifiers ID_CRED_I and ID_CRED_R are COSE header_maps, i.e. CBOR maps containing Common COSE Header Parameters, see Section 3.1 of {{I-D.ietf-cose-rfc8152bis-struct}}). As such, ID_CRED_I and ID_CRED_R typically provide information about the format of authentication credential, CRED_I and CRED_R, respectively. In the following we give some examples of COSE header_maps.
 
 Raw public keys are most optimally stored as COSE_Key objects and identified with a 'kid2' parameter (see {{kid2-header-param}} and {{kid2-key-common-param}}):
 
