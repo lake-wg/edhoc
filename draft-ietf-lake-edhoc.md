@@ -320,11 +320,13 @@ C_I and C_R are chosen by I and R, respectively. The Initiator selects C_I and s
 
 If connection identifiers are used by an application protocol for which EDHOC establishes keys then the selected connection identifiers SHALL adhere to the requirements for that protocol, see {{ci-oscore}} for an example.
 
-### Use of Connection Identifiers in EDHOC {#ci-edhoc}
+### Use of Connection Identifiers with EDHOC {#ci-edhoc}
 
-Connection identifiers may be used to correlate EDHOC messages and facilitate the retrieval of protocol state during EDHOC protocol execution. EDHOC transports that do not inherently provide correlation across all messages of an exchange can send connection identifiers along with EDHOC messages to gain that required capability, see {{transport}}. For an example when CoAP is used as transport, see {{coap}}.
+Connection identifiers may be used to correlate EDHOC messages and facilitate the retrieval of protocol state during EDHOC protocol execution.  EDHOC transports that do not inherently provide correlation across all messages of an exchange can send connection identifiers along with EDHOC messages to gain that required
+capability, see {{transport}}.  For an example of using connection identifiers when CoAP is used as transport, see {{coap}}.
 
-### Use of Connection Identifiers in OSCORE {#ci-oscore}
+
+### Use of Connection Identifiers with OSCORE {#ci-oscore}
 
 For OSCORE, the choice of a connection identifier results in the endpoint selecting its Recipient ID, see Section 3.1 of {{RFC8613}}), for which certain uniqueness requirements apply, see Section 3.3 of {{RFC8613}}). Therefore the Initiator and the Responder MUST NOT select connection identifiers such that it results in same OSCORE Recipient ID. Since the Recipient ID is a byte string and a EDHOC connection identifier is either a CBOR byte string or a CBOR integer, care must be taken when selecting the connection identifiers and converting them to Recipient IDs. A mapping from EDHOC connection identifier to OSCORE Recipient ID is specified in {{edhoc-to-oscore}}.
 
