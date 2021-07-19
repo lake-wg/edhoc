@@ -1534,7 +1534,7 @@ By default, the CoAP client is the Initiator and the CoAP server is the Responde
 
 By default, the message flow is as follows: EDHOC message_1 is sent in the payload of a POST request from the client to the server's resource for EDHOC. EDHOC message_2 or the EDHOC error message is sent from the server to the client in the payload of a 2.04 (Changed) response. EDHOC message_3 or the EDHOC error message is sent from the client to the server's resource in the payload of a POST request. If needed, an EDHOC error message is sent from the server to the client in the payload of a 2.04 (Changed) response. Alternatively, if EDHOC message_4 is used, it is sent from the server to the client in the payload of a 2.04 (Changed) response analogously to message_2.
 
-In order to correlate a message received from a client to a message previously sent by the server, messages sent by the client are prepended with the CBOR serialization of the connection identifier which the server has chosen. This applies independently of if the CoAP server is Responder or Initiator. For the default case when the server is Responder, the prepended connection identifier is C_R, and C_I if the server is Initiator. If message_1 is sent to the server, the CBOR simple value `null` (0xf6) is sent in its place (given that the server has not selected C_R yet).
+In order to correlate a message received from a client to a message previously sent by the server, messages sent by the client are prepended with the CBOR serialization of the connection identifier which the server has chosen. This applies independently of if the CoAP server is Responder or Initiator. For the default case when the server is Responder, the prepended connection identifier is C_R, and C_I if the server is Initiator. If message_1 is sent to the server, the CBOR simple value `nil` (0xf6) is sent in its place (given that the server has not selected C_R yet).
 
 These identifiers are encoded in CBOR and thus self-delimiting.
 They are sent in front of the actual EDHOC message,
@@ -1550,7 +1550,7 @@ Client    Server
   |          |
   +--------->| Header: POST (Code=0.02)
   |   POST   | Uri-Path: "/.well-known/edhoc"
-  |          | Payload: null, EDHOC message_1
+  |          | Payload: nil, EDHOC message_1
   |          |
   |<---------+ Header: 2.04 Changed
   |   2.04   | Content-Format: application/edhoc
@@ -1623,7 +1623,9 @@ This Appendix is intended to simplify for implementors not familiar with CBOR {{
 
 The Concise Binary Object Representation (CBOR) {{RFC8949}} is a data format designed for small code size and small message size. CBOR builds on the JSON data model but extends it by e.g. encoding binary data directly without base64 conversion. In addition to the binary CBOR encoding, CBOR also has a diagnostic notation that is readable and editable by humans. The Concise Data Definition Language (CDDL) {{RFC8610}} provides a way to express structures for protocol messages and APIs that use CBOR. {{RFC8610}} also extends the diagnostic notation.
 
-CBOR data items are encoded to or decoded from byte strings using a type-length-value encoding scheme, where the three highest order bits of the initial byte contain information about the major type. CBOR supports several different types of data items, in addition to integers (int, uint), simple values (e.g. null), byte strings (bstr), and text strings (tstr), CBOR also supports arrays \[\]  of data items, maps {} of pairs of data items, and sequences {{RFC8742}} of data items. Some examples are given below. For a complete specification and more examples, see {{RFC8949}} and {{RFC8610}}. We recommend implementors to get used to CBOR by using the CBOR playground {{CborMe}}. 
+CBOR data items are encoded to or decoded from byte strings using a type-length-value encoding scheme, where the three highest order bits of the initial byte contain information about the major type. CBOR supports several different types of data items, in addition to integers (int, uint), simple values, byte strings (bstr), and text strings (tstr), CBOR also supports arrays \[\]  of data items, maps {} of pairs of data items, and sequences {{RFC8742}} of data items. Some examples are given below. (To avoid potential ambiguity we consequently use the term `nil` for the simple value 0xf6.)
+
+For a complete specification and more examples, see {{RFC8949}} and {{RFC8610}}. We recommend implementors to get used to CBOR by using the CBOR playground {{CborMe}}.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 Diagnostic          Encoded              Type
@@ -1632,15 +1634,15 @@ Diagnostic          Encoded              Type
 24                  0x1818               unsigned integer
 -24                 0x37                 negative integer
 -25                 0x3818               negative integer 
-null                0xf6                 simple value 
+nil                 0xf6                 simple value
 h'12cd'             0x4212cd             byte string
 '12cd'              0x4431326364         byte string
 "12cd"              0x6431326364         text string
 { 4 : h'cd' }       0xa10441cd           map                 
-<< 1, 2, null >>    0x430102f6           byte string
-[ 1, 2, null ]      0x830102f6           array      
-( 1, 2, null )      0x0102f6             sequence
-1, 2, null          0x0102f6             sequence
+<< 1, 2, nil >>     0x430102f6           byte string
+[ 1, 2, nil ]       0x830102f6           array
+( 1, 2, nil )       0x0102f6             sequence
+1, 2, nil           0x0102f6             sequence
 ------------------------------------------------------------------
 ~~~~~~~~~~~~~~~~~~~~~~~
 {: artwork-align="center"}
@@ -3571,7 +3573,7 @@ Note that the requirements in {{proc-outline}} still apply because duplicate mes
 Protocols that do not natively provide full correlation between a series of messages can send the C_I and C_R identifiers along as needed.
 
 The transport over CoAP ({{coap}}) can serve as a blueprint for other server-client protocols:
-The client prepends the C_x which the server selected (or, for message 1, a sentinel null value which is not a valid C_x) to any request message it sends.
+The client prepends the C_x which the server selected (or, for message 1, a sentinel `nil` value which is not a valid C_x) to any request message it sends.
 The server does not send any such indicator, as responses are matched to request by the client-server protocol design.
 
 Protocols that do not provide any correlation at all can prescribe prepending of the peer's chosen C_x to all messages.
