@@ -53,7 +53,6 @@ normative:
   I-D.ietf-cose-x509:
   I-D.ietf-core-echo-request-tag:
   I-D.ietf-lake-reqs:
-  I-D.ietf-rats-uccs:
 
 informative:
 
@@ -69,6 +68,7 @@ informative:
   I-D.ietf-core-oscore-edhoc:
   I-D.ietf-cose-cbor-encoded-cert:
   I-D.mattsson-cfrg-det-sigs-with-noise:
+  I-D.ietf-rats-uccs:
 
   SP-800-56A:
     target: https://doi.org/10.6028/NIST.SP.800-56Ar3
@@ -193,13 +193,18 @@ Total               103       245
 The remainder of the document is organized as follows: {{background}} outlines EDHOC authenticated with digital signatures, {{overview}} describes the protocol elements of EDHOC, including message flow, and formatting of the ephemeral public keys, {{key-der}} describes the key derivation, {{asym}} specifies EDHOC with authentication based on signature keys or static Diffie-Hellman keys, {{error}} specifies the EDHOC error message, and {{transfer}} describes how EDHOC can be transferred in CoAP and used to establish an OSCORE security context.
 
 
-## Terminology and Requirements Language
+## Terminology and Requirements Language {#term}
 
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in BCP 14 {{RFC2119}} {{RFC8174}} when, and only when, they appear in all capitals, as shown here.
 
 Readers are expected to be familiar with the terms and concepts described in CBOR {{RFC8949}}, CBOR Sequences {{RFC8742}}, COSE structures and process {{I-D.ietf-cose-rfc8152bis-struct}}, COSE algorithms {{I-D.ietf-cose-rfc8152bis-algs}}, and CDDL {{RFC8610}}. The Concise Data Definition Language (CDDL) is used to express CBOR data structures {{RFC8949}}. Examples of CBOR and CDDL are provided in {{CBOR}}. When referring to CBOR, this specification always refer to Deterministically Encoded CBOR as specified in Sections 4.2.1 and 4.2.2 of {{RFC8949}}.
 
 The single output from authenticated encryption (including the authentication tag) is called 'ciphertext', following {{RFC5116}}.
+
+We use the term Unprotected CWT Claims Set (UCCS) just as in {{I-D.ietf-rats-uccs}} to denote a CBOR Web Token {{RFC8392}} without wrapping it into a COSE object, i.e. a CBOR map consisting of claims.
+
+Editor's note: If {{I-D.ietf-rats-uccs}} completes before this draft, make it a normative reference.
+
 
 
 # EDHOC Outline {#background}
@@ -1351,14 +1356,14 @@ IANA has created a new registry entitled "EDHOC Error Codes" under the new headi
 
 ## COSE Header Parameters Registry {#cwt-header-param}
 
-This document registers the following entries in the "COSE Header Parameters" registry under the "CBOR Object Signing and Encryption (COSE)" heading. The value of the 'cwt' header parameter is a CWT {{RFC8392}} or an unprotected CWT Claims Set {{I-D.ietf-rats-uccs}}.
+This document registers the following entries in the "COSE Header Parameters" registry under the "CBOR Object Signing and Encryption (COSE)" heading. The value of the 'cwt' header parameter is a CWT {{RFC8392}} or an Unprotected CWT Claims Set, see {{term}}.
 
 ~~~~~~~~~~~
 +-----------+-------+----------------+------------------------------+
 | Name      | Label | Value Type     | Description                  |
 +===========+=======+================+==============================+
 | cwt       |  TBD1 | COSE_Messages  | A CBOR Web Token (CWT) or an |
-|           |       | / map          | unprotected CWT Claims Set   |
+|           |       | / map          | Unprotected CWT Claims Set   |
 +-----------+-------+----------------+------------------------------+
 ~~~~~~~~~~~
 
