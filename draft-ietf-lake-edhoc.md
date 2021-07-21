@@ -34,11 +34,13 @@ normative:
 
   RFC2119:
   RFC5116:
+  RFC5280:
   RFC5869:
   RFC6090:
   RFC6979:
   RFC7252:
   RFC7748:
+  RFC8747:
   RFC8949:
   RFC7959:
   RFC8174:
@@ -352,6 +354,31 @@ shows how to use connection identifiers and message_1 indication with CoAP.
 The Initiator and the Responder need to have agreed on a transport to be used for EDHOC, see {{applicability}}.
 
 ## Authentication Parameters {#auth-key-id}
+
+EDHOC enables public-key based authentication and supports various settings for how the other endpoint's public key is transported, identified and trusted.
+
+The authentication (public) key appears in different functions:
+
+1. as part of the authentication credential CRED_x included in the integrity calculation
+2. for verification of the Signature_or_MAC field in message_2 and message_3
+3. in the key derivation (in case of a static Diffie-Hellman key), see {{key-der}}.
+
+The choice of authentication key has an impact on the message size (see {{auth-keys}}) and even more so the choice of authentication credential (see {{auth-cred}}) in case it is transported within the protocol (see {{id_cred}}). The following list shows possible authentication credentials:
+
+* X.509 v3 certificate {{RFC5280}}
+* C509 certificate {{I-D.ietf-cose-cbor-encoded-cert}}
+* CBOR Web Token (CWT, {{RFC8392}})
+* Unprotected CWT Claims Set (UCCS, see {{term}})
+
+(For CWT and UCCS, the public key is represented as a COSE_Key in the `cnf` claim, see {{RFC8747}}.)
+
+For many settings it is not necessary to transport the authentication credential over constrained links, for example in deployments with Pre-Shared Public Keys (PSPK), or when the authentication credential can be acquired out-of-band (over less constrained links). In order to accomplish items 1-3 above, the receiving endpoint still needs to retrieve the authentication key and the authentication credential. ID_CRED_x is intended to provide a reference to facilitate such retrieval (see {{id_cred}}).
+
+The choice of authentication credential may also be used to enforce the trust model, e.g. by using a certificate or CWT signed by a trusted third party. For settings not relying on indirect trust, UCCS can be used as a generic representation of a raw public key. A UCCS as authentication credential provides essentially the same trustworthiness as a self-signed certificate or CWT, but is of smaller size. UCCS may be used either when there is direct trust in the public key, or when trust is not yet established, e.g. trust-on-first-use.
+
+COSE_Key {{I-D.ietf-cose-rfc8152bis-struct}} is omitted from the list above because it is not directly suitable as a generic format, but the public key can easily be represented as a UCCS, see {{auth-cred}}.
+
+More details are provided in the following subsections.
 
 ### Authentication Keys {#auth-keys}
 
