@@ -360,23 +360,21 @@ EDHOC enables public-key based authentication and supports various settings for 
 The authentication (public) key appears in different functions:
 
 1. as part of the authentication credential CRED_x included in the integrity calculation
-2. for verification of the Signature_or_MAC field in message_2 and message_3
-3. in the key derivation (in case of a static Diffie-Hellman key), see {{key-der}}.
+2. for verification of the Signature_or_MAC field in message_2 and message_3 (see {{asym-msg2-proc}} and {{asym-msg3-proc}})
+3. in the key derivation (in case of a static Diffie-Hellman key, see {{key-der}}).
 
-The choice of authentication key has an impact on the message size (see {{auth-keys}}) and even more so the choice of authentication credential (see {{auth-cred}}) in case it is transported within the protocol (see {{id_cred}}). The following list shows possible authentication credentials:
+The choice of authentication key has an impact on the message size (see {{auth-keys}}), and even more so the choice of authentication credential (see {{auth-cred}}) in case it is transported within the protocol (see {{id_cred}}). The following list shows possible authentication credentials:
 
 * X.509 v3 certificate {{RFC5280}}
 * C509 certificate {{I-D.ietf-cose-cbor-encoded-cert}}
 * CBOR Web Token (CWT, {{RFC8392}})
 * Unprotected CWT Claims Set (UCCS, see {{term}})
 
-(For CWT and UCCS, the public key is represented as a COSE_Key in the `cnf` claim, see {{auth-cred}}.)
+For CWT and UCCS, the authentication key is represented with a `cnf` claim {{RFC8747}} containing a COSE_Key {{I-D.ietf-cose-rfc8152bis-struct}}. UCCS can be seen as a generic representation of a raw public key, see {{auth-cred}} for an example. COSE_Key is omitted from the list above because of limitations to represent the identity (see {{identities}}) and because it can easily be embedded in a UCCS.
 
-For many settings it is not necessary to transport the authentication credential over constrained links, for example in deployments with Pre-Shared Public Keys (PSPK), or when the authentication credential can be acquired out-of-band (over less constrained links). In order to accomplish items 1-3 above, the receiving endpoint still needs to retrieve the authentication key and the authentication credential. ID_CRED_x is intended to provide a reference to facilitate such retrieval (see {{id_cred}}).
+Identical authentication credentials need to be established in both endpoints to accomplish item 1 above (see {{auth-cred}}) but for many settings it is not necessary to transport the authentication credential over constrained links. It may, for example, be pre-provisioned or acquired out-of-band over less constrained links. ID_CRED_x coincides with the authentication credential CRED_x in case it is transported, or else contains a reference to the authentication credential to facilitate its retrieval (see {{id_cred}}).
 
-The choice of authentication credential may also be used to enforce the trust model, e.g. by using a certificate or CWT signed by a trusted third party. For settings not relying on indirect trust, UCCS can be used as a generic representation of a raw public key. A UCCS as authentication credential provides essentially the same trustworthiness as a self-signed certificate or CWT, but is of smaller size. UCCS may be used either when there is direct trust in the public key, or when trust is not yet established, e.g. trust-on-first-use.
-
-COSE_Key {{I-D.ietf-cose-rfc8152bis-struct}} is omitted from the list above because it is not directly suitable as a generic format, but the public key can easily be represented as a UCCS, see {{auth-cred}}.
+The choice of authentication credential also depends on the trust model. For example, a certificate or CWT may rely on a trusted third party, whereas a UCCS may be used when trust in the public key can be achieved by other means, or in the case of trust-on-first-use. A UCCS as authentication credential provides essentially the same trustworthiness as a self-signed certificate or CWT, but has smaller size.
 
 More details are provided in the following subsections.
 
@@ -419,16 +417,12 @@ To prevent misbinding attacks in systems where an attacker can register public k
 
 When CRED_x is a CWT or UCCS, the claims set includes:
 
-* the `cnf` claim with value COSE_Key, see {{RFC8747}}. The public key parameters depend on key type:
-    * For a COSE_Key of type OKP the CBOR map SHALL only include the parameters 1 (kty), -1 (crv), and -2 (x-coordinate).
-    * For a COSE_Key of type EC2 the CBOR map SHALL only include the parameters 1 (kty), -1 (crv), -2 (x-coordinate), and -3 (y-coordinate).
-*  the `sub` (subject) claim contains the "identity", if the parties have agreed on an identity besides the public key.
+* the `cnf` claim with value COSE_Key, see {{RFC8747}}, where the public key parameters depend on key type:
+    * for OKP the CBOR map typically includes the parameters 1 (kty), -1 (crv), and -2 (x-coordinate)
+    * for EC2 the CBOR map typically includes the parameters 1 (kty), -1 (crv), -2 (x-coordinate), and -3 (y-coordinate)
+*  the `sub` (subject) claim containing the "identity", if the parties have agreed on an identity besides the public key.
 
-In the COSE_Key, a signature key typically has the common parameter key_ops "verify" (value 2), and a Diffie-Hellman public key typically has the common parameter key_ops "MAC verify" (value 10).
-
-CRED_x needs to be defined such that it is identical when generated by Initiator or Responder. The parameters SHALL be encoded in bytewise lexicographic order of their deterministic encodings as specified in Section 4.2.1 of {{RFC8949}}.
-
-Editor's note: Fix the normative text above
+CRED_x needs to be defined such that it is identical when generated by Initiator or Responder, see {{applicability}}. The parameters SHALL be encoded in bytewise lexicographic order of their deterministic encodings as specified in Section 4.2.1 of {{RFC8949}}.
 
 An example of CRED_x when the UCCS contains an X25519 static Diffie-Hellman key and the parties have agreed on an EUI-64 identity is shown below:
 
@@ -437,7 +431,6 @@ CRED_x = {     /UCCS/
  2 : "42-50-31-FF-EF-37-32-39",    /sub/
  8 : {    /cnf/
        1 : {     /COSE_Key/
-              4:  10,      /key_ops = "MAC verify"/
               1:  1,
              -1:  4,
              -2:  h'b1a3e89460e88d3a8d54211dc95f0b90
@@ -591,7 +584,7 @@ The purpose of the applicability statement is describe the intended use of EDHOC
 1. How the endpoint detects that an EDHOC message is received. This includes how EDHOC messages are transported, for example in the payload of a CoAP message with a certain Uri-Path or Content-Format; see {{coap}}.
  * The method of transporting EDHOC messages may also describe data carried along with the messages that are needed for the transport to satisfy the requirements of {{transport}}, e.g., connection identifiers used with certain messages, see {{coap}}.
 1. Authentication method (METHOD; see {{method}}).
-3. Profile for authentication credentials (CRED_I, CRED_R; see {{auth-cred}}), e.g., profile for certificate or COSE_key, including supported authentication key algorithms (subject public key algorithm in X.509 certificate).
+3. Profile for authentication credentials (CRED_I, CRED_R; see {{auth-cred}}), e.g., profile for certificate or UCCS, including supported authentication key algorithms (subject public key algorithm in X.509 certificate).
 4. Type used to identify authentication credentials (ID_CRED_I, ID_CRED_R; see {{id_cred}}).
 5. Use and type of external authorization data (EAD_1, EAD_2, EAD_3, EAD_4; see {{AD}}).
 6. Identifier used as identity of endpoint; see {{identities}}.
