@@ -389,20 +389,6 @@ The authentication key MUST be a signature key or static Diffie-Hellman key. The
 * Only the Initiator SHALL have access to the Initiator's private authentication key.
 
 
-### Identities {#identities}
-
-EDHOC assumes the existence of mechanisms (certification authority, trusted third party, manual distribution, etc.) for specifying and distributing authentication keys and identities. Policies are typically set based on the identity of the other party, and parties typically only allow connections from a specific identity or a small restricted set of identities. For example, in the case of a device connecting to a network, the network may only allow connections from devices which authenticate with certificates having a particular range of serial numbers in the subject field and signed by a particular CA. On the other side, the device may only be allowed to connect to a network which authenticates with a particular public key (information of which may be provisioned, e.g., out of band or in the external authorization data, see {{AD}}).
- 
-The EDHOC implementation must be able to receive and enforce information from the application about what is the intended endpoint, and in particular whether it is a specific identity or a set of identities.
-
-* When a Public Key Infrastructure (PKI) is used with certificates, the trust anchor is a Certification Authority (CA) certificate, and the identity is the subject whose unique name (e.g. a domain name, NAI, or EUI) is included in the endpoint's certificate. Before running EDHOC each party needs at least one CA public key certificate, or just the public key, and a specific identity or set of identities it is allowed to communicate with. Only validated public-key certificates with an allowed subject name, as specified by the application, are to be accepted. EDHOC provides proof that the other party possesses the private authentication key corresponding to the public authentication key in its certificate. The certification path provides proof that the subject of the certificate owns the public key in the certificate.
-
-* Similarly, when a PKI is used with CWTs, each party needs to have a trusted self-signed CWT or UCCS/raw public key to verify the CWTs, and a specific identity or set of identities in the `sub`(subject) claim of the CWT to determine if it is allowed to continue the EDHOC protocol.
-
-* When public keys are used but not with a PKI (UCCS, self-signed certificate/CWT), the trust anchor is the public authentication key of the other party. In this case, the identity is typically directly associated to the public authentication key of the other party. For example, the name of the subject may be a canonical representation of the public key. Alternatively, if identities can be expressed in the form of unique subject names assigned to public keys, then a binding to identity can be achieved by including both public key and associated subject name in the protocol message computation: CRED_I or CRED_R may be a self-signed certificate/CWT or UCCS containing the public authentication key and the subject name, see {{auth-cred}}. Before running EDHOC, each endpoint needs a specific public authentication key/unique associated subject name, or a set of public authentication keys/unique associated subject names, which it is allowed to communicate with. EDHOC provides proof that the other party possesses the private authentication key corresponding to the public authentication key.
-
-
-
 ### Authentication Credentials {#auth-cred}
 
 The authentication credentials, CRED_I and CRED_R, contain the public authentication key of the Initiator and the Responder, respectively.
@@ -413,7 +399,7 @@ The credentials CRED_I and CRED_R are signed or MAC:ed (in the Signature_OR_MAC 
 When the credential is a certificate, CRED_x is an end-entity certificate (i.e. not the certificate chain), encoded as a CBOR bstr.
 In X.509 and C509 certificates, signature keys typically have key usage "digitalSignature" and Diffie-Hellman public keys typically have key usage "keyAgreement".
 
-To prevent misbinding attacks in systems where an attacker can register public keys without proving knowledge of the private key, SIGMA {{SIGMA}} enforces a MAC to be calculated over the "identity", which in case of a X.509 certificate would be the 'subject' and 'subjectAltName' fields. EDHOC follows SIGMA by calculating a MAC over the whole certificate. While the SIGMA paper only focuses on the identity, the same principle is true for any information such as policies connected to the public key.
+To prevent misbinding attacks in systems where an attacker can register public keys without proving knowledge of the private key, SIGMA {{SIGMA}} enforces a MAC to be calculated over the "identity", which in case of a X.509 certificate would be the 'subject' and 'subjectAltName' fields, see {{identities}}. EDHOC follows SIGMA by calculating a MAC over the whole certificate. While the SIGMA paper only focuses on the identity, the same principle is true for any information such as policies connected to the public key.
 
 When CRED_x is a CWT or UCCS, the claims set includes:
 
@@ -439,6 +425,22 @@ CRED_x = {     /UCCS/
        }
 }
 ~~~~~~~~~~~
+
+### Identities {#identities}
+
+EDHOC assumes the existence of mechanisms (certification authority, trusted third party, manual distribution, etc.) for specifying and distributing authentication keys and identities. Policies are typically set based on the identity of the other party, and parties typically only allow connections from a specific identity or a small restricted set of identities. For example, in the case of a device connecting to a network, the network may only allow connections from devices which authenticate with certificates having a particular range of serial numbers in the subject field and signed by a particular CA. On the other side, the device may only be allowed to connect to a network which authenticates with a particular public key (information of which may be provisioned, e.g., out of band or in the external authorization data, see {{AD}}).
+
+The EDHOC implementation must be able to receive and enforce information from the application about what is the intended endpoint, and in particular whether it is a specific identity or a set of identities.
+
+* When a Public Key Infrastructure (PKI) is used with certificates, the trust anchor is a Certification Authority (CA) certificate, and the identity is the subject whose unique name (e.g. a domain name, NAI, or EUI) is included in the endpoint's certificate. Before running EDHOC each party needs at least one CA public key certificate, or just the public key, and a specific identity or set of identities it is allowed to communicate with. Only validated public-key certificates with an allowed subject name, as specified by the application, are to be accepted. EDHOC provides proof that the other party possesses the private authentication key corresponding to the public authentication key in its certificate. The certification path provides proof that the subject of the certificate owns the public key in the certificate.
+
+* Similarly, when a PKI is used with CWTs, each party needs to have a trusted self-signed CWT or UCCS/raw public key to verify the CWTs, and a specific identity or set of identities in the `sub`(subject) claim of the CWT to determine if it is allowed to continue the EDHOC protocol.
+
+* When public keys are used but not with a PKI (UCCS, self-signed certificate/CWT), the trust anchor is the public authentication key of the other party. In this case, the identity is typically directly associated to the public authentication key of the other party. For example, the name of the subject may be a canonical representation of the public key. Alternatively, if identities can be expressed in the form of unique subject names assigned to public keys, then a binding to identity can be achieved by including both public key and associated subject name in the protocol message computation: CRED_I or CRED_R may be a self-signed certificate/CWT or UCCS containing the public authentication key and the subject name, see {{auth-cred}}. Before running EDHOC, each endpoint needs a specific public authentication key/unique associated subject name, or a set of public authentication keys/unique associated subject names, which it is allowed to communicate with. EDHOC provides proof that the other party possesses the private authentication key corresponding to the public authentication key.
+
+
+
+
 
 ### Identification of Credentials {#id_cred}
 
