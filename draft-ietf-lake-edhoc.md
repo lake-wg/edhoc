@@ -182,10 +182,10 @@ Compared to the DTLS 1.3 handshake {{I-D.ietf-tls-dtls13}} with ECDHE and connec
                     kid       x5t                     
 ---------------------------------
 message_1            37        37                     
-message_2            45       116       
-message_3            20        91        
+message_2            46       117       
+message_3            19        90        
 ---------------------------------
-Total               103       245      
+Total               102       244      
 =================================
 ~~~~~~~~~~~~~~~~~~~~~~~
 {: #fig-sizes title="Example of message sizes in bytes." artwork-align="center"}
