@@ -1004,8 +1004,8 @@ The Responder SHALL compose message_4 as follows:
 
    where EAD_4 is protected external authorization data, see {{AD}}. COSE constructs the input to the AEAD {{RFC5116}} as follows:
 
-   * Key K = EDHOC-Exporter( "EDHOC_message_4_Key", h'', length )
-   * Nonce N = EDHOC-Exporter( "EDHOC_message_4_Nonce", h'', length )
+   * Key K = EDHOC-Exporter( "EDHOC_message_4_Key", length )
+   * Nonce N = EDHOC-Exporter( "EDHOC_message_4_Nonce", length )
    * Plaintext P = ( ? EAD_4 )
    * Associated data A = \[ "Encrypt0", h'', TH_4 \]
 
@@ -1520,8 +1520,8 @@ The context parameter is h'' (0x40), the empty CBOR byte string.
 By default, key_length is the key length (in bytes) of the application AEAD Algorithm of the selected cipher suite for the EDHOC session. Also by default, salt_length has value 8. The Initiator and Responder MAY agree out-of-band on a longer key_length than the default and on a different salt_length.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
-Master Secret = EDHOC-Exporter( "OSCORE Master Secret", h'',  key_length )
-Master Salt   = EDHOC-Exporter( "OSCORE Master Salt", h'',  salt_length )
+Master Secret = EDHOC-Exporter( "OSCORE Master Secret", key_length )
+Master Salt   = EDHOC-Exporter( "OSCORE Master Salt", salt_length )
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 * The AEAD Algorithm is the application AEAD algorithm of the selected cipher suite for the EDHOC session.
