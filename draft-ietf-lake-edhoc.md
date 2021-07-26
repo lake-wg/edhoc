@@ -617,7 +617,7 @@ EDHOC uses Extract-and-Expand {{RFC5869}} with the EDHOC hash algorithm in the s
 
 If the EDHOC hash algorithm is SHA-2, then Extract( salt, IKM ) = HKDF-Extract( salt, IKM ) {{RFC5869}}. If the EDHOC hash algorithm is SHAKE128, then Extract( salt, IKM ) = KMAC128( salt, IKM, 256, "" ). If the EDHOC hash algorithm is SHAKE256, then Extract( salt, IKM ) = KMAC256( salt, IKM, 512, "" ).
 
-PRK_2e is used to derive a keystream to encrypt message_2. PRK_3e2m is used to derive keys and IVs to produce a MAC in message_2 and to encrypt message_3. PRK_4x3m is used to derive keys and IVs to produce a MAC in message_3 and to derive application specific data.
+PRK_2e is used to derive a keystream to encrypt message_2. PRK_3e2m is used to produce a MAC in message_2 and to encrypt message_3. PRK_4x3m is used to produce a MAC in message_3, to encrypt message_4, and to derive application specific data.
 
 PRK_2e is derived with the following input:
 
@@ -648,7 +648,7 @@ Example: Assuming the use of curve25519, the ECDH shared secrets G_XY, G_RX, and
 The keys and IVs used in EDHOC are derived from PRKs using Expand {{RFC5869}} where the EDHOC-KDF is instantiated with the EDHOC AEAD algorithm in the selected cipher suite.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
-   OKM = EDHOC-KDF( PRK, transcript_hash, label, length )
+   OKM = EDHOC-KDF( PRK, transcript_hash, label_context, length )
        = Expand( PRK, info, length )
 ~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -658,9 +658,18 @@ where info is the CBOR encoding of
 info = [
    edhoc_aead_id : int / tstr,
    transcript_hash : bstr,
-   label : tstr,
+   label_context,
    length : uint
 ]
+~~~~~~~~~~~
+
+label_context is a CBOR sequence
+
+~~~~~~~~~~~ CDDL
+label_context = (
+  label : tstr,
+  * context : any,
+)
 ~~~~~~~~~~~
 
 where
@@ -669,7 +678,9 @@ where
   
   + transcript_hash is a bstr set to one of the transcript hashes TH_2, TH_3, or TH_4 as defined in Sections {{asym-msg2-form}}{: format="counter"}, {{asym-msg3-form}}{: format="counter"}, and {{exporter}}{: format="counter"}.
 
-  + label is a tstr set to the name of the derived key or IV, i.e. "K_2m", "IV_2m", "KEYSTREAM_2", "K_3m", "IV_3m", "K_3ae", or "IV_3ae".
+  + label is a tstr set to the name of the derived key or IV, i.e. "KEYSTREAM_2", "MAC_2", "K_3ae", "IV_3ae", or "MAC_3".
+
+  + context is CBOR sequence
 
   + length is the length of output keying material (OKM) in bytes
 
@@ -682,26 +693,18 @@ KEYSTREAM_2 are derived using the transcript hash TH_2 and the pseudorandom key 
 Application keys and other application specific data can be derived using the EDHOC-Exporter interface defined as:
 
 ~~~~~~~~~~~
-   EDHOC-Exporter(label, context, length)
+   EDHOC-Exporter(label_context, length)
      = EDHOC-KDF(PRK_4x3m, TH_4, label_context, length) 
 ~~~~~~~~~~~
 
-label_context is a CBOR sequence:
-
-~~~~~~~~~~~ CDDL
-label_context = (
-  label : tstr,
-  context : bstr,
-)
-~~~~~~~~~~~
-
-where label is a registered tstr from the EDHOC Exporter Label registry ({{exporter-label}}), context is a bstr defined by the application, and length is a uint defined by the application. The (label, context) pair must be unique, i.e. a (label, context) MUST NOT be used for two different purposes. However an application can re-derive the same key several times as long as it is done in a secure way. For example, in most encryption algorithms the same (key, nonce) pair must not be reused. 
+where label is a registered tstr from the EDHOC Exporter Label registry ({{exporter-label}}), context is a CBOR sequence defined by the application, and length is a uint defined by the application. The (label, context) pair must be unique, i.e. a (label, context) MUST NOT be used for two different purposes. However an application can re-derive the same key several times as long as it is done in a secure way. For example, in most encryption algorithms the same (key, nonce) pair must not be reused. 
 
 The transcript hash TH_4 is a CBOR encoded bstr and the input to the hash function is a CBOR Sequence.
 
 ~~~~~~~~~~~
    TH_4 = H( TH_3, CIPHERTEXT_3 )
 ~~~~~~~~~~~
+
 where H() is the hash function in the selected cipher suite. Examples of use of the EDHOC-Exporter are given in {{asym-msg4-proc}} and {{transfer}}.
 
 To provide forward secrecy in an even more efficient way than re-running EDHOC, EDHOC provides the function EDHOC-KeyUpdate. When EDHOC-KeyUpdate is called the old PRK_4x3m is deleted and the new PRK_4x3m is calculated as a "hash" of the old key using the Extract function as illustrated by the following pseudocode:
@@ -826,30 +829,13 @@ The Responder SHALL compose message_2 as follows:
 
 * Compute the transcript hash TH_2 = H( H(message_1), data_2 ) where H() is the hash function in the selected cipher suite. The transcript hash TH_2 is a CBOR encoded bstr and the input to the hash function is a CBOR Sequence. Note that H(message_1) can be computed and cached already in the processing of message_1.
 
-* Compute an inner COSE_Encrypt0 as defined in Section 5.3 of {{I-D.ietf-cose-rfc8152bis-struct}}, with the EDHOC AEAD algorithm in the selected cipher suite, K_2m, IV_2m, and the following parameters:
-
-   * protected =  << ID_CRED_R >>
+* Compute MAC_2 = EDHOC-KDF( PRK_3x2m, TH_2, ( "MAC_2", ID_CRED_R, CRED_R, ? AD_2 ), mac_length ). If the Responder authenticates with a static Diffie-Hellman key (method equals 1 or 3), then mac_length is equal to the tag length of the EDHOC AEAD algorithm. If the Responder authenticates with a signature key (method equals 0 or 2), then mac_length is equal to the output size of the EDHOC hash algorithm.
 
       * ID_CRED_R - identifier to facilitate retrieval of CRED_R, see {{id_cred}}
-
-   * external_aad = << TH_2, CRED_R, ? EAD_2 >>
 
       * CRED_R - bstr containing the credential of the Responder, see {{id_cred}} 
 
       * EAD_2 = unprotected external authorization data, see {{AD}}
-
-   * plaintext = h''
-
-   COSE constructs the input to the AEAD {{RFC5116}} as follows: 
-
-   * Key K = EDHOC-KDF( PRK_3e2m, TH_2, "K_2m", length ) 
-   * Nonce N = EDHOC-KDF( PRK_3e2m, TH_2, "IV_2m", length )
-   * Plaintext P = 0x (the empty string)
-   * Associated data A =
-
-     \[ "Encrypt0", << ID_CRED_R >>, << TH_2, CRED_R, ? EAD_2 >> \]
-
-   MAC_2 is the 'ciphertext' of the inner COSE_Encrypt0.
 
 * If the Responder authenticates with a static Diffie-Hellman key (method equals 1 or 3), then Signature_or_MAC_2 is MAC_2. If the Responder authenticates with a signature key (method equals 0 or 2), then Signature_or_MAC_2 is the 'signature' of a COSE_Sign1 object as defined in Section 4.4 of {{I-D.ietf-cose-rfc8152bis-struct}} using the signature algorithm in the selected cipher suite, the private authentication key of the Responder, and the following parameters:
 
@@ -915,30 +901,13 @@ The Initiator SHALL compose message_3 as follows:
 
 * Compute the transcript hash TH_3 = H(TH_2, CIPHERTEXT_2) where H() is the hash function in the selected cipher suite. The transcript hash TH_3 is a CBOR encoded bstr and the input to the hash function is a CBOR Sequence.  Note that H(TH_2, CIPHERTEXT_2) can be computed and cached already in the processing of message_2.
 
-* Compute an inner COSE_Encrypt0 as defined in Section 5.3 of {{I-D.ietf-cose-rfc8152bis-struct}}, with the EDHOC AEAD algorithm in the selected cipher suite, K_3m, IV_3m, and the following parameters:
-
-   * protected =  << ID_CRED_I >>
+* Compute MAC_3 = EDHOC-KDF( PRK_4x3m, TH_3, ( "MAC_3", ID_CRED_I, CRED_I, ? AD_3 ), mac_length ). If the Initiator authenticates with a static Diffie-Hellman key (method equals 1 or 3), then mac_length is equal to the tag length of the EDHOC AEAD algorithm. If the Initiator authenticates with a signature key (method equals 0 or 2), then mac_length is equal to the output size of the EDHOC hash algorithm.
 
       * ID_CRED_I - identifier to facilitate retrieval of CRED_I, see {{id_cred}}
 
-   * external_aad = << TH_3, CRED_I, ? EAD_3 >>
-
-      * CRED_I - bstr containing the credential of the Initiator, see {{id_cred}}. 
+      * CRED_I - bstr containing the credential of the Initiator, see {{id_cred}}
 
       * EAD_3 = protected external authorization data, see {{AD}}
-
-   * plaintext = h''
-
-   COSE constructs the input to the AEAD {{RFC5116}} as follows: 
-
-   * Key K = EDHOC-KDF( PRK_4x3m, TH_3, "K_3m", length ) 
-   * Nonce N = EDHOC-KDF( PRK_4x3m, TH_3, "IV_3m", length )
-   * Plaintext P = 0x (the empty string)
-   * Associated data A =
-
-     \[ "Encrypt0", << ID_CRED_I >>, << TH_3, CRED_I, ? EAD_3 >> \]
-
-   MAC_3 is the 'ciphertext' of the inner COSE_Encrypt0.
 
 * If the Initiator authenticates with a static Diffie-Hellman key (method equals 2 or 3), then Signature_or_MAC_3 is MAC_3. If the Initiator authenticates with a signature key (method equals 0 or 1), then Signature_or_MAC_3 is the 'signature' of a COSE_Sign1 object as defined in Section 4.4 of {{I-D.ietf-cose-rfc8152bis-struct}} using the signature algorithm in the selected cipher suite, the private authentication key of the Initiator, and the following parameters:
 
