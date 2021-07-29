@@ -9,9 +9,12 @@
 .tags
 .targets.mk
 /*-[0-9][0-9].xml
+archive.json
+draft-selander-lake-reqs.xml
 issues.json
+lib
 pulls.json
 report.xml
 venv/
 lib
-draft-selander-lake-reqs.xml
+draft-ietf-lake-edhoc.xml
