@@ -795,7 +795,7 @@ If any processing step fails, the Responder SHOULD send an EDHOC error message b
 
 ### Formatting of Message 2 {#asym-msg2-form}
 
-message_2 and data_2 SHALL be CBOR Sequences (see {{CBOR}}) as defined below
+message_2 SHALL be a CBOR Sequence (see {{CBOR}}) as defined below
 
 ~~~~~~~~~~~ CDDL
 message_2 = (
@@ -806,7 +806,7 @@ message_2 = (
 
 where:
 
-* G_Y_CIPHERTEXT_2 - the concatenation of G_Y the ephemeral public key of the Responder and CIPHERTEXT_2
+* G_Y_CIPHERTEXT_2 - the concatenation of G_Y, the ephemeral public key of the Responder, and CIPHERTEXT_2
 * C_R - variable length connection identifier
 
 ### Responder Processing of Message 2 {#asym-msg2-proc}
