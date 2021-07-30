@@ -182,10 +182,10 @@ Compared to the DTLS 1.3 handshake {{I-D.ietf-tls-dtls13}} with ECDHE and connec
                     kid       x5t                     
 ---------------------------------
 message_1            37        37                     
-message_2            46       117       
+message_2            45       116       
 message_3            19        90        
 ---------------------------------
-Total               102       244      
+Total               101       243      
 =================================
 ~~~~~~~~~~~~~~~~~~~~~~~
 {: #fig-sizes title="Example of message sizes in bytes." artwork-align="center"}
@@ -799,22 +799,15 @@ message_2 and data_2 SHALL be CBOR Sequences (see {{CBOR}}) as defined below
 
 ~~~~~~~~~~~ CDDL
 message_2 = (
-  data_2,
-  CIPHERTEXT_2 : bstr,
-)
-~~~~~~~~~~~
-
-~~~~~~~~~~~ CDDL
-data_2 = (
-  G_Y : bstr,
   C_R : bstr / int,
+  G_Y_CIPHERTEXT_2 : bstr,
 )
 ~~~~~~~~~~~
 
 where:
 
-* G_Y - the ephemeral public key of the Responder
 * C_R - variable length connection identifier
+* G_Y_CIPHERTEXT_2 - the concatenation of G_Y the ephemeral public key of the Responder and CIPHERTEXT_2
 
 ### Responder Processing of Message 2 {#asym-msg2-proc}
 
