@@ -817,7 +817,7 @@ The Responder SHALL compose message_2 as follows:
 
 * Choose a connection identifier C_R and store it for the length of the protocol.
 
-* Compute the transcript hash TH_2 = H( H(message_1), data_2 ) where H() is the hash function in the selected cipher suite. The transcript hash TH_2 is a CBOR encoded bstr and the input to the hash function is a CBOR Sequence. Note that H(message_1) can be computed and cached already in the processing of message_1.
+* Compute the transcript hash TH_2 = H( H(message_1), G_Y, C_R ) where H() is the hash function in the selected cipher suite. The transcript hash TH_2 is a CBOR encoded bstr and the input to the hash function is a CBOR Sequence. Note that H(message_1) can be computed and cached already in the processing of message_1.
 
 * Compute an inner COSE_Encrypt0 as defined in Section 5.3 of {{I-D.ietf-cose-rfc8152bis-struct}}, with the EDHOC AEAD algorithm in the selected cipher suite, K_2m, IV_2m, and the following parameters:
 
