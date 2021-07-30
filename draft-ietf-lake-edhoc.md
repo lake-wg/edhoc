@@ -799,15 +799,15 @@ message_2 and data_2 SHALL be CBOR Sequences (see {{CBOR}}) as defined below
 
 ~~~~~~~~~~~ CDDL
 message_2 = (
-  C_R : bstr / int,
   G_Y_CIPHERTEXT_2 : bstr,
+  C_R : bstr / int,
 )
 ~~~~~~~~~~~
 
 where:
 
-* C_R - variable length connection identifier
 * G_Y_CIPHERTEXT_2 - the concatenation of G_Y the ephemeral public key of the Responder and CIPHERTEXT_2
+* C_R - variable length connection identifier
 
 ### Responder Processing of Message 2 {#asym-msg2-proc}
 
