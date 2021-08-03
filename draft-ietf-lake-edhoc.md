@@ -893,7 +893,7 @@ The Initiator SHALL compose message_3 as follows:
 
 * Compute the transcript hash TH_3 = H(TH_2, CIPHERTEXT_2) where H() is the hash function in the selected cipher suite. The transcript hash TH_3 is a CBOR encoded bstr and the input to the hash function is a CBOR Sequence.  Note that H(TH_2, CIPHERTEXT_2) can be computed and cached already in the processing of message_2.
 
-* Compute MAC_3 = EDHOC-KDF( PRK_4x3m, TH_3, "MAC_3", ( ID_CRED_I, CRED_I, ? AD_3 ), mac_length ). If the Initiator authenticates with a static Diffie-Hellman key (method equals 1 or 3), then mac_length is equal to the tag length of the EDHOC AEAD algorithm. If the Initiator authenticates with a signature key (method equals 0 or 2), then mac_length is equal to the output size of the EDHOC hash algorithm.
+* Compute MAC_3 = EDHOC-KDF( PRK_4x3m, TH_3, "MAC_3", ( ID_CRED_I, CRED_I, ? AD_3 ), mac_length ). If the Initiator authenticates with a static Diffie-Hellman key (method equals 2 or 3), then mac_length is equal to the tag length of the EDHOC AEAD algorithm. If the Initiator authenticates with a signature key (method equals 0 or 1), then mac_length is equal to the output size of the EDHOC hash algorithm.
 
       * ID_CRED_I - identifier to facilitate retrieval of CRED_I, see {{id_cred}}
 
