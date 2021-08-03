@@ -13,20 +13,6 @@ pi: # can use array (if all yes) or hash here
   tocdepth: 2
 
 author:
-- name: John Preuß Mattsson
-  surname: Preuß Mattsson
-  org: Ericsson AB
-  abbrev: Ericsson
-  street: SE-164 80 Stockholm
-  country: Sweden
-  email: john.mattsson@ericsson.com
-- name: John Fornehed
-  surname: Fornehed
-  org: Ericsson AB
-  abbrev: Ericsson
-  street: SE-164 80 Stockholm
-  country: Sweden
-  email: john.fornehed@ericsson.com
 - name: Göran Selander
   surname: Selander
   org: Ericsson AB
@@ -34,6 +20,13 @@ author:
   street: SE-164 80 Stockholm
   country: Sweden
   email: goran.selander@ericsson.com
+- name: John Preuß Mattsson
+  surname: Preuß Mattsson
+  org: Ericsson AB
+  abbrev: Ericsson
+  street: SE-164 80 Stockholm
+  country: Sweden
+  email: john.mattsson@ericsson.com
 - name: Francesca Palombini
   surname: Palombini
   org: Ericsson AB
