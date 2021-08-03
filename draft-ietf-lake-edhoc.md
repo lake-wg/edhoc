@@ -821,7 +821,7 @@ The Responder SHALL compose message_2 as follows:
 
 * Compute the transcript hash TH_2 = H( H(message_1), data_2 ) where H() is the hash function in the selected cipher suite. The transcript hash TH_2 is a CBOR encoded bstr and the input to the hash function is a CBOR Sequence. Note that H(message_1) can be computed and cached already in the processing of message_1.
 
-* Compute MAC_2 = EDHOC-KDF( PRK_3x2m, TH_2, "MAC_2", ( ID_CRED_R, CRED_R, ? AD_2 ), mac_length ). If the Responder authenticates with a static Diffie-Hellman key (method equals 1 or 3), then mac_length is equal to the tag length of the EDHOC AEAD algorithm. If the Responder authenticates with a signature key (method equals 0 or 2), then mac_length is equal to the output size of the EDHOC hash algorithm.
+* Compute MAC_2 = EDHOC-KDF( PRK_3e2m, TH_2, "MAC_2", ( ID_CRED_R, CRED_R, ? AD_2 ), mac_length ). If the Responder authenticates with a static Diffie-Hellman key (method equals 1 or 3), then mac_length is equal to the tag length of the EDHOC AEAD algorithm. If the Responder authenticates with a signature key (method equals 0 or 2), then mac_length is equal to the output size of the EDHOC hash algorithm.
 
       * ID_CRED_R - identifier to facilitate retrieval of CRED_R, see {{id_cred}}
 
