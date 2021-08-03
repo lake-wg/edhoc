@@ -672,7 +672,7 @@ where
 
   + label is a tstr set to the name of the derived key or IV, i.e. "KEYSTREAM_2", "MAC_2", "K_3ae", "IV_3ae", or "MAC_3".
 
-  + context is CBOR sequence
+  + context is CBOR sequence, i.e., zero or more encoded CBOR data items 
 
   + length is the length of output keying material (OKM) in bytes
 
@@ -689,7 +689,7 @@ Application keys and other application specific data can be derived using the ED
      = EDHOC-KDF(PRK_4x3m, TH_4, label, context, length) 
 ~~~~~~~~~~~
 
-where label is a registered tstr from the EDHOC Exporter Label registry ({{exporter-label}}), context is a CBOR sequence defined by the application, and length is a uint defined by the application. The (label, context) pair must be unique, i.e. a (label, context) MUST NOT be used for two different purposes. However an application can re-derive the same key several times as long as it is done in a secure way. For example, in most encryption algorithms the same (key, nonce) pair must not be reused. 
+where label is a registered tstr from the EDHOC Exporter Label registry ({{exporter-label}}), context is a CBOR sequence defined by the application, and length is a uint defined by the application. The (label, context) pair must be unique, i.e., a (label, context) MUST NOT be used for two different purposes. However an application can re-derive the same key several times as long as it is done in a secure way. For example, in most encryption algorithms the same (key, nonce) pair must not be reused. The context can for example be the empty (zero-length) sequence or a single CBOR byte string.
 
 The transcript hash TH_4 is a CBOR encoded bstr and the input to the hash function is a CBOR Sequence.
 
