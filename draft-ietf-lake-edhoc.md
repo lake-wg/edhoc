@@ -172,7 +172,7 @@ EDHOC makes use of known protocol constructions, such as SIGMA {{SIGMA}} and Ext
 
 ## Use of EDHOC
 
-EDHOC is designed for highly constrained settings making it especially suitable for low-power wide area networks {{RFC8376}} such as Cellular IoT, 6TiSCH, and LoRaWAN. A main objective for EDHOC is to be a lightweight authenticated key exchange for OSCORE, i.e. to provide authentication and session key establishment for IoT use cases such as those built on CoAP {{RFC7252}}. CoAP is a specialized web transfer protocol for use with constrained nodes and networks, providing a request/response interaction model between application endpoints. As such, EDHOC is targeting a large variety of use cases involving 'things' with embedded microcontrollers, sensors, and actuators.
+EDHOC is designed for highly constrained settings making it especially suitable for low-power wide area networks {{RFC8376}} such as Cellular IoT, 6TiSCH, and LoRaWAN. A main objective for EDHOC is to be a lightweight authenticated key exchange for OSCORE, i.e., to provide authentication and session key establishment for IoT use cases such as those built on CoAP {{RFC7252}}. CoAP is a specialized web transfer protocol for use with constrained nodes and networks, providing a request/response interaction model between application endpoints. As such, EDHOC is targeting a large variety of use cases involving 'things' with embedded microcontrollers, sensors, and actuators.
 
 A typical setting is when one of the endpoints is constrained or in a constrained network, and the other endpoint is a node on the Internet (such as a mobile phone) or at the edge of the constrained network (such as a gateway). Thing-to-thing interactions over constrained networks are also relevant since both endpoints would then benefit from the lightweight properties of the protocol. EDHOC could e.g. be run when a device connects for the first time, or to establish fresh keys which are not revealed by a later compromise of the long-term keys. Further security properties are described in {{sec-prop}}.
 
@@ -208,7 +208,7 @@ Readers are expected to be familiar with the terms and concepts described in CBO
 
 The single output from authenticated encryption (including the authentication tag) is called 'ciphertext', following {{RFC5116}}.
 
-We use the term Unprotected CWT Claims Set (UCCS) just as in {{I-D.ietf-rats-uccs}} to denote a CBOR Web Token {{RFC8392}} without wrapping it into a COSE object, i.e. a CBOR map consisting of claims.
+We use the term Unprotected CWT Claims Set (UCCS) just as in {{I-D.ietf-rats-uccs}} to denote a CBOR Web Token {{RFC8392}} without wrapping it into a COSE object, i.e., a CBOR map consisting of claims.
 
 Editor's note: If {{I-D.ietf-rats-uccs}} completes before this draft, make it a normative reference.
 
@@ -401,7 +401,7 @@ The Initiator and the Responder MAY use different types of credentials, e.g. one
 
 The credentials CRED_I and CRED_R are signed or MAC:ed (in the Signature_OR_MAC field, depending on method) by the Initiator and the Responder, respectively, see {{m3}} and {{m2}}.
 
-When the credential is a certificate, CRED_x is an end-entity certificate (i.e. not the certificate chain), encoded as a CBOR bstr.
+When the credential is a certificate, CRED_x is an end-entity certificate (i.e., not the certificate chain), encoded as a CBOR bstr.
 In X.509 and C509 certificates, signature keys typically have key usage "digitalSignature" and Diffie-Hellman public keys typically have key usage "keyAgreement".
 
 To prevent misbinding attacks in systems where an attacker can register public keys without proving knowledge of the private key, SIGMA {{SIGMA}} enforces a MAC to be calculated over the "identity", which in case of a X.509 certificate would be the 'subject' and 'subjectAltName' fields, see {{identities}}. EDHOC follows SIGMA by calculating a MAC over the whole certificate. While the SIGMA paper only focuses on the identity, the same principle is true for any information such as policies connected to the public key.
@@ -601,7 +601,7 @@ An example of an applicability statement is shown in {{appl-temp}}.
 
 For some parameters, like METHOD, ID_CRED_x, type of EAD, the receiver is able to verify compliance with applicability statement, and if it needs to fail because of incompliance, to infer the reason why the protocol failed.
 
-For other parameters, like CRED_x in the case that it is not transported, it may not be possible to verify that incompliance with applicability statement was the reason for failure: Integrity verification in message_2 or message_3 may fail not only because of wrong authentication credential. For example, in case the Initiator uses public key certificate by reference (i.e. not transported within the protocol) then both endpoints need to use an identical data structure as CRED_I or else the integrity verification will fail.
+For other parameters, like CRED_x in the case that it is not transported, it may not be possible to verify that incompliance with applicability statement was the reason for failure: Integrity verification in message_2 or message_3 may fail not only because of wrong authentication credential. For example, in case the Initiator uses public key certificate by reference (i.e., not transported within the protocol) then both endpoints need to use an identical data structure as CRED_I or else the integrity verification will fail.
 
 Note that it is not necessary for the endpoints to specify a single transport for the EDHOC messages. For example, a mix of CoAP and HTTP may be used along the path, and this may still allow correlation between messages.
 
@@ -674,7 +674,7 @@ where
   
   + transcript_hash is a bstr set to one of the transcript hashes TH_2, TH_3, or TH_4 as defined in Sections {{asym-msg2-form}}{: format="counter"}, {{asym-msg3-form}}{: format="counter"}, and {{exporter}}{: format="counter"}.
 
-  + label is a tstr set to the name of the derived key or IV, i.e. "K_2m", "IV_2m", "KEYSTREAM_2", "K_3m", "IV_3m", "K_3ae", or "IV_3ae".
+  + label is a tstr set to the name of the derived key or IV, i.e., "K_2m", "IV_2m", "KEYSTREAM_2", "K_3m", "IV_3m", "K_3ae", or "IV_3ae".
 
   + length is the length of output keying material (OKM) in bytes
 
@@ -1183,7 +1183,7 @@ EDHOC protects the credential identifier of the Initiator against active attacks
 
 Compared to {{SIGMA}}, EDHOC adds an explicit method type and expands the message authentication coverage to additional elements such as algorithms, external authorization data, and previous messages. This protects against an attacker replaying messages or injecting messages from another session.
 
-EDHOC also adds selection of connection identifiers and downgrade protected negotiation of cryptographic parameters, i.e. an attacker cannot affect the negotiated parameters. A single session of EDHOC does not include negotiation of cipher suites, but it enables the Responder to verify that the selected cipher suite is the most preferred cipher suite by the Initiator which is supported by both the Initiator and the Responder.
+EDHOC also adds selection of connection identifiers and downgrade protected negotiation of cryptographic parameters, i.e., an attacker cannot affect the negotiated parameters. A single session of EDHOC does not include negotiation of cipher suites, but it enables the Responder to verify that the selected cipher suite is the most preferred cipher suite by the Initiator which is supported by both the Initiator and the Responder.
 
 As required by {{RFC7258}}, IETF protocols need to mitigate pervasive monitoring when possible. One way to mitigate pervasive monitoring is to use a key exchange that provides perfect forward secrecy. EDHOC therefore only supports methods with perfect forward secrecy. To limit the effect of breaches, it is important to limit the use of symmetrical group keys for bootstrapping. EDHOC therefore strives to make the additional cost of using raw public keys and self-signed certificates as small as possible. Raw public keys and self-signed certificates are not a replacement for a public key infrastructure, but SHOULD be used instead of symmetrical group keys for bootstrapping.
 
@@ -1529,7 +1529,7 @@ This sppendix describes how to select EDHOC connection identifiers and derive an
 
 This section specifies a rule for converting from EDHOC connection identifier to OSCORE Sender/Recipient ID. (An identifier is Sender ID or Recipient ID depending on from which endpoint is the point of view, see Section 3.1 of {{RFC8613}}.)
 
-* If the EDHOC connection identifier is numeric, i.e. encoded as a CBOR integer on the wire, it is converted to a (naturally byte-string shaped) OSCORE Sender/Recipient ID equal to its CBOR encoded form.
+* If the EDHOC connection identifier is numeric, i.e., encoded as a CBOR integer on the wire, it is converted to a (naturally byte-string shaped) OSCORE Sender/Recipient ID equal to its CBOR encoded form.
 
 For example, a numeric C_R equal to 10 (0x0A in CBOR encoding) is converted to a (typically client) Sender ID equal to 0x0A, while a numeric C_I equal to -12 (0x2B in CBOR encoding) is converted to a (typically client) Sender ID equal to 0x2B.
 
@@ -1655,7 +1655,7 @@ This section defines a format for compact representation based on the Elliptic-C
 
   2. Output M = X
 
-The encoding of the point at infinity is not supported. Compact representation does not change any requirements on validation. If a y-coordinate is required for validation or compatibily with APIs the value ~yp SHALL be set to zero. For such use, the compact representation can be transformed into the SECG point compressed format by prepending it with the single byte 0x02 (i.e. M = 0x02 \|\| X).
+The encoding of the point at infinity is not supported. Compact representation does not change any requirements on validation. If a y-coordinate is required for validation or compatibily with APIs the value ~yp SHALL be set to zero. For such use, the compact representation can be transformed into the SECG point compressed format by prepending it with the single byte 0x02 (i.e., M = 0x02 \|\| X).
 
 Using compact representation have some security benefits. An implementation does not need to check that the point is not the point at infinity (the identity element). Similarly, as not even the sign of the y-coordinate is encoded, compact representation trivially avoids so called "benign malleability" attacks where an attacker changes the sign, see {{SECG}}.
 
@@ -2452,7 +2452,7 @@ MAC_3 (CBOR unencoded) (8 bytes)
 
 Since the method = 0, Signature_or_MAC_3 is a signature. The algorithm with selected cipher suite 0 is Ed25519.
 
-* The message M_3 to be signed = \[ "Signature1", << ID_CRED_I >>, << TH_3, CRED_I >>, MAC_3 \], i.e. ID_CRED_I encoded as CBOR bstr, the concatenation of the CBOR byte strings TH_3 and CRED_I wrapped as a CBOR bstr, and MAC_3 encoded as a CBOR bstr.
+* The message M_3 to be signed = \[ "Signature1", << ID_CRED_I >>, << TH_3, CRED_I >>, MAC_3 \], i.e., ID_CRED_I encoded as CBOR bstr, the concatenation of the CBOR byte strings TH_3 and CRED_I wrapped as a CBOR bstr, and MAC_3 encoded as a CBOR bstr.
 
 * The signing key is the private authentication key of the Initiator.
 
@@ -2781,7 +2781,7 @@ Connection identifier chosen by Initiator (1 byte)
 16
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-Note that since C_I is a byte string in the interval h'00' to h'2f', it is encoded as the corresponding integer - 24, i.e. 0x16 = 22, 22 - 24 = -2, and -2 in CBOR encoding is equal to 0x21.
+Note that since C_I is a byte string in the interval h'00' to h'2f', it is encoded as the corresponding integer - 24, i.e., 0x16 = 22, 22 - 24 = -2, and -2 in CBOR encoding is equal to 0x21.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 C_I (1 byte)
@@ -2907,7 +2907,7 @@ Connection identifier chosen by Responder (1 byte)
 00
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-Note that since C_R is a byte string in the interval h'00' to h'2f', it is encoded as the corresponding integer - 24, i.e. 0x00 = 0, 0 - 24 = -24, and -24 in CBOR encoding is equal to 0x37.
+Note that since C_R is a byte string in the interval h'00' to h'2f', it is encoded as the corresponding integer - 24, i.e., 0x00 = 0, 0 - 24 = -24, and -24 in CBOR encoding is equal to 0x37.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 C_R (1 byte)
@@ -3108,7 +3108,7 @@ CIPHERTEXT_2 is the ciphertext resulting from XOR between plaintext and KEYSTREA
 
 The plaintext is the CBOR Sequence of the items ID_CRED_R and the CBOR encoded Signature_or_MAC_2, in this order (EAD_2 is empty). 
 
-Note that since ID_CRED_R contains a single 'kid' parameter, i.e., ID_CRED_R = { 4 : kid_R }, only the byte string kid_R is conveyed in the plaintext encoded as a bstr_identifier. kid_R is encoded as the corresponding integer - 24, i.e. 0x05 = 5, 5 - 24 = -19, and -19 in CBOR encoding is equal to 0x32.
+Note that since ID_CRED_R contains a single 'kid' parameter, i.e., ID_CRED_R = { 4 : kid_R }, only the byte string kid_R is conveyed in the plaintext encoded as a bstr_identifier. kid_R is encoded as the corresponding integer - 24, i.e., 0x05 = 5, 5 - 24 = -19, and -19 in CBOR encoding is equal to 0x32.
 
 The plaintext is the following:
 
@@ -3368,7 +3368,7 @@ Finally, the outer COSE_Encrypt0 is computed.
 
 The plaintext is the CBOR Sequence of the items ID_CRED_I and the CBOR encoded Signature_or_MAC_3, in this order (EAD_3 is empty). 
 
-Note that since ID_CRED_I contains a single 'kid' parameter, i.e., ID_CRED_I = { 4 : kid_I }, only the byte string kid_I is conveyed in the plaintext encoded as a bstr_identifier. kid_I is encoded as the corresponding integer - 24, i.e. 0x23 = 35, 35 - 24 = 11, and 11 in CBOR encoding is equal to 0x0b.
+Note that since ID_CRED_I contains a single 'kid' parameter, i.e., ID_CRED_I = { 4 : kid_I }, only the byte string kid_I is conveyed in the plaintext encoded as a bstr_identifier. kid_I is encoded as the corresponding integer - 24, i.e., 0x23 = 35, 35 - 24 = 11, and 11 in CBOR encoding is equal to 0x0b.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 P_3ae (CBOR Sequence) (10 bytes)
