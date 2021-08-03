@@ -351,7 +351,7 @@ Cryptographically, EDHOC does not put requirements on the lower layers. EDHOC is
 * message duplication,
 * fragmentation, 
 * demultiplex EDHOC messages from other types of messages, and 
-* denial of service protection.
+* denial-of-service protection.
 
 Besides these common transport-oriented properties, EDHOC transport additionally needs to support the correlation between EDHOC messages, including an indication of a message being message_1. The correlation may reuse existing mechanisms in the transport protocol. For example, the CoAP Token may be used to correlate EDHOC messages in a CoAP response and an associated CoAP request. In the absence of correlation between a message received and a message previously sent inherent to the transport, the EDHOC connection identifiers may be added, e.g., by prepending the appropriate connection identifier (when available from the EDHOC protocol) to the EDHOC message. Transport of EDHOC in CoAP payloads is described in {{coap}}, which also 
 shows how to use connection identifiers and message_1 indication with CoAP.
@@ -386,7 +386,7 @@ More details are provided in the following subsections.
 ### Authentication Keys {#auth-keys}
 
 The authentication key MUST be a signature key or static Diffie-Hellman key. The Initiator and the Responder
- MAY use different types of authentication keys, e.g., one uses a signature key and the other uses a static Diffie-Hellman key. When using a signature key, the authentication is provided by a signature. When using a static Diffie-Hellman key the authentication is provided by a Message Authentication Code (MAC) computed from an ephemeral-static ECDH shared secret which enables significant reductions in message sizes. The MAC is implemented with an AEAD algorithm. When using static Diffie-Hellman keys the Initiator's and Responder's private authentication keys are called I and R, respectively, and the public authentication keys are called G_I and G_R, respectively. The authentication key algorithm needs to specified with enough parameters to make it completely determined. Note that for most signature algorithms, the signature is determined by the signature algorithm and the authentication key algorithm together. For example, the curve used in the signature is typically determined by the authentication key parameters. 
+ MAY use different types of authentication keys, e.g., one uses a signature key and the other uses a static Diffie-Hellman key. When using a signature key, the authentication is provided by a signature. When using a static Diffie-Hellman key the authentication is provided by a Message Authentication Code (MAC) computed from an ephemeral-static ECDH shared secret which enables significant reductions in message sizes. The MAC is implemented with an AEAD algorithm. When using static Diffie-Hellman keys the Initiator's and Responder's private authentication keys are called I and R, respectively, and the public authentication keys are called G_I and G_R, respectively. The authentication key algorithm needs to be specified with enough parameters to make it completely determined. Note that for most signature algorithms, the signature is determined by the signature algorithm and the authentication key algorithm together. For example, the curve used in the signature is typically determined by the authentication key parameters. 
 
 
 * Only the Responder SHALL have access to the Responder's private authentication key.
@@ -399,7 +399,7 @@ The authentication key MUST be a signature key or static Diffie-Hellman key. The
 The authentication credentials, CRED_I and CRED_R, contain the public authentication key of the Initiator and the Responder, respectively.
 The Initiator and the Responder MAY use different types of credentials, e.g., one uses an UCCS and the other uses an X.509 certificate.
 
-The credentials CRED_I and CRED_R are signed or MAC:ed (in the Signature_OR_MAC field, depending on method) by the Initiator and the Responder, respectively, see {{m3}} and {{m2}}.
+The credentials CRED_I and CRED_R are signed or MACed (in the Signature_OR_MAC field, depending on method) by the Initiator and the Responder, respectively, see {{m3}} and {{m2}}.
 
 When the credential is a certificate, CRED_x is an end-entity certificate (i.e., not the certificate chain), encoded as a CBOR bstr.
 In X.509 and C509 certificates, signature keys typically have key usage "digitalSignature" and Diffie-Hellman public keys typically have key usage "keyAgreement".
@@ -479,7 +479,7 @@ CWT and UCCS are transported with the COSE header parameter registered in {{cwt-
 
 It is RECOMMENDED that ID_CRED_x uniquely identify the public authentication key as the recipient may otherwise have to try several keys. ID_CRED_I and ID_CRED_R are transported in the 'ciphertext', see {{m3}} and {{m2}}.
 
-When ID_CRED_x does not contain the actual credential it may be very short, e.g., if the endpoints have agreed to use a key identifier parameter `kid` or `kid2`. The latter is introduced to allow more one-byte identifiers (see {{kid2-header-param}} and {{kid2-key-common-param}}) which may be useful in many scenarios since constrained devices only have a few keys. Note that in CBOR, the integers -24 to 23 and the empty byte string h'' are encoded as one byte.
+When ID_CRED_x does not contain the actual credential, it may be very short, e.g., if the endpoints have agreed to use a key identifier parameter `kid` or `kid2`. The latter is introduced to allow more one-byte identifiers (see {{kid2-header-param}} and {{kid2-key-common-param}}) which may be useful in many scenarios since constrained devices only have a few keys. Note that in CBOR, the integers -24 to 23 and the empty byte string h'' are encoded as one byte.
 
 * ID_CRED_x = { TBD2 : key_id_x }, where key_id_x : kid2, for x = I or R.
 
@@ -584,7 +584,7 @@ The EAD fields of EDHOC are not intended for generic application data. Since dat
 
 EDHOC requires certain parameters to be agreed upon between Initiator and Responder. Some parameters can be agreed through the protocol execution (specifically cipher suite negotiation, see {{cs}}) but other parameters may need to be known out-of-band (e.g., which authentication method is used, see {{method}}).
 
-The purpose of the applicability statement is describe the intended use of EDHOC to allow for the relevant processing and verifications to be made, including things like:
+The purpose of the applicability statement is to describe the intended use of EDHOC to allow for the relevant processing and verifications to be made, including things like:
 
 1. How the endpoint detects that an EDHOC message is received. This includes how EDHOC messages are transported, for example in the payload of a CoAP message with a certain Uri-Path or Content-Format; see {{coap}}.
  * The method of transporting EDHOC messages may also describe data carried along with the messages that are needed for the transport to satisfy the requirements of {{transport}}, e.g., connection identifiers used with certain messages, see {{coap}}.
@@ -700,7 +700,7 @@ label_context = (
 )
 ~~~~~~~~~~~
 
-where label is a registered tstr from the EDHOC Exporter Label registry ({{exporter-label}}), context is a bstr defined by the application, and length is a uint defined by the application. The (label, context) pair must be unique, i.e. a (label, context) MUST NOT be used for two different purposes. However an application can re-derive the same key several times as long as it is done in a secure way. For example, in most encryption algorithms the same (key, nonce) pair must not be reused. 
+where label is a registered tstr from the EDHOC Exporter Label registry ({{exporter-label}}), context is a bstr defined by the application, and length is a uint defined by the application. The (label, context) pair must be unique, i.e. a (label, context) MUST NOT be used for two different purposes. However, an application can re-derive the same key several times as long as it is done in a secure way. For example, in most encryption algorithms the same (key, nonce) pair must not be reused. 
 
 The transcript hash TH_4 is a CBOR encoded bstr and the input to the hash function is a CBOR Sequence.
 
@@ -729,7 +729,7 @@ While EDHOC uses the COSE_Key, COSE_Sign1, and COSE_Encrypt0 structures, only a 
 
 This section outlines the message processing of EDHOC. 
 
-For each session, the endpoints are assumed to keep an associated protocol state containing identifiers, keys, etc. used for subsequent processing of protocol related data. The protocol state is assumed to be associated to an applicability statement ({{applicability}}) which provides the context for how messages are transported, identified and processed.
+For each session, the endpoints are assumed to keep an associated protocol state containing identifiers, keys, etc. used for subsequent processing of protocol related data. The protocol state is assumed to be associated to an applicability statement ({{applicability}}) which provides the context for how messages are transported, identified, and processed.
 
 EDHOC messages SHALL be processed according to the current protocol state. The following steps are expected to be performed at reception of an EDHOC message:
 
@@ -737,7 +737,7 @@ EDHOC messages SHALL be processed according to the current protocol state. The f
 
 2. Retrieve the protocol state according to the message correlation provided by the transport, see {{transport}}. If there is no protocol state, in the case of message_1, a new protocol state is created. The Responder endpoint needs to make use of available Denial-of-Service mitigation ({{dos}}).
 
-3. If the message received is an error message then process according to {{error}}, else process as the expected next message according to the protocol state. 
+3. If the message received is an error message, then process according to {{error}}, else process as the expected next message according to the protocol state. 
 
 If the processing fails, then the protocol is discontinued, an error message sent, and the protocol state erased. Further details are provided in the following subsections.
 
@@ -765,7 +765,7 @@ suite = int
 where:
 
 * METHOD = 0, 1, 2, or 3 (see {{fig-method-types}}).
-* SUITES_I - cipher suites which the Initiator supports in order of (decreasing) preference. The list of supported cipher suites can be truncated at the end, as is detailed in the processing steps below and {{wrong-selected}}. One of the supported cipher suites is selected. The selected suite is the first suite in the SUITES_I CBOR array. If a single supported cipher suite is conveyed then that cipher suite is selected and SUITES_I is encoded as an int instead of an array.
+* SUITES_I - cipher suites which the Initiator supports in order of (decreasing) preference. The list of supported cipher suites can be truncated at the end, as is detailed in the processing steps below and {{wrong-selected}}. One of the supported cipher suites is selected. The selected suite is the first suite in the SUITES_I CBOR array. If a single supported cipher suite is conveyed, then that cipher suite is selected and SUITES_I is encoded as an int instead of an array.
 * G_X - the ephemeral public key of the Initiator
 * C_I - variable length connection identifier
 * EAD_1 - unprotected external authorization data, see {{AD}}.
@@ -794,7 +794,7 @@ The Responder SHALL process message_1 as follows:
 
 * Pass EAD_1 to the security application.
 
-If any processing step fails, the Responder SHOULD send an EDHOC error message back, formatted as defined in {{error}}, and the session MUST be discontinued. Sending error messages is essential for debugging but MAY e.g., be skipped due to denial of service reasons, see {{security}}.
+If any processing step fails, the Responder SHOULD send an EDHOC error message back, formatted as defined in {{error}}, and the session MUST be discontinued. Sending error messages is essential for debugging but MAY e.g., be skipped due to denial-of-service reasons, see {{security}}.
 
 ## EDHOC Message 2 {#m2}
 
@@ -898,7 +898,7 @@ The Initiator SHALL process message_2 as follows:
 
 * Verify Signature_or_MAC_2 using the algorithm in the selected cipher suite. The verification process depends on the method, see {{asym-msg2-proc}}.
 
-If any processing step fails, the Initiator SHOULD send an EDHOC error message back, formatted as defined in {{error}}. Sending error messages is essential for debugging but MAY e.g., be skipped if a session cannot be found or due to denial of service reasons, see {{security}}. If an error message is sent, the session MUST be discontinued.
+If any processing step fails, the Initiator SHOULD send an EDHOC error message back, formatted as defined in {{error}}. Sending error messages is essential for debugging but MAY e.g., be skipped if a session cannot be found or due to denial-of-service reasons, see {{security}}. If an error message is sent, the session MUST be discontinued.
 
 
 ## EDHOC Message 3 {#m3}
@@ -1002,7 +1002,7 @@ The Responder SHALL process message_3 as follows:
 
 *  Pass the connection identifiers (C_I, C_R), and the application algorithms in the selected cipher suite to the security application. The application can now derive application keys using the EDHOC-Exporter interface.
 
-If any processing step fails, the Responder SHOULD send an EDHOC error message back, formatted as defined in {{error}}. Sending error messages is essential for debugging but MAY e.g., be skipped if a session cannot be found or due to denial of service reasons, see {{security}}. If an error message is sent, the session MUST be discontinued.
+If any processing step fails, the Responder SHOULD send an EDHOC error message back, formatted as defined in {{error}}. Sending error messages is essential for debugging but MAY e.g., be skipped if a session cannot be found or due to denial-of-service reasons, see {{security}}. If an error message is sent, the session MUST be discontinued.
 
 After verifying message_3, the Responder is assured that the Initiator has calculated the key PRK_4x3m (explicit key confirmation) and that no other party than the Responder can compute the key. The Responder can securely send protected application data and store the keying material PRK_4x3m and TH_4.
 
@@ -1572,7 +1572,7 @@ From then on, Client and Server retrieve the OSCORE protocol state using the Rec
 
 ## Transferring EDHOC over CoAP {#coap}
 
-This section specifies one instance for how EDHOC can be transferred as an exchange of CoAP {{RFC7252}} messages. CoAP is a reliable transport that can preserve packet ordering and handle message duplication. CoAP can also perform fragmentation and protect against denial of service attacks. According to this specification, EDHOC messages are carried in Confirmable messages, which is beneficial especially if fragmentation is used.
+This section specifies one instance for how EDHOC can be transferred as an exchange of CoAP {{RFC7252}} messages. CoAP is a reliable transport that can preserve packet ordering and handle message duplication. CoAP can also perform fragmentation and protect against denial-of-service attacks. According to this specification, EDHOC messages are carried in Confirmable messages, which is beneficial especially if fragmentation is used.
 
 By default, the CoAP client is the Initiator and the CoAP server is the Responder, but the roles SHOULD be chosen to protect the most sensitive identity, see {{security}}. According to this specification, EDHOC is transferred in POST requests and 2.04 (Changed) responses to the Uri-Path: "/.well-known/edhoc". An application may define its own path that can be discovered, e.g., using resource directory {{I-D.ietf-core-resource-directory}}.
 
