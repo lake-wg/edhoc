@@ -13,23 +13,35 @@ pi: # can use array (if all yes) or hash here
   tocdepth: 2
 
 author:
-      -
-        ins: G. Selander
-        name: Göran Selander
-        org: Ericsson AB
-        email: goran.selander@ericsson.com
-      -
-        ins: J. Mattsson
-        name: John Preuß Mattsson
-        org: Ericsson AB
-        email: john.mattsson@ericsson.com
-      -
-        ins: F. Palombini
-        name: Francesca Palombini
-        org: Ericsson AB
-        email: francesca.palombini@ericsson.com
+- name: John Preuß Mattsson
+  surname: Preuß Mattsson
+  org: Ericsson AB
+  abbrev: Ericsson
+  street: SE-164 80 Stockholm
+  country: Sweden
+  email: john.mattsson@ericsson.com
+- name: John Fornehed
+  surname: Fornehed
+  org: Ericsson AB
+  abbrev: Ericsson
+  street: SE-164 80 Stockholm
+  country: Sweden
+  email: john.fornehed@ericsson.com
+- name: Göran Selander
+  surname: Selander
+  org: Ericsson AB
+  abbrev: Ericsson
+  street: SE-164 80 Stockholm
+  country: Sweden
+  email: goran.selander@ericsson.com
+- name: Francesca Palombini
+  surname: Palombini
+  org: Ericsson AB
+  abbrev: Ericsson
+  street: SE-164 80 Stockholm
+  country: Sweden
+  email: francesca.palombini@ericsson.com
 
-        
 normative:
 
   RFC2119:
