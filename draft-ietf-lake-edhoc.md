@@ -660,7 +660,7 @@ info = [
    transcript_hash : bstr,
    label : tstr,
    * context : any,
-   length : uint
+   length : uint,
 ]
 ~~~~~~~~~~~
 
@@ -1692,7 +1692,8 @@ info = [
    edhoc_aead_id : int / tstr,
    transcript_hash : bstr,
    label : tstr,
-   length : uint
+   * context : any,
+   length : uint,
 ]
 ~~~~~~~~~~~
 
