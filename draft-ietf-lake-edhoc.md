@@ -401,8 +401,7 @@ The Initiator and the Responder MAY use different types of credentials, e.g., on
 
 The credentials CRED_I and CRED_R are signed or MACed (in the Signature_OR_MAC field, depending on method) by the Initiator and the Responder, respectively, see {{m3}} and {{m2}}.
 
-When the credential is a certificate, CRED_x is an end-entity certificate (i.e., not the certificate chain), encoded as a CBOR bstr.
-In X.509 and C509 certificates, signature keys typically have key usage "digitalSignature" and Diffie-Hellman public keys typically have key usage "keyAgreement".
+When the credential is a certificate, CRED_x is an end-entity certificate (i.e., not the certificate chain). In X.509 and C509 certificates, signature keys typically have key usage "digitalSignature" and Diffie-Hellman public keys typically have key usage "keyAgreement".
 
 To prevent misbinding attacks in systems where an attacker can register public keys without proving knowledge of the private key, SIGMA {{SIGMA}} enforces a MAC to be calculated over the "identity", which in case of a X.509 certificate would be the 'subject' and 'subjectAltName' fields, see {{identities}}. EDHOC follows SIGMA by calculating a MAC over the whole certificate. While the SIGMA paper only focuses on the identity, the same principle is true for any information such as policies connected to the public key.
 
@@ -839,7 +838,7 @@ The Responder SHALL compose message_2 as follows:
 
    * external_aad = << TH_2, CRED_R, ? EAD_2 >>
 
-      * CRED_R - bstr containing the credential of the Responder, see {{id_cred}} 
+      * CRED_R - CBOR item containing the credential of the Responder, see {{id_cred}} 
 
       * EAD_2 = unprotected external authorization data, see {{AD}}
 
@@ -928,7 +927,7 @@ The Initiator SHALL compose message_3 as follows:
 
    * external_aad = << TH_3, CRED_I, ? EAD_3 >>
 
-      * CRED_I - bstr containing the credential of the Initiator, see {{id_cred}}. 
+      * CRED_I - CBOR item containing the credential of the Initiator, see {{id_cred}}. 
 
       * EAD_3 = protected external authorization data, see {{AD}}
 
