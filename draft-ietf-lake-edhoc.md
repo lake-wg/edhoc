@@ -217,7 +217,7 @@ SIGMA (SIGn-and-MAc) is a family of theoretical protocols with a large number of
 
 ~~~~~~~~~~~
 Initiator                                               Responder
-   |                          G_X                            |
+   |                           G_X                           |
    +-------------------------------------------------------->|
    |                                                         |
    |  G_Y, AEAD( K_2; ID_CRED_R, Sig(R; CRED_R, G_X, G_Y) )  |
@@ -280,15 +280,15 @@ The Initiator can derive symmetric application keys after creating EDHOC message
 
 ~~~~~~~~~~~
 Initiator                                                   Responder
-|                   METHOD, SUITES_I, G_X, C_I, EAD_1               |
+|                 METHOD, SUITES_I, G_X, C_I, EAD_1                 |
 +------------------------------------------------------------------>|
 |                             message_1                             |
 |                                                                   |
-|          G_Y, C_R, Enc(ID_CRED_R, Signature_or_MAC_2, EAD_2)      |
+|        G_Y, Enc(ID_CRED_R, Signature_or_MAC_2, EAD_2), C_R        |
 |<------------------------------------------------------------------+
 |                             message_2                             |
 |                                                                   |
-|           AEAD(K_3ae; ID_CRED_I, Signature_or_MAC_3, EAD_3)       |
+|         AEAD(K_3ae; ID_CRED_I, Signature_or_MAC_3, EAD_3)         |
 +------------------------------------------------------------------>|
 |                             message_3                             |
 ~~~~~~~~~~~
