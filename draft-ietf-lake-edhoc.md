@@ -1694,16 +1694,11 @@ message_1 = (
   SUITES_I : [ selected : suite, supported : 2* suite ] / suite,
   G_X : bstr,
   C_I : bstr / int,
-  ? EAD ; EAD_1
+  ? EAD_1 ; EAD_1
 )
 
 message_2 = (
-  data_2,
-  CIPHERTEXT_2 : bstr,
-)
-
-data_2 = (
-  G_Y : bstr,
+  G_Y_CIPHERTEXT_2 : bstr,
   C_R : bstr / int,
 )
 
