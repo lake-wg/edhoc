@@ -569,7 +569,7 @@ EDHOC allows opaque external authorization data (EAD) to be sent in the EDHOC me
 External authorization data is a CBOR sequence (see {{CBOR}}) as defined below:
 
 ~~~~~~~~~~~ CDDL
-EAD = (
+ead = (
   type : int,
   1* ext_authz_data : any,
 )
@@ -756,7 +756,7 @@ message_1 = (
   SUITES_I : [ selected : suite, supported : 2* suite ] / suite,
   G_X : bstr,
   C_I : bstr / int,  
-  ? EAD_1 : EAD,
+  ? EAD_1 : ead,
 )
 
 suite = int
@@ -1076,7 +1076,7 @@ error SHALL be a CBOR Sequence (see {{CBOR}}) as defined below
 ~~~~~~~~~~~ CDDL
 error = (
   ERR_CODE : int,
-  ERR_INFO : any
+  ERR_INFO : any,
 )
 ~~~~~~~~~~~
 {: #fig-error-message title="EDHOC Error Message"}
@@ -1695,18 +1695,20 @@ h'12cd'             0x4212cd             byte string
 
 This sections compiles the CDDL definitions for ease of reference.
 
-
 ~~~~~~~~~~~ CDDL
 suite = int
 
-SUITES_R : [ supported : 2* suite ] / suite
+ead = (
+  type : int,
+  1* ext_authz_data : any,
+)
 
 message_1 = (
   METHOD : int,
   SUITES_I : [ selected : suite, supported : 2* suite ] / suite,
   G_X : bstr,
   C_I : bstr / int,
-  ? EAD ; EAD_1
+  ? EAD_1 : ead,
 )
 
 message_2 = (
@@ -1727,16 +1729,18 @@ message_4 = (
   CIPHERTEXT_4 : bstr,
 )
 
+SUITES_R : [ supported : 2* suite ] / suite
+
 error = (
   ERR_CODE : int,
-  ERR_INFO : any
+  ERR_INFO : any,
 )
 
 info = [
    edhoc_aead_id : int / tstr,
    transcript_hash : bstr,
    label : tstr,
-   length : uint
+   length : uint,
 ]
 ~~~~~~~~~~~
 
