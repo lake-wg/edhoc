@@ -756,7 +756,7 @@ message_1 = (
   SUITES_I : [ selected : suite, supported : 2* suite ] / suite,
   G_X : bstr,
   C_I : bstr / int,  
-  ? EAD_1 : EAD ,
+  ? EAD_1 : EAD,
 )
 
 suite = int
