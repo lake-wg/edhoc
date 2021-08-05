@@ -45,8 +45,6 @@ normative:
   RFC6979:
   RFC7252:
   RFC7748:
-  RFC8747:
-  RFC8949:
   RFC7959:
   RFC8174:
   RFC8376:
@@ -55,11 +53,12 @@ normative:
   RFC8613:
   RFC8724:
   RFC8742:
+  RFC8747:
+  RFC8949:
   I-D.ietf-cose-rfc8152bis-struct:
   I-D.ietf-cose-rfc8152bis-algs:
   I-D.ietf-cose-x509:
   I-D.ietf-core-echo-request-tag:
-  I-D.ietf-lake-reqs:
 
 informative:
 
@@ -69,13 +68,14 @@ informative:
   RFC8446:
   RFC8937:
   I-D.ietf-core-resource-directory:
-  I-D.ietf-lwig-security-protocol-comparison:
-  I-D.ietf-tls-dtls13:
-  I-D.selander-ace-ake-authz:
   I-D.ietf-core-oscore-edhoc:
   I-D.ietf-cose-cbor-encoded-cert:
-  I-D.mattsson-cfrg-det-sigs-with-noise:
+  I-D.ietf-lake-reqs:
+  I-D.ietf-lwig-security-protocol-comparison:
   I-D.ietf-rats-uccs:
+  I-D.ietf-tls-dtls13:
+  I-D.mattsson-cfrg-det-sigs-with-noise:
+  I-D.selander-ace-ake-authz:
 
   SP-800-56A:
     target: https://doi.org/10.6028/NIST.SP.800-56Ar3
