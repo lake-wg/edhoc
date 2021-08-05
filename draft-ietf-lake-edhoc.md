@@ -481,10 +481,11 @@ When ID_CRED_x does not contain the actual credential it may be very short, e.g.
 
 ## Cipher Suites {#cs}
 
-An EDHOC cipher suite consists of an ordered set of algorithms from the "COSE Algorithms" and "COSE Elliptic Curves" registries. Algorithms need to be specified with enough parameters to make them completely determined. Currently, none of the algorithms require parameters. EDHOC is only specified for use with key exchange algorithms of type ECDH curves. Use with other types of key exchange algorithms would likely require a specification updating EDHOC. Note that for most signature algorithms, the signature is determined by the signature algorithm and the authentication key algorithm together, see {{auth-keys}}. 
+An EDHOC cipher suite consists of an ordered set of algorithms from the "COSE Algorithms" and "COSE Elliptic Curves" registries as well as the EDHOC MAC length. Algorithms need to be specified with enough parameters to make them completely determined. Currently, none of the algorithms require parameters. EDHOC is only specified for use with key exchange algorithms of type ECDH curves. Use with other types of key exchange algorithms would likely require a specification updating EDHOC. Note that for most signature algorithms, the signature is determined by the signature algorithm and the authentication key algorithm together, see {{auth-keys}}. 
 
 * EDHOC AEAD algorithm
 * EDHOC hash algorithm
+* EDHOC MAC length in bytes (Static DH)
 * EDHOC key exchange algorithm (ECDH curve)
 * EDHOC signature algorithm
 * Application AEAD algorithm 
@@ -497,19 +498,19 @@ EDHOC can be used with all algorithms and curves defined for COSE. Implementatio
 The following CCM cipher suites are for constrained IoT where message overhead is a very important factor. Cipher suites 1 and 3 use a larger tag length (128-bit) in the EDHOC AEAD algorithm than the Application AEAD algorithm (64-bit):
 
 ~~~~~~~~~~~
-   0. ( 10, -16, 4, -8, 10, -16 )
+   0. ( 10, -16, 8, 4, -8, 10, -16 )
       (AES-CCM-16-64-128, SHA-256, X25519, EdDSA,
        AES-CCM-16-64-128, SHA-256)
 
-   1. ( 30, -16, 4, -8, 10, -16 )
+   1. ( 30, -16, 16, 4, -8, 10, -16 )
       (AES-CCM-16-128-128, SHA-256, X25519, EdDSA,
        AES-CCM-16-64-128, SHA-256)
 
-   2. ( 10, -16, 1, -7, 10, -16 )
+   2. ( 10, -16, 8, 1, -7, 10, -16 )
       (AES-CCM-16-64-128, SHA-256, P-256, ES256,
        AES-CCM-16-64-128, SHA-256)
 
-   3. ( 30, -16, 1, -7, 10, -16 )
+   3. ( 30, -16, 16, 1, -7, 10, -16 )
       (AES-CCM-16-128-128, SHA-256, P-256, ES256,
        AES-CCM-16-64-128, SHA-256)
 ~~~~~~~~~~~
@@ -517,11 +518,11 @@ The following CCM cipher suites are for constrained IoT where message overhead i
 The following ChaCha20 cipher suites are for less constrained applications and only use 128-bit tag lengths.
 
 ~~~~~~~~~~~
-   4. ( 24, -16, 4, -8, 24, -16 )
+   4. ( 24, -16, 16, 4, -8, 24, -16 )
       (ChaCha20/Poly1305, SHA-256, X25519, EdDSA,
        ChaCha20/Poly1305, SHA-256)
 
-   5. ( 24, -16, 1, -7, 24, -16 )
+   5. ( 24, -16, 16, 1, -7, 24, -16 )
       (ChaCha20/Poly1305, SHA-256, P-256, ES256,
        ChaCha20/Poly1305, SHA-256)
 ~~~~~~~~~~~
@@ -529,7 +530,7 @@ The following ChaCha20 cipher suites are for less constrained applications and o
 The following GCM cipher suite is for general non-constrained applications. It uses high performance algorithms that are widely supported:
 
 ~~~~~~~~~~~
-   6. ( 1, -16, 4, -7, 1, -16 )
+   6. ( 1, -16, 16, 4, -7, 1, -16 )
       (A128GCM, SHA-256, X25519, ES256,
        A128GCM, SHA-256)
 ~~~~~~~~~~~
@@ -537,11 +538,11 @@ The following GCM cipher suite is for general non-constrained applications. It u
 The following two cipher suites are for high security application such as government use and financial applications. The two cipher suites do not share any algorithms. The first of the two cipher suites is compatible with the CNSA suite {{CNSA}}.
 
 ~~~~~~~~~~~
-  24. ( 3, -43, 2, -35, 3, -43 )
+  24. ( 3, -43, 16, 2, -35, 3, -43 )
       (A256GCM, SHA-384, P-384, ES384,
        A256GCM, SHA-384)
 
-  25. ( 24, -45, 5, -8, 24, -45 )
+  25. ( 24, -45, 16, 5, -8, 24, -45 )
       (ChaCha20/Poly1305, SHAKE256, X448, EdDSA,
        ChaCha20/Poly1305, SHAKE256)
 ~~~~~~~~~~~
@@ -821,7 +822,7 @@ The Responder SHALL compose message_2 as follows:
 
 * Compute the transcript hash TH_2 = H( H(message_1), data_2 ) where H() is the hash function in the selected cipher suite. The transcript hash TH_2 is a CBOR encoded bstr and the input to the hash function is a CBOR Sequence. Note that H(message_1) can be computed and cached already in the processing of message_1.
 
-* Compute MAC_2 = EDHOC-KDF( PRK_3e2m, TH_2, "MAC_2", ( ID_CRED_R, CRED_R, ? AD_2 ), mac_length ). If the Responder authenticates with a static Diffie-Hellman key (method equals 1 or 3), then mac_length is equal to the tag length of the EDHOC AEAD algorithm. If the Responder authenticates with a signature key (method equals 0 or 2), then mac_length is equal to the output size of the EDHOC hash algorithm.
+* Compute MAC_2 = EDHOC-KDF( PRK_3e2m, TH_2, "MAC_2", ( ID_CRED_R, CRED_R, ? AD_2 ), mac_length ). If the Responder authenticates with a static Diffie-Hellman key (method equals 1 or 3), then mac_length is given by the cipher suite. If the Responder authenticates with a signature key (method equals 0 or 2), then mac_length is equal to the output size of the EDHOC hash algorithm.
 
       * ID_CRED_R - identifier to facilitate retrieval of CRED_R, see {{id_cred}}
 
@@ -893,7 +894,7 @@ The Initiator SHALL compose message_3 as follows:
 
 * Compute the transcript hash TH_3 = H(TH_2, CIPHERTEXT_2) where H() is the hash function in the selected cipher suite. The transcript hash TH_3 is a CBOR encoded bstr and the input to the hash function is a CBOR Sequence.  Note that H(TH_2, CIPHERTEXT_2) can be computed and cached already in the processing of message_2.
 
-* Compute MAC_3 = EDHOC-KDF( PRK_4x3m, TH_3, "MAC_3", ( ID_CRED_I, CRED_I, ? AD_3 ), mac_length ). If the Initiator authenticates with a static Diffie-Hellman key (method equals 2 or 3), then mac_length is equal to the tag length of the EDHOC AEAD algorithm. If the Initiator authenticates with a signature key (method equals 0 or 1), then mac_length is equal to the output size of the EDHOC hash algorithm.
+* Compute MAC_3 = EDHOC-KDF( PRK_4x3m, TH_3, "MAC_3", ( ID_CRED_I, CRED_I, ? AD_3 ), mac_length ). If the Initiator authenticates with a static Diffie-Hellman key (method equals 2 or 3), then mac_length  is given by the cipher suite. If the Initiator authenticates with a signature key (method equals 0 or 1), then mac_length is equal to the output size of the EDHOC hash algorithm.
 
       * ID_CRED_I - identifier to facilitate retrieval of CRED_I, see {{id_cred}}
 
