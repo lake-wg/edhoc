@@ -716,6 +716,8 @@ To provide forward secrecy in an even more efficient way than re-running EDHOC, 
       PRK_4x3m = Extract( nonce, PRK_4x3m )
 ~~~~~~~~~~~
 
+The EDHOC-KeyUpdate takes a nonce as input to guarantee that there are no short cycles. The Initiator and the Responder need to agree on the nonce, which can e.g., be a counter or a random number.
+
 # Message Formatting and Processing {#asym}
 
 This section specifies formatting of the messages and processing steps. Error messages are specified in {{error}}. 
