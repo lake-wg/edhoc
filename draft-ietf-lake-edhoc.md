@@ -256,7 +256,7 @@ In order to create a "full-fledged" protocol some additional protocol elements a
 
 * An optional fourth message giving explicit key confirmation to I in deployments where no protected application data is sent from R to I.
 
-* A key material exporter and a key update function enabling frequent forward secrecy.
+* A key material exporter and a key update function enabling forward secrecy.
 
 * Verification of a common preferred cipher suite:
 
@@ -716,7 +716,7 @@ To provide forward secrecy in an even more efficient way than re-running EDHOC, 
       PRK_4x3m = Extract( nonce, PRK_4x3m )
 ~~~~~~~~~~~
 
-The EDHOC-KeyUpdate takes a nonce as input to guarantee that there are no short cycles. The Initiator and the Responder need to agree on the nonce, which can e.g., be a counter or a random number.
+The EDHOC-KeyUpdate takes a nonce as input to guarantee that there are no short cycles. The Initiator and the Responder need to agree on the nonce, which can e.g., be a counter or a random number. While the KeyUpdate method provides forward secrecy it does not give as strong security properties as re-running EDHOC, see {{security}}.
 
 # Message Formatting and Processing {#asym}
 
