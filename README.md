@@ -1,5 +1,7 @@
 # Ephemeral Diffie-Hellman Over COSE (EDHOC).
 
+![ghpages](https://github.com/lake-wg/edhoc/actions/workflows/ghpages.yml/badge.svg)
+
 This is the working area for the Internet-Draft, "Ephemeral Diffie-Hellman Over COSE (EDHOC)".
 
 * [Editor's Copy](https://lake-wg.github.io/edhoc/#go.draft-ietf-lake-edhoc.html)
