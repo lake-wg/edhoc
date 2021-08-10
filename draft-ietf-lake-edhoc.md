@@ -499,19 +499,19 @@ The following CCM cipher suites are for constrained IoT where message overhead i
 
 ~~~~~~~~~~~
    0. ( 10, -16, 8, 4, -8, 10, -16 )
-      (AES-CCM-16-64-128, SHA-256, X25519, EdDSA,
+      (AES-CCM-16-64-128, SHA-256, 8, X25519, EdDSA,
        AES-CCM-16-64-128, SHA-256)
 
    1. ( 30, -16, 16, 4, -8, 10, -16 )
-      (AES-CCM-16-128-128, SHA-256, X25519, EdDSA,
+      (AES-CCM-16-128-128, SHA-256, 16, X25519, EdDSA,
        AES-CCM-16-64-128, SHA-256)
 
    2. ( 10, -16, 8, 1, -7, 10, -16 )
-      (AES-CCM-16-64-128, SHA-256, P-256, ES256,
+      (AES-CCM-16-64-128, SHA-256, 8, P-256, ES256,
        AES-CCM-16-64-128, SHA-256)
 
    3. ( 30, -16, 16, 1, -7, 10, -16 )
-      (AES-CCM-16-128-128, SHA-256, P-256, ES256,
+      (AES-CCM-16-128-128, SHA-256, 16, P-256, ES256,
        AES-CCM-16-64-128, SHA-256)
 ~~~~~~~~~~~
 
@@ -519,11 +519,11 @@ The following ChaCha20 cipher suites are for less constrained applications and o
 
 ~~~~~~~~~~~
    4. ( 24, -16, 16, 4, -8, 24, -16 )
-      (ChaCha20/Poly1305, SHA-256, X25519, EdDSA,
+      (ChaCha20/Poly1305, SHA-256, 16, X25519, EdDSA,
        ChaCha20/Poly1305, SHA-256)
 
    5. ( 24, -16, 16, 1, -7, 24, -16 )
-      (ChaCha20/Poly1305, SHA-256, P-256, ES256,
+      (ChaCha20/Poly1305, SHA-256, 16, P-256, ES256,
        ChaCha20/Poly1305, SHA-256)
 ~~~~~~~~~~~
 
@@ -531,7 +531,7 @@ The following GCM cipher suite is for general non-constrained applications. It u
 
 ~~~~~~~~~~~
    6. ( 1, -16, 16, 4, -7, 1, -16 )
-      (A128GCM, SHA-256, X25519, ES256,
+      (A128GCM, SHA-256, 16, X25519, ES256,
        A128GCM, SHA-256)
 ~~~~~~~~~~~
 
@@ -539,11 +539,11 @@ The following two cipher suites are for high security application such as govern
 
 ~~~~~~~~~~~
   24. ( 3, -43, 16, 2, -35, 3, -43 )
-      (A256GCM, SHA-384, P-384, ES384,
+      (A256GCM, SHA-384, 16, P-384, ES384,
        A256GCM, SHA-384)
 
   25. ( 24, -45, 16, 5, -8, 24, -45 )
-      (ChaCha20/Poly1305, SHAKE256, X448, EdDSA,
+      (ChaCha20/Poly1305, SHAKE256, 16, X448, EdDSA,
        ChaCha20/Poly1305, SHAKE256)
 ~~~~~~~~~~~
 
