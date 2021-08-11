@@ -189,10 +189,10 @@ Compared to the DTLS 1.3 handshake {{I-D.ietf-tls-dtls13}} with ECDHE and connec
                     kid       x5t                     
 ---------------------------------
 message_1            37        37                     
-message_2            46       117       
+message_2            45       116       
 message_3            19        90        
 ---------------------------------
-Total               102       244      
+Total               101       243      
 =================================
 ~~~~~~~~~~~~~~~~~~~~~~~
 {: #fig-sizes title="Example of message sizes in bytes." artwork-align="center"}
@@ -224,7 +224,7 @@ SIGMA (SIGn-and-MAc) is a family of theoretical protocols with a large number of
 
 ~~~~~~~~~~~
 Initiator                                               Responder
-   |                          G_X                            |
+   |                           G_X                           |
    +-------------------------------------------------------->|
    |                                                         |
    |  G_Y, AEAD( K_2; ID_CRED_R, Sig(R; CRED_R, G_X, G_Y) )  |
@@ -287,15 +287,15 @@ The Initiator can derive symmetric application keys after creating EDHOC message
 
 ~~~~~~~~~~~
 Initiator                                                   Responder
-|                   METHOD, SUITES_I, G_X, C_I, EAD_1               |
+|                 METHOD, SUITES_I, G_X, C_I, EAD_1                 |
 +------------------------------------------------------------------>|
 |                             message_1                             |
 |                                                                   |
-|          G_Y, C_R, Enc(ID_CRED_R, Signature_or_MAC_2, EAD_2)      |
+|        G_Y, Enc(ID_CRED_R, Signature_or_MAC_2, EAD_2), C_R        |
 |<------------------------------------------------------------------+
 |                             message_2                             |
 |                                                                   |
-|           AEAD(K_3ae; ID_CRED_I, Signature_or_MAC_3, EAD_3)       |
+|         AEAD(K_3ae; ID_CRED_I, Signature_or_MAC_3, EAD_3)         |
 +------------------------------------------------------------------>|
 |                             message_3                             |
 ~~~~~~~~~~~
@@ -803,25 +803,18 @@ If any processing step fails, the Responder SHOULD send an EDHOC error message b
 
 ### Formatting of Message 2 {#asym-msg2-form}
 
-message_2 and data_2 SHALL be CBOR Sequences (see {{CBOR}}) as defined below
+message_2 SHALL be a CBOR Sequence (see {{CBOR}}) as defined below
 
 ~~~~~~~~~~~ CDDL
 message_2 = (
-  data_2,
-  CIPHERTEXT_2 : bstr,
-)
-~~~~~~~~~~~
-
-~~~~~~~~~~~ CDDL
-data_2 = (
-  G_Y : bstr,
+  G_Y_CIPHERTEXT_2 : bstr,
   C_R : bstr / int,
 )
 ~~~~~~~~~~~
 
 where:
 
-* G_Y - the ephemeral public key of the Responder
+* G_Y_CIPHERTEXT_2 - the concatenation of G_Y, the ephemeral public key of the Responder, and CIPHERTEXT_2
 * C_R - variable length connection identifier
 
 ### Responder Processing of Message 2 {#asym-msg2-proc}
@@ -832,7 +825,7 @@ The Responder SHALL compose message_2 as follows:
 
 * Choose a connection identifier C_R and store it for the length of the protocol.
 
-* Compute the transcript hash TH_2 = H( H(message_1), data_2 ) where H() is the hash function in the selected cipher suite. The transcript hash TH_2 is a CBOR encoded bstr and the input to the hash function is a CBOR Sequence. Note that H(message_1) can be computed and cached already in the processing of message_1.
+* Compute the transcript hash TH_2 = H( H(message_1), G_Y, C_R ) where H() is the hash function in the selected cipher suite. The transcript hash TH_2 is a CBOR encoded bstr and the input to the hash function is a CBOR Sequence. Note that H(message_1) can be computed and cached already in the processing of message_1.
 
 * Compute an inner COSE_Encrypt0 as defined in Section 5.3 of {{I-D.ietf-cose-rfc8152bis-struct}}, with the EDHOC AEAD algorithm in the selected cipher suite, K_2m, IV_2m, and the following parameters:
 
@@ -1717,12 +1710,7 @@ message_1 = (
 )
 
 message_2 = (
-  data_2,
-  CIPHERTEXT_2 : bstr,
-)
-
-data_2 = (
-  G_Y : bstr,
+  G_Y_CIPHERTEXT_2 : bstr,
   C_R : bstr / int,
 )
 
