@@ -1,6 +1,7 @@
 ---
 title: Ephemeral Diffie-Hellman Over COSE (EDHOC)
 docname: draft-ietf-lake-edhoc-latest
+abbrev: EDHOC
 
 ipr: trust200902
 cat: std
@@ -825,12 +826,9 @@ The Responder SHALL compose message_2 as follows:
 * Compute the transcript hash TH_2 = H( H(message_1), G_Y, C_R ) where H() is the hash function in the selected cipher suite. The transcript hash TH_2 is a CBOR encoded bstr and the input to the hash function is a CBOR Sequence. Note that H(message_1) can be computed and cached already in the processing of message_1.
 
 * Compute MAC_2 = EDHOC-KDF( PRK_3e2m, TH_2, "MAC_2", ( ID_CRED_R, CRED_R, ? EAD_2 ), mac_length ). If the Responder authenticates with a static Diffie-Hellman key (method equals 1 or 3), then mac_length is the EDHOC MAC length given by the cipher suite. If the Responder authenticates with a signature key (method equals 0 or 2), then mac_length is equal to the output size of the EDHOC hash algorithm given by the cipher suite.
-
-      * ID_CRED_R - identifier to facilitate retrieval of CRED_R, see {{id_cred}}
-      
-      * CRED_R - CBOR item containing the credential of the Responder, see {{id_cred}} 
-
-      * EAD_2 = unprotected external authorization data, see {{AD}}
+    * ID_CRED_R - identifier to facilitate retrieval of CRED_R, see {{id_cred}}
+    * CRED_R - CBOR item containing the credential of the Responder, see {{id_cred}} 
+    * EAD_2 = unprotected external authorization data, see {{AD}}
 
 * If the Responder authenticates with a static Diffie-Hellman key (method equals 1 or 3), then Signature_or_MAC_2 is MAC_2. If the Responder authenticates with a signature key (method equals 0 or 2), then Signature_or_MAC_2 is the 'signature' of a COSE_Sign1 object as defined in Section 4.4 of {{I-D.ietf-cose-rfc8152bis-struct}} using the signature algorithm in the selected cipher suite, the private authentication key of the Responder, and the following parameters:
 
@@ -897,12 +895,9 @@ The Initiator SHALL compose message_3 as follows:
 * Compute the transcript hash TH_3 = H(TH_2, CIPHERTEXT_2) where H() is the hash function in the selected cipher suite. The transcript hash TH_3 is a CBOR encoded bstr and the input to the hash function is a CBOR Sequence.  Note that H(TH_2, CIPHERTEXT_2) can be computed and cached already in the processing of message_2.
 
 * Compute MAC_3 = EDHOC-KDF( PRK_4x3m, TH_3, "MAC_3", ( ID_CRED_I, CRED_I, ? EAD_3 ), mac_length ). If the Initiator authenticates with a static Diffie-Hellman key (method equals 2 or 3), then mac_length is the EDHOC MAC length given by the cipher suite.  If the Initiator authenticates with a signature key (method equals 0 or 1), then mac_length is equal to the output size of the EDHOC hash algorithm given by the cipher suite.
-
-      * ID_CRED_I - identifier to facilitate retrieval of CRED_I, see {{id_cred}}
-
-      * CRED_I - CBOR item containing the credential of the Initiator, see {{id_cred}}. 
-
-      * EAD_3 = protected external authorization data, see {{AD}}
+    * ID_CRED_I - identifier to facilitate retrieval of CRED_I, see {{id_cred}}
+    * CRED_I - CBOR item containing the credential of the Initiator, see {{id_cred}}
+    * EAD_3 = protected external authorization data, see {{AD}}
 
 * If the Initiator authenticates with a static Diffie-Hellman key (method equals 2 or 3), then Signature_or_MAC_3 is MAC_3. If the Initiator authenticates with a signature key (method equals 0 or 1), then Signature_or_MAC_3 is the 'signature' of a COSE_Sign1 object as defined in Section 4.4 of {{I-D.ietf-cose-rfc8152bis-struct}} using the signature algorithm in the selected cipher suite, the private authentication key of the Initiator, and the following parameters:
 
