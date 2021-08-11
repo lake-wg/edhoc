@@ -641,7 +641,7 @@ Example: Assuming the use of SHA-256 the extract phase of HKDF produces PRK_2e a
 
 where salt = 0x (the empty byte string).
 
-The pseudorandom keys PRK_3e2m and PRK_4x3m are defined as follow:
+The pseudorandom keys PRK_3e2m and PRK_4x3m are defined as follows:
 
 * If the Responder authenticates with a static Diffie-Hellman key, then PRK_3e2m = Extract( PRK_2e, G_RX ), where G_RX is the ECDH shared secret calculated from G_R and X, or G_X and R, else PRK_3e2m = PRK_2e.
 
@@ -684,9 +684,9 @@ where
 
   + length is the length of output keying material (OKM) in bytes
 
-If the EDHOC hash algorithm is SHA-2, then Expand( PRK, info, length ) = HKDF-Expand( PRK, info, length ) {{RFC5869}}. If the EDHOC hash algorithm is SHAKE128, then Expand( PRK, info, length ) = KMAC128( PRK, info, L, "" ). If the EDHOC hash algorithm is SHAKE256, then Expand( PRK, info, length ) = KMAC256( PRK, info, L, "" ).
+If the EDHOC hash algorithm is SHA-2, then Expand( PRK, info, length ) = HKDF-Expand( PRK, info, length ) {{RFC5869}}. If the EDHOC hash algorithm is SHAKE128, then Expand( PRK, info, length ) = KMAC128( PRK, info, , "" ). If the EDHOC hash algorithm is SHAKE256, then Expand( PRK, info, length ) = KMAC256( PRK, info, L, "" ). L = 8*length is the output length in bits.
 
-KEYSTREAM_2 are derived using the transcript hash TH_2 and the pseudorandom key PRK_2e. MAC_2 is derived using the transcript hash TH_2 and the pseudorandom key PRK_3e2m. K_3ae and IV_3ae are derived using the transcript hash TH_3 and the pseudorandom key PRK_3e2m. MAC_3 is derived using the transcript hash TH_3 and the pseudorandom key PRK_4x3m. IVs are only used if the EDHOC AEAD algorithm uses IVs. KEYSTREAM_2, "K_3ae", and "IV_3ae" do not use a context. "MAC_2" and "MAC_3" use context as defined in {{asym-msg2-proc}} and {{asym-msg3-proc}}.
+KEYSTREAM_2 is derived using the transcript hash TH_2 and the pseudorandom key PRK_2e. MAC_2 is derived using the transcript hash TH_2 and the pseudorandom key PRK_3e2m. K_3ae and IV_3ae are derived using the transcript hash TH_3 and the pseudorandom key PRK_3e2m. MAC_3 is derived using the transcript hash TH_3 and the pseudorandom key PRK_4x3m. IVs are only used if the EDHOC AEAD algorithm uses IVs. KEYSTREAM_2, K_3ae, and IV_3ae do not use a context. MAC_2 and MAC_3 use context as defined in {{asym-msg2-proc}} and {{asym-msg3-proc}}, respectively.
 
 ## EDHOC-Exporter Interface {#exporter}
 
@@ -831,7 +831,7 @@ The Responder SHALL compose message_2 as follows:
 
 * Compute the transcript hash TH_2 = H( H(message_1), data_2 ) where H() is the hash function in the selected cipher suite. The transcript hash TH_2 is a CBOR encoded bstr and the input to the hash function is a CBOR Sequence. Note that H(message_1) can be computed and cached already in the processing of message_1.
 
-* Compute MAC_2 = EDHOC-KDF( PRK_3e2m, TH_2, "MAC_2", ( ID_CRED_R, CRED_R, ? EAD_2 ), mac_length ). If the Responder authenticates with a static Diffie-Hellman key (method equals 1 or 3), then mac_length is given by the cipher suite. If the Responder authenticates with a signature key (method equals 0 or 2), then mac_length is equal to the output size of the EDHOC hash algorithm.
+* Compute MAC_2 = EDHOC-KDF( PRK_3e2m, TH_2, "MAC_2", ( ID_CRED_R, CRED_R, ? EAD_2 ), mac_length ). If the Responder authenticates with a static Diffie-Hellman key (method equals 1 or 3), then mac_length is the EDHOC MAC length given by the cipher suite. If the Responder authenticates with a signature key (method equals 0 or 2), then mac_length is equal to the output size of the EDHOC hash algorithm given by the cipher suite.
 
       * ID_CRED_R - identifier to facilitate retrieval of CRED_R, see {{id_cred}}
       
@@ -903,7 +903,7 @@ The Initiator SHALL compose message_3 as follows:
 
 * Compute the transcript hash TH_3 = H(TH_2, CIPHERTEXT_2) where H() is the hash function in the selected cipher suite. The transcript hash TH_3 is a CBOR encoded bstr and the input to the hash function is a CBOR Sequence.  Note that H(TH_2, CIPHERTEXT_2) can be computed and cached already in the processing of message_2.
 
-* Compute MAC_3 = EDHOC-KDF( PRK_4x3m, TH_3, "MAC_3", ( ID_CRED_I, CRED_I, ? EAD_3 ), mac_length ). If the Initiator authenticates with a static Diffie-Hellman key (method equals 2 or 3), then mac_length  is given by the cipher suite. If the Initiator authenticates with a signature key (method equals 0 or 1), then mac_length is equal to the output size of the EDHOC hash algorithm.
+* Compute MAC_3 = EDHOC-KDF( PRK_4x3m, TH_3, "MAC_3", ( ID_CRED_I, CRED_I, ? EAD_3 ), mac_length ). If the Initiator authenticates with a static Diffie-Hellman key (method equals 2 or 3), then mac_length is the EDHOC MAC length given by the cipher suite.  If the Initiator authenticates with a signature key (method equals 0 or 1), then mac_length is equal to the output size of the EDHOC hash algorithm given by the cipher suite.
 
       * ID_CRED_I - identifier to facilitate retrieval of CRED_I, see {{id_cred}}
 
