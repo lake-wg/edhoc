@@ -740,7 +740,7 @@ EDHOC messages SHALL be processed according to the current protocol state. The f
 
 3. If the message received is an error message, then process according to {{error}}, else process as the expected next message according to the protocol state. 
 
-If the processing fails, then the protocol is discontinued, an error message sent, and the protocol state erased. Further details are provided in the following subsections.
+If the processing fails for some reason then, typically, an error message is sent, the protocol is discontinued, and the protocol state erased. Further details are provided in the following subsections and in {{error}}.
 
 Different instances of the same message MUST NOT be processed in one session.  Note that processing will fail if the same message appears a second time for EDHOC processing because the state of the protocol has moved on and now expects something else. This assumes that message duplication due to re-transmissions is handled by the transport protocol, see {{transport}}. The case when the transport does not support message deduplication is addressed in {{duplication}}.
 
@@ -1015,7 +1015,7 @@ The Initiator SHALL process message_4 as follows:
 
 * Pass EAD_4 to the security application.
 
-If any verification step fails the Initiator MUST send an EDHOC error message back, formatted as defined in {{error}}, and the session MUST be discontinued.
+If any processing step fails, the Responder SHOULD send an EDHOC error message back, formatted as defined in {{error}}. Sending error messages is essential for debugging but MAY e.g., be skipped if a session cannot be found or due to denial-of-service reasons, see {{security}}. If an error message is sent, the session MUST be discontinued.
 
 # Error Handling {#error}
 
