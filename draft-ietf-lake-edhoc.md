@@ -566,22 +566,22 @@ EDHOC always uses compact representation of elliptic curve points, see {{comrep}
 
 ## External Authorization Data (EAD) {#AD}
 
-In order to reduce round trips and number of messages or to simplify processing, external security applications may be integrated into EDHOC by transporting authorization related data together with the messages. One example is the transport third-party identity and authorization information protected out of scope of EDHOC {{I-D.selander-ace-ake-authz}}. Another example is the embedding of a certificate enrolment request or a newly issued certificate.
+In order to reduce round trips and number of messages or to simplify processing, external security applications may be integrated into EDHOC by transporting authorization related data in the messages. One example is third-party identity and authorization information protected out of scope of EDHOC {{I-D.selander-ace-ake-authz}}. Another example is a certificate enrolment request or the resulting issued certificate.
 
 EDHOC allows opaque external authorization data (EAD) to be sent in the EDHOC messages. External authorization data sent in message_1 (EAD_1) or message_2 (EAD_2) must be considered unprotected by EDHOC, see {{unprot-data}}. External authorization data sent in message_3 (EAD_3) or message_4 (EAD_4) is protected between Initiator and Responder.
 
-External authorization data is a CBOR sequence (see {{CBOR}}) as defined below:
+External authorization data is a CBOR sequence (see {{CBOR}}) consisting of one or more (type, ext_authz_data) pairs as defined below:
 
 ~~~~~~~~~~~ CDDL
-ead = (
+ead = 1* (
   type : int,
-  1* ext_authz_data : any,
+  ext_authz_data : any,
 )
 ~~~~~~~~~~~ 
 
-where type is an int and is followed by one or more ext_authz_data depending on type as defined in a separate specification. 
+ where ext_authz_data is authorization related data defined in a separate specification and its type is an int. Different types of ext_authz_data are registered in {{iana-ead}}.
 
-The EAD fields of EDHOC are not intended for generic application data. Since data carried in EAD_1 and EAD_2 fields may not be protected, special considerations need to be made such that a) it does not violate security, privacy etc. requirements of the service which uses this data, and b) it does not violate the security properties of EDHOC. Security applications making use of the EAD fields must perform the necessary security analysis.
+The EAD fields of EDHOC are not intended for generic application data. Since data carried in EAD_1 and EAD_2 fields may not be protected, special considerations need to be made such that it does not violate security and privacy requirements of the service which uses this data. Moreover, the content in an EAD field may impact the security properties provided by EDHOC. Security applications making use of the EAD fields must perform the necessary security analysis.
 
 
 ## Applicability Statement {#applicability}
@@ -1658,9 +1658,9 @@ This sections compiles the CDDL definitions for ease of reference.
 ~~~~~~~~~~~ CDDL
 suite = int
 
-ead = (
+ead = 1* (
   type : int,
-  1* ext_authz_data : any,
+  ext_authz_data : any,
 )
 
 message_1 = (
