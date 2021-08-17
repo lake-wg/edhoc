@@ -482,9 +482,9 @@ CWT and UCCS are transported with the COSE header parameter registered in {{cwt-
 
 It is RECOMMENDED that ID_CRED_x uniquely identify the public authentication key as the recipient may otherwise have to try several keys. ID_CRED_I and ID_CRED_R are transported in the 'ciphertext', see {{m3}} and {{m2}}.
 
-When ID_CRED_x does not contain the actual credential, it may be very short, e.g., if the endpoints have agreed to use a key identifier parameter `kid` or `kid2`. The latter is introduced to allow more one-byte identifiers (see {{kid2-header-param}} and {{kid2-key-common-param}}) which may be useful in many scenarios since constrained devices only have a few keys. Note that in CBOR, the integers -24 to 23 and the empty byte string h'' are encoded as one byte.
+When ID_CRED_x does not contain the actual credential, it may be very short, e.g., if the endpoints have agreed to use a key identifier parameter `kid`. The latter is extended to support int values to allow more one-byte identifiers (see {{kid-header-param}} and {{kid-key-common-param}}) which may be useful in many scenarios since constrained devices only have a few keys. Note that in CBOR, the integers -24 to 23 and the empty byte string h'' are encoded as one byte.
 
-* ID_CRED_x = { TBD2 : key_id_x }, where key_id_x : kid2, for x = I or R.
+* ID_CRED_x = { 4 : key_id_x }, where key_id_x : kid, for x = I or R.
 
 
 ## Cipher Suites {#cs}
@@ -850,7 +850,7 @@ The Responder SHALL compose message_2 as follows:
 
    * plaintext = ( ID_CRED_R / bstr / int, Signature_or_MAC_2, ? EAD_2 )
 
-       * Note that if ID_CRED_R contains a single 'kid2' parameter, i.e., ID_CRED_R = { TBD2 : kid_R }, only the byte string or integer kid_R is conveyed in the plaintext encoded as a bstr / int.
+       * Note that if ID_CRED_R contains a single 'kid' parameter, i.e., ID_CRED_R = { 4 : kid_R }, only the byte string or integer kid_R is conveyed in the plaintext encoded as a bstr or int.
 
    * CIPHERTEXT_2 = plaintext XOR KEYSTREAM_2
 
@@ -921,7 +921,7 @@ The Initiator SHALL compose message_3 as follows:
 
    * plaintext = ( ID_CRED_I / bstr / int, Signature_or_MAC_3, ? EAD_3 )
 
-      * Note that if ID_CRED_I contains a single 'kid2' parameter, i.e., ID_CRED_I = { TBD2 : kid_I }, only the byte string or integer kid_I is conveyed in the plaintext encoded as a bstr or int.
+      * Note that if ID_CRED_I contains a single 'kid' parameter, i.e., ID_CRED_I = { 4 : kid_I }, only the byte string or integer kid_I is conveyed in the plaintext encoded as a bstr or int.
 
    COSE constructs the input to the AEAD {{RFC5116}} as follows: 
 
@@ -1363,29 +1363,30 @@ This document registers the following entries in the "COSE Header Parameters" re
 +-----------+-------+----------------+------------------------------+
 ~~~~~~~~~~~
 
-## COSE Header Parameters Registry {#kid2-header-param}
+## COSE Header Parameters Registry {#kid-header-param}
 
-IANA has added the COSE header parameter 'kid2' to the COSE Header Parameters registry. The kid2 parameter may point to a COSE key common parameter 'kid' or 'kid2'. The kid2 parameter can be used to identify a key stored in a UCCS, in a CWT, or in a certificate. The Value Reference for this item is empty and omitted from the table below.
-
-~~~~~~~~~~~
-+------+-------+------------+----------------+-------------------+
-| Name | Label | Value Type | Description    | Reference         |
-+------+-------+------------+----------------+-------------------+
-| kid2 | TBD2  | bstr / int | Key identifier | [[This document]] |
-+------+-------+------------+----------------+-------------------+
-~~~~~~~~~~~
-
-## COSE Key Common Parameters Registry {#kid2-key-common-param}
-
-IANA has added the COSE key common parameter 'kid2' to the COSE Key Common Parameters registry. The Value Reference for this item is empty and omitted from the table below.
+IANA has extended the Value Type of the COSE Header Parameter 'kid' to also allow the value int. The resulting Value Type is bstr / int. The kid parameter can be used to identify a key stored in a UCCS, in a CWT, or in a public key certificate. (The Value Registry for this item is empty and omitted from the table below.)
 
 ~~~~~~~~~~~
 +------+-------+------------+----------------+-------------------+
 | Name | Label | Value Type | Description    | Reference         |
 +------+-------+------------+----------------+-------------------+
-| kid2 | TBD5  | bstr / int | Key identifi-  | [[This document]] |
-|      |       |            | cation value - |                   |
-|      |       |            | match to kid2  |                   |
+| kid  |   4   | bstr / int | Key identifier | [RFC9052]         |
+|      |       |            |                | [[This document]] |
++------+-------+------------+----------------+-------------------+
+~~~~~~~~~~~
+
+## COSE Key Common Parameters Registry {#kid-key-common-param}
+
+IANA has extended the Value Type of the COSE Key Common Parameter 'kid' to the COSE Key value int. The resulting Value Type is bstr / int. (The Value Registry for this item is empty and omitted from the table below.)
+
+~~~~~~~~~~~
++------+-------+------------+----------------+-------------------+
+| Name | Label | Value Type | Description    | Reference         |
++------+-------+------------+----------------+-------------------+
+| kid  |   2   | bstr / int | Key identifi-  | [RFC9052]         |
+|      |       |            | cation value - | [[This document]] |
+|      |       |            | match to kid   |                   |
 |      |       |            | in message     |                   |
 +------+-------+------------+----------------+-------------------+
 ~~~~~~~~~~~
