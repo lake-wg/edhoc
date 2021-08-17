@@ -183,7 +183,7 @@ EDHOC enables the reuse of the same lightweight primitives as OSCORE: CBOR for e
 
 ## Message Size Examples
 
-Compared to the DTLS 1.3 handshake {{I-D.ietf-tls-dtls13}} with ECDHE and connection ID, the number of bytes in EDHOC + CoAP can be less than 1/6 when RPK authentication is used, see {{I-D.ietf-lwig-security-protocol-comparison}}. {{fig-sizes}} shows two examples of message sizes for EDHOC with different kinds of authentication keys and different COSE header parameters for identification: static Diffie-Hellman keys identified by 'kid' {{I-D.ietf-cose-rfc8152bis-struct}}, and X.509 signature certificates identified by a hash value using 'x5t' {{I-D.ietf-cose-x509}}.
+Compared to the DTLS 1.3 handshake {{I-D.ietf-tls-dtls13}} with ECDHE and connection ID, the number of bytes in EDHOC + CoAP can be less than 1/6 when RPK authentication is used, see {{I-D.ietf-lwig-security-protocol-comparison}}. {{fig-sizes}} shows two examples of message sizes for EDHOC with different kinds of authentication keys and different COSE header parameters for identification: static Diffie-Hellman keys identified by `kid` {{I-D.ietf-cose-rfc8152bis-struct}}, and X.509 signature certificates identified by a hash value using `x5t` {{I-D.ietf-cose-x509}}.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 =================================
@@ -209,7 +209,7 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "S
 
 Readers are expected to be familiar with the terms and concepts described in CBOR {{RFC8949}}, CBOR Sequences {{RFC8742}}, COSE structures and process {{I-D.ietf-cose-rfc8152bis-struct}}, COSE algorithms {{I-D.ietf-cose-rfc8152bis-algs}}, and CDDL {{RFC8610}}. The Concise Data Definition Language (CDDL) is used to express CBOR data structures {{RFC8949}}. Examples of CBOR and CDDL are provided in {{CBOR}}. When referring to CBOR, this specification always refers to Deterministically Encoded CBOR as specified in Sections 4.2.1 and 4.2.2 of {{RFC8949}}.
 
-The single output from authenticated encryption (including the authentication tag) is called 'ciphertext', following {{RFC5116}}.
+The single output from authenticated encryption (including the authentication tag) is called "ciphertext", following {{RFC5116}}.
 
 We use the term Unprotected CWT Claims Set (UCCS) just as in {{I-D.ietf-rats-uccs}} to denote a CBOR Web Token {{RFC8392}} without wrapping it into a COSE object, i.e., a CBOR map consisting of claims.
 
@@ -407,7 +407,7 @@ The credentials CRED_I and CRED_R are signed or MACed (in the Signature_OR_MAC f
 
 When the credential is a certificate, CRED_x is an end-entity certificate (i.e., not the certificate chain). In X.509 and C509 certificates, signature keys typically have key usage "digitalSignature" and Diffie-Hellman public keys typically have key usage "keyAgreement".
 
-To prevent misbinding attacks in systems where an attacker can register public keys without proving knowledge of the private key, SIGMA {{SIGMA}} enforces a MAC to be calculated over the "identity", which in case of a X.509 certificate would be the 'subject' and 'subjectAltName' fields, see {{identities}}. EDHOC follows SIGMA by calculating a MAC over the whole certificate. While the SIGMA paper only focuses on the identity, the same principle is true for any information such as policies connected to the public key.
+To prevent misbinding attacks in systems where an attacker can register public keys without proving knowledge of the private key, SIGMA {{SIGMA}} enforces a MAC to be calculated over the "identity", which in case of a X.509 certificate would be the "subject" and "subjectAltName" fields, see {{identities}}. EDHOC follows SIGMA by calculating a MAC over the whole certificate. While the SIGMA paper only focuses on the identity, the same principle is true for any information such as policies connected to the public key.
 
 When CRED_x is a CWT or UCCS, the claims set includes:
 
@@ -459,13 +459,13 @@ The identifiers ID_CRED_I and ID_CRED_R are CBOR maps registered in the "COSE He
 
 Public key certificates can be identified in different ways. Header parameters for identifying C509 certificates and X.509 certificates are defined in {{I-D.ietf-cose-cbor-encoded-cert}} and {{I-D.ietf-cose-x509}}, for example:
 
-* by a hash value with the 'c5t' or 'x5t' parameters;
+* by a hash value with the `c5t` or `x5t` parameters;
 
    * ID_CRED_x = { 34 : COSE_CertHash }, for x = I or R,
 
    * ID_CRED_x = { TBD3 : COSE_CertHash }, for x = I or R,
 
-* by a URI with the 'c5u' or 'x5u' parameters;
+* by a URI with the `c5u` or `x5u` parameters;
 
    * ID_CRED_x = { 35 : uri }, for x = I or R,
 
@@ -480,7 +480,7 @@ CWT and UCCS are transported with the COSE header parameter registered in {{cwt-
 
 * ID_CRED_x = { TBD1 : UCCS }, for x = I or R,
 
-It is RECOMMENDED that ID_CRED_x uniquely identify the public authentication key as the recipient may otherwise have to try several keys. ID_CRED_I and ID_CRED_R are transported in the 'ciphertext', see {{m3}} and {{m2}}.
+It is RECOMMENDED that ID_CRED_x uniquely identify the public authentication key as the recipient may otherwise have to try several keys. ID_CRED_I and ID_CRED_R are transported in the ciphertext, see {{m3}} and {{m2}}.
 
 When ID_CRED_x does not contain the actual credential, it may be very short, e.g., if the endpoints have agreed to use a key identifier parameter `kid`. The latter is extended to support int values to allow more one-byte identifiers (see {{kid-header-param}} and {{kid-key-common-param}}) which may be useful in many scenarios since constrained devices only have a few keys. Note that in CBOR, the integers -24 to 23 and the empty byte string h'' are encoded as one byte.
 
@@ -562,7 +562,7 @@ The Initiator needs to have a list of cipher suites it supports in order of pref
 
 ## Ephemeral Public Keys {#cose_key}
 
-EDHOC always uses compact representation of elliptic curve points, see {{comrep}}. In COSE compact representation is achieved by formatting the ECDH ephemeral public keys as COSE_Keys of type EC2 or OKP according to Sections 7.1 and 7.2 of [I-D.ietf-cose-rfc8152bis-algs], but only including the 'x' parameter in G_X and G_Y. For Elliptic Curve Keys of type EC2, compact representation MAY be used also in the COSE_Key.  If the COSE implementation requires an 'y' parameter, the value y = false SHALL be used. COSE always use compact output for Elliptic Curve Keys of type EC2.
+EDHOC always uses compact representation of elliptic curve points, see {{comrep}}. In COSE compact representation is achieved by formatting the ECDH ephemeral public keys as COSE_Keys of type EC2 or OKP according to Sections 7.1 and 7.2 of [I-D.ietf-cose-rfc8152bis-algs], but only including the `x` parameter in G_X and G_Y. For Elliptic Curve Keys of type EC2, compact representation MAY be used also in the COSE_Key.  If the COSE implementation requires an `y` parameter, the value y = false SHALL be used. COSE always use compact output for Elliptic Curve Keys of type EC2.
 
 ## External Authorization Data (EAD) {#AD}
 
@@ -724,7 +724,7 @@ This section specifies formatting of the messages and processing steps. Error me
 An EDHOC message is encoded as a sequence of CBOR data (CBOR Sequence, {{RFC8742}}).
 Additional optimizations are made to reduce message overhead.
 
-While EDHOC uses the COSE_Key, COSE_Sign1, and COSE_Encrypt0 structures, only a subset of the parameters is included in the EDHOC messages, see {{COSE}}. The unprotected COSE header in COSE_Sign1, and COSE_Encrypt0 (not included in the EDHOC message) MAY contain parameters (e.g., 'alg').
+While EDHOC uses the COSE_Key, COSE_Sign1, and COSE_Encrypt0 structures, only a subset of the parameters is included in the EDHOC messages, see {{COSE}}. The unprotected COSE header in COSE_Sign1, and COSE_Encrypt0 (not included in the EDHOC message) MAY contain parameters (e.g., `alg`).
 
 ## Message Processing Outline {#proc-outline}
 
@@ -779,7 +779,7 @@ The Initiator SHALL compose message_1 as follows:
 
 * The Initiator MUST select its most preferred cipher suite, conditioned on what it can assume to be supported by the Responder. If the Initiator previously received from the Responder an error message with error code 2 (see {{wrong-selected}}) indicating cipher suites supported by the Responder which also are supported by the Initiator, then the Initiator SHOULD select the most preferred cipher suite of those (note that error messages are not authenticated and may be forged).
 
-* Generate an ephemeral ECDH key pair using the curve in the selected cipher suite and format it as a COSE_Key. Let G_X be the 'x' parameter of the COSE_Key.
+* Generate an ephemeral ECDH key pair using the curve in the selected cipher suite and format it as a COSE_Key. Let G_X be the `x` parameter of the COSE_Key.
    
 * Choose a connection identifier C_I and store it for the length of the protocol.
 
@@ -819,7 +819,7 @@ where:
 
 The Responder SHALL compose message_2 as follows:
 
-* Generate an ephemeral ECDH key pair using the curve in the selected cipher suite and format it as a COSE_Key. Let G_Y be the 'x' parameter of the COSE_Key.
+* Generate an ephemeral ECDH key pair using the curve in the selected cipher suite and format it as a COSE_Key. Let G_Y be the `x` parameter of the COSE_Key.
 
 * Choose a connection identifier C_R and store it for the length of the protocol.
 
@@ -830,7 +830,7 @@ The Responder SHALL compose message_2 as follows:
     * CRED_R - CBOR item containing the credential of the Responder, see {{id_cred}} 
     * EAD_2 = unprotected external authorization data, see {{AD}}
 
-* If the Responder authenticates with a static Diffie-Hellman key (method equals 1 or 3), then Signature_or_MAC_2 is MAC_2. If the Responder authenticates with a signature key (method equals 0 or 2), then Signature_or_MAC_2 is the 'signature' of a COSE_Sign1 object as defined in Section 4.4 of {{I-D.ietf-cose-rfc8152bis-struct}} using the signature algorithm in the selected cipher suite, the private authentication key of the Responder, and the following parameters:
+* If the Responder authenticates with a static Diffie-Hellman key (method equals 1 or 3), then Signature_or_MAC_2 is MAC_2. If the Responder authenticates with a signature key (method equals 0 or 2), then Signature_or_MAC_2 is the `signature` of a COSE_Sign1 object as defined in Section 4.4 of {{I-D.ietf-cose-rfc8152bis-struct}} using the signature algorithm in the selected cipher suite, the private authentication key of the Responder, and the following parameters:
 
    * protected =  << ID_CRED_R >>
 
@@ -850,7 +850,7 @@ The Responder SHALL compose message_2 as follows:
 
    * plaintext = ( ID_CRED_R / bstr / int, Signature_or_MAC_2, ? EAD_2 )
 
-       * Note that if ID_CRED_R contains a single 'kid' parameter, i.e., ID_CRED_R = { 4 : kid_R }, only the byte string or integer kid_R is conveyed in the plaintext encoded as a bstr or int.
+       * Note that if ID_CRED_R contains a single `kid` parameter, i.e., ID_CRED_R = { 4 : kid_R }, only the byte string or integer kid_R is conveyed in the plaintext encoded as a bstr or int.
 
    * CIPHERTEXT_2 = plaintext XOR KEYSTREAM_2
 
@@ -899,7 +899,7 @@ The Initiator SHALL compose message_3 as follows:
     * CRED_I - CBOR item containing the credential of the Initiator, see {{id_cred}}
     * EAD_3 = protected external authorization data, see {{AD}}
 
-* If the Initiator authenticates with a static Diffie-Hellman key (method equals 2 or 3), then Signature_or_MAC_3 is MAC_3. If the Initiator authenticates with a signature key (method equals 0 or 1), then Signature_or_MAC_3 is the 'signature' of a COSE_Sign1 object as defined in Section 4.4 of {{I-D.ietf-cose-rfc8152bis-struct}} using the signature algorithm in the selected cipher suite, the private authentication key of the Initiator, and the following parameters:
+* If the Initiator authenticates with a static Diffie-Hellman key (method equals 2 or 3), then Signature_or_MAC_3 is MAC_3. If the Initiator authenticates with a signature key (method equals 0 or 1), then Signature_or_MAC_3 is the `signature` of a COSE_Sign1 object as defined in Section 4.4 of {{I-D.ietf-cose-rfc8152bis-struct}} using the signature algorithm in the selected cipher suite, the private authentication key of the Initiator, and the following parameters:
 
    * protected =  << ID_CRED_I >>
 
@@ -921,7 +921,7 @@ The Initiator SHALL compose message_3 as follows:
 
    * plaintext = ( ID_CRED_I / bstr / int, Signature_or_MAC_3, ? EAD_3 )
 
-      * Note that if ID_CRED_I contains a single 'kid' parameter, i.e., ID_CRED_I = { 4 : kid_I }, only the byte string or integer kid_I is conveyed in the plaintext encoded as a bstr or int.
+      * Note that if ID_CRED_I contains a single `kid` parameter, i.e., ID_CRED_I = { 4 : kid_I }, only the byte string or integer kid_I is conveyed in the plaintext encoded as a bstr or int.
 
    COSE constructs the input to the AEAD {{RFC5116}} as follows: 
 
@@ -930,7 +930,7 @@ The Initiator SHALL compose message_3 as follows:
    * Plaintext P = ( ID_CRED_I / bstr / int, Signature_or_MAC_3, ? EAD_3 )
    * Associated data A = \[ "Encrypt0", h'', TH_3 \]
 
-   CIPHERTEXT_3 is the 'ciphertext' of the outer COSE_Encrypt0.
+   CIPHERTEXT_3 is the ciphertext of the outer COSE_Encrypt0.
 
 * Encode message_3 as a sequence of CBOR encoded data items as specified in {{asym-msg3-form}}.
 
@@ -999,7 +999,7 @@ The Responder SHALL compose message_4 as follows:
    * Plaintext P = ( ? EAD_4 )
    * Associated data A = \[ "Encrypt0", h'', TH_4 \]
 
-  CIPHERTEXT_4 is the 'ciphertext' of the COSE_Encrypt0.
+  CIPHERTEXT_4 is the ciphertext of the COSE_Encrypt0.
 
 * Encode message_4 as a sequence of CBOR encoded data items as specified in {{asym-msg4-form}}.
 
@@ -1352,7 +1352,7 @@ IANA has created a new registry entitled "EDHOC Error Codes" under the new headi
 
 ## COSE Header Parameters Registry {#cwt-header-param}
 
-This document registers the following entries in the "COSE Header Parameters" registry under the "CBOR Object Signing and Encryption (COSE)" heading. The value of the 'cwt' header parameter is a CWT {{RFC8392}} or an Unprotected CWT Claims Set, see {{term}}.
+This document registers the following entries in the "COSE Header Parameters" registry under the "CBOR Object Signing and Encryption (COSE)" heading. The value of the `cwt` header parameter is a CWT {{RFC8392}} or an Unprotected CWT Claims Set, see {{term}}.
 
 ~~~~~~~~~~~
 +-----------+-------+----------------+------------------------------+
@@ -1365,7 +1365,7 @@ This document registers the following entries in the "COSE Header Parameters" re
 
 ## COSE Header Parameters Registry {#kid-header-param}
 
-IANA has extended the Value Type of the COSE Header Parameter 'kid' to also allow the value int. The resulting Value Type is bstr / int. The kid parameter can be used to identify a key stored in a UCCS, in a CWT, or in a public key certificate. (The Value Registry for this item is empty and omitted from the table below.)
+IANA has extended the Value Type of the COSE Header Parameter `kid` to also allow the value int. The resulting Value Type is bstr / int. The kid parameter can be used to identify a key stored in a UCCS, in a CWT, or in a public key certificate. (The Value Registry for this item is empty and omitted from the table below.)
 
 ~~~~~~~~~~~
 +------+-------+------------+----------------+-------------------+
@@ -1378,7 +1378,7 @@ IANA has extended the Value Type of the COSE Header Parameter 'kid' to also allo
 
 ## COSE Key Common Parameters Registry {#kid-key-common-param}
 
-IANA has extended the Value Type of the COSE Key Common Parameter 'kid' to the COSE Key value int. The resulting Value Type is bstr / int. (The Value Registry for this item is empty and omitted from the table below.)
+IANA has extended the Value Type of the COSE Key Common Parameter `kid` to the COSE Key value int. The resulting Value Type is bstr / int. (The Value Registry for this item is empty and omitted from the table below.)
 
 ~~~~~~~~~~~
 +------+-------+------------+----------------+-------------------+
@@ -1394,7 +1394,7 @@ IANA has extended the Value Type of the COSE Key Common Parameter 'kid' to the C
 
 ## The Well-Known URI Registry
 
-IANA has added the well-known URI 'edhoc' to the Well-Known URIs registry.
+IANA has added the well-known URI `edhoc` to the Well-Known URIs registry.
 
 - URI suffix: edhoc
 
@@ -1406,7 +1406,7 @@ IANA has added the well-known URI 'edhoc' to the Well-Known URIs registry.
 
 ## Media Types Registry
 
-IANA has added the media type 'application/edhoc' to the Media Types registry.
+IANA has added the media type `application/edhoc` to the Media Types registry.
 
 - Type name: application
 
@@ -1448,7 +1448,7 @@ IANA has added the media type 'application/edhoc' to the Media Types registry.
 
 ## CoAP Content-Formats Registry
 
-IANA has added the media type 'application/edhoc' to the CoAP Content-Formats registry.
+IANA has added the media type `application/edhoc` to the CoAP Content-Formats registry.
 
 -  Media Type: application/edhoc
 
@@ -1472,7 +1472,7 @@ The IANA Registries established in this document is defined as "Expert Review". 
 
 Expert reviewers should take into consideration the following points:
 
-* Clarity and correctness of registrations. Experts are expected to check the clarity of purpose and use of the requested entries. Expert needs to make sure the values of algorithms are taken from the right registry, when that's required. Expert should consider requesting an opinion on the correctness of registered parameters from relevant IETF working groups. Encodings that do not meet these objective of clarity and completeness should not be registered.
+* Clarity and correctness of registrations. Experts are expected to check the clarity of purpose and use of the requested entries. Expert needs to make sure the values of algorithms are taken from the right registry, when that is required. Expert should consider requesting an opinion on the correctness of registered parameters from relevant IETF working groups. Encodings that do not meet these objective of clarity and completeness should not be registered.
 * Experts should take into account the expected usage of fields when approving point assignment. The length of the encoded value should be weighed against how many code points of that length are left, the size of device it will be used on, and the number of code points left that encode to that size.
 * Specifications are recommended. When specifications are not provided, the description provided needs to have sufficient information to verify the points above.
 
@@ -1705,7 +1705,7 @@ info = [
 
 CBOR Object Signing and Encryption (COSE) {{I-D.ietf-cose-rfc8152bis-struct}} describes how to create and process signatures, message authentication codes, and encryption using CBOR. COSE builds on JOSE, but is adapted to allow more efficient processing in constrained devices. EDHOC makes use of COSE_Key, COSE_Encrypt0, and COSE_Sign1 objects in the message processing:
 
-* ECDH ephemeral public keys of type EC2 or OKP in message_1 and message_2 consist of the COSE_Key parameter named 'x', see Section 7.1 and 7.2 of {{I-D.ietf-cose-rfc8152bis-algs}}
+* ECDH ephemeral public keys of type EC2 or OKP in message_1 and message_2 consist of the COSE_Key parameter named `x`, see Section 7.1 and 7.2 of {{I-D.ietf-cose-rfc8152bis-algs}}
 
 * Certain ciphertexts in message_2 and message_3 consist of a subset of the single recipient encrypted data object COSE_Encrypt0, which is described in Sections 5.2-5.3 of {{I-D.ietf-cose-rfc8152bis-struct}}. The ciphertext is computed over the plaintext and associated data,  using an encryption key and a nonce. The associated data is an Enc_structure consisting of protected headers and externally supplied data (external_aad).
 
@@ -1728,7 +1728,7 @@ NOTE 2. If not clear from the context, remember that CBOR sequences and CBOR arr
 
 <!-- Test vector index (int) 22900 -->
 
-EDHOC with signature authentication and X.509 certificates is used. In this test vector, the hash value 'x5t' is used to identify the certificate. The optional C_1 in message_1 is omitted. No external authorization data is sent in the message exchange.
+EDHOC with signature authentication and X.509 certificates is used. In this test vector, the hash value `x5t` is used to identify the certificate. The optional C_1 in message_1 is omitted. No external authorization data is sent in the message exchange.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 method (Signature Authentication)
@@ -1856,7 +1856,7 @@ G_XY (ECDH shared secret) (32 bytes)
 15 04 91 49 5c 61 78 2b 
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-The key and nonce for calculating the 'ciphertext' are calculated as follows, as specified in {{key-der}}.
+The key and nonce for calculating the ciphertext are calculated as follows, as specified in {{key-der}}.
 
 HKDF SHA-256 is the HKDF used (as defined by cipher suite 0).
 
@@ -1977,7 +1977,7 @@ c9 d6 b0 53 4b 71 c2 b4 9e 4b f9 03 15 00 ce e6 86 99 79 c2 97 bb 5a 8b
 71 be 5c 22 5e b2 
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-And because certificates are identified by a hash value with the 'x5t' parameter, ID_CRED_R is the following:
+And because certificates are identified by a hash value with the `x5t` parameter, ID_CRED_R is the following:
 
 ID_CRED_R = { 34 : COSE_CertHash }. In this example, the hash algorithm used is SHA-2 256-bit with hash truncated to 64-bits (value -15). The hash value is calculated over the CBOR unencoded CRED_R. The CBOR diagnostic notation is:
 
@@ -2303,7 +2303,7 @@ CRED_I (103 bytes)
 48 65 02 ff 7b dd a6 
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-And because certificates are identified by a hash value with the 'x5t' parameter, ID_CRED_I is the following:
+And because certificates are identified by a hash value with the `x5t` parameter, ID_CRED_I is the following:
 
 ID_CRED_I = { 34 : COSE_CertHash }. In this example, the hash algorithm used is SHA-2 256-bit with hash truncated to 64-bits (value -15). The hash value is calculated over the CBOR unencoded CRED_I.
 
@@ -2404,7 +2404,7 @@ IV_3m (13 bytes)
 9c 83 9c 0e e8 36 42 50 5a 8e 1c 9f b2 
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-MAC_3 is the 'ciphertext' of the COSE_Encrypt0:
+MAC_3 is the ciphertext of the COSE_Encrypt0:
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 MAC_3 (CBOR unencoded) (8 bytes)
@@ -2536,7 +2536,7 @@ IV_3ae (13 bytes)
 74 c7 de 41 b8 4a 5b b7 19 0a 85 98 dc 
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-Using the parameters above, the 'ciphertext' CIPHERTEXT_3 can be computed:
+Using the parameters above, the ciphertext CIPHERTEXT_3 can be computed:
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 CIPHERTEXT_3 (CBOR unencoded) (88 bytes)
@@ -2810,7 +2810,7 @@ de fc 2f 35 69 10 9b 3d 1f a4 a7 3d c5 e2 fe b9 e1 15 0d 90 c2 5e e2 f0
 66 c2 d8 85 f4 f8 ac 4e
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-The key and nonce for calculating the 'ciphertext' are calculated as follows, as specified in {{key-der}}.
+The key and nonce for calculating the ciphertext are calculated as follows, as specified in {{key-der}}.
 
 HKDF SHA-256 is the HKDF used (as defined by cipher suite 0).
 
@@ -3051,7 +3051,7 @@ Finally, COSE_Encrypt0 is computed from the parameters above.
 
 
 
-MAC_2 is the 'ciphertext' of the COSE_Encrypt0 with empty plaintext. In case of cipher suite 0 the AEAD is AES-CCM truncated to 8 bytes:
+MAC_2 is the ciphertext of the COSE_Encrypt0 with empty plaintext. In case of cipher suite 0 the AEAD is AES-CCM truncated to 8 bytes:
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 MAC_2 (CBOR unencoded) (8 bytes)
@@ -3069,7 +3069,7 @@ CIPHERTEXT_2 is the ciphertext resulting from XOR between plaintext and KEYSTREA
 
 The plaintext is the CBOR Sequence of the items ID_CRED_R and the CBOR encoded Signature_or_MAC_2, in this order (EAD_2 is empty). 
 
-Note that since ID_CRED_R contains a single 'kid' parameter, i.e., ID_CRED_R = { 4 : kid_R }, only the byte string kid_R is conveyed in the plaintext encoded as a bstr_identifier. kid_R is encoded as the corresponding integer - 24, i.e., 0x05 = 5, 5 - 24 = -19, and -19 in CBOR encoding is equal to 0x32.
+Note that since ID_CRED_R contains a single `kid` parameter, i.e., ID_CRED_R = { 4 : kid_R }, only the byte string kid_R is conveyed in the plaintext encoded as a bstr_identifier. kid_R is encoded as the corresponding integer - 24, i.e., 0x05 = 5, 5 - 24 = -19, and -19 in CBOR encoding is equal to 0x32.
 
 The plaintext is the following:
 
@@ -3311,7 +3311,7 @@ IV_3m (13 bytes)
 0d a7 cc 3a 6f 9a b2 48 52 ce 8b 37 a6  
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-MAC_3 is the 'ciphertext' of the COSE_Encrypt0 with empty plaintext. In case of cipher suite 0 the AEAD is AES-CCM truncated to 8 bytes:
+MAC_3 is the ciphertext of the COSE_Encrypt0 with empty plaintext. In case of cipher suite 0 the AEAD is AES-CCM truncated to 8 bytes:
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 MAC_3 (CBOR unencoded) (8 bytes)
@@ -3329,7 +3329,7 @@ Finally, the outer COSE_Encrypt0 is computed.
 
 The plaintext is the CBOR Sequence of the items ID_CRED_I and the CBOR encoded Signature_or_MAC_3, in this order (EAD_3 is empty). 
 
-Note that since ID_CRED_I contains a single 'kid' parameter, i.e., ID_CRED_I = { 4 : kid_I }, only the byte string kid_I is conveyed in the plaintext encoded as a bstr_identifier. kid_I is encoded as the corresponding integer - 24, i.e., 0x23 = 35, 35 - 24 = 11, and 11 in CBOR encoding is equal to 0x0b.
+Note that since ID_CRED_I contains a single `kid` parameter, i.e., ID_CRED_I = { 4 : kid_I }, only the byte string kid_I is conveyed in the plaintext encoded as a bstr_identifier. kid_I is encoded as the corresponding integer - 24, i.e., 0x23 = 35, 35 - 24 = 11, and 11 in CBOR encoding is equal to 0x0b.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 P_3ae (CBOR Sequence) (10 bytes)
@@ -3407,7 +3407,7 @@ IV_3ae (13 bytes)
 6c 6d 0f e1 1e 9a 1a f3 7b 87 84 55 10  
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-Using the parameters above, the 'ciphertext' CIPHERTEXT_3 can be computed:
+Using the parameters above, the ciphertext CIPHERTEXT_3 can be computed:
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 CIPHERTEXT_3 (CBOR unencoded) (18 bytes)
@@ -3548,7 +3548,7 @@ For use of EDHOC in the XX protocol, the following assumptions are made on the p
 * CRED_I is an 802.1AR IDevID encoded as a C509 Certificate of type 0 {{I-D.ietf-cose-cbor-encoded-cert}}.
     * R acquires CRED_I out-of-band, indicated in EAD_1
 
-    * ID_CRED_I = {4: h''} is a kid with value empty byte string
+    * ID_CRED_I = {4: h''} is a `kid` with value empty byte string
 
 * CRED_R is a COSE_Key of type OKP as specified in {{id_cred}}.
    * The CBOR map has parameters 1 (kty), -1 (crv), and -2 (x-coordinate).
@@ -3601,7 +3601,7 @@ Main changes:
    * Prepended C_x moved from the EDHOC protocol itself to the transport mapping
    * METHOD_CORR renamed to METHOD, corr removed
    * Removed bstr_identifier and use bstr / int instead; C_x can now be int without any implied bstr semantics
-   * Defined COSE header parameter 'kid2' with value type bstr / int for use with ID_CRED_x
+   * Defined COSE header parameter `kid2` with value type bstr / int for use with ID_CRED_x
    * Updated message sizes
    * New cipher suites with AES-GCM and ChaCha20 / Poly1305
    * Changed from one- to two-byte identifier of CNSA compliant suite 
