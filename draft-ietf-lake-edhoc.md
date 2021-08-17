@@ -618,21 +618,41 @@ Other conditions may be part of the applicability statement, such as target appl
 
 # Key Derivation {#key-der}
 
-EDHOC uses Extract-and-Expand {{RFC5869}} with the EDHOC hash algorithm in the selected cipher suite to derive keys used in EDHOC and in the application. Extract is used to derive fixed-length uniformly pseudorandom keys (PRK) from ECDH shared secrets. Expand is used to derive additional output keying material (OKM) from the PRKs. The PRKs are derived using Extract.
+EDHOC uses Extract-and-Expand {{RFC5869}} with the EDHOC hash algorithm in the selected cipher suite to derive keys used in EDHOC and in the application. Extract is used to derive fixed-length uniformly pseudorandom keys (PRK) from ECDH shared secrets. Expand is used to derive additional output keying material (OKM) from the PRKs.
+
+* PRK_2e is used to derive a keystream to encrypt message_2.
+* PRK_3e2m is used to produce a MAC in message_2 and to encrypt message_3.
+* PRK_4x3m is used to produce a MAC in message_3, to encrypt message_4, and to derive application specific data.
+
+## Extract {#extract}
+
+The pseudorandom keys (PRKs) are derived using Extract.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
    PRK = Extract( salt, IKM )
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-If the EDHOC hash algorithm is SHA-2, then Extract( salt, IKM ) = HKDF-Extract( salt, IKM ) {{RFC5869}}. If the EDHOC hash algorithm is SHAKE128, then Extract( salt, IKM ) = KMAC128( salt, IKM, 256, "" ). If the EDHOC hash algorithm is SHAKE256, then Extract( salt, IKM ) = KMAC256( salt, IKM, 512, "" ).
+where the input keying material (IKM) and salt are defined for each PRK below.
 
-PRK_2e is used to derive a keystream to encrypt message_2. PRK_3e2m is used to produce a MAC in message_2 and to encrypt message_3. PRK_4x3m is used to produce a MAC in message_3, to encrypt message_4, and to derive application specific data.
+The definition of Extract depends on the EDHOC hash algorithm of the selected cipher suite:
+
+* If the EDHOC hash algorithm is SHA-2, then Extract( salt, IKM ) = HKDF-Extract( salt, IKM ) {{RFC5869}}.
+* If the EDHOC hash algorithm is SHAKE128, then Extract( salt, IKM ) = KMAC128( salt, IKM, 256, "" ).
+* If the EDHOC hash algorithm is SHAKE256, then Extract( salt, IKM ) = KMAC256( salt, IKM, 512, "" ).
+
+### PRK_2e
 
 PRK_2e is derived with the following input:
 
 * The salt SHALL be the empty byte string. Note that {{RFC5869}} specifies that if the salt is not provided, it is set to a string of zeros (see Section 2.2 of {{RFC5869}}). For implementation purposes, not providing the salt is the same as setting the salt to the empty byte string. 
 
-* The input keying material (IKM) SHALL be the ECDH shared secret G_XY (calculated from G_X and Y or G_Y and X) as defined in Section 6.3.1 of {{I-D.ietf-cose-rfc8152bis-algs}}.
+* The IKM SHALL be the ECDH shared secret G_XY (calculated from G_X and Y or G_Y and X) as defined in Section 6.3.1 of {{I-D.ietf-cose-rfc8152bis-algs}}.
+
+Example: Assuming the use of curve25519, the ECDH shared secret G_XY is the output of the X25519 function {{RFC7748}}:
+
+~~~~~~~~~~~~~~~~~~~~~~~
+   G_XY = X25519( Y, G_X ) = X25519( X, G_Y )
+~~~~~~~~~~~~~~~~~~~~~~~
 
 Example: Assuming the use of SHA-256 the extract phase of HKDF produces PRK_2e as follows:
 
@@ -642,19 +662,23 @@ Example: Assuming the use of SHA-256 the extract phase of HKDF produces PRK_2e a
 
 where salt = 0x (the empty byte string).
 
-The pseudorandom keys PRK_3e2m and PRK_4x3m are defined as follows:
+### PRK_3e2m
 
-* If the Responder authenticates with a static Diffie-Hellman key, then PRK_3e2m = Extract( PRK_2e, G_RX ), where G_RX is the ECDH shared secret calculated from G_R and X, or G_X and R, else PRK_3e2m = PRK_2e.
+PRK_3e2m is derived as follows:
 
-* If the Initiator authenticates with a static Diffie-Hellman key, then PRK_4x3m = Extract( PRK_3e2m, G_IY ), where G_IY is the ECDH shared secret calculated from G_I and Y, or G_Y and I, else PRK_4x3m = PRK_3e2m.
+If the Responder authenticates with a static Diffie-Hellman key, then PRK_3e2m = Extract( PRK_2e, G_RX ), where G_RX is the ECDH shared secret calculated from G_R and X, or G_X and R, else PRK_3e2m = PRK_2e.
 
-Example: Assuming the use of curve25519, the ECDH shared secrets G_XY, G_RX, and G_IY are the outputs of the X25519 function {{RFC7748}}:
+### PRK_4x3m
 
-~~~~~~~~~~~~~~~~~~~~~~~
-   G_XY = X25519( Y, G_X ) = X25519( X, G_Y )
-~~~~~~~~~~~~~~~~~~~~~~~
+PRK_4x3m is derived as follows:
 
-The keys and IVs used in EDHOC are derived from PRKs using Expand {{RFC5869}} where the EDHOC-KDF is instantiated with the EDHOC AEAD algorithm in the selected cipher suite.
+If the Initiator authenticates with a static Diffie-Hellman key, then PRK_4x3m = Extract( PRK_3e2m, G_IY ), where G_IY is the ECDH shared secret calculated from G_I and Y, or G_Y and I, else PRK_4x3m = PRK_3e2m.
+
+
+
+## Expand {#expand}
+
+The keys, IVs and MACs used in EDHOC are derived from the PRKs using Expand, and instantiated with the EDHOC AEAD algorithm in the selected cipher suite.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
    OKM = EDHOC-KDF( PRK, transcript_hash, label, context, length )
@@ -675,19 +699,33 @@ info = [
 
 where
 
-  + edhoc_aead_id is an int or tstr containing the algorithm identifier of the EDHOC AEAD algorithm in the selected cipher suite encoded as defined in {{I-D.ietf-cose-rfc8152bis-algs}}. Note that a single fixed edhoc_aead_id is used in all invocations of EDHOC-KDF, including the derivation of KEYSTREAM_2 and invocations of the EDHOC-Exporter.
+  + edhoc_aead_id is an int or tstr containing the algorithm identifier of the EDHOC AEAD algorithm in the selected cipher suite encoded as defined in {{I-D.ietf-cose-rfc8152bis-algs}}. Note that a single fixed edhoc_aead_id is used in all invocations of EDHOC-KDF, including the derivation of KEYSTREAM_2 and invocations of the EDHOC-Exporter (see {{exporter}}).
   
   + transcript_hash is a bstr set to one of the transcript hashes TH_2, TH_3, or TH_4 as defined in Sections {{asym-msg2-form}}{: format="counter"}, {{asym-msg3-form}}{: format="counter"}, and {{exporter}}{: format="counter"}.
 
   + label is a tstr set to the name of the derived key or IV, i.e. "KEYSTREAM_2", "MAC_2", "K_3ae", "IV_3ae", or "MAC_3".
 
-  + context is CBOR sequence, i.e., zero or more encoded CBOR data items 
+  + context is a CBOR sequence, i.e., zero or more encoded CBOR data items
 
   + length is the length of output keying material (OKM) in bytes
 
-If the EDHOC hash algorithm is SHA-2, then Expand( PRK, info, length ) = HKDF-Expand( PRK, info, length ) {{RFC5869}}. If the EDHOC hash algorithm is SHAKE128, then Expand( PRK, info, length ) = KMAC128( PRK, info, , "" ). If the EDHOC hash algorithm is SHAKE256, then Expand( PRK, info, length ) = KMAC256( PRK, info, L, "" ). L = 8*length is the output length in bits.
 
-KEYSTREAM_2 is derived using the transcript hash TH_2 and the pseudorandom key PRK_2e. MAC_2 is derived using the transcript hash TH_2 and the pseudorandom key PRK_3e2m. K_3ae and IV_3ae are derived using the transcript hash TH_3 and the pseudorandom key PRK_3e2m. MAC_3 is derived using the transcript hash TH_3 and the pseudorandom key PRK_4x3m. IVs are only used if the EDHOC AEAD algorithm uses IVs. KEYSTREAM_2, K_3ae, and IV_3ae do not use a context. MAC_2 and MAC_3 use context as defined in {{asym-msg2-proc}} and {{asym-msg3-proc}}, respectively.
+The definition of Expand depends on the EDHOC hash algorithm of the selected cipher suite:
+
+* If the EDHOC hash algorithm is SHA-2, then Expand( PRK, info, length ) = HKDF-Expand( PRK, info, length ) {{RFC5869}}.
+* If the EDHOC hash algorithm is SHAKE128, then Expand( PRK, info, length ) = KMAC128( PRK, info, L, "" ).
+* If the EDHOC hash algorithm is SHAKE256, then Expand( PRK, info, length ) = KMAC256( PRK, info, L, "" ).
+
+where L = 8*length, the output length in bits.
+
+The keys, IVs and MACs are derived as follows:
+
+* KEYSTREAM_2 is derived using the transcript hash TH_2 and the pseudorandom key PRK_2e.
+* MAC_2 is derived using the transcript hash TH_2 and the pseudorandom key PRK_3e2m.
+* K_3ae and IV_3ae are derived using the transcript hash TH_3 and the pseudorandom key PRK_3e2m. IVs are only used if the EDHOC AEAD algorithm uses IVs.
+* MAC_3 is derived using the transcript hash TH_3 and the pseudorandom key PRK_4x3m.
+
+KEYSTREAM_2, K_3ae, and IV_3ae do not use a context. MAC_2 and MAC_3 use context as defined in {{asym-msg2-proc}} and {{asym-msg3-proc}}, respectively.
 
 ## EDHOC-Exporter Interface {#exporter}
 
