@@ -620,9 +620,8 @@ Other conditions may be part of the applicability statement, such as target appl
 
 EDHOC uses Extract-and-Expand {{RFC5869}} with the EDHOC hash algorithm in the selected cipher suite to derive keys used in EDHOC and in the application. Extract is used to derive fixed-length uniformly pseudorandom keys (PRK) from ECDH shared secrets. Expand is used to derive additional output keying material (OKM) from the PRKs.
 
-* PRK_2e is used to derive a keystream to encrypt message_2.
-* PRK_3e2m is used to produce a MAC in message_2 and to encrypt message_3.
-* PRK_4x3m is used to produce a MAC in message_3, to encrypt message_4, and to derive application specific data.
+This section defines Extract, Expand and other key derivation functions based on these: Expand is used to define EDHOC-KDF and in turn EDHOC-Exporter, whereas Extract is used to define EDHOC-KeyUpdate.
+
 
 ## Extract {#extract}
 
@@ -636,13 +635,13 @@ where the input keying material (IKM) and salt are defined for each PRK below.
 
 The definition of Extract depends on the EDHOC hash algorithm of the selected cipher suite:
 
-* If the EDHOC hash algorithm is SHA-2, then Extract( salt, IKM ) = HKDF-Extract( salt, IKM ) {{RFC5869}}.
-* If the EDHOC hash algorithm is SHAKE128, then Extract( salt, IKM ) = KMAC128( salt, IKM, 256, "" ).
-* If the EDHOC hash algorithm is SHAKE256, then Extract( salt, IKM ) = KMAC256( salt, IKM, 512, "" ).
+* if the EDHOC hash algorithm is SHA-2, then Extract( salt, IKM ) = HKDF-Extract( salt, IKM ) {{RFC5869}}
+* if the EDHOC hash algorithm is SHAKE128, then Extract( salt, IKM ) = KMAC128( salt, IKM, 256, "" )
+* if the EDHOC hash algorithm is SHAKE256, then Extract( salt, IKM ) = KMAC256( salt, IKM, 512, "" )
 
 ### PRK_2e
 
-PRK_2e is derived with the following input:
+PRK_2e is used to derive a keystream to encrypt message_2. PRK_2e is derived with the following input:
 
 * The salt SHALL be the empty byte string. Note that {{RFC5869}} specifies that if the salt is not provided, it is set to a string of zeros (see Section 2.2 of {{RFC5869}}). For implementation purposes, not providing the salt is the same as setting the salt to the empty byte string. 
 
@@ -664,13 +663,13 @@ where salt = 0x (the empty byte string).
 
 ### PRK_3e2m
 
-PRK_3e2m is derived as follows:
+PRK_3e2m is used to produce a MAC in message_2 and to encrypt message_3. PRK_3e2m is derived as follows:
 
 If the Responder authenticates with a static Diffie-Hellman key, then PRK_3e2m = Extract( PRK_2e, G_RX ), where G_RX is the ECDH shared secret calculated from G_R and X, or G_X and R, else PRK_3e2m = PRK_2e.
 
 ### PRK_4x3m
 
-PRK_4x3m is derived as follows:
+PRK_4x3m is used to produce a MAC in message_3, to encrypt message_4, and to derive application specific data. PRK_4x3m is derived as follows:
 
 If the Initiator authenticates with a static Diffie-Hellman key, then PRK_4x3m = Extract( PRK_3e2m, G_IY ), where G_IY is the ECDH shared secret calculated from G_I and Y, or G_Y and I, else PRK_4x3m = PRK_3e2m.
 
@@ -712,9 +711,9 @@ where
 
 The definition of Expand depends on the EDHOC hash algorithm of the selected cipher suite:
 
-* If the EDHOC hash algorithm is SHA-2, then Expand( PRK, info, length ) = HKDF-Expand( PRK, info, length ) {{RFC5869}}.
-* If the EDHOC hash algorithm is SHAKE128, then Expand( PRK, info, length ) = KMAC128( PRK, info, L, "" ).
-* If the EDHOC hash algorithm is SHAKE256, then Expand( PRK, info, length ) = KMAC256( PRK, info, L, "" ).
+* if the EDHOC hash algorithm is SHA-2, then Expand( PRK, info, length ) = HKDF-Expand( PRK, info, length ) {{RFC5869}}
+* if the EDHOC hash algorithm is SHAKE128, then Expand( PRK, info, length ) = KMAC128( PRK, info, L, "" )
+* if the EDHOC hash algorithm is SHAKE256, then Expand( PRK, info, length ) = KMAC256( PRK, info, L, "" )
 
 where L = 8*length, the output length in bits.
 
@@ -727,7 +726,7 @@ The keys, IVs and MACs are derived as follows:
 
 KEYSTREAM_2, K_3ae, and IV_3ae do not use a context. MAC_2 and MAC_3 use context as defined in {{asym-msg2-proc}} and {{asym-msg3-proc}}, respectively.
 
-## EDHOC-Exporter Interface {#exporter}
+## EDHOC-Exporter {#exporter}
 
 Application keys and other application specific data can be derived using the EDHOC-Exporter interface defined as:
 
@@ -745,6 +744,8 @@ The transcript hash TH_4 is a CBOR encoded bstr and the input to the hash functi
 ~~~~~~~~~~~
 
 where H() is the hash function in the selected cipher suite. Examples of use of the EDHOC-Exporter are given in {{asym-msg4-proc}} and {{transfer}}.
+
+## EDHOC-KeyUpdate {#keyupdate}
 
 To provide forward secrecy in an even more efficient way than re-running EDHOC, EDHOC provides the function EDHOC-KeyUpdate. When EDHOC-KeyUpdate is called the old PRK_4x3m is deleted and the new PRK_4x3m is calculated as a "hash" of the old key using the Extract function as illustrated by the following pseudocode:
 
@@ -972,7 +973,7 @@ The Initiator SHALL compose message_3 as follows:
 
 * Encode message_3 as a sequence of CBOR encoded data items as specified in {{asym-msg3-form}}.
 
-Pass the connection identifiers (C_I, C_R) and the application algorithms in the selected cipher suite to the application. The application can now derive application keys using the EDHOC-Exporter interface.
+Pass the connection identifiers (C_I, C_R) and the application algorithms in the selected cipher suite to the application. The application can now derive application keys using the EDHOC-Exporter interface, see {{exporter}}.
 
 After sending message_3, the Initiator is assured that no other party than the Responder can compute the key PRK_4x3m (implicit key authentication). The Initiator can securely derive application keys and send protected application data. However, the Initiator does not know that the Responder has actually computed the key PRK_4x3m and therefore the Initiator SHOULD NOT permanently store the keying material PRK_4x3m and TH_4, or derived application keys, until the Initiator is assured that the Responder has actually computed the key PRK_4x3m (explicit key confirmation). This is similar to waiting for acknowledgement (ACK) in a transport protocol. Explicit key confirmation is e.g., assured when the Initiator has verified an OSCORE message or message_4 from the Responder. 
 
