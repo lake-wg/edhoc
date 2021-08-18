@@ -3633,7 +3633,28 @@ may need ... no, they don't need anything special: after an error, the next thin
 
 # Change Log
 
+RFC Editor: Please remove this appendix.
+
 Main changes:
+
+* From -08 to -09:
+   * G_Y and CIPHERTEXT_2 are now included in one CBOR bstr
+   * MAC_2 and MAC_3 are now generated with EDHOC-KDF
+   * Info field “context” is now general and explicit in EDHOC-KDF
+   * Restructured Section 4, Key Derivation
+   * Added EDHOC MAC length to cipher suite for use with static DH
+   * More details on the use of CWT and UCCS
+   * Restructured and clarified Section 3.5, Authentication Parameters
+   * Replaced“kid2” with extension of “kid”
+   * EAD encoding now supports multiple ead types in one message
+   * Clarified EAD type
+   * Updated message sizes
+   * Replaced “perfect forward secrecy” with “forward secrecy”
+   * Updated security considerations
+   * Replaced “null” with “nil”
+   * Updated CDDL definitions
+   * Expanded on the use of COSE
+
 
 * From -07 to -08:
    * Prepended C_x moved from the EDHOC protocol itself to the transport mapping
