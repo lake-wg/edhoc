@@ -64,7 +64,6 @@ normative:
 
 informative:
 
-  RFC4949:
   RFC7228:
   RFC7258:
   RFC7296:
@@ -1178,7 +1177,7 @@ Compared to {{SIGMA}}, EDHOC adds an explicit method type and expands the messag
 
 EDHOC also adds selection of connection identifiers and downgrade protected negotiation of cryptographic parameters, i.e., an attacker cannot affect the negotiated parameters. A single session of EDHOC does not include negotiation of cipher suites, but it enables the Responder to verify that the selected cipher suite is the most preferred cipher suite by the Initiator which is supported by both the Initiator and the Responder.
 
-As required by {{RFC7258}}, IETF protocols need to mitigate pervasive monitoring when possible. EDHOC therefore only supports methods with ephemeral Diffie-Hellman and provides a KeyUpdate function for lightweight application protocol rekeying with forward secrecy. As discussed in {{RFC4949}} the term “forward secrecy” is a muddled area. EDHOC provides forward secrecy in the sense that compromise of the private authentication keys does not compromise past session keys, and compromise of a session key does not compromise past session keys.
+As required by {{RFC7258}}, IETF protocols need to mitigate pervasive monitoring when possible. EDHOC therefore only supports methods with ephemeral Diffie-Hellman and provides a KeyUpdate function for lightweight application protocol rekeying with forward secrecy, in the sense that compromise of the private authentication keys does not compromise past session keys, and compromise of a session key does not compromise past session keys.
 
 While the KeyUpdate method can be used to meet cryptographic limits and provide partial protection against key leakage, it provides significantly weaker security properties than re-running EDHOC with ephemeral Diffie-Hellman. Even with frequent use of KeyUpdate, compromise of one session key compromises all future session keys, and an attacker therefore only needs to perform static key exfiltration {{RFC7624}}. Frequently re-running EDHOC with ephemeral Diffie-Hellman forces attackers to perform dynamic key exfiltration instead of static key exfiltration {{RFC7624}}. In the dynamic case, the attacker must have continuous interactions with the collaborator, which is more complicated and has a higher risk profile than the static case.
 
