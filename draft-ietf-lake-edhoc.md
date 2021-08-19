@@ -1433,7 +1433,7 @@ IANA has extended the Value Type of the COSE Key Common Parameter 'kid' to the C
 
 ## The Well-Known URI Registry
 
-IANA has added the well-known URI 'edhoc' to the Well-Known URIs registry.
+IANA has added the well-known URI "edhoc" to the Well-Known URIs registry.
 
 - URI suffix: edhoc
 
@@ -1445,7 +1445,7 @@ IANA has added the well-known URI 'edhoc' to the Well-Known URIs registry.
 
 ## Media Types Registry
 
-IANA has added the media type 'application/edhoc' to the Media Types registry.
+IANA has added the media type "application/edhoc" to the Media Types registry.
 
 - Type name: application
 
@@ -1487,7 +1487,7 @@ IANA has added the media type 'application/edhoc' to the Media Types registry.
 
 ## CoAP Content-Formats Registry
 
-IANA has added the media type 'application/edhoc' to the CoAP Content-Formats registry.
+IANA has added the media type "application/edhoc" to the CoAP Content-Formats registry.
 
 -  Media Type: application/edhoc
 
