@@ -364,7 +364,7 @@ The Initiator and the Responder need to have agreed on a transport to be used fo
 
 EDHOC enables public-key based authentication and supports various settings for how the other endpoint's public key is transported, identified, and trusted.
 
-The authentication key (i.e. the public key) appears in different functions:
+The authentication key (i.e., the public key) appears in different functions:
 
 1. as part of the authentication credential CRED_x included in the integrity calculation
 2. for verification of the Signature_or_MAC field in message_2 and message_3 (see {{asym-msg2-proc}} and {{asym-msg3-proc}})
@@ -702,7 +702,7 @@ where
   
   + transcript_hash is a bstr set to one of the transcript hashes TH_2, TH_3, or TH_4 as defined in Sections {{asym-msg2-form}}{: format="counter"}, {{asym-msg3-form}}{: format="counter"}, and {{exporter}}{: format="counter"}.
 
-  + label is a tstr set to the name of the derived key or IV, i.e. "KEYSTREAM_2", "MAC_2", "K_3ae", "IV_3ae", or "MAC_3".
+  + label is a tstr set to the name of the derived key, IV or MAC; i.e., "KEYSTREAM_2", "MAC_2", "K_3ae", "IV_3ae", or "MAC_3".
 
   + context is a CBOR sequence, i.e., zero or more encoded CBOR data items
 
@@ -1575,7 +1575,7 @@ By default, the CoAP client is the Initiator and the CoAP server is the Responde
 
 By default, the message flow is as follows: EDHOC message_1 is sent in the payload of a POST request from the client to the server's resource for EDHOC. EDHOC message_2 or the EDHOC error message is sent from the server to the client in the payload of a 2.04 (Changed) response. EDHOC message_3 or the EDHOC error message is sent from the client to the server's resource in the payload of a POST request. If needed, an EDHOC error message is sent from the server to the client in the payload of a 2.04 (Changed) response. Alternatively, if EDHOC message_4 is used, it is sent from the server to the client in the payload of a 2.04 (Changed) response analogously to message_2.
 
-In order to correlate a message received from a client to a message previously sent by the server, messages sent by the client are prepended with the CBOR serialization of the connection identifier which the server has chosen. This applies independently of if the CoAP server is Responder or Initiator. For the default case when the server is Responder, the prepended connection identifier is C_R, and C_I if the server is Initiator. If message_1 is sent to the server, the CBOR simple value 'true' (0xf5) is sent in its place (given that the server has not selected C_R yet).
+In order to correlate a message received from a client to a message previously sent by the server, messages sent by the client are prepended with the CBOR serialization of the connection identifier which the server has chosen. This applies independently of if the CoAP server is Responder or Initiator. For the default case when the server is Responder, the prepended connection identifier is C_R, and C_I if the server is Initiator. If message_1 is sent to the server, the CBOR simple value "true" (0xf5) is sent in its place (given that the server has not selected C_R yet).
 
 These identifiers are encoded in CBOR and thus self-delimiting.
 They are sent in front of the actual EDHOC message,
