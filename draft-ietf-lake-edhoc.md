@@ -405,7 +405,7 @@ The Initiator and the Responder MAY use different types of credentials, e.g., on
 The credentials CRED_I and CRED_R are MACed by the Initiator and the Responder, respectively, see {{asym-msg3-proc}} and {{asym-msg2-proc}}, and thus included in the message integrity calculation.
 
 To prevent misbinding attacks in systems where an attacker can register public keys without proving knowledge of the private key, SIGMA {{SIGMA}} enforces a MAC to be calculated over the "identity".
-EDHOC follows SIGMA by calculating a MAC over the whole credential, which in case of a X.509 certificate includes the "subject" and "subjectAltName" fields, and in the case of CWT or UCCS includes the "sub" claim, see {{identities}}. While the SIGMA paper only focuses on the identity, the same principle is true for any information such as policies connected to the public key.
+EDHOC follows SIGMA by calculating a MAC over the whole credential, which in case of a X.509 or C509 certificate includes the "subject" and "subjectAltName" fields, and in the case of CWT or UCCS includes the "sub" claim, see {{identities}}. While the SIGMA paper only focuses on the identity, the same principle is true for any information such as policies connected to the public key.
 
 When the credential is a certificate, CRED_x is an end-entity certificate (i.e., not the certificate chain). In X.509 and C509 certificates, signature keys typically have key usage "digitalSignature" and Diffie-Hellman public keys typically have key usage "keyAgreement".
 
@@ -593,7 +593,7 @@ The purpose of the applicability statement is to describe the intended use of ED
 1. How the endpoint detects that an EDHOC message is received. This includes how EDHOC messages are transported, for example in the payload of a CoAP message with a certain Uri-Path or Content-Format; see {{coap}}.
  * The method of transporting EDHOC messages may also describe data carried along with the messages that are needed for the transport to satisfy the requirements of {{transport}}, e.g., connection identifiers used with certain messages, see {{coap}}.
 1. Authentication method (METHOD; see {{method}}).
-3. Profile for authentication credentials (CRED_I, CRED_R; see {{auth-cred}}), e.g., profile for certificate or UCCS, including supported authentication key algorithms (subject public key algorithm in X.509 certificate).
+3. Profile for authentication credentials (CRED_I, CRED_R; see {{auth-cred}}), e.g., profile for certificate or UCCS, including supported authentication key algorithms (subject public key algorithm in X.509 or C509 certificate).
 4. Type used to identify authentication credentials (ID_CRED_I, ID_CRED_R; see {{id_cred}}).
 5. Use and type of external authorization data (EAD_1, EAD_2, EAD_3, EAD_4; see {{AD}}).
 6. Identifier used as identity of endpoint; see {{identities}}.
