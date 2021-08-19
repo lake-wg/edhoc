@@ -424,9 +424,9 @@ An example of CRED_x when the UCCS contains an X25519 static Diffie-Hellman key 
   2 : "42-50-31-FF-EF-37-32-39",               /sub/
   8 : {                                        /cnf/
     1 : {                                      /COSE_Key/
-      1:  1,                                   /kty/
-     -1:  4,                                   /crv/
-     -2:  h'b1a3e89460e88d3a8d54211dc95f0b90   /x/
+      1 : 1,                                   /kty/
+     -1 : 4,                                   /crv/
+     -2 : h'b1a3e89460e88d3a8d54211dc95f0b90   /x/
             3ff205eb71912d6db8f4af980d2db83a'
     }
   }
