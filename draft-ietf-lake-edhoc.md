@@ -444,7 +444,7 @@ The EDHOC implementation or the application must enforce information about the i
 
 * Similarly, when a PKI is used with CWTs, each party needs to have a trusted third party self-signed CWT, or just the UCCS/raw public key, to verify the CWTs, and a specific identity or set of identities in the 'sub'(subject) claim of the CWT to determine if it is allowed to communicate with.
 
-* When public keys are used but not with a PKI (UCCS, self-signed certificate/CWT), the trust anchor is the  authentication key of the other party. In this case, the identity is typically directly associated to the authentication key of the other party. For example, the name of the subject may be a canonical representation of the public key. Alternatively, if identities can be expressed in the form of unique subject names assigned to public keys, then a binding to identity can be achieved by including both public key and associated subject name in the protocol message computation: CRED_I or CRED_R may be a self-signed certificate/CWT or UCCS containing the authentication key and the subject name, see {{auth-cred}}. Before running EDHOC, each endpoint needs a specific authentication key/unique associated subject name, or a set of public authentication keys/unique associated subject names, which it is allowed to communicate with. EDHOC provides proof that the other party possesses the private authentication key corresponding to the public authentication key.
+* When public keys are used but not with a PKI (UCCS, self-signed certificate/CWT), the trust anchor is the authentication key of the other party. In this case, the identity is typically directly associated to the authentication key of the other party. For example, the name of the subject may be a canonical representation of the public key. Alternatively, if identities can be expressed in the form of unique subject names assigned to public keys, then a binding to identity can be achieved by including both public key and associated subject name in the protocol message computation: CRED_I or CRED_R may be a self-signed certificate/CWT or UCCS containing the authentication key and the subject name, see {{auth-cred}}. Before running EDHOC, each endpoint needs a specific authentication key/unique associated subject name, or a set of public authentication keys/unique associated subject names, which it is allowed to communicate with. EDHOC provides proof that the other party possesses the private authentication key corresponding to the public authentication key.
 
 
 ### Identification of Credentials {#id_cred}
@@ -455,36 +455,37 @@ ID_CRED_I and ID_CRED_R are used to identify and optionally transport the public
 
 * ID_CRED_I is intended to facilitate for the Responder to retrieve the Initiator's public authentication key.
 
-The identifiers ID_CRED_I and ID_CRED_R are registered in the "COSE Header Parameters" IANA registry. As such, ID_CRED_I and ID_CRED_R typically also provide information about the format of authentication credential, CRED_I and CRED_R, respectively.
+The identifiers ID_CRED_I and ID_CRED_R are registered in the "COSE Header Parameters" IANA registry. As such, ID_CRED_I and ID_CRED_R typically also provide information about the format of authentication credential, CRED_I and CRED_R, respectively. ID_CRED_I and ID_CRED_R MAY be of different types.
 
-Public key certificates can be identified in different ways. COSE header parameters for identifying C509 certificates and X.509 certificates are defined in {{I-D.ietf-cose-cbor-encoded-cert}} and {{I-D.ietf-cose-x509}}, for example:
+Public key certificates can be identified in different ways. COSE header parameters for identifying  X.509 or C509 certificates are defined in {{I-D.ietf-cose-x509}} and {{I-D.ietf-cose-cbor-encoded-cert}}, for example:
 
-* by a hash value with the 'c5t' or 'x5t' parameters;
+* by a hash value with the 'x5t' or 'c5t' parameters, respectively:
 
    * ID_CRED_x = { 34 : COSE_CertHash }, for x = I or R,
 
-   * ID_CRED_x = { TBD3 : COSE_CertHash }, for x = I or R,
+   * ID_CRED_x = { TBD3 : COSE_CertHash }, for x = I or R;
 
-* by a URI with the 'c5u' or 'x5u' parameters;
+* or by a URI with the 'x5u' or 'c5u' parameters, respectively:
 
    * ID_CRED_x = { 35 : uri }, for x = I or R,
 
-   * ID_CRED_x = { TBD4 : uri }, for x = I or R,
+   * ID_CRED_x = { TBD4 : uri }, for x = I or R.
 
-ID_CRED_x MAY contain the actual credential used for authentication, CRED_x. For example, a certificate chain can be transported in ID_CRED_x with COSE header parameter c5c or x5chain, defined in {{I-D.ietf-cose-cbor-encoded-cert}} and {{I-D.ietf-cose-x509}}. ID_CRED_I and ID_CRED_R MAY be of different types.
+ID_CRED_x MAY contain the actual credential used for authentication, CRED_x. For example, a certificate chain can be transported in ID_CRED_x with COSE header parameter c5c or x5chain, defined in {{I-D.ietf-cose-cbor-encoded-cert}} and {{I-D.ietf-cose-x509}}. 
 
-
-CWT and UCCS are transported with the COSE header parameter registered in {{cwt-header-param}}.
+Credentials of type CWT and UCCS are transported with the COSE header parameter registered in {{cwt-header-param}}:
 
 * ID_CRED_x = { TBD1 : CWT }, for x = I or R,
 
-* ID_CRED_x = { TBD1 : UCCS }, for x = I or R,
+* ID_CRED_x = { TBD1 : UCCS }, for x = I or R.
 
 It is RECOMMENDED that ID_CRED_x uniquely identify the public authentication key as the recipient may otherwise have to try several keys. ID_CRED_I and ID_CRED_R are transported in the 'ciphertext', see {{asym-msg3-proc}} and {{asym-msg2-proc}}.
 
-When ID_CRED_x does not contain the actual credential, it may be very short, e.g., if the endpoints have agreed to use a key identifier parameter 'kid'. Note that 'kid' is extended to support int values to allow more one-byte identifiers (see {{kid-header-param}} and {{kid-key-common-param}}) which may be useful in many scenarios since constrained devices only have a few keys.
+When ID_CRED_x does not contain the actual credential, it may be very short, e.g., if the endpoints have agreed to use a key identifier parameter 'kid': 
 
 * ID_CRED_x = { 4 : key_id_x }, where key_id_x : kid, for x = I or R.
+
+Note that 'kid' is extended to support int values to allow more one-byte identifiers (see {{kid-header-param}} and {{kid-key-common-param}}) which may be useful in many scenarios since constrained devices only have a few keys.
 
 
 ## Cipher Suites {#cs}
