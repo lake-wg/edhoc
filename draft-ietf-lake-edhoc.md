@@ -370,7 +370,7 @@ The authentication key (i.e. the public key) appears in different functions:
 2. for verification of the Signature_or_MAC field in message_2 and message_3 (see {{asym-msg2-proc}} and {{asym-msg3-proc}})
 3. in the key derivation (in case of a static Diffie-Hellman key, see {{key-der}}).
 
-The choice of authentication key has an impact on the message size (see {{auth-keys}}), and even more so the choice of authentication credential (see {{auth-cred}}) in case it is transported within the protocol (see {{id_cred}}). The following list shows possible authentication credentials:
+The choice of authentication key has an impact on the message size (see {{auth-keys}}), and even more so the choice of authentication credential (see {{auth-cred}}) in case it is transported within the protocol (see {{id_cred}}). EDHOC supports authentication credentials for which COSE Header Parameters are defined, including:
 
 * X.509 v3 certificate {{RFC5280}}
 * C509 certificate {{I-D.ietf-cose-cbor-encoded-cert}}
