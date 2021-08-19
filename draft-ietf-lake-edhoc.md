@@ -388,9 +388,9 @@ More details are provided in the following subsections.
 ### Authentication Keys {#auth-keys}
 
 The authentication key MUST be a signature key or static Diffie-Hellman key. The Initiator and the Responder
-MAY use different types of authentication keys, e.g., one uses a signature key and the other uses a static Diffie-Hellman key. When using a signature key, the authentication is provided by a signature. When using a static Diffie-Hellman key the authentication is provided by a Message Authentication Code (MAC) computed from an ephemeral-static ECDH shared secret which enables significant reductions in message sizes. When using static Diffie-Hellman keys the Initiator's and Responder's private authentication keys are called I and R, respectively, and the public authentication keys are called G_I and G_R, respectively. The authentication key algorithm needs to specified with enough parameters to make it completely determined. Note that for most signature algorithms, the signature is determined by the signature algorithm and the authentication key algorithm together. For example, the curve used in the signature is typically determined by the authentication key parameters. 
+MAY use different types of authentication keys, e.g., one uses a signature key and the other uses a static Diffie-Hellman key. When using a signature key, the authentication is provided by a signature. When using a static Diffie-Hellman key the authentication is provided by a Message Authentication Code (MAC) computed from an ephemeral-static ECDH shared secret which enables significant reductions in message sizes. When using static Diffie-Hellman keys the Initiator's and Responder's private authentication keys are called I and R, respectively, and the public authentication keys are called G_I and G_R, respectively.
 
-
+The authentication key algorithm needs to be specified with enough parameters to make it completely determined. Note that for most signature algorithms, the signature is determined jointly by the signature algorithm and the authentication key algorithm. For example, the curve used in the signature is typically determined by the authentication key parameters.
 
 * Only the Responder SHALL have access to the Responder's private authentication key.
 
