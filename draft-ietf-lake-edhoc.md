@@ -364,7 +364,7 @@ The Initiator and the Responder need to have agreed on a transport to be used fo
 
 EDHOC enables public-key based authentication and supports various settings for how the other endpoint's public key is transported, identified, and trusted.
 
-The authentication (public) key appears in different functions:
+The authentication key (i.e. the public key) appears in different functions:
 
 1. as part of the authentication credential CRED_x included in the integrity calculation
 2. for verification of the Signature_or_MAC field in message_2 and message_3 (see {{asym-msg2-proc}} and {{asym-msg3-proc}})
