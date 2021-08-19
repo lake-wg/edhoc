@@ -409,7 +409,7 @@ EDHOC follows SIGMA by calculating a MAC over the whole credential, which in cas
 
 When the credential is a certificate, CRED_x is an end-entity certificate (i.e., not the certificate chain). In X.509 and C509 certificates, signature keys typically have key usage "digitalSignature" and Diffie-Hellman public keys typically have key usage "keyAgreement".
 
-When CRED_x is Elliptic Curve based the claims set for CWT or UCCS includes:
+In case of elliptic curve based credential the claims set for CWT or UCCS includes:
 
 * the 'cnf' claim with value COSE_Key, see {{RFC8747}}, where the public key parameters depend on key type:
     * for OKP the CBOR map typically includes the parameters 1 (kty), -1 (crv), and -2 (x-coordinate)
