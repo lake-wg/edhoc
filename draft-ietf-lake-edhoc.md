@@ -370,7 +370,7 @@ The authentication key (i.e. the public key) appears in different functions:
 2. for verification of the Signature_or_MAC field in message_2 and message_3 (see {{asym-msg2-proc}} and {{asym-msg3-proc}})
 3. in the key derivation (in case of a static Diffie-Hellman key, see {{key-der}}).
 
-The choice of authentication key has an impact on the message size (see {{auth-keys}}), and even more so the choice of authentication credential (see {{auth-cred}}) in case it is transported within the protocol (see {{id_cred}}). EDHOC supports authentication credentials for which COSE Header Parameters are defined, including:
+The choice of authentication key has an impact on the message size (see {{auth-keys}}), and even more so the choice of authentication credential (see {{auth-cred}}) in case it is transported within the protocol (see {{id_cred}}). EDHOC supports authentication credentials for which COSE header parameters are defined, including:
 
 * X.509 v3 certificate {{RFC5280}}
 * C509 certificate {{I-D.ietf-cose-cbor-encoded-cert}}
@@ -455,9 +455,9 @@ ID_CRED_I and ID_CRED_R are used to identify and optionally transport the public
 
 * ID_CRED_I is intended to facilitate for the Responder to retrieve the Initiator's public authentication key.
 
-The identifiers ID_CRED_I and ID_CRED_R are CBOR maps registered in the "COSE Header Parameters" IANA registry. As such, ID_CRED_I and ID_CRED_R typically also provide information about the format of authentication credential, CRED_I and CRED_R, respectively.
+The identifiers ID_CRED_I and ID_CRED_R are registered in the "COSE Header Parameters" IANA registry. As such, ID_CRED_I and ID_CRED_R typically also provide information about the format of authentication credential, CRED_I and CRED_R, respectively.
 
-Public key certificates can be identified in different ways. Header parameters for identifying C509 certificates and X.509 certificates are defined in {{I-D.ietf-cose-cbor-encoded-cert}} and {{I-D.ietf-cose-x509}}, for example:
+Public key certificates can be identified in different ways. COSE header parameters for identifying C509 certificates and X.509 certificates are defined in {{I-D.ietf-cose-cbor-encoded-cert}} and {{I-D.ietf-cose-x509}}, for example:
 
 * by a hash value with the `c5t` or `x5t` parameters;
 
