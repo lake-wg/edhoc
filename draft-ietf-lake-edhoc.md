@@ -3621,7 +3621,7 @@ Note that the requirements in {{proc-outline}} still apply because duplicate mes
 Protocols that do not natively provide full correlation between a series of messages can send the C_I and C_R identifiers along as needed.
 
 The transport over CoAP ({{coap}}) can serve as a blueprint for other server-client protocols:
-The client prepends the C_x which the server selected (or, for message 1, a sentinel CBOR simple value `true` which is not a valid C_x) to any request message it sends.
+The client prepends the C_x which the server selected (or, for message 1, the CBOR simple value `true` which is not a valid C_x) to any request message it sends.
 The server does not send any such indicator, as responses are matched to request by the client-server protocol design.
 
 Protocols that do not provide any correlation at all can prescribe prepending of the peer's chosen C_x to all messages.
