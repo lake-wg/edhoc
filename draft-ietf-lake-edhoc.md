@@ -402,11 +402,12 @@ MAY use different types of authentication keys, e.g., one uses a signature key a
 The authentication credentials, CRED_I and CRED_R, contain the public authentication key of the Initiator and the Responder, respectively.
 The Initiator and the Responder MAY use different types of credentials, e.g., one uses an UCCS and the other uses an X.509 certificate.
 
-The credentials CRED_I and CRED_R are MACed by the Initiator and the Responder, respectively, see {{asym-msg2-proc}} and {{asym-msg3-proc}}, and thus included in the message integrity calculation.
+The credentials CRED_I and CRED_R are MACed by the Initiator and the Responder, respectively, see {{asym-msg3-proc}} and {{asym-msg2-proc}}, and thus included in the message integrity calculation.
+
+To prevent misbinding attacks in systems where an attacker can register public keys without proving knowledge of the private key, SIGMA {{SIGMA}} enforces a MAC to be calculated over the "identity".
+EDHOC follows SIGMA by calculating a MAC over the whole credential, which in case of a X.509 certificate includes the "subject" and "subjectAltName" fields, and in the case of CWT or UCCS includes the "sub" claim, see {{identities}}. While the SIGMA paper only focuses on the identity, the same principle is true for any information such as policies connected to the public key.
 
 When the credential is a certificate, CRED_x is an end-entity certificate (i.e., not the certificate chain). In X.509 and C509 certificates, signature keys typically have key usage "digitalSignature" and Diffie-Hellman public keys typically have key usage "keyAgreement".
-
-To prevent misbinding attacks in systems where an attacker can register public keys without proving knowledge of the private key, SIGMA {{SIGMA}} enforces a MAC to be calculated over the "identity", which in case of a X.509 certificate would be the "subject" and "subjectAltName" fields, see {{identities}}. EDHOC follows SIGMA by calculating a MAC over the whole certificate. While the SIGMA paper only focuses on the identity, the same principle is true for any information such as policies connected to the public key.
 
 When CRED_x is a CWT or UCCS, the claims set includes:
 
