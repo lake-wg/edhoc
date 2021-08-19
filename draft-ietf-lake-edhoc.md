@@ -1666,7 +1666,7 @@ This Appendix is intended to simplify for implementors not familiar with CBOR {{
 
 The Concise Binary Object Representation (CBOR) {{RFC8949}} is a data format designed for small code size and small message size. CBOR builds on the JSON data model but extends it by e.g., encoding binary data directly without base64 conversion. In addition to the binary CBOR encoding, CBOR also has a diagnostic notation that is readable and editable by humans. The Concise Data Definition Language (CDDL) {{RFC8610}} provides a way to express structures for protocol messages and APIs that use CBOR. {{RFC8610}} also extends the diagnostic notation.
 
-CBOR data items are encoded to or decoded from byte strings using a type-length-value encoding scheme, where the three highest order bits of the initial byte contain information about the major type. CBOR supports several different types of data items, in addition to integers (int, uint), simple values, byte strings (bstr), and text strings (tstr), CBOR also supports arrays \[\]  of data items, maps {} of pairs of data items, and sequences {{RFC8742}} of data items. Some examples are given below. (To avoid potential ambiguity we consequently use the term `null` for the simple value 0xf6.)
+CBOR data items are encoded to or decoded from byte strings using a type-length-value encoding scheme, where the three highest order bits of the initial byte contain information about the major type. CBOR supports several different types of data items, in addition to integers (int, uint), simple values, byte strings (bstr), and text strings (tstr), CBOR also supports arrays \[\]  of data items, maps {} of pairs of data items, and sequences {{RFC8742}} of data items. Some examples are given below. 
 
 For a complete specification and more examples, see {{RFC8949}} and {{RFC8610}}. We recommend implementors to get used to CBOR by using the CBOR playground {{CborMe}}.
 
@@ -1678,13 +1678,12 @@ Diagnostic          Encoded              Type
 -24                 0x37                 negative integer
 -25                 0x3818               negative integer 
 true                0xf5                 simple value
-null                0xf6                 simple value
 h'12cd'             0x4212cd             byte string
 '12cd'              0x4431326364         byte string
 "12cd"              0x6431326364         text string
 { 4 : h'cd' }       0xa10441cd           map                 
-<< 1, 2, null >>    0x430102f6           byte string
-[ 1, 2, null ]      0x830102f6           array
+<< 1, 2, true >>    0x430102f5           byte string
+[ 1, 2, true ]      0x830102f5           array
 ( 1, 2, true )      0x0102f5             sequence
 1, 2, true          0x0102f5             sequence
 ------------------------------------------------------------------
