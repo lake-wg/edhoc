@@ -1826,13 +1826,13 @@ Main changes:
    * Added EDHOC MAC length to cipher suite for use with static DH
    * More details on the use of CWT and UCCS
    * Restructured and clarified Section 3.5, Authentication Parameters
-   * Replaced “kid2” with extension of “kid”
+   * Replaced 'kid2' with extension of 'kid'
    * EAD encoding now supports multiple ead types in one message
    * Clarified EAD type
    * Updated message sizes
    * Replaced “perfect forward secrecy” with “forward secrecy”
    * Updated security considerations
-   * Replaced prepended “null” with “true” in the CoAP transport of message_1
+   * Replaced prepended 'null' with 'true' in the CoAP transport of message_1
    * Updated CDDL definitions
    * Expanded on the use of COSE
 
