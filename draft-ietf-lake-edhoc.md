@@ -592,7 +592,7 @@ EDHOC requires certain parameters to be agreed upon between Initiator and Respon
 The purpose of the applicability statement is to describe the intended use of EDHOC to allow for the relevant processing and verifications to be made, including things like:
 
 1. How the endpoint detects that an EDHOC message is received. This includes how EDHOC messages are transported, for example in the payload of a CoAP message with a certain Uri-Path or Content-Format; see {{coap}}.
- * The method of transporting EDHOC messages may also describe data carried along with the messages that are needed for the transport to satisfy the requirements of {{transport}}, e.g., connection identifiers used with certain messages, see {{coap}}.
+   * The method of transporting EDHOC messages may also describe data carried along with the messages that are needed for the transport to satisfy the requirements of {{transport}}, e.g., connection identifiers used with certain messages, see {{coap}}.
 1. Authentication method (METHOD; see {{method}}).
 3. Profile for authentication credentials (CRED_I, CRED_R; see {{auth-cred}}), e.g., profile for certificate or UCCS, including supported authentication key algorithms (subject public key algorithm in X.509 or C509 certificate).
 4. Type used to identify authentication credentials (ID_CRED_I, ID_CRED_R; see {{id_cred}}).
@@ -1757,27 +1757,21 @@ TBD
 
 # Applicability Template {#appl-temp}
 
-This appendix contains an example of an applicability statement, see {{applicability}}.
+This appendix contains a rudimentary example of an applicability statement, see {{applicability}}.
 
-For use of EDHOC in the XX protocol, the following assumptions are made on the parameters:  
+For use of EDHOC in the XX protocol, the following assumptions are made:
 
-* METHOD = 1 (I uses signature key, R uses static DH key.)
-
-* EDHOC requests are expected by the server at /app1-edh, no Content-Format needed.
-
-* CRED_I is an 802.1AR IDevID encoded as a C509 Certificate of type 0 {{I-D.ietf-cose-cbor-encoded-cert}}.
-    * R acquires CRED_I out-of-band, indicated in EAD_1
-
-    * ID_CRED_I = {4: h''} is a 'kid' with value empty byte string
-
-* CRED_R is a COSE_Key of type OKP as specified in {{id_cred}}.
+1. Transfer in CoAP as specified in {{coap}} with requests expected by the CoAP server (= Responder) at /app1-edh, no Content-Format needed.
+2. METHOD = 1 (I uses signature key, R uses static DH key.)
+3. CRED_I is an IEEE 802.1AR IDevID encoded as a C509 certificate of type 0 {{I-D.ietf-cose-cbor-encoded-cert}}.
+    * R acquires CRED_I out-of-band, indicated in EAD_1.
+    * ID_CRED_I = {4: h''} is a 'kid' with value empty byte string.
+4. CRED_R is a UCCS of type OKP as specified in {{auth-cred}}.
    * The CBOR map has parameters 1 (kty), -1 (crv), and -2 (x-coordinate).
-* ID_CRED_R = CRED_R
-
-* No use of message_4: the application sends protected messages from R to I.
-
-* External authorization data is defined and processed as specified in {{I-D.selander-ace-ake-authz}}.
-
+   * ID_CRED_R = CRED_R
+5. External authorization data is defined and processed as specified in {{I-D.selander-ace-ake-authz}}.
+6. EUI-64 used as identity of endpoint.
+7. No use of message_4: the application sends protected messages from R to I.
 
 
 # EDHOC Message Deduplication {#duplication}
