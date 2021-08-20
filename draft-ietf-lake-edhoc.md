@@ -199,7 +199,7 @@ Total               101       243
 
 ## Document Structure
 
-The remainder of the document is organized as follows: {{background}} outlines EDHOC authenticated with digital signatures, {{overview}} describes the protocol elements of EDHOC, including message flow, and formatting of the ephemeral public keys, {{key-der}} describes the key derivation, {{asym}} specifies EDHOC with authentication based on signature keys or static Diffie-Hellman keys, {{error}} specifies the EDHOC error message, and {{transfer}} describes how EDHOC can be transferred in CoAP and used to establish an OSCORE security context.
+The remainder of the document is organized as follows: {{background}} outlines EDHOC authenticated with digital signatures, {{overview}} describes the protocol elements of EDHOC, including formatting of the ephemeral public keys, {{key-der}} specifies the key derivation, {{asym}} specifies message processing for EDHOC authenticated with signature keys or static Diffie-Hellman keys, {{error}} describes the error messages, and {{transfer}} shows how to transfer EDHOC with CoAP and establish an OSCORE security context.
 
 
 ## Terminology and Requirements Language {#term}
@@ -1521,7 +1521,7 @@ Expert reviewers should take into consideration the following points:
 
 # Use with OSCORE and Transfer over CoAP {#transfer}
 
-This sppendix describes how to select EDHOC connection identifiers and derive an OSCORE security context when OSCORE is used with EDHOC, and how to transfer EDHOC messages over CoAP.
+This appendix describes how to select EDHOC connection identifiers and derive an OSCORE security context when OSCORE is used with EDHOC, and how to transfer EDHOC messages over CoAP.
 
 ## Selecting EDHOC Connection Identifier {#edhoc-to-oscore}
 
