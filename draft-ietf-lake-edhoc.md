@@ -558,7 +558,7 @@ The following two cipher suites are for high security application such as govern
 
 The different methods use the same cipher suites, but some algorithms are not used in some methods. The EDHOC signature algorithm is not used in methods without signature authentication.
 
-The Initiator needs to have a list of cipher suites it supports in order of preference. The Responder needs to have a list of cipher suites it supports. SUITES_I is a CBOR array containing cipher suites that the Initiator supports. SUITES_I is formatted and processed as detailed in {{asym-msg1-form}} to secure the cipher suite negotiation. Examples of cipher suite negotiation are given in {{ex-neg}}.
+The Initiator needs to have a list of cipher suites it supports in order of preference. The Responder needs to have a list of cipher suites it supports. SUITES_I is a CBOR array containing cipher suites supported by the Initiator, formatted and processed as detailed in {{asym-msg1-form}} to secure the cipher suite negotiation. Examples of cipher suite negotiation are given in {{ex-neg}}.
 
 
 ## Ephemeral Public Keys {#cose_key}
@@ -600,7 +600,7 @@ The purpose of the applicability statement is to describe the intended use of ED
 6. Identifier used as identity of endpoint; see {{identities}}.
 7. If message_4 shall be sent/expected, and if not, how to ensure a protected application message is sent from the Responder to the Initiator; see {{m4}}.
 
-The applicability statement may also contain information about supported cipher suites. The procedure for selecting and verifying cipher suite is still performed as specified by the protocol, but it may become simplified by this knowledge. 
+The applicability statement may also contain information about supported cipher suites. The procedure for selecting and verifying cipher suite is still performed as described in {{asym-msg1-form}} and {{wrong-selected}}, but it may become simplified by this knowledge.
 
 An example of an applicability statement is shown in {{appl-temp}}. 
 
@@ -794,7 +794,7 @@ message_1 SHALL be a CBOR Sequence (see {{CBOR}}) as defined below
 ~~~~~~~~~~~ CDDL
 message_1 = (
   METHOD : int,
-  SUITES_I : [ selected : suite, supported : 2* suite ] / suite,
+  SUITES_I : [ 2* suite ] / suite,
   G_X : bstr,
   C_I : bstr / int,  
   ? EAD_1 : ead,
@@ -806,7 +806,7 @@ suite = int
 where:
 
 * METHOD = 0, 1, 2, or 3 (see {{fig-method-types}}).
-* SUITES_I - cipher suites which the Initiator supports in order of (decreasing) preference. The list of supported cipher suites can be truncated at the end, as is detailed in the processing steps below and {{wrong-selected}}. One of the supported cipher suites is selected. The selected suite is the first suite in the SUITES_I CBOR array. If a single supported cipher suite is conveyed, then that cipher suite is selected and SUITES_I is encoded as an int instead of an array.
+* SUITES_I - array of cipher suites which the Initiator supports in order of preference, starting with the most preferred and ending with the cipher suite selected for this session. If the most preferred cipher suite is selected then SUITES_I is encoded as an int containing that cipher suite. The processing steps are detailed below and in {{wrong-selected}}.
 * G_X - the ephemeral public key of the Initiator
 * C_I - variable length connection identifier
 * EAD_1 - unprotected external authorization data, see {{AD}}.
@@ -815,9 +815,9 @@ where:
 
 The Initiator SHALL compose message_1 as follows:
 
-* The supported cipher suites and the order of preference MUST NOT be changed based on previous error messages. However, the list SUITES_I sent to the Responder MAY be truncated such that cipher suites which are the least preferred are omitted. The amount of truncation MAY be changed between sessions, e.g., based on previous error messages (see next bullet), but all cipher suites which are more preferred than the least preferred cipher suite in the list MUST be included in the list.
+* The supported cipher suites and the order of preference MUST NOT be changed based on previous error messages. SUITES_I contains the ordered list of supported cipher suites, truncated after the cipher suite selected for this session. The selected cipher suite MAY be changed between sessions, e.g., based on previous error messages (see next bullet), but all cipher suites which are more preferred than the selected cipher suite in the list MUST be included in SUITES_I.
 
-* The Initiator MUST select its most preferred cipher suite, conditioned on what it can assume to be supported by the Responder. If the Initiator previously received from the Responder an error message with error code 2 (see {{wrong-selected}}) indicating cipher suites supported by the Responder which also are supported by the Initiator, then the Initiator SHOULD select the most preferred cipher suite of those (note that error messages are not authenticated and may be forged).
+* The Initiator MUST select its most preferred cipher suite, conditioned on what it can assume to be supported by the Responder. If the Initiator previously received from the Responder an error message with error code 2 (see {{wrong-selected}}) indicating cipher suites supported by the Responder, then the Initiator SHOULD select the most preferred supported cipher suite among those (note that error messages are not authenticated and may be forged).
 
 * Generate an ephemeral ECDH key pair using the curve in the selected cipher suite and format it as a COSE_Key. Let G_X be the 'x' parameter of the COSE_Key.
    
@@ -1110,20 +1110,20 @@ Error code 1 is used for errors that do not have a specific error code defined. 
 Error code 2 MUST only be used in a response to message_1 in case the cipher suite selected by the Initiator is not supported by the Responder, or if the Responder supports a cipher suite more preferred by the Initiator than the selected cipher suite, see {{resp-proc-msg1}}. ERR_INFO is of type SUITES_R:
 
 ~~~~~~~~~~ CDDL
-SUITES_R : [ supported : 2* suite ] / suite
+SUITES_R : [ 2* suite ] / suite
 ~~~~~~~~~~~
 
-If the Responder does not support the selected cipher suite, then SUITES_R MUST include one or more supported cipher suites. If the Responder does not support the selected cipher suite, but supports another cipher suite in SUITES_I, then SUITES_R MUST include the first supported cipher suite in SUITES_I.
+If the Responder does not support the selected cipher suite, then SUITES_R MUST include one or more supported cipher suites. If the Responder does not support the selected cipher suite, but supports another cipher suite in SUITES_I, then SUITES_R MUST include the first supported cipher suite in SUITES_I. If the Responder does not support any cipher suite in SUITES_I, then it SHOULD include all its supported cipher suites in SUITES_R in any order.
 
 ### Cipher Suite Negotiation
 
-After receiving SUITES_R, the Initiator can determine which cipher suite to select for the next EDHOC run with the Responder.
+After receiving SUITES_R, the Initiator can determine which cipher suite to select (if any) for the next EDHOC run with the Responder.
 
-If the Initiator intends to contact the Responder in the future, the Initiator SHOULD remember which selected cipher suite to use until the next message_1 has been sent, otherwise the Initiator and Responder will likely run into an infinite loop. After a successful run of EDHOC, the Initiator MAY remember the selected cipher suite to use in future EDHOC runs. Note that if the Initiator or Responder is updated with new cipher suite policies, any cached information may be outdated.
+If the Initiator intends to contact the Responder in the future, the Initiator SHOULD remember which selected cipher suite to use until the next message_1 has been sent, otherwise the Initiator and Responder will likely run into an infinite loop where the Initiator selects its most preferred and the Responder sends an error with supported cipher suites. After a successful run of EDHOC, the Initiator MAY remember the selected cipher suite to use in future EDHOC sessions. Note that if the Initiator or Responder is updated with new cipher suite policies, any cached information may be outdated.
 
 ### Examples {#ex-neg}
 
-Assume that the Initiator supports the five cipher suites 5, 6, 7, 8, and 9 in decreasing order of preference. Figures {{fig-error1}}{: format="counter"} and {{fig-error2}}{: format="counter"} show examples of how the Initiator can truncate SUITES_I and how SUITES_R is used by Responders to give the Initiator information about the cipher suites that the Responder supports.
+Assume that the Initiator supports the five cipher suites 5, 6, 7, 8, and 9 in decreasing order of preference. Figures {{fig-error1}}{: format="counter"} and {{fig-error2}}{: format="counter"} show examples of how the Initiator can format SUITES_I and how SUITES_R is used by Responders to give the Initiator information about the cipher suites that the Responder supports.
 
 In the first example ({{fig-error1}}), the Responder supports cipher suite 6 but not the initially selected cipher suite 5.
 
@@ -1137,7 +1137,7 @@ Initiator                                                   Responder
 |<------------------------------------------------------------------+
 |                               error                               |
 |                                                                   |
-|           METHOD, SUITES_I = [6, 5, 6], G_X, C_I, EAD_1           |
+|             METHOD, SUITES_I = [5, 6], G_X, C_I, EAD_1            |
 +------------------------------------------------------------------>|
 |                             message_1                             |
 ~~~~~~~~~~~
@@ -1148,7 +1148,7 @@ In the second example ({{fig-error2}}), the Responder supports cipher suites 8 a
 
 ~~~~~~~~~~~
 Initiator                                                   Responder
-|          METHOD, SUITES_I = [6, 5, 6], G_X, C_I, EAD_1            |
+|            METHOD, SUITES_I = [5, 6], G_X, C_I, EAD_1             |
 +------------------------------------------------------------------>|
 |                             message_1                             |
 |                                                                   |
@@ -1156,7 +1156,7 @@ Initiator                                                   Responder
 |<------------------------------------------------------------------+
 |                               error                               |
 |                                                                   |
-|         METHOD, SUITES_I = [8, 5, 6, 7, 8], G_X, C_I, EAD_1       |
+|           METHOD, SUITES_I = [5, 6, 7, 8], G_X, C_I, EAD_1        |
 +------------------------------------------------------------------>|
 |                             message_1                             |
 ~~~~~~~~~~~
@@ -1706,7 +1706,7 @@ ead = 1* (
 
 message_1 = (
   METHOD : int,
-  SUITES_I : [ selected : suite, supported : 2* suite ] / suite,
+  SUITES_I : [ 2* suite ] / suite,
   G_X : bstr,
   C_I : bstr / int,
   ? EAD_1 : ead,
@@ -1725,7 +1725,7 @@ message_4 = (
   CIPHERTEXT_4 : bstr,
 )
 
-SUITES_R : [ supported : 2* suite ] / suite
+SUITES_R : [ 2* suite ] / suite
 
 error = (
   ERR_CODE : int,
@@ -1812,6 +1812,7 @@ may need ... no, they don't need anything special: after an error, the next thin
 RFC Editor: Please remove this appendix.
 
 Main changes:
+* SUITES_I simplified to only contain the selected and more preferred suites
 
 * From -08 to -09:
    * G_Y and CIPHERTEXT_2 are now included in one CBOR bstr
