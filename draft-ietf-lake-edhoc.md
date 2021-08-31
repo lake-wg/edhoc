@@ -865,7 +865,7 @@ The Responder SHALL compose message_2 as follows:
 
 * Compute the transcript hash TH_2 = H( H(message_1), G_Y, C_R ) where H() is the hash function in the selected cipher suite. The transcript hash TH_2 is a CBOR encoded bstr and the input to the hash function is a CBOR Sequence. Note that H(message_1) can be computed and cached already in the processing of message_1.
 
-* Compute MAC_2 = EDHOC-KDF( PRK_3e2m, TH_2, "MAC_2", ( ID_CRED_R, CRED_R, ? EAD_2 ), mac_length ). If the Responder authenticates with a static Diffie-Hellman key (method equals 1 or 3), then mac_length is the EDHOC MAC length given by the cipher suite. If the Responder authenticates with a signature key (method equals 0 or 2), then mac_length is equal to the output size of the EDHOC hash algorithm given by the cipher suite.
+* Compute MAC_2 = EDHOC-KDF( PRK_3e2m, TH_2, "MAC_2", ( ID_CRED_R, CRED_R, ? EAD_2 ), mac_length ). If the Responder authenticates with a static Diffie-Hellman key (method equals 1 or 3), then mac_length is the EDHOC MAC length given by the selected cipher suite. If the Responder authenticates with a signature key (method equals 0 or 2), then mac_length is equal to the output size of the EDHOC hash algorithm given by the selected cipher suite.
     * ID_CRED_R - identifier to facilitate retrieval of CRED_R, see {{id_cred}}
     * CRED_R - CBOR item containing the credential of the Responder, see {{id_cred}} 
     * EAD_2 = unprotected external authorization data, see {{AD}}
@@ -934,7 +934,7 @@ The Initiator SHALL compose message_3 as follows:
 
 * Compute the transcript hash TH_3 = H(TH_2, CIPHERTEXT_2) where H() is the hash function in the selected cipher suite. The transcript hash TH_3 is a CBOR encoded bstr and the input to the hash function is a CBOR Sequence.  Note that H(TH_2, CIPHERTEXT_2) can be computed and cached already in the processing of message_2.
 
-* Compute MAC_3 = EDHOC-KDF( PRK_4x3m, TH_3, "MAC_3", ( ID_CRED_I, CRED_I, ? EAD_3 ), mac_length ). If the Initiator authenticates with a static Diffie-Hellman key (method equals 2 or 3), then mac_length is the EDHOC MAC length given by the cipher suite.  If the Initiator authenticates with a signature key (method equals 0 or 1), then mac_length is equal to the output size of the EDHOC hash algorithm given by the cipher suite.
+* Compute MAC_3 = EDHOC-KDF( PRK_4x3m, TH_3, "MAC_3", ( ID_CRED_I, CRED_I, ? EAD_3 ), mac_length ). If the Initiator authenticates with a static Diffie-Hellman key (method equals 2 or 3), then mac_length is the EDHOC MAC length given by the selected cipher suite.  If the Initiator authenticates with a signature key (method equals 0 or 1), then mac_length is equal to the output size of the EDHOC hash algorithm given by the selected cipher suite.
     * ID_CRED_I - identifier to facilitate retrieval of CRED_I, see {{id_cred}}
     * CRED_I - CBOR item containing the credential of the Initiator, see {{id_cred}}
     * EAD_3 = protected external authorization data, see {{AD}}
@@ -1117,9 +1117,9 @@ If the Responder does not support the selected cipher suite, then SUITES_R MUST 
 
 ### Cipher Suite Negotiation
 
-After receiving SUITES_R, the Initiator can determine which cipher suite to select for the next EDHOC run with the Responder.
+After receiving SUITES_R, the Initiator can determine which cipher suite to select for the next EDHOC session with the Responder.
 
-If the Initiator intends to contact the Responder in the future, the Initiator SHOULD remember which selected cipher suite to use until the next message_1 has been sent, otherwise the Initiator and Responder will likely run into an infinite loop. After a successful run of EDHOC, the Initiator MAY remember the selected cipher suite to use in future EDHOC runs. Note that if the Initiator or Responder is updated with new cipher suite policies, any cached information may be outdated.
+If the Initiator intends to contact the Responder in the future, the Initiator SHOULD remember which selected cipher suite to use until the next message_1 has been sent, otherwise the Initiator and Responder will likely run into an infinite loop. After a successful run of EDHOC, the Initiator MAY remember the selected cipher suite to use in future EDHOC sessions. Note that if the Initiator or Responder is updated with new cipher suite policies, any cached information may be outdated.
 
 ### Examples {#ex-neg}
 
@@ -1191,7 +1191,7 @@ EDHOC provides a minimum of 64-bit security against online brute force attacks a
 
 After sending message_3, the Initiator is assured that no other party than the Responder can compute the key PRK_4x3m (implicit key authentication). The Initiator does however not know that the Responder has actually computed the key PRK_4x3m. While the Initiator can securely send protected application data, the Initiator SHOULD NOT permanently store the keying material PRK_4x3m and TH_4 until the Initiator is assured that the Responder has actually computed the key PRK_4x3m (explicit key confirmation). Explicit key confirmation is e.g., assured when the Initiator has verified an OSCORE message or message_4 from the Responder. After verifying message_3, the Responder is assured that the Initiator has calculated the key PRK_4x3m (explicit key confirmation) and that no other party than the Responder can compute the key. The Responder can securely send protected application data and store the keying material PRK_4x3m and TH_4.
 
-Key compromise impersonation (KCI): In EDHOC authenticated with signature keys, EDHOC provides KCI protection against an attacker having access to the long-term key or the ephemeral secret key. With static Diffie-Hellman key authentication, KCI protection would be provided against an attacker having access to the long-term Diffie-Hellman key, but not to an attacker having access to the ephemeral secret key. Note that the term KCI has typically been used for compromise of long-term keys, and that an attacker with access to the ephemeral secret key can only attack that specific protocol run.
+Key compromise impersonation (KCI): In EDHOC authenticated with signature keys, EDHOC provides KCI protection against an attacker having access to the long-term key or the ephemeral secret key. With static Diffie-Hellman key authentication, KCI protection would be provided against an attacker having access to the long-term Diffie-Hellman key, but not to an attacker having access to the ephemeral secret key. Note that the term KCI has typically been used for compromise of long-term keys, and that an attacker with access to the ephemeral secret key can only attack that specific session.
 
 Repudiation: In EDHOC authenticated with signature keys, the Initiator could theoretically prove that the Responder performed a run of the protocol by presenting the private ephemeral key, and vice versa. Note that storing the private ephemeral keys violates the protocol requirements. With static Diffie-Hellman key authentication, both parties can always deny having participated in the protocol.
 
@@ -1560,7 +1560,7 @@ Master Salt   = EDHOC-Exporter( "OSCORE Master Salt", , salt_length )
 
 * The AEAD Algorithm is the application AEAD algorithm of the selected cipher suite for the EDHOC session.
 
-* The HKDF Algorithm is the one based on the application hash algorithm of the selected cipher suite for the EDHOC session. For example, if SHA-256 is the application hash algorithm of the selected ciphersuite, HKDF SHA-256 is used as HKDF Algorithm in the OSCORE Security Context.
+* The HKDF Algorithm is the one based on the application hash algorithm of the selected cipher suite for the EDHOC session. For example, if SHA-256 is the application hash algorithm of the selected cipher suite, HKDF SHA-256 is used as HKDF Algorithm in the OSCORE Security Context.
 
 * In case the Client is Initiator and the Server is Responder, the Client's OSCORE Sender ID and the Server's OSCORE Sender ID are determined from the EDHOC connection identifiers C_R and C_I for the EDHOC session, respectively, by applying the conversion in {{edhoc-to-oscore}}. The reverse applies in case the Client is the Responder and the Server is the Initiator.
 
