@@ -1390,6 +1390,13 @@ IANA has created a new registry entitled "EDHOC Method Type" under the new headi
 
 IANA has created a new registry entitled "EDHOC Error Codes" under the new heading "EDHOC". The registration procedure is "Specification Required". The columns of the registry are ERR_CODE, ERR_INFO Type and Description, where ERR_CODE is an integer, ERR_INFO is a CDDL defined type, and Description is a text string. The initial contents of the registry are shown in {{fig-error-codes}}.
 
+## EDHOC External Authorization Data {#iana-ead}
+
+IANA has created a new registry entitled "EDHOC External Authorization Data" 
+under the new heading "EDHOC". The registration procedure is "Expert Review". 
+The columns of the registry are Value, Description, and Reference, where Value is 
+an integer and the other columns are text strings. 
+
 ## COSE Header Parameters Registry {#cwt-header-param}
 
 This document registers the following entries in the "COSE Header Parameters" registry under the "CBOR Object Signing and Encryption (COSE)" heading. The value of the 'cwt' header parameter is a CWT {{RFC8392}} or an Unprotected CWT Claims Set, see {{term}}.
@@ -1497,13 +1504,6 @@ IANA has added the media type "application/edhoc" to the CoAP Content-Formats re
 -  ID: TBD42
 
 -  Reference: \[\[this document\]\]
-
-## EDHOC External Authorization Data {#iana-ead}
-
-IANA has created a new registry entitled "EDHOC External Authorization Data" 
-under the new heading "EDHOC". The registration procedure is "Expert Review". 
-The columns of the registry are Value, Description, and Reference, where Value is 
-an integer and the other columns are text strings. 
 
 
 ## Expert Review Instructions
