@@ -686,16 +686,16 @@ The keys, IVs and MACs used in EDHOC are derived from the PRKs using Expand, and
        = Expand( PRK, info, length )
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-where info is the CBOR encoding of
+where info is encoded as the CBOR sequence
 
 ~~~~~~~~~~~ CDDL
-info = [
+info = (
    edhoc_aead_id : int / tstr,
    transcript_hash : bstr,
    label : tstr,
-   * context : any,
+   context : bstr,
    length : uint,
-]
+)
 ~~~~~~~~~~~
 
 where
@@ -706,7 +706,7 @@ where
 
   + label is a tstr set to the name of the derived key, IV or MAC; i.e., "KEYSTREAM_2", "MAC_2", "K_3ae", "IV_3ae", or "MAC_3".
 
-  + context is a CBOR sequence, i.e., zero or more encoded CBOR data items
+  + context is a bstr
 
   + length is the length of output keying material (OKM) in bytes
 
@@ -737,7 +737,7 @@ Application keys and other application specific data can be derived using the ED
      = EDHOC-KDF(PRK_4x3m, TH_4, label, context, length) 
 ~~~~~~~~~~~
 
-where label is a registered tstr from the EDHOC Exporter Label registry ({{exporter-label}}), context is a CBOR sequence defined by the application, and length is a uint defined by the application. The (label, context) pair must be unique, i.e., a (label, context) MUST NOT be used for two different purposes. However an application can re-derive the same key several times as long as it is done in a secure way. For example, in most encryption algorithms the same (key, nonce) pair must not be reused. The context can for example be the empty (zero-length) sequence or a single CBOR byte string.
+where label is a registered tstr from the EDHOC Exporter Label registry ({{exporter-label}}), context is a bstr defined by the application, and length is a uint defined by the application. The (label, context) pair must be unique, i.e., a (label, context) MUST NOT be used for two different purposes. However an application can re-derive the same key several times as long as it is done in a secure way. For example, in most encryption algorithms the same (key, nonce) pair must not be reused. The context can for example be the empty (zero-length) sequence or a single CBOR byte string.
 
 The transcript hash TH_4 is a CBOR encoded bstr and the input to the hash function is a CBOR Sequence.
 
@@ -867,7 +867,7 @@ The Responder SHALL compose message_2 as follows:
 
 * Compute the transcript hash TH_2 = H( H(message_1), G_Y, C_R ) where H() is the hash function in the selected cipher suite. The transcript hash TH_2 is a CBOR encoded bstr and the input to the hash function is a CBOR Sequence. Note that H(message_1) can be computed and cached already in the processing of message_1.
 
-* Compute MAC_2 = EDHOC-KDF( PRK_3e2m, TH_2, "MAC_2", ( ID_CRED_R, CRED_R, ? EAD_2 ), mac_length ). If the Responder authenticates with a static Diffie-Hellman key (method equals 1 or 3), then mac_length is the EDHOC MAC length given by the cipher suite. If the Responder authenticates with a signature key (method equals 0 or 2), then mac_length is equal to the output size of the EDHOC hash algorithm given by the cipher suite.
+* Compute MAC_2 = EDHOC-KDF( PRK_3e2m, TH_2, "MAC_2", << ID_CRED_R, CRED_R, ? EAD_2 >>, mac_length_2 ). If the Responder authenticates with a static Diffie-Hellman key (method equals 1 or 3), then mac_length_2 is the EDHOC MAC length given by the selected cipher suite. If the Responder authenticates with a signature key (method equals 0 or 2), then mac_length_2 is equal to the output size of the EDHOC hash algorithm given by the selected cipher suite.
     * ID_CRED_R - identifier to facilitate retrieval of CRED_R, see {{id_cred}}
     * CRED_R - CBOR item containing the credential of the Responder, see {{id_cred}} 
     * EAD_2 = unprotected external authorization data, see {{AD}}
@@ -936,7 +936,7 @@ The Initiator SHALL compose message_3 as follows:
 
 * Compute the transcript hash TH_3 = H(TH_2, CIPHERTEXT_2) where H() is the hash function in the selected cipher suite. The transcript hash TH_3 is a CBOR encoded bstr and the input to the hash function is a CBOR Sequence.  Note that H(TH_2, CIPHERTEXT_2) can be computed and cached already in the processing of message_2.
 
-* Compute MAC_3 = EDHOC-KDF( PRK_4x3m, TH_3, "MAC_3", ( ID_CRED_I, CRED_I, ? EAD_3 ), mac_length ). If the Initiator authenticates with a static Diffie-Hellman key (method equals 2 or 3), then mac_length is the EDHOC MAC length given by the cipher suite.  If the Initiator authenticates with a signature key (method equals 0 or 1), then mac_length is equal to the output size of the EDHOC hash algorithm given by the cipher suite.
+* Compute MAC_3 = EDHOC-KDF( PRK_4x3m, TH_3, "MAC_3", << ID_CRED_I, CRED_I, ? EAD_3 >>, mac_length_3 ). If the Initiator authenticates with a static Diffie-Hellman key (method equals 2 or 3), then mac_length_3 is the EDHOC MAC length given by the selected cipher suite.  If the Initiator authenticates with a signature key (method equals 0 or 1), then mac_length_3 is equal to the output size of the EDHOC hash algorithm given by the selected cipher suite.
     * ID_CRED_I - identifier to facilitate retrieval of CRED_I, see {{id_cred}}
     * CRED_I - CBOR item containing the credential of the Initiator, see {{id_cred}}
     * EAD_3 = protected external authorization data, see {{AD}}
@@ -967,8 +967,8 @@ The Initiator SHALL compose message_3 as follows:
 
    COSE constructs the input to the AEAD {{RFC5116}} as follows: 
 
-   * Key K = EDHOC-KDF( PRK_3e2m, TH_3, "K_3ae", length ) 
-   * Nonce N = EDHOC-KDF( PRK_3e2m, TH_3, "IV_3ae", length )
+   * Key K = EDHOC-KDF( PRK_3e2m, TH_3, "K_3ae", h'', length ) 
+   * Nonce N = EDHOC-KDF( PRK_3e2m, TH_3, "IV_3ae", h'', length )
    * Plaintext P = ( ID_CRED_I / bstr / int, Signature_or_MAC_3, ? EAD_3 )
    * Associated data A = \[ "Encrypt0", h'', TH_3 \]
 
@@ -1036,8 +1036,8 @@ The Responder SHALL compose message_4 as follows:
 
    where EAD_4 is protected external authorization data, see {{AD}}. COSE constructs the input to the AEAD {{RFC5116}} as follows:
 
-   * Key K = EDHOC-Exporter( "EDHOC_message_4_Key", , length )
-   * Nonce N = EDHOC-Exporter( "EDHOC_message_4_Nonce", , length )
+   * Key K = EDHOC-Exporter( "EDHOC_message_4_Key", h'', length )
+   * Nonce N = EDHOC-Exporter( "EDHOC_message_4_Nonce", h'', length )
    * Plaintext P = ( ? EAD_4 )
    * Associated data A = \[ "Encrypt0", h'', TH_4 \]
 
@@ -1187,7 +1187,7 @@ EDHOC provides a minimum of 64-bit security against online brute force attacks a
 
 After sending message_3, the Initiator is assured that no other party than the Responder can compute the key PRK_4x3m (implicit key authentication). The Initiator does however not know that the Responder has actually computed the key PRK_4x3m. While the Initiator can securely send protected application data, the Initiator SHOULD NOT permanently store the keying material PRK_4x3m and TH_4 until the Initiator is assured that the Responder has actually computed the key PRK_4x3m (explicit key confirmation). Explicit key confirmation is e.g., assured when the Initiator has verified an OSCORE message or message_4 from the Responder. After verifying message_3, the Responder is assured that the Initiator has calculated the key PRK_4x3m (explicit key confirmation) and that no other party than the Responder can compute the key. The Responder can securely send protected application data and store the keying material PRK_4x3m and TH_4.
 
-Key compromise impersonation (KCI): In EDHOC authenticated with signature keys, EDHOC provides KCI protection against an attacker having access to the long-term key or the ephemeral secret key. With static Diffie-Hellman key authentication, KCI protection would be provided against an attacker having access to the long-term Diffie-Hellman key, but not to an attacker having access to the ephemeral secret key. Note that the term KCI has typically been used for compromise of long-term keys, and that an attacker with access to the ephemeral secret key can only attack that specific protocol run.
+Key compromise impersonation (KCI): In EDHOC authenticated with signature keys, EDHOC provides KCI protection against an attacker having access to the long-term key or the ephemeral secret key. With static Diffie-Hellman key authentication, KCI protection would be provided against an attacker having access to the long-term Diffie-Hellman key, but not to an attacker having access to the ephemeral secret key. Note that the term KCI has typically been used for compromise of long-term keys, and that an attacker with access to the ephemeral secret key can only attack that specific session.
 
 Repudiation: In EDHOC authenticated with signature keys, the Initiator could theoretically prove that the Responder performed a run of the protocol by presenting the private ephemeral key, and vice versa. Note that storing the private ephemeral keys violates the protocol requirements. With static Diffie-Hellman key authentication, both parties can always deny having participated in the protocol.
 
@@ -1386,6 +1386,13 @@ IANA has created a new registry entitled "EDHOC Method Type" under the new headi
 
 IANA has created a new registry entitled "EDHOC Error Codes" under the new heading "EDHOC". The registration procedure is "Specification Required". The columns of the registry are ERR_CODE, ERR_INFO Type and Description, where ERR_CODE is an integer, ERR_INFO is a CDDL defined type, and Description is a text string. The initial contents of the registry are shown in {{fig-error-codes}}.
 
+## EDHOC External Authorization Data {#iana-ead}
+
+IANA has created a new registry entitled "EDHOC External Authorization Data" 
+under the new heading "EDHOC". The registration procedure is "Expert Review". 
+The columns of the registry are Value, Description, and Reference, where Value is 
+an integer and the other columns are text strings. 
+
 ## COSE Header Parameters Registry {#cwt-header-param}
 
 This document registers the following entries in the "COSE Header Parameters" registry under the "CBOR Object Signing and Encryption (COSE)" heading. The value of the 'cwt' header parameter is a CWT {{RFC8392}} or an Unprotected CWT Claims Set, see {{term}}.
@@ -1494,13 +1501,6 @@ IANA has added the media type "application/edhoc" to the CoAP Content-Formats re
 
 -  Reference: \[\[this document\]\]
 
-## EDHOC External Authorization Data {#iana-ead}
-
-IANA has created a new registry entitled "EDHOC External Authorization Data" 
-under the new heading "EDHOC". The registration procedure is "Expert Review". 
-The columns of the registry are Value, Description, and Reference, where Value is 
-an integer and the other columns are text strings. 
-
 
 ## Expert Review Instructions
 
@@ -1550,13 +1550,13 @@ The context parameter is h'' (0x40), the empty CBOR byte string.
 By default, key_length is the key length (in bytes) of the application AEAD Algorithm of the selected cipher suite for the EDHOC session. Also by default, salt_length has value 8. The Initiator and Responder MAY agree out-of-band on a longer key_length than the default and on a different salt_length.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
-Master Secret = EDHOC-Exporter( "OSCORE Master Secret", , key_length )
-Master Salt   = EDHOC-Exporter( "OSCORE Master Salt", , salt_length )
+Master Secret = EDHOC-Exporter( "OSCORE Master Secret", h'', key_length )
+Master Salt   = EDHOC-Exporter( "OSCORE Master Salt", h'', salt_length )
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 * The AEAD Algorithm is the application AEAD algorithm of the selected cipher suite for the EDHOC session.
 
-* The HKDF Algorithm is the one based on the application hash algorithm of the selected cipher suite for the EDHOC session. For example, if SHA-256 is the application hash algorithm of the selected ciphersuite, HKDF SHA-256 is used as HKDF Algorithm in the OSCORE Security Context.
+* The HKDF Algorithm is the one based on the application hash algorithm of the selected cipher suite for the EDHOC session. For example, if SHA-256 is the application hash algorithm of the selected cipher suite, HKDF SHA-256 is used as HKDF Algorithm in the OSCORE Security Context.
 
 * In case the Client is Initiator and the Server is Responder, the Client's OSCORE Sender ID and the Server's OSCORE Sender ID are determined from the EDHOC connection identifiers C_R and C_I for the EDHOC session, respectively, by applying the conversion in {{edhoc-to-oscore}}. The reverse applies in case the Client is the Responder and the Server is the Initiator.
 
@@ -1728,13 +1728,13 @@ error = (
   ERR_INFO : any,
 )
 
-info = [
+info = (
    edhoc_aead_id : int / tstr,
    transcript_hash : bstr,
    label : tstr,
-   * context : any,
+   context : bstr,
    length : uint,
-]
+)
 ~~~~~~~~~~~
 
 ## COSE {#COSE}
