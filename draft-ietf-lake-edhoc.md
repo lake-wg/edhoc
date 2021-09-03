@@ -474,11 +474,11 @@ Public key certificates can be identified in different ways. COSE header paramet
 
 ID_CRED_x MAY contain the actual credential used for authentication, CRED_x. For example, a certificate chain can be transported in ID_CRED_x with COSE header parameter c5c or x5chain, defined in {{I-D.ietf-cose-cbor-encoded-cert}} and {{I-D.ietf-cose-x509}}. 
 
-Credentials of type CWT and UCCS are transported with the COSE header parameter registered in {{cwt-header-param}}:
+Credentials of type CWT and UCCS are transported with the COSE header parameters registered in {{cwt-header-param}}:
 
 * ID_CRED_x = { TBD1 : CWT }, for x = I or R,
 
-* ID_CRED_x = { TBD1 : UCCS }, for x = I or R.
+* ID_CRED_x = { TBD2 : UCCS }, for x = I or R.
 
 It is RECOMMENDED that ID_CRED_x uniquely identify the public authentication key as the recipient may otherwise have to try several keys. ID_CRED_I and ID_CRED_R are transported in the 'ciphertext', see {{asym-msg3-proc}} and {{asym-msg2-proc}}.
 
@@ -1395,15 +1395,18 @@ an integer and the other columns are text strings.
 
 ## COSE Header Parameters Registry {#cwt-header-param}
 
-This document registers the following entries in the "COSE Header Parameters" registry under the "CBOR Object Signing and Encryption (COSE)" heading. The value of the 'cwt' header parameter is a CWT {{RFC8392}} or an Unprotected CWT Claims Set, see {{term}}.
+This document registers the following entries in the "COSE Header Parameters" registry under the "CBOR Object Signing and Encryption (COSE)" heading. The value of the 'cwt' header parameter is a COSE Web Token (CWT) {{RFC8392}} and the value of the 'uccs' header parameter is an Unprotected CWT Claims Set (UCCS), see {{term}}.
 
 ~~~~~~~~~~~
-+-----------+-------+----------------+------------------------------+
-| Name      | Label | Value Type     | Description                  |
-+===========+=======+================+==============================+
-| cwt       |  TBD1 | COSE_Messages  | A CBOR Web Token (CWT) or an |
-|           |       | / map          | Unprotected CWT Claims Set   |
-+-----------+-------+----------------+------------------------------+
++------+-------+------------+----------------+-------------------+
++-----------+-------+----------------+---------------------------+
+| Name      | Label | Value Type     | Description               |
++===========+=======+================+===========================+
+| cwt       |  TBD1 | COSE_Messages  | A CBOR Web Token (CWT)    |
++-----------+-------+----------------+---------------------------+
+| uccs      |  TBD2 | map            | An Unprotected CWT Claims |
+|           |       |                | Set (UCCS)                |
++-----------+-------+----------------+----------------- ---------+
 ~~~~~~~~~~~
 
 ## COSE Header Parameters Registry {#kid-header-param}
