@@ -261,7 +261,7 @@ In order to create a "full-fledged" protocol some additional protocol elements a
 
 * Verification of a common preferred cipher suite:
 
-   * The Initiator lists supported cipher suites in order of preference
+   * The Initiator lists supported cipher suites in order of preference, ending with the selected cipher suite for the session.
    
    * The Responder verifies that the selected cipher suite is the first supported cipher suite (or else rejects and states supported cipher suites). 
 
@@ -808,7 +808,7 @@ suites = [ 2* suite ] / suite
 where:
 
 * METHOD = 0, 1, 2, or 3 (see {{fig-method-types}}).
-* SUITES_I - array of cipher suites which the Initiator supports in order of preference, starting with the most preferred and ending with the cipher suite selected for this session. If the most preferred cipher suite is selected then SUITES_I is encoded as an int containing that cipher suite. The processing steps are detailed below and in {{wrong-selected}}.
+* SUITES_I - array of cipher suites which the Initiator supports in order of preference, starting with the most preferred and ending with the cipher suite selected for this session. If the most preferred cipher suite is selected then SUITES_I is encoded as that cipher suite, i.e. as an int. The processing steps are detailed below and in {{wrong-selected}}.
 * G_X - the ephemeral public key of the Initiator
 * C_I - variable length connection identifier
 * EAD_1 - unprotected external authorization data, see {{AD}}.
@@ -1109,7 +1109,7 @@ Error code 1 is used for errors that do not have a specific error code defined. 
 
 ## Wrong Selected Cipher Suite {#wrong-selected}
 
-Error code 2 MUST only be used in a response to message_1 in case the cipher suite selected by the Initiator is not supported by the Responder, or if the Responder supports a cipher suite more preferred by the Initiator than the selected cipher suite, see {{resp-proc-msg1}}. ERR_INFO is of type suites containing a list of cipher suites that the Responder supports. We call the list of cipher suites SUITES_R. If the Responder does not support the selected cipher suite, then SUITES_R MUST include one or more supported cipher suites. If the Responder does not support the selected cipher suite, but supports another cipher suite in SUITES_I, then SUITES_R MUST include the first supported cipher suite in SUITES_I. If the Responder does not support any cipher suite in SUITES_I, then it SHOULD include all its supported cipher suites in SUITES_R in any order.
+Error code 2 MUST only be used in a response to message_1 in case the cipher suite selected by the Initiator is not supported by the Responder, or if the Responder supports a cipher suite more preferred by the Initiator than the selected cipher suite, see {{resp-proc-msg1}}. ERR_INFO is of type suites containing a list of cipher suites that the Responder supports. We call the list of cipher suites SUITES_R. If the Responder does not support the selected cipher suite, then SUITES_R MUST include one or more supported cipher suites, see {{asym-msg1-form}}. If the Responder does not support the selected cipher suite, but supports another cipher suite in SUITES_I, then SUITES_R MUST include the supported cipher suite in SUITES_I which is most preferred by the Initiator. If the Responder does not support any cipher suite in SUITES_I, then it SHOULD include all its supported cipher suites in SUITES_R in any order.
 
 ### Cipher Suite Negotiation
 
@@ -1129,7 +1129,7 @@ Initiator                                                   Responder
 +------------------------------------------------------------------>|
 |                             message_1                             |
 |                                                                   |
-|                      DIAG_MSG, SUITES_R = 6                       |
+|                   ERR_CODE = 2, SUITES_R = 6                      |
 |<------------------------------------------------------------------+
 |                               error                               |
 |                                                                   |
@@ -1140,7 +1140,7 @@ Initiator                                                   Responder
 {: #fig-error1 title="Example of Responder supporting suite 6 but not suite 5."}
 {: artwork-align="center"}
 
-In the second example ({{fig-error2}}), the Responder supports cipher suites 8 and 9 but not the more preferred (by the Initiator) cipher suites 5, 6 or 7. To illustrate the negotiation mechanics we let the Initiator first make a guess that the Responder supports suite 6 but not suite 5. Since the Responder supports neither 5 nor 6, it responds with an error and SUITES_R, after which the Initiator selects its most preferred supported suite. The order of cipher suites in SUITES_R does not matter. (If the Responder had supported suite 5, it would include it in SUITES_R of the response, and it would in that case have become the selected suite in the second message_1.)
+In the second example ({{fig-error2}}), the Responder supports cipher suites 8 and 9 but not the more preferred (by the Initiator) cipher suites 5, 6 or 7. To illustrate the negotiation mechanics we let the Initiator first make a guess that the Responder supports suite 6 but not suite 5. Since the Responder supports neither 5 nor 6, it responds with SUITES_R containing the supported suites, after which the Initiator selects its most preferred supported suite. The order of cipher suites in SUITES_R does not matter. (If the Responder had supported suite 5, it would have included it in SUITES_R of the response, and it would in that case have become the selected suite in the second message_1.)
 
 ~~~~~~~~~~~
 Initiator                                                   Responder
@@ -1148,7 +1148,7 @@ Initiator                                                   Responder
 +------------------------------------------------------------------>|
 |                             message_1                             |
 |                                                                   |
-|                     DIAG_MSG, SUITES_R = [9, 8]                   |
+|                  ERR_CODE = 2, SUITES_R = [9, 8]                  |
 |<------------------------------------------------------------------+
 |                               error                               |
 |                                                                   |
