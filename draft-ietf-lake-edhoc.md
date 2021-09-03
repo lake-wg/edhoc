@@ -426,6 +426,7 @@ An example of CRED_x being a UCCS in bytewise lexicographic order containing an 
   8 : {                                        /cnf/
     1 : {                                      /COSE_Key/
       1 : 1,                                   /kty/
+      2 : 0,                                   /kid/
      -1 : 4,                                   /crv/
      -2 : h'b1a3e89460e88d3a8d54211dc95f0b90   /x/
             3ff205eb71912d6db8f4af980d2db83a'
@@ -794,13 +795,14 @@ message_1 SHALL be a CBOR Sequence (see {{CBOR}}) as defined below
 ~~~~~~~~~~~ CDDL
 message_1 = (
   METHOD : int,
-  SUITES_I : [ 2* suite ] / suite,
+  SUITES_I : suites,
   G_X : bstr,
   C_I : bstr / int,  
   ? EAD_1 : ead,
 )
 
 suite = int
+suites = [ 2* suite ] / suite
 ~~~~~~~~~~~
 
 where:
@@ -1090,7 +1092,7 @@ The remainder of this section specifies the currently defined error codes, see {
 +----------+---------------+----------------------------------------+
 |        1 | tstr          | Unspecified                            |
 +----------+---------------+----------------------------------------+
-|        2 | SUITES_R      | Wrong selected cipher suite            |
+|        2 | suites        | Wrong selected cipher suite            |
 +----------+---------------+----------------------------------------+
 ~~~~~~~~~~~
 {: #fig-error-codes title="Error Codes and Error Information"}
@@ -1107,13 +1109,7 @@ Error code 1 is used for errors that do not have a specific error code defined. 
 
 ## Wrong Selected Cipher Suite {#wrong-selected}
 
-Error code 2 MUST only be used in a response to message_1 in case the cipher suite selected by the Initiator is not supported by the Responder, or if the Responder supports a cipher suite more preferred by the Initiator than the selected cipher suite, see {{resp-proc-msg1}}. ERR_INFO is of type SUITES_R:
-
-~~~~~~~~~~ CDDL
-SUITES_R : [ 2* suite ] / suite
-~~~~~~~~~~~
-
-If the Responder does not support the selected cipher suite, then SUITES_R MUST include one or more supported cipher suites. If the Responder does not support the selected cipher suite, but supports another cipher suite in SUITES_I, then SUITES_R MUST include the first supported cipher suite in SUITES_I. If the Responder does not support any cipher suite in SUITES_I, then it SHOULD include all its supported cipher suites in SUITES_R in any order.
+Error code 2 MUST only be used in a response to message_1 in case the cipher suite selected by the Initiator is not supported by the Responder, or if the Responder supports a cipher suite more preferred by the Initiator than the selected cipher suite, see {{resp-proc-msg1}}. ERR_INFO is of type suites containing a list of cipher suites that the Responder supports. We call the list of cipher suites SUITES_R. If the Responder does not support the selected cipher suite, then SUITES_R MUST include one or more supported cipher suites. If the Responder does not support the selected cipher suite, but supports another cipher suite in SUITES_I, then SUITES_R MUST include the first supported cipher suite in SUITES_I. If the Responder does not support any cipher suite in SUITES_I, then it SHOULD include all its supported cipher suites in SUITES_R in any order.
 
 ### Cipher Suite Negotiation
 
@@ -1699,6 +1695,8 @@ This sections compiles the CDDL definitions for ease of reference.
 ~~~~~~~~~~~ CDDL
 suite = int
 
+suites = [ 2* suite ] / suite
+
 ead = 1* (
   type : int,
   ext_authz_data : any,
@@ -1706,7 +1704,7 @@ ead = 1* (
 
 message_1 = (
   METHOD : int,
-  SUITES_I : [ 2* suite ] / suite,
+  SUITES_I : suites,
   G_X : bstr,
   C_I : bstr / int,
   ? EAD_1 : ead,
@@ -1724,8 +1722,6 @@ message_3 = (
 message_4 = (
   CIPHERTEXT_4 : bstr,
 )
-
-SUITES_R : [ 2* suite ] / suite
 
 error = (
   ERR_CODE : int,
