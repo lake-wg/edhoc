@@ -685,14 +685,14 @@ The keys, IVs and MACs used in EDHOC are derived from the PRKs using Expand, and
        = Expand( PRK, info, length )
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-where info is the encoding of the CBOR sequence
+where info is encoded as the CBOR sequence
 
 ~~~~~~~~~~~ CDDL
 info = (
    edhoc_aead_id : int / tstr,
    transcript_hash : bstr,
    label : tstr,
-   context : bsrt,
+   context : bstr,
    length : uint,
 )
 ~~~~~~~~~~~
@@ -736,7 +736,7 @@ Application keys and other application specific data can be derived using the ED
      = EDHOC-KDF(PRK_4x3m, TH_4, label, context, length) 
 ~~~~~~~~~~~
 
-where label is a registered tstr from the EDHOC Exporter Label registry ({{exporter-label}}), context is byte a string defined by the application, and length is a uint defined by the application. The (label, context) pair must be unique, i.e., a (label, context) MUST NOT be used for two different purposes. However an application can re-derive the same key several times as long as it is done in a secure way. For example, in most encryption algorithms the same (key, nonce) pair must not be reused. The context can for example be the empty (zero-length) sequence or a single CBOR byte string.
+where label is a registered tstr from the EDHOC Exporter Label registry ({{exporter-label}}), context is a bstr defined by the application, and length is a uint defined by the application. The (label, context) pair must be unique, i.e., a (label, context) MUST NOT be used for two different purposes. However an application can re-derive the same key several times as long as it is done in a secure way. For example, in most encryption algorithms the same (key, nonce) pair must not be reused. The context can for example be the empty (zero-length) sequence or a single CBOR byte string.
 
 The transcript hash TH_4 is a CBOR encoded bstr and the input to the hash function is a CBOR Sequence.
 
@@ -965,8 +965,8 @@ The Initiator SHALL compose message_3 as follows:
 
    COSE constructs the input to the AEAD {{RFC5116}} as follows: 
 
-   * Key K = EDHOC-KDF( PRK_3e2m, TH_3, "K_3ae", length ) 
-   * Nonce N = EDHOC-KDF( PRK_3e2m, TH_3, "IV_3ae", length )
+   * Key K = EDHOC-KDF( PRK_3e2m, TH_3, "K_3ae", h'', length ) 
+   * Nonce N = EDHOC-KDF( PRK_3e2m, TH_3, "IV_3ae", h'', length )
    * Plaintext P = ( ID_CRED_I / bstr / int, Signature_or_MAC_3, ? EAD_3 )
    * Associated data A = \[ "Encrypt0", h'', TH_3 \]
 
