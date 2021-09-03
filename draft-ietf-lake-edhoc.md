@@ -1732,13 +1732,13 @@ error = (
   ERR_INFO : any,
 )
 
-info = [
+info = (
    edhoc_aead_id : int / tstr,
    transcript_hash : bstr,
    label : tstr,
-   * context : any,
+   context : bstr,
    length : uint,
-]
+)
 ~~~~~~~~~~~
 
 ## COSE {#COSE}
