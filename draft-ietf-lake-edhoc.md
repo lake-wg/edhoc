@@ -1438,6 +1438,24 @@ IANA has extended the Value Type of the COSE Key Common Parameter 'kid' to the C
 ~~~~~~~~~~~
 
 
+## CWT Confirmation Methods Registry {#kid-cwt-conf-meth-param}
+
+IANA has extended the Value Type of the WT Confirmation Methods 'kid' to the COSE Key Value Type int. The resulting Value Type is bstr / int. The new updated content for the 'kid' method is shown in the list below.
+
+- Confirmation Method Name: kid
+
+- Confirmation Method Description: Key Identifier
+
+- JWT Confirmation Method Name: kid
+
+- Confirmation Key: 3
+
+- Confirmation Value Type(s): bstr / int
+
+- Change Controller: IESG
+
+- Specification Document(s): Section 3.4 of RFC 8747 [[This document]]
+
 ## The Well-Known URI Registry
 
 IANA has added the well-known URI "edhoc" to the Well-Known URIs registry.
