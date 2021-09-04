@@ -1566,8 +1566,8 @@ The context parameter is h'' (0x40), the empty CBOR byte string.
 By default, key_length is the key length (in bytes) of the application AEAD Algorithm of the selected cipher suite for the EDHOC session. Also by default, salt_length has value 8. The Initiator and Responder MAY agree out-of-band on a longer key_length than the default and on a different salt_length.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
-Master Secret = EDHOC-Exporter( "OSCORE Master Secret", h'', key_length )
-Master Salt   = EDHOC-Exporter( "OSCORE Master Salt", h'', salt_length )
+Master Secret = EDHOC-Exporter("OSCORE Master Secret", h'', key_length)
+Master Salt   = EDHOC-Exporter("OSCORE Master Salt", h'', salt_length)
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 * The AEAD Algorithm is the application AEAD algorithm of the selected cipher suite for the EDHOC session.
