@@ -1824,11 +1824,11 @@ may need ... no, they don't need anything special: after an error, the next thin
 
 RFC Editor: Please remove this appendix.
 
-Main changes:
-* SUITES_I simplified to only contain the selected and more preferred suites
-* Separate header parameters for CWT and UCCS 
-* Info is CBOR sequence and context is bstr
-* CWT Confirmation Method kid extended to bstr / int
+* From -09 to -10:
+   * SUITES_I simplified to only contain the selected and more preferred suites
+   * Info is a CBOR sequence and context is a bstr
+   * Separate header parameters for CWT and UCCS 
+   * CWT Confirmation Method kid extended to bstr / int
 
 * From -08 to -09:
    * G_Y and CIPHERTEXT_2 are now included in one CBOR bstr
