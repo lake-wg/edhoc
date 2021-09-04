@@ -259,11 +259,7 @@ In order to create a "full-fledged" protocol some additional protocol elements a
 
 * A key material exporter and a key update function enabling forward secrecy.
 
-* Verification of a common preferred cipher suite:
-
-   * The Initiator lists supported cipher suites in order of preference, ending with the selected cipher suite for the session.
-   
-   * The Responder verifies that the selected cipher suite is the first supported cipher suite (or else rejects and states supported cipher suites). 
+* Verification of a common preferred cipher suite.
 
 * Method types and error handling.
 
