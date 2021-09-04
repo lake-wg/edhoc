@@ -1827,6 +1827,7 @@ RFC Editor: Please remove this appendix.
 * From -09 to -10:
    * SUITES_I simplified to only contain the selected and more preferred suites
    * Info is a CBOR sequence and context is a bstr
+   * Added kid to UCCS example
    * Separate header parameters for CWT and UCCS 
    * CWT Confirmation Method kid extended to bstr / int
 
