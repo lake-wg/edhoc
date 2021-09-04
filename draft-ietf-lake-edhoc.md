@@ -1435,7 +1435,7 @@ IANA has extended the Value Type of the COSE Key Common Parameter 'kid' to the C
 
 ## CWT Confirmation Methods Registry {#kid-cwt-conf-meth-param}
 
-IANA has extended the Value Type of the WT Confirmation Methods 'kid' to the COSE Key Value Type int. The resulting Value Type is bstr / int. The new updated content for the 'kid' method is shown in the list below.
+IANA has extended the Value Type of the WT Confirmation Methods 'kid' to the COSE Key Value Type int. The incorrect term binary string has been corrected to bstr. The resulting Value Type is bstr / int. The new updated content for the 'kid' method is shown in the list below.
 
 - Confirmation Method Name: kid
 
