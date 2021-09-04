@@ -1239,7 +1239,7 @@ If supported by the device, it is RECOMMENDED that at least the long-term privat
  
 # IANA Considerations {#iana}
 
-## EDHOC Exporter Label {#exporter-label}
+## EDHOC Exporter Label Registry {#exporter-label}
 
 IANA has created a new registry titled "EDHOC Exporter Label" under the new heading "EDHOC". The registration procedure is "Expert Review". The columns of the registry are Label, Description, and Reference. All columns are text strings. The initial contents of the registry are:
 
@@ -1382,7 +1382,7 @@ IANA has created a new registry entitled "EDHOC Method Type" under the new headi
 
 IANA has created a new registry entitled "EDHOC Error Codes" under the new heading "EDHOC". The registration procedure is "Specification Required". The columns of the registry are ERR_CODE, ERR_INFO Type and Description, where ERR_CODE is an integer, ERR_INFO is a CDDL defined type, and Description is a text string. The initial contents of the registry are shown in {{fig-error-codes}}.
 
-## EDHOC External Authorization Data {#iana-ead}
+## EDHOC External Authorization Data Registry {#iana-ead}
 
 IANA has created a new registry entitled "EDHOC External Authorization Data" 
 under the new heading "EDHOC". The registration procedure is "Expert Review". 
