@@ -1394,7 +1394,6 @@ an integer and the other columns are text strings.
 This document registers the following entries in the "COSE Header Parameters" registry under the "CBOR Object Signing and Encryption (COSE)" heading. The value of the 'cwt' header parameter is a COSE Web Token (CWT) {{RFC8392}} and the value of the 'uccs' header parameter is an Unprotected CWT Claims Set (UCCS), see {{term}}.
 
 ~~~~~~~~~~~
-+------+-------+------------+----------------+-------------------+
 +-----------+-------+----------------+---------------------------+
 | Name      | Label | Value Type     | Description               |
 +===========+=======+================+===========================+
@@ -1402,7 +1401,7 @@ This document registers the following entries in the "COSE Header Parameters" re
 +-----------+-------+----------------+---------------------------+
 | uccs      |  TBD2 | map            | An Unprotected CWT Claims |
 |           |       |                | Set (UCCS)                |
-+-----------+-------+----------------+----------------- ---------+
++-----------+-------+----------------+---------------------------+
 ~~~~~~~~~~~
 
 ## COSE Header Parameters Registry {#kid-header-param}
