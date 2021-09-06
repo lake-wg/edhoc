@@ -577,7 +577,7 @@ ead = 1* (
 )
 ~~~~~~~~~~~ 
 
- where ext_authz_data is authorization related data defined in a separate specification and its type is an int. Different types of ext_authz_data are registered in {{iana-ead}}.
+ where ext_authz_data is authorization related data defined in a separate specification and its type is an int. There is a register for different types of  ext_authz_data, see {{iana-ead}}.
 
 The EAD fields of EDHOC are not intended for generic application data. Since data carried in EAD_1 and EAD_2 fields may not be protected, special considerations need to be made such that it does not violate security and privacy requirements of the service which uses this data. Moreover, the content in an EAD field may impact the security properties provided by EDHOC. Security applications making use of the EAD fields must perform the necessary security analysis.
 
@@ -1105,7 +1105,7 @@ Error code 1 is used for errors that do not have a specific error code defined. 
 
 ## Wrong Selected Cipher Suite {#wrong-selected}
 
-Error code 2 MUST only be used in a response to message_1 in case the cipher suite selected by the Initiator is not supported by the Responder, or if the Responder supports a cipher suite more preferred by the Initiator than the selected cipher suite, see {{resp-proc-msg1}}. ERR_INFO is in this case denoted SUITES_R and is of type suites, see {{asym-msg1-form}}). If the Responder does not support the selected cipher suite, then SUITES_R MUST include one or more supported cipher suites. If the Responder supports a cipher suite in SUITES_I other than the selected cipher suite (independently of if the selected cipher suite is supported or not) then SUITES_R MUST include the supported cipher suite in SUITES_I which is most preferred by the Initiator. SUITES_R MAY include a single cipher suite, i.e. be encoded as an int. If the Responder does not support any cipher suite in SUITES_I, then it SHOULD include all its supported cipher suites in SUITES_R in any order.
+Error code 2 MUST only be used in a response to message_1 in case the cipher suite selected by the Initiator is not supported by the Responder, or if the Responder supports a cipher suite more preferred by the Initiator than the selected cipher suite, see {{resp-proc-msg1}}. ERR_INFO is in this case denoted SUITES_R and is of type suites, see {{asym-msg1-form}}. If the Responder does not support the selected cipher suite, then SUITES_R MUST include one or more supported cipher suites. If the Responder supports a cipher suite in SUITES_I other than the selected cipher suite (independently of if the selected cipher suite is supported or not) then SUITES_R MUST include the supported cipher suite in SUITES_I which is most preferred by the Initiator. SUITES_R MAY include a single cipher suite, i.e. be encoded as an int. If the Responder does not support any cipher suite in SUITES_I, then it SHOULD include all its supported cipher suites in SUITES_R in any order.
 
 ### Cipher Suite Negotiation
 
