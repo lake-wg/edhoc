@@ -572,8 +572,8 @@ void test_vectors( EDHOCKeyType type_I, EDHOCKeyType type_R, int selected_suite,
     print( "oscore_salt_raw", OSCORE_salt );
     print( "client_sender_id_raw", OSCORE_id( C_R ) );
     print( "server_sender_id_raw", OSCORE_id( C_I ) );
-    print( "OSCORE AEAD Algorithm", oscore_aead_alg );
-    print( "OSCORE Hash Algorithm", oscore_hash_alg );
+    print( "oscore_aead_alg", oscore_aead_alg );
+    print( "oscore_hash_alg", oscore_hash_alg );
     print( "key_update_nonce_raw", nonce );
     print( "prk_4x3m_key_update_raw", PRK_4x3m_new );   
     print( "oscore_secret_key_update_raw", OSCORE_secretFS );
