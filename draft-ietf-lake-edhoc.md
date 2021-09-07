@@ -22,6 +22,7 @@ author:
   country: Sweden
   email: goran.selander@ericsson.com
 - name: John Preuß Mattsson
+  initials: J
   surname: Preuß Mattsson
   org: Ericsson AB
   abbrev: Ericsson
