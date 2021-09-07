@@ -1,6 +1,7 @@
 Security Levels and Design Goals of EDHOC version 2, 7 September 2021
 by John Preuß Mattsson, not officially decided by IETF LAKE WG
 This document was created to help formal verification of EHDOC
+Based on version -10 of the EDHOC draft https://datatracker.ietf.org/doc/html/draft-ietf-lake-edhoc
 ------------------------------------------------------------------------------------------
 
 EDHOC inherits most of its security properties from the theoretical SIGMA-I protocol [SIGMA].
