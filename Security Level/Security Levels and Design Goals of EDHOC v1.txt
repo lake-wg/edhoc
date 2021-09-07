@@ -1,4 +1,4 @@
-Security Levels and Design Goals of EDHOC
+Security Levels and Design Goals of EDHOC version 1, 13 May 2021
 by John Preuß Mattsson, not officially decided by IETF LAKE WG
 This document was created to help formal verification of EHDOC
 ------------------------------------------------------------------------------------------
