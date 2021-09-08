@@ -156,8 +156,14 @@ info for MAC_2 (CBOR Sequence) (106 bytes)
 MAC_2 (Raw Value) (8 bytes)
 25 d3 a6 26 83 c9 54 e4 
 
+MAC_2 (CBOR Data Item) (9 bytes)
+48 25 d3 a6 26 83 c9 54 e4 
+
 Signature_or_MAC_2 (Raw Value) (8 bytes)
 25 d3 a6 26 83 c9 54 e4 
+
+Signature_or_MAC_2 (CBOR Data Item) (9 bytes)
+48 25 d3 a6 26 83 c9 54 e4 
 
 PLAINTEXT_2 (CBOR Sequence) (10 bytes)
 05 48 25 d3 a6 26 83 c9 54 e4 
@@ -172,6 +178,9 @@ b7 20 d1 30 db 51 5a 64 7d 01
 
 CIPHERTEXT_2 (Raw Value) (10 bytes)
 b2 68 f4 e3 7d 77 d9 ad 29 e5 
+
+CIPHERTEXT_2 (CBOR Data Item) (11 bytes)
+4a b2 68 f4 e3 7d 77 d9 ad 29 e5 
 
 message_2 (CBOR Sequence) (45 bytes)
 58 2a 25 54 91 b0 5a 39 89 ff 2d 3f fe a6 20 98 aa b5 7c 16 0f 29 4e d9 
@@ -229,8 +238,14 @@ d4 9a 2b c3 87 4b 43 ae 18 29 18 65 4d 41 43 5f 33 58 4a a1 04 29 a2 02
 MAC_3 (Raw Value) (8 bytes)
 b1 b6 ba a5 b7 8c cd 39 
 
+MAC_3 (CBOR Data Item) (9 bytes)
+48 b1 b6 ba a5 b7 8c cd 39 
+
 Signature_or_MAC_3 (Raw Value) (8 bytes)
 b1 b6 ba a5 b7 8c cd 39 
+
+Signature_or_MAC_3 (CBOR Data Item) (9 bytes)
+48 b1 b6 ba a5 b7 8c cd 39 
 
 P_3ae (CBOR Sequence) (10 bytes)
 29 48 b1 b6 ba a5 b7 8c cd 39 
@@ -256,6 +271,9 @@ c4 91 e4 d9 81 e3 3f 94 c0 2e 12 83 ed
 CIPHERTEXT_3 (Raw Value) (18 bytes)
 79 72 ae 79 9b a3 be e4 84 8e 94 1e 98 18 8e 4f 07 8a 
 
+CIPHERTEXT_3 (CBOR Data Item) (19 bytes)
+52 79 72 ae 79 9b a3 be e4 84 8e 94 1e 98 18 8e 4f 07 8a 
+
 message_3 (CBOR Sequence) (19 bytes)
 52 79 72 ae 79 9b a3 be e4 84 8e 94 1e 98 18 8e 4f 07 8a 
 
@@ -276,15 +294,7 @@ TH_4 (CBOR Data Item) (34 bytes)
 58 20 a7 fa 7e 15 06 65 3c f5 87 ce fb 9b 69 89 79 eb 5c 5f e6 7b de 0c 
 ee 4f 72 01 1b 24 70 8f 10 b1 
 
-info for OSCORE Master Secret (CBOR Sequence) (58 bytes)
-0a 58 20 a7 fa 7e 15 06 65 3c f5 87 ce fb 9b 69 89 79 eb 5c 5f e6 7b de 
-0c ee 4f 72 01 1b 24 70 8f 10 b1 74 4f 53 43 4f 52 45 20 4d 61 73 74 65 
-72 20 53 65 63 72 65 74 40 10 
-
-info for OSCORE Master Salt (CBOR Sequence) (56 bytes)
-0a 58 20 a7 fa 7e 15 06 65 3c f5 87 ce fb 9b 69 89 79 eb 5c 5f e6 7b de 
-0c ee 4f 72 01 1b 24 70 8f 10 b1 72 4f 53 43 4f 52 45 20 4d 61 73 74 65 
-72 20 53 61 6c 74 40 08 
+EAD_4 (CBOR Sequence) (0 bytes)
 
 P_4ae (CBOR Sequence) (0 bytes)
 
@@ -311,11 +321,24 @@ IV_4ae (Raw Value) (13 bytes)
 CIPHERTEXT_4 (8 bytes)
 93 32 f1 01 74 2c 51 df 
 
+CIPHERTEXT_4 (CBOR Data Item) (9 bytes)
+48 93 32 f1 01 74 2c 51 df 
+
 message_4 (CBOR Sequence) (9 bytes)
 48 93 32 f1 01 74 2c 51 df 
 
+info for OSCORE Master Secret (CBOR Sequence) (58 bytes)
+0a 58 20 a7 fa 7e 15 06 65 3c f5 87 ce fb 9b 69 89 79 eb 5c 5f e6 7b de 
+0c ee 4f 72 01 1b 24 70 8f 10 b1 74 4f 53 43 4f 52 45 20 4d 61 73 74 65 
+72 20 53 65 63 72 65 74 40 10 
+
 OSCORE Master Secret (Raw Value) (16 bytes)
 6b e2 df 0b a9 ca 9a d1 61 0b 70 33 17 a0 78 c1 
+
+info for OSCORE Master Salt (CBOR Sequence) (56 bytes)
+0a 58 20 a7 fa 7e 15 06 65 3c f5 87 ce fb 9b 69 89 79 eb 5c 5f e6 7b de 
+0c ee 4f 72 01 1b 24 70 8f 10 b1 72 4f 53 43 4f 52 45 20 4d 61 73 74 65 
+72 20 53 61 6c 74 40 08 
 
 OSCORE Master Salt (Raw Value) (8 bytes)
 c7 ba e4 50 27 2c 94 f6 
@@ -471,6 +494,10 @@ MAC_2 (Raw Value) (32 bytes)
 01 dc a4 13 61 3f c0 74 48 7a 86 fa 93 dd 3d a5 af f3 f7 3e 2c d8 f1 80 
 f2 5d df 8c 59 97 5f 07 
 
+MAC_2 (CBOR Data Item) (34 bytes)
+58 20 01 dc a4 13 61 3f c0 74 48 7a 86 fa 93 dd 3d a5 af f3 f7 3e 2c d8 
+f1 80 f2 5d df 8c 59 97 5f 07 
+
 Message to be signed 2 (CBOR Data Item) (227 bytes)
 84 6a 53 69 67 6e 61 74 75 72 65 31 4e a1 18 22 82 2e 48 47 1f b9 43 aa 
 23 c5 11 58 a4 58 20 48 de 10 7c c5 b6 ec 8b c1 bf 75 5b 28 d6 59 d1 80 
@@ -487,6 +514,11 @@ Signature_or_MAC_2 (Raw Value) (64 bytes)
 75 66 2e e0 43 08 41 fa db e7 be a9 61 14 8f 51 56 43 54 e8 a6 9c 48 f9 
 da a1 24 61 6b 3d 53 22 ff 62 89 06 b5 08 1e ed b7 7e f3 d5 f9 80 92 36 
 0f 37 a9 68 c5 fe 0e 59 61 43 83 5f 67 8d 1a 09 
+
+Signature_or_MAC_2 (CBOR Data Item) (66 bytes)
+58 40 75 66 2e e0 43 08 41 fa db e7 be a9 61 14 8f 51 56 43 54 e8 a6 9c 
+48 f9 da a1 24 61 6b 3d 53 22 ff 62 89 06 b5 08 1e ed b7 7e f3 d5 f9 80 
+92 36 0f 37 a9 68 c5 fe 0e 59 61 43 83 5f 67 8d 1a 09 
 
 PLAINTEXT_2 (CBOR Sequence) (80 bytes)
 a1 18 22 82 2e 48 47 1f b9 43 aa 23 c5 11 58 40 75 66 2e e0 43 08 41 fa 
@@ -510,6 +542,12 @@ c4 a8 ef d1 a6 80 02 7d 6c 44 84 e1 ec 82 64 40 8d a3 9e 73 da f8 e1 e8
 5f af 19 f0 01 39 5e 9a 6d 9a ce 1e 15 4b e1 20 1f 13 09 65 fa ac 65 78 
 8f 6b c6 8b 8e da ca a3 9b d3 7d 30 70 d0 73 57 0b a5 3b 39 e9 d3 e4 c0 
 cf a6 83 26 5b 87 bd 35 
+
+CIPHERTEXT_2 (CBOR Data Item) (82 bytes)
+58 50 c4 a8 ef d1 a6 80 02 7d 6c 44 84 e1 ec 82 64 40 8d a3 9e 73 da f8 
+e1 e8 5f af 19 f0 01 39 5e 9a 6d 9a ce 1e 15 4b e1 20 1f 13 09 65 fa ac 
+65 78 8f 6b c6 8b 8e da ca a3 9b d3 7d 30 70 d0 73 57 0b a5 3b 39 e9 d3 
+e4 c0 cf a6 83 26 5b 87 bd 35 
 
 message_2 (CBOR Sequence) (115 bytes)
 58 70 b0 e3 89 41 2d 9b 57 60 68 7c 11 ee 3a 35 82 9c fd 5b 9d 9c 80 3f 
@@ -573,8 +611,14 @@ info for MAC_3 (CBOR Sequence) (118 bytes)
 MAC_3 (Raw Value) (8 bytes)
 0c f7 3f 91 c2 0e f0 21 
 
+MAC_3 (CBOR Data Item) (9 bytes)
+48 0c f7 3f 91 c2 0e f0 21 
+
 Signature_or_MAC_3 (Raw Value) (8 bytes)
 0c f7 3f 91 c2 0e f0 21 
+
+Signature_or_MAC_3 (CBOR Data Item) (9 bytes)
+48 0c f7 3f 91 c2 0e f0 21 
 
 P_3ae (CBOR Sequence) (10 bytes)
 29 48 0c f7 3f 91 c2 0e f0 21 
@@ -600,6 +644,9 @@ IV_3ae (Raw Value) (13 bytes)
 CIPHERTEXT_3 (Raw Value) (18 bytes)
 de 4c 58 3f 32 78 e6 81 d8 ac 63 bd 39 54 24 c2 66 64 
 
+CIPHERTEXT_3 (CBOR Data Item) (19 bytes)
+52 de 4c 58 3f 32 78 e6 81 d8 ac 63 bd 39 54 24 c2 66 64 
+
 message_3 (CBOR Sequence) (19 bytes)
 52 de 4c 58 3f 32 78 e6 81 d8 ac 63 bd 39 54 24 c2 66 64 
 
@@ -620,15 +667,7 @@ TH_4 (CBOR Data Item) (34 bytes)
 58 20 8e 7b 73 8c 6f 0a 7a 92 f3 80 18 c8 a8 58 fd b6 57 14 76 ef df 33 
 5a 5e 5b 48 e7 ad 2c eb a3 08 
 
-info for OSCORE Master Secret (CBOR Sequence) (58 bytes)
-0a 58 20 8e 7b 73 8c 6f 0a 7a 92 f3 80 18 c8 a8 58 fd b6 57 14 76 ef df 
-33 5a 5e 5b 48 e7 ad 2c eb a3 08 74 4f 53 43 4f 52 45 20 4d 61 73 74 65 
-72 20 53 65 63 72 65 74 40 10 
-
-info for OSCORE Master Salt (CBOR Sequence) (56 bytes)
-0a 58 20 8e 7b 73 8c 6f 0a 7a 92 f3 80 18 c8 a8 58 fd b6 57 14 76 ef df 
-33 5a 5e 5b 48 e7 ad 2c eb a3 08 72 4f 53 43 4f 52 45 20 4d 61 73 74 65 
-72 20 53 61 6c 74 40 08 
+EAD_4 (CBOR Sequence) (0 bytes)
 
 P_4ae (CBOR Sequence) (0 bytes)
 
@@ -655,11 +694,24 @@ f1 2f 4c 73 a2 51 96 8c 64 57 c0 71 38
 CIPHERTEXT_4 (8 bytes)
 26 9c 84 87 79 f2 e5 10 
 
+CIPHERTEXT_4 (CBOR Data Item) (9 bytes)
+48 26 9c 84 87 79 f2 e5 10 
+
 message_4 (CBOR Sequence) (9 bytes)
 48 26 9c 84 87 79 f2 e5 10 
 
+info for OSCORE Master Secret (CBOR Sequence) (58 bytes)
+0a 58 20 8e 7b 73 8c 6f 0a 7a 92 f3 80 18 c8 a8 58 fd b6 57 14 76 ef df 
+33 5a 5e 5b 48 e7 ad 2c eb a3 08 74 4f 53 43 4f 52 45 20 4d 61 73 74 65 
+72 20 53 65 63 72 65 74 40 10 
+
 OSCORE Master Secret (Raw Value) (16 bytes)
 fa bd 79 96 1a 0d e1 85 02 3c 43 df 3e 51 84 20 
+
+info for OSCORE Master Salt (CBOR Sequence) (56 bytes)
+0a 58 20 8e 7b 73 8c 6f 0a 7a 92 f3 80 18 c8 a8 58 fd b6 57 14 76 ef df 
+33 5a 5e 5b 48 e7 ad 2c eb a3 08 72 4f 53 43 4f 52 45 20 4d 61 73 74 65 
+72 20 53 61 6c 74 40 08 
 
 OSCORE Master Salt (Raw Value) (8 bytes)
 f9 86 a7 52 e2 f2 d9 46 
@@ -813,8 +865,14 @@ a6 4b 35 14 c9 f8 5e 70 76 08
 MAC_2 (Raw Value) (8 bytes)
 9e 1b da 16 81 07 f1 c8 
 
+MAC_2 (CBOR Data Item) (9 bytes)
+48 9e 1b da 16 81 07 f1 c8 
+
 Signature_or_MAC_2 (Raw Value) (8 bytes)
 9e 1b da 16 81 07 f1 c8 
+
+Signature_or_MAC_2 (CBOR Data Item) (9 bytes)
+48 9e 1b da 16 81 07 f1 c8 
 
 PLAINTEXT_2 (CBOR Sequence) (10 bytes)
 2d 48 9e 1b da 16 81 07 f1 c8 
@@ -829,6 +887,9 @@ KEYSTREAM_2 (Raw Value) (10 bytes)
 
 CIPHERTEXT_2 (Raw Value) (10 bytes)
 06 80 aa 05 9c 4c d3 6e 3c b1 
+
+CIPHERTEXT_2 (CBOR Data Item) (11 bytes)
+4a 06 80 aa 05 9c 4c d3 6e 3c b1 
 
 message_2 (CBOR Sequence) (45 bytes)
 58 2a 23 73 3d 17 19 5c b8 c3 cb 1b 3a cd df f6 e0 e4 8d de ca 84 af 83 
@@ -890,6 +951,10 @@ MAC_3 (Raw Value) (32 bytes)
 c1 6a f1 81 19 e7 4f 79 5b 32 00 9a a1 af e5 e3 6b 64 be bf 3b 45 03 b0 
 c8 d5 42 ff 24 4a bd 99 
 
+MAC_3 (CBOR Data Item) (34 bytes)
+58 20 c1 6a f1 81 19 e7 4f 79 5b 32 00 9a a1 af e5 e3 6b 64 be bf 3b 45 
+03 b0 c8 d5 42 ff 24 4a bd 99 
+
 Message to be signed 3 (CBOR Data Item) (237 bytes)
 84 6a 53 69 67 6e 61 74 75 72 65 31 4e a1 18 22 82 2e 48 d0 88 09 a9 e5 
 b0 0f c9 58 ae 58 20 47 47 c6 33 49 8d 64 73 36 e3 cc 35 1e 8e b7 1f aa 
@@ -906,6 +971,11 @@ Signature_or_MAC_3 (Raw Value) (64 bytes)
 4d f0 f4 14 fe ca 34 c3 8c 31 74 24 2c 89 f3 e4 27 05 76 19 c7 13 de aa 
 72 cd 28 0f d3 d6 43 ab 14 2b ce b8 75 66 e6 7f 76 f1 c3 15 23 89 a5 e2 
 f7 b3 29 1f 12 68 da 1e 6e 5d cd d3 18 47 e9 05 
+
+Signature_or_MAC_3 (CBOR Data Item) (66 bytes)
+58 40 4d f0 f4 14 fe ca 34 c3 8c 31 74 24 2c 89 f3 e4 27 05 76 19 c7 13 
+de aa 72 cd 28 0f d3 d6 43 ab 14 2b ce b8 75 66 e6 7f 76 f1 c3 15 23 89 
+a5 e2 f7 b3 29 1f 12 68 da 1e 6e 5d cd d3 18 47 e9 05 
 
 P_3ae (CBOR Sequence) (80 bytes)
 a1 18 22 82 2e 48 d0 88 09 a9 e5 b0 0f c9 58 40 4d f0 f4 14 fe ca 34 c3 
@@ -937,6 +1007,12 @@ a6 d0 fb a1 95 97 01 cd 15 e4 0b b3 a1 4f 4b 40 90 c4 7a 8b 7d 83 e1 67
 38 0c 3c 0a b9 50 cb be 4a 74 78 17 af 57 1c 8d 99 32 c6 66 95 13 17 1a 
 66 d8 87 13 78 82 90 e3 2c 0c 06 c0 1e b1 48 77 
 
+CIPHERTEXT_3 (CBOR Data Item) (90 bytes)
+58 58 3a 78 59 b4 c6 6c 70 81 b2 31 37 a4 51 01 bc f4 55 25 45 c2 50 be 
+5b bf a6 d0 fb a1 95 97 01 cd 15 e4 0b b3 a1 4f 4b 40 90 c4 7a 8b 7d 83 
+e1 67 38 0c 3c 0a b9 50 cb be 4a 74 78 17 af 57 1c 8d 99 32 c6 66 95 13 
+17 1a 66 d8 87 13 78 82 90 e3 2c 0c 06 c0 1e b1 48 77 
+
 message_3 (CBOR Sequence) (90 bytes)
 58 58 3a 78 59 b4 c6 6c 70 81 b2 31 37 a4 51 01 bc f4 55 25 45 c2 50 be 
 5b bf a6 d0 fb a1 95 97 01 cd 15 e4 0b b3 a1 4f 4b 40 90 c4 7a 8b 7d 83 
@@ -963,15 +1039,7 @@ TH_4 (CBOR Data Item) (34 bytes)
 58 20 6e 7f b8 9b ae ed 53 d0 d8 68 d4 68 77 bc f1 c6 1e 5a 41 83 d7 00 
 e3 95 10 47 87 77 cf a8 69 bc 
 
-info for OSCORE Master Secret (CBOR Sequence) (58 bytes)
-0a 58 20 6e 7f b8 9b ae ed 53 d0 d8 68 d4 68 77 bc f1 c6 1e 5a 41 83 d7 
-00 e3 95 10 47 87 77 cf a8 69 bc 74 4f 53 43 4f 52 45 20 4d 61 73 74 65 
-72 20 53 65 63 72 65 74 40 10 
-
-info for OSCORE Master Salt (CBOR Sequence) (56 bytes)
-0a 58 20 6e 7f b8 9b ae ed 53 d0 d8 68 d4 68 77 bc f1 c6 1e 5a 41 83 d7 
-00 e3 95 10 47 87 77 cf a8 69 bc 72 4f 53 43 4f 52 45 20 4d 61 73 74 65 
-72 20 53 61 6c 74 40 08 
+EAD_4 (CBOR Sequence) (0 bytes)
 
 P_4ae (CBOR Sequence) (0 bytes)
 
@@ -998,11 +1066,24 @@ IV_4ae (Raw Value) (13 bytes)
 CIPHERTEXT_4 (8 bytes)
 2b 14 84 52 65 e6 c8 98 
 
+CIPHERTEXT_4 (CBOR Data Item) (9 bytes)
+48 2b 14 84 52 65 e6 c8 98 
+
 message_4 (CBOR Sequence) (9 bytes)
 48 2b 14 84 52 65 e6 c8 98 
 
+info for OSCORE Master Secret (CBOR Sequence) (58 bytes)
+0a 58 20 6e 7f b8 9b ae ed 53 d0 d8 68 d4 68 77 bc f1 c6 1e 5a 41 83 d7 
+00 e3 95 10 47 87 77 cf a8 69 bc 74 4f 53 43 4f 52 45 20 4d 61 73 74 65 
+72 20 53 65 63 72 65 74 40 10 
+
 OSCORE Master Secret (Raw Value) (16 bytes)
 0b 9b d3 fa 74 b7 47 7d 0e e5 93 08 5e f8 42 76 
+
+info for OSCORE Master Salt (CBOR Sequence) (56 bytes)
+0a 58 20 6e 7f b8 9b ae ed 53 d0 d8 68 d4 68 77 bc f1 c6 1e 5a 41 83 d7 
+00 e3 95 10 47 87 77 cf a8 69 bc 72 4f 53 43 4f 52 45 20 4d 61 73 74 65 
+72 20 53 61 6c 74 40 08 
 
 OSCORE Master Salt (Raw Value) (8 bytes)
 75 02 e0 8b 10 74 75 b6 
@@ -1158,6 +1239,10 @@ MAC_2 (Raw Value) (32 bytes)
 cb b9 18 62 9b 8d 5f dc 2e fa 14 98 40 5b 5e 68 2c ad ab e3 31 e8 48 2c 
 eb b6 49 44 ca 1b db 39 
 
+MAC_2 (CBOR Data Item) (34 bytes)
+58 20 cb b9 18 62 9b 8d 5f dc 2e fa 14 98 40 5b 5e 68 2c ad ab e3 31 e8 
+48 2c eb b6 49 44 ca 1b db 39 
+
 Message to be signed 2 (CBOR Data Item) (210 bytes)
 84 6a 53 69 67 6e 61 74 75 72 65 31 4e a1 18 22 82 2e 48 60 78 0e 94 51 
 bd c4 3c 58 93 58 20 07 82 db b6 87 c3 02 88 a3 0b 70 6b 07 4b ed 78 95 
@@ -1173,6 +1258,11 @@ Signature_or_MAC_2 (Raw Value) (64 bytes)
 70 40 a7 57 ce 4f 1d bb 02 5b cc f9 8d 16 80 02 65 78 3c 44 6d 17 c2 08 
 9a 48 72 51 dd 80 92 fa b5 c4 18 4a ce ab d6 49 5f 2a 39 5b 88 9d d3 d7 
 db 8a 01 64 fd f5 11 da 14 9c d2 b4 a6 db 46 0f 
+
+Signature_or_MAC_2 (CBOR Data Item) (66 bytes)
+58 40 70 40 a7 57 ce 4f 1d bb 02 5b cc f9 8d 16 80 02 65 78 3c 44 6d 17 
+c2 08 9a 48 72 51 dd 80 92 fa b5 c4 18 4a ce ab d6 49 5f 2a 39 5b 88 9d 
+d3 d7 db 8a 01 64 fd f5 11 da 14 9c d2 b4 a6 db 46 0f 
 
 PLAINTEXT_2 (CBOR Sequence) (80 bytes)
 a1 18 22 82 2e 48 60 78 0e 94 51 bd c4 3c 58 40 70 40 a7 57 ce 4f 1d bb 
@@ -1196,6 +1286,12 @@ f1 1d 8f 87 17 6b f5 7d af 07 30 a5 c5 1b 65 ae 4f fb c1 7d db 20 a8 45
 05 e7 1d 62 30 3a be 4a 77 2f e1 18 7a c8 33 e1 20 0b fc 2e 9c 9f f7 0b 
 5b ec 25 65 6d e6 c4 9f a9 84 67 a9 a0 37 6a 88 03 6f e0 b4 57 7c 39 82 
 41 5e 43 88 db 8f e4 01 
+
+CIPHERTEXT_2 (CBOR Data Item) (82 bytes)
+58 50 f1 1d 8f 87 17 6b f5 7d af 07 30 a5 c5 1b 65 ae 4f fb c1 7d db 20 
+a8 45 05 e7 1d 62 30 3a be 4a 77 2f e1 18 7a c8 33 e1 20 0b fc 2e 9c 9f 
+f7 0b 5b ec 25 65 6d e6 c4 9f a9 84 67 a9 a0 37 6a 88 03 6f e0 b4 57 7c 
+39 82 41 5e 43 88 db 8f e4 01 
 
 message_2 (CBOR Sequence) (115 bytes)
 58 70 e1 73 90 96 c5 c9 58 2c 12 98 91 81 66 d6 95 48 c7 8f 74 97 b2 58 
@@ -1263,6 +1359,10 @@ MAC_3 (Raw Value) (32 bytes)
 3d 06 fd d8 8a eb da b4 b3 ee ca 69 3f de 93 40 52 3e 81 0f 4d ad 75 26 
 9f 5d ae a8 e3 6d 33 79 
 
+MAC_3 (CBOR Data Item) (34 bytes)
+58 20 3d 06 fd d8 8a eb da b4 b3 ee ca 69 3f de 93 40 52 3e 81 0f 4d ad 
+75 26 9f 5d ae a8 e3 6d 33 79 
+
 Message to be signed 3 (CBOR Data Item) (236 bytes)
 84 6a 53 69 67 6e 61 74 75 72 65 31 4e a1 18 22 82 2e 48 81 d4 5b e0 63 
 29 d6 3a 58 ad 58 20 5a a2 5b 46 39 7c 2f 14 5e b7 92 ed 0d 17 ea 2b 07 
@@ -1279,6 +1379,11 @@ Signature_or_MAC_3 (Raw Value) (64 bytes)
 74 8a 59 cb 36 b6 1d aa bd aa 7b 60 1a 0b 78 3d 44 9b 6f 2c 91 20 e1 00 
 96 b3 3a 1c 01 96 31 f3 d0 47 5e cb 92 e6 d3 d3 76 1d 30 9a 79 6d 90 92 
 ab ba b5 ba 00 fc 29 69 35 b4 1f 69 fb 92 1d 03 
+
+Signature_or_MAC_3 (CBOR Data Item) (66 bytes)
+58 40 74 8a 59 cb 36 b6 1d aa bd aa 7b 60 1a 0b 78 3d 44 9b 6f 2c 91 20 
+e1 00 96 b3 3a 1c 01 96 31 f3 d0 47 5e cb 92 e6 d3 d3 76 1d 30 9a 79 6d 
+90 92 ab ba b5 ba 00 fc 29 69 35 b4 1f 69 fb 92 1d 03 
 
 P_3ae (CBOR Sequence) (80 bytes)
 a1 18 22 82 2e 48 81 d4 5b e0 63 29 d6 3a 58 40 74 8a 59 cb 36 b6 1d aa 
@@ -1310,6 +1415,12 @@ a8 38 fa 7a 01 d1 7e 65 41 e8 52 a4 3d 6c 07 a3 0e 82 82 9f ce f0 7d 21
 97 8f e0 eb 21 fd c2 c0 82 f8 d1 ae 4e 0f 61 9a 3f 5b 88 a4 8c b0 08 94 
 da d8 16 9f ae a9 c7 c0 d6 8f 9e 51 25 c4 e9 2e 
 
+CIPHERTEXT_3 (CBOR Data Item) (90 bytes)
+58 58 a8 38 fa 7a 01 d1 7e 65 41 e8 52 a4 3d 6c 07 a3 0e 82 82 9f ce f0 
+7d 21 83 c5 4f b7 22 62 90 1c 9d d6 d9 c6 bd 8e d0 18 be 45 94 2e 23 4f 
+21 23 97 8f e0 eb 21 fd c2 c0 82 f8 d1 ae 4e 0f 61 9a 3f 5b 88 a4 8c b0 
+08 94 da d8 16 9f ae a9 c7 c0 d6 8f 9e 51 25 c4 e9 2e 
+
 message_3 (CBOR Sequence) (90 bytes)
 58 58 a8 38 fa 7a 01 d1 7e 65 41 e8 52 a4 3d 6c 07 a3 0e 82 82 9f ce f0 
 7d 21 83 c5 4f b7 22 62 90 1c 9d d6 d9 c6 bd 8e d0 18 be 45 94 2e 23 4f 
@@ -1336,15 +1447,7 @@ TH_4 (CBOR Data Item) (34 bytes)
 58 20 d8 4a 43 c3 2b 48 1d be 5c 21 38 cb 9a b1 bd 58 97 0e 3c 30 36 7d 
 8e 00 5f 9f 63 33 40 d2 ca e3 
 
-info for OSCORE Master Secret (CBOR Sequence) (58 bytes)
-0a 58 20 d8 4a 43 c3 2b 48 1d be 5c 21 38 cb 9a b1 bd 58 97 0e 3c 30 36 
-7d 8e 00 5f 9f 63 33 40 d2 ca e3 74 4f 53 43 4f 52 45 20 4d 61 73 74 65 
-72 20 53 65 63 72 65 74 40 10 
-
-info for OSCORE Master Salt (CBOR Sequence) (56 bytes)
-0a 58 20 d8 4a 43 c3 2b 48 1d be 5c 21 38 cb 9a b1 bd 58 97 0e 3c 30 36 
-7d 8e 00 5f 9f 63 33 40 d2 ca e3 72 4f 53 43 4f 52 45 20 4d 61 73 74 65 
-72 20 53 61 6c 74 40 08 
+EAD_4 (CBOR Sequence) (0 bytes)
 
 P_4ae (CBOR Sequence) (0 bytes)
 
@@ -1371,11 +1474,24 @@ IV_4ae (Raw Value) (13 bytes)
 CIPHERTEXT_4 (8 bytes)
 b1 5a db ba fc 31 30 89 
 
+CIPHERTEXT_4 (CBOR Data Item) (9 bytes)
+48 b1 5a db ba fc 31 30 89 
+
 message_4 (CBOR Sequence) (9 bytes)
 48 b1 5a db ba fc 31 30 89 
 
+info for OSCORE Master Secret (CBOR Sequence) (58 bytes)
+0a 58 20 d8 4a 43 c3 2b 48 1d be 5c 21 38 cb 9a b1 bd 58 97 0e 3c 30 36 
+7d 8e 00 5f 9f 63 33 40 d2 ca e3 74 4f 53 43 4f 52 45 20 4d 61 73 74 65 
+72 20 53 65 63 72 65 74 40 10 
+
 OSCORE Master Secret (Raw Value) (16 bytes)
 9c 99 44 87 2b 2e 8a c1 9f 1d 24 a0 13 c4 b6 58 
+
+info for OSCORE Master Salt (CBOR Sequence) (56 bytes)
+0a 58 20 d8 4a 43 c3 2b 48 1d be 5c 21 38 cb 9a b1 bd 58 97 0e 3c 30 36 
+7d 8e 00 5f 9f 63 33 40 d2 ca e3 72 4f 53 43 4f 52 45 20 4d 61 73 74 65 
+72 20 53 61 6c 74 40 08 
 
 OSCORE Master Salt (Raw Value) (8 bytes)
 b4 a5 c5 4a 74 de f1 03 
@@ -1537,8 +1653,14 @@ f7 31 03 77 41 89 1b 7d 99 ff e6 65 4d 41 43 5f 32 58 a7 a1 18 23 d8 20
 MAC_2 (Raw Value) (8 bytes)
 ae 28 af 0f 5f 4a 2f a6 
 
+MAC_2 (CBOR Data Item) (9 bytes)
+48 ae 28 af 0f 5f 4a 2f a6 
+
 Signature_or_MAC_2 (Raw Value) (8 bytes)
 ae 28 af 0f 5f 4a 2f a6 
+
+Signature_or_MAC_2 (CBOR Data Item) (9 bytes)
+48 ae 28 af 0f 5f 4a 2f a6 
 
 PLAINTEXT_2 (CBOR Sequence) (43 bytes)
 a1 18 23 d8 20 78 1b 68 74 74 70 73 3a 2f 2f 65 78 61 6d 70 6c 65 2e 65 
@@ -1556,6 +1678,10 @@ ad 9e c5 a9 a2 12 6b 63 31 19 d3 1f 2f 16 37 70 65 d6 e6 0d da 12 f2 ca
 CIPHERTEXT_2 (Raw Value) (43 bytes)
 0c 86 e6 71 82 6a 70 0b 45 6d a3 6c 15 39 18 15 1d b7 8b 7d b6 77 dc af 
 08 c0 4c 40 53 d0 27 df be 6f 08 98 f8 ee c6 2a bb 25 fa 
+
+CIPHERTEXT_2 (CBOR Data Item) (45 bytes)
+58 2b 0c 86 e6 71 82 6a 70 0b 45 6d a3 6c 15 39 18 15 1d b7 8b 7d b6 77 
+dc af 08 c0 4c 40 53 d0 27 df be 6f 08 98 f8 ee c6 2a bb 25 fa 
 
 message_2 (CBOR Sequence) (78 bytes)
 58 4b b2 7a 5f 78 b9 a8 8f 2e fd 12 c6 f6 49 be c5 32 2a 2f 8c 36 89 c0 
@@ -1625,8 +1751,14 @@ e7 7b b4 86 ef 45 34 13 f0 2d db 65 4d 41 43 5f 33 58 9b a1 18 23 d8 20
 MAC_3 (Raw Value) (8 bytes)
 a0 cd 2c de 39 22 bf 2f 
 
+MAC_3 (CBOR Data Item) (9 bytes)
+48 a0 cd 2c de 39 22 bf 2f 
+
 Signature_or_MAC_3 (Raw Value) (8 bytes)
 a0 cd 2c de 39 22 bf 2f 
+
+Signature_or_MAC_3 (CBOR Data Item) (9 bytes)
+48 a0 cd 2c de 39 22 bf 2f 
 
 P_3ae (CBOR Sequence) (43 bytes)
 a1 18 23 d8 20 78 1b 68 74 74 70 73 3a 2f 2f 65 78 61 6d 70 6c 65 2e 65 
@@ -1655,6 +1787,11 @@ CIPHERTEXT_3 (Raw Value) (51 bytes)
 df 72 97 b3 b7 e2 ff 1a ab ec a6 97 e1 c1 ec a2 6c 20 fb 62 0e 3a 49 74 
 37 20 b3 
 
+CIPHERTEXT_3 (CBOR Data Item) (53 bytes)
+58 33 73 c6 a3 0b 49 68 41 ca 6e ee 99 13 1a 3c 26 43 3c a0 6a 63 82 c4 
+e1 d7 df 72 97 b3 b7 e2 ff 1a ab ec a6 97 e1 c1 ec a2 6c 20 fb 62 0e 3a 
+49 74 37 20 b3 
+
 message_3 (CBOR Sequence) (53 bytes)
 58 33 73 c6 a3 0b 49 68 41 ca 6e ee 99 13 1a 3c 26 43 3c a0 6a 63 82 c4 
 e1 d7 df 72 97 b3 b7 e2 ff 1a ab ec a6 97 e1 c1 ec a2 6c 20 fb 62 0e 3a 
@@ -1678,15 +1815,7 @@ TH_4 (CBOR Data Item) (34 bytes)
 58 20 0d af 5a a7 30 7c 4d 8d 4f c4 0f 11 87 34 ad 8e 62 39 49 b9 b7 fe 
 98 85 9f ad d4 ae 25 b0 69 55 
 
-info for OSCORE Master Secret (CBOR Sequence) (58 bytes)
-0a 58 20 0d af 5a a7 30 7c 4d 8d 4f c4 0f 11 87 34 ad 8e 62 39 49 b9 b7 
-fe 98 85 9f ad d4 ae 25 b0 69 55 74 4f 53 43 4f 52 45 20 4d 61 73 74 65 
-72 20 53 65 63 72 65 74 40 10 
-
-info for OSCORE Master Salt (CBOR Sequence) (56 bytes)
-0a 58 20 0d af 5a a7 30 7c 4d 8d 4f c4 0f 11 87 34 ad 8e 62 39 49 b9 b7 
-fe 98 85 9f ad d4 ae 25 b0 69 55 72 4f 53 43 4f 52 45 20 4d 61 73 74 65 
-72 20 53 61 6c 74 40 08 
+EAD_4 (CBOR Sequence) (0 bytes)
 
 P_4ae (CBOR Sequence) (0 bytes)
 
@@ -1713,11 +1842,24 @@ IV_4ae (Raw Value) (13 bytes)
 CIPHERTEXT_4 (8 bytes)
 42 30 15 8d 0b c4 67 a2 
 
+CIPHERTEXT_4 (CBOR Data Item) (9 bytes)
+48 42 30 15 8d 0b c4 67 a2 
+
 message_4 (CBOR Sequence) (9 bytes)
 48 42 30 15 8d 0b c4 67 a2 
 
+info for OSCORE Master Secret (CBOR Sequence) (58 bytes)
+0a 58 20 0d af 5a a7 30 7c 4d 8d 4f c4 0f 11 87 34 ad 8e 62 39 49 b9 b7 
+fe 98 85 9f ad d4 ae 25 b0 69 55 74 4f 53 43 4f 52 45 20 4d 61 73 74 65 
+72 20 53 65 63 72 65 74 40 10 
+
 OSCORE Master Secret (Raw Value) (16 bytes)
 0a 17 31 65 2f 0b 85 77 b5 20 1e c2 19 5b a1 88 
+
+info for OSCORE Master Salt (CBOR Sequence) (56 bytes)
+0a 58 20 0d af 5a a7 30 7c 4d 8d 4f c4 0f 11 87 34 ad 8e 62 39 49 b9 b7 
+fe 98 85 9f ad d4 ae 25 b0 69 55 72 4f 53 43 4f 52 45 20 4d 61 73 74 65 
+72 20 53 61 6c 74 40 08 
 
 OSCORE Master Salt (Raw Value) (8 bytes)
 65 82 d2 2d cf 66 d8 89 
@@ -1881,6 +2023,10 @@ MAC_2 (Raw Value) (32 bytes)
 4e b6 f9 e6 cc ad 46 9d 5a 32 3a 68 a6 6a 12 e6 a0 fa 5f 75 84 b1 42 f2 
 78 e8 d7 b4 63 74 78 90 
 
+MAC_2 (CBOR Data Item) (34 bytes)
+58 20 4e b6 f9 e6 cc ad 46 9d 5a 32 3a 68 a6 6a 12 e6 a0 fa 5f 75 84 b1 
+42 f2 78 e8 d7 b4 63 74 78 90 
+
 Message to be signed 2 (CBOR Data Item) (309 bytes)
 84 6a 53 69 67 6e 61 74 75 72 65 31 58 73 a1 18 20 58 6e 58 6c 00 01 02 
 03 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f 10 11 12 13 14 15 16 17 18 19 1a 
@@ -1900,6 +2046,11 @@ Signature_or_MAC_2 (Raw Value) (64 bytes)
 4f f4 85 ea 3a b6 e2 2b cb 33 e3 7d b8 78 f2 95 4b c0 6a d5 9b bd 7b 34 
 a4 34 3e 75 9c 2b f6 06 b7 f5 18 0b 08 22 75 cf 48 f7 d8 bc 30 02 2c 47 
 d7 ba 05 5a f5 33 df 50 49 c5 24 74 28 4f 2d 02 
+
+Signature_or_MAC_2 (CBOR Data Item) (66 bytes)
+58 40 4f f4 85 ea 3a b6 e2 2b cb 33 e3 7d b8 78 f2 95 4b c0 6a d5 9b bd 
+7b 34 a4 34 3e 75 9c 2b f6 06 b7 f5 18 0b 08 22 75 cf 48 f7 d8 bc 30 02 
+2c 47 d7 ba 05 5a f5 33 df 50 49 c5 24 74 28 4f 2d 02 
 
 PLAINTEXT_2 (CBOR Sequence) (181 bytes)
 a1 18 20 58 6e 58 6c 00 01 02 03 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f 10 
@@ -1935,6 +2086,16 @@ c0 85 e5 c7 aa 57 79 88 53 2e 64 e2 7d 85 ac f2 85 ff 39 98 05 0d cb 5d
 6a 84 99 ae 11 2c c9 91 11 97 01 d4 99 76 0a 8a f8 76 8f bb f2 d4 0d a4 
 09 78 30 b3 02 9b a2 f7 a1 92 92 31 90 5c 66 89 06 ad dc 56 09 5b a8 c5 
 a8 78 58 d6 8e 59 22 67 1a 5e 96 44 39 
+
+CIPHERTEXT_2 (CBOR Data Item) (183 bytes)
+58 b5 9b 01 25 21 20 5d f7 4a be 12 63 ca 22 3e d2 da 42 df 68 1e cc 1d 
+5c 72 be 2e e8 a9 6e 80 45 29 09 87 23 59 f4 1e ff cd 67 a8 8a 81 97 7e 
+3b b0 85 18 29 f1 0d 43 38 27 c4 67 43 57 7c 31 f6 0f ae 25 34 3e 4a c6 
+52 a0 7e 35 02 c2 86 c1 62 a9 6c 14 3b 09 29 02 22 88 4a e3 2d 2e fa 8f 
+bd 98 c0 85 e5 c7 aa 57 79 88 53 2e 64 e2 7d 85 ac f2 85 ff 39 98 05 0d 
+cb 5d 6a 84 99 ae 11 2c c9 91 11 97 01 d4 99 76 0a 8a f8 76 8f bb f2 d4 
+0d a4 09 78 30 b3 02 9b a2 f7 a1 92 92 31 90 5c 66 89 06 ad dc 56 09 5b 
+a8 c5 a8 78 58 d6 8e 59 22 67 1a 5e 96 44 39 
 
 message_2 (CBOR Sequence) (216 bytes)
 58 d5 65 b9 7e b3 49 42 fd dc f6 d8 6a d0 ce 7e 92 94 42 fd 4e 8c 04 e7 
@@ -2025,8 +2186,14 @@ f3 26 3f 2d ac c9 e0 d9 33 99 95 65 4d 41 43 5f 33 59 01 1d a1 18 21 58
 MAC_3 (Raw Value) (8 bytes)
 3a ab 7c 96 50 e9 a6 91 
 
+MAC_3 (CBOR Data Item) (9 bytes)
+48 3a ab 7c 96 50 e9 a6 91 
+
 Signature_or_MAC_3 (Raw Value) (8 bytes)
 3a ab 7c 96 50 e9 a6 91 
+
+Signature_or_MAC_3 (CBOR Data Item) (9 bytes)
+48 3a ab 7c 96 50 e9 a6 91 
 
 P_3ae (CBOR Sequence) (154 bytes)
 a1 18 21 58 8c 58 8a 00 01 02 03 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f 10 
@@ -2064,6 +2231,15 @@ af 03 0f 1d b7 10 b0 45 a0 04 61 04 09 21 6f 4b a5 db 0b ca 9f 8d 5d c1
 f5 7d 52 e6 c3 fc 32 6c 1b ef 93 e6 45 d3 b5 e1 5a 8a 79 ab c2 3b e2 c9 
 4d 86 c6 e2 7c 31 d6 0d 21 c2 f5 c7 25 fa 11 39 c0 18 
 
+CIPHERTEXT_3 (CBOR Data Item) (164 bytes)
+58 a2 fe fc a7 89 46 24 39 f6 e2 fa 93 d6 d8 09 36 42 a7 c7 0a 9f db 41 
+e9 9d 2b 61 c9 74 b7 2f c4 33 53 2f df 92 c8 65 71 97 74 9b ce 87 09 d8 
+44 9d 96 6e e4 08 26 b6 b8 81 a7 eb f4 6a fb 54 8e 3c 52 c1 77 db 2a 55 
+9f f1 f1 98 9b 6c 22 38 c0 fb 8b 68 17 e6 2d 18 08 2a 46 e9 88 3a ef f3 
+d8 c3 af 03 0f 1d b7 10 b0 45 a0 04 61 04 09 21 6f 4b a5 db 0b ca 9f 8d 
+5d c1 f5 7d 52 e6 c3 fc 32 6c 1b ef 93 e6 45 d3 b5 e1 5a 8a 79 ab c2 3b 
+e2 c9 4d 86 c6 e2 7c 31 d6 0d 21 c2 f5 c7 25 fa 11 39 c0 18 
+
 message_3 (CBOR Sequence) (164 bytes)
 58 a2 fe fc a7 89 46 24 39 f6 e2 fa 93 d6 d8 09 36 42 a7 c7 0a 9f db 41 
 e9 9d 2b 61 c9 74 b7 2f c4 33 53 2f df 92 c8 65 71 97 74 9b ce 87 09 d8 
@@ -2096,15 +2272,7 @@ TH_4 (CBOR Data Item) (34 bytes)
 58 20 96 42 3f 76 73 16 df 28 a1 31 37 3c 80 91 59 dd 3f 35 33 11 f7 de 
 b1 c4 6b fc 8e 8f 83 cb d9 57 
 
-info for OSCORE Master Secret (CBOR Sequence) (58 bytes)
-0a 58 20 96 42 3f 76 73 16 df 28 a1 31 37 3c 80 91 59 dd 3f 35 33 11 f7 
-de b1 c4 6b fc 8e 8f 83 cb d9 57 74 4f 53 43 4f 52 45 20 4d 61 73 74 65 
-72 20 53 65 63 72 65 74 40 10 
-
-info for OSCORE Master Salt (CBOR Sequence) (56 bytes)
-0a 58 20 96 42 3f 76 73 16 df 28 a1 31 37 3c 80 91 59 dd 3f 35 33 11 f7 
-de b1 c4 6b fc 8e 8f 83 cb d9 57 72 4f 53 43 4f 52 45 20 4d 61 73 74 65 
-72 20 53 61 6c 74 40 08 
+EAD_4 (CBOR Sequence) (0 bytes)
 
 P_4ae (CBOR Sequence) (0 bytes)
 
@@ -2131,11 +2299,24 @@ a2 44 bc 25 f6 74 2a 6e da 23 87 89 98
 CIPHERTEXT_4 (8 bytes)
 28 8e 1d bd ac fd f5 12 
 
+CIPHERTEXT_4 (CBOR Data Item) (9 bytes)
+48 28 8e 1d bd ac fd f5 12 
+
 message_4 (CBOR Sequence) (9 bytes)
 48 28 8e 1d bd ac fd f5 12 
 
+info for OSCORE Master Secret (CBOR Sequence) (58 bytes)
+0a 58 20 96 42 3f 76 73 16 df 28 a1 31 37 3c 80 91 59 dd 3f 35 33 11 f7 
+de b1 c4 6b fc 8e 8f 83 cb d9 57 74 4f 53 43 4f 52 45 20 4d 61 73 74 65 
+72 20 53 65 63 72 65 74 40 10 
+
 OSCORE Master Secret (Raw Value) (16 bytes)
 06 38 29 4b 12 e3 15 91 b2 ac 81 f9 fa 62 e6 2e 
+
+info for OSCORE Master Salt (CBOR Sequence) (56 bytes)
+0a 58 20 96 42 3f 76 73 16 df 28 a1 31 37 3c 80 91 59 dd 3f 35 33 11 f7 
+de b1 c4 6b fc 8e 8f 83 cb d9 57 72 4f 53 43 4f 52 45 20 4d 61 73 74 65 
+72 20 53 61 6c 74 40 08 
 
 OSCORE Master Salt (Raw Value) (8 bytes)
 3f 7a 5d b0 d7 f0 eb 16 
@@ -2290,6 +2471,10 @@ MAC_2 (Raw Value) (32 bytes)
 4c c5 f6 9a a6 50 a6 8f 33 3f 19 44 d9 f5 1a c5 3c ef 63 94 f2 c3 df c0 
 0a a0 47 6f e0 52 c5 06 
 
+MAC_2 (CBOR Data Item) (34 bytes)
+58 20 4c c5 f6 9a a6 50 a6 8f 33 3f 19 44 d9 f5 1a c5 3c ef 63 94 f2 c3 
+df c0 0a a0 47 6f e0 52 c5 06 
+
 Message to be signed 2 (CBOR Data Item) (200 bytes)
 84 6a 53 69 67 6e 61 74 75 72 65 31 43 a1 18 2a 58 94 58 20 73 09 58 6a 
 e4 2b 3f d6 12 90 5a 32 83 24 94 c2 98 25 29 8b 37 c2 9a 56 7d d2 29 16 
@@ -2305,6 +2490,11 @@ Signature_or_MAC_2 (Raw Value) (64 bytes)
 eb ff 68 74 fa 7e 95 b5 75 2e 05 ef 2e 39 85 9a 41 cb e7 05 c3 a2 b3 9f 
 3b e6 06 17 89 8a f0 82 b7 51 33 24 4d a9 c8 7a 88 3d 49 17 b0 df c9 9d 
 4e 4e 71 39 ef 20 69 9e 68 ae 2f b0 20 76 10 0b 
+
+Signature_or_MAC_2 (CBOR Data Item) (66 bytes)
+58 40 eb ff 68 74 fa 7e 95 b5 75 2e 05 ef 2e 39 85 9a 41 cb e7 05 c3 a2 
+b3 9f 3b e6 06 17 89 8a f0 82 b7 51 33 24 4d a9 c8 7a 88 3d 49 17 b0 df 
+c9 9d 4e 4e 71 39 ef 20 69 9e 68 ae 2f b0 20 76 10 0b 
 
 PLAINTEXT_2 (CBOR Sequence) (69 bytes)
 a1 18 2a 58 40 eb ff 68 74 fa 7e 95 b5 75 2e 05 ef 2e 39 85 9a 41 cb e7 
@@ -2325,6 +2515,11 @@ CIPHERTEXT_2 (Raw Value) (69 bytes)
 66 15 0d 54 66 59 0f b8 66 3b db 87 9e 89 09 3b 4f c9 cc 37 a3 ef 8f 41 
 c4 c1 de fd aa 88 5a d7 4e 3a 18 52 39 83 82 89 5f 2d c1 26 cb 04 ad 36 
 bf 9a e4 1c 53 6c bb 00 3a ba d1 e7 8e 76 ff eb 1d c5 63 f6 a8 
+
+CIPHERTEXT_2 (CBOR Data Item) (71 bytes)
+58 45 66 15 0d 54 66 59 0f b8 66 3b db 87 9e 89 09 3b 4f c9 cc 37 a3 ef 
+8f 41 c4 c1 de fd aa 88 5a d7 4e 3a 18 52 39 83 82 89 5f 2d c1 26 cb 04 
+ad 36 bf 9a e4 1c 53 6c bb 00 3a ba d1 e7 8e 76 ff eb 1d c5 63 f6 a8 
 
 message_2 (CBOR Sequence) (104 bytes)
 58 65 d5 70 f3 a5 40 fe 2e 95 2f 25 ba 32 80 c0 b1 23 8c bd 86 7e d5 6a 
@@ -2394,8 +2589,14 @@ be 5c c9 f5 8c 02 e9 a2 94 69 24 2f 36 50 49 30 4c 6d b2 14 08
 MAC_3 (Raw Value) (8 bytes)
 c8 7f 01 38 91 83 31 e7 
 
+MAC_3 (CBOR Data Item) (9 bytes)
+48 c8 7f 01 38 91 83 31 e7 
+
 Signature_or_MAC_3 (Raw Value) (8 bytes)
 c8 7f 01 38 91 83 31 e7 
+
+Signature_or_MAC_3 (CBOR Data Item) (9 bytes)
+48 c8 7f 01 38 91 83 31 e7 
 
 P_3ae (CBOR Sequence) (83 bytes)
 a1 18 2b a2 02 77 34 32 2d 35 30 2d 33 31 2d 46 46 2d 45 46 2d 33 37 2d 
@@ -2427,6 +2628,12 @@ e8 72 fb 70 94 5c b5 27 d5 25 1e c1 87 2e 36 2b 12 ce ea 57 f5 f7 d6 76
 8b 30 b0 52 ca c2 bc 74 97 56 cd 96 c7 2e 4b f4 90 99 d0 89 c6 c9 ab b0 
 0e 65 75 98 02 4b ce 68 69 a3 09 b6 17 ee 8d 21 25 37 1d 
 
+CIPHERTEXT_3 (CBOR Data Item) (93 bytes)
+58 5b a6 a0 29 6e 0f 3a fe 73 f2 1c 76 4e e7 8b 46 c1 48 47 14 14 62 02 
+ef 8b e8 72 fb 70 94 5c b5 27 d5 25 1e c1 87 2e 36 2b 12 ce ea 57 f5 f7 
+d6 76 8b 30 b0 52 ca c2 bc 74 97 56 cd 96 c7 2e 4b f4 90 99 d0 89 c6 c9 
+ab b0 0e 65 75 98 02 4b ce 68 69 a3 09 b6 17 ee 8d 21 25 37 1d 
+
 message_3 (CBOR Sequence) (93 bytes)
 58 5b a6 a0 29 6e 0f 3a fe 73 f2 1c 76 4e e7 8b 46 c1 48 47 14 14 62 02 
 ef 8b e8 72 fb 70 94 5c b5 27 d5 25 1e c1 87 2e 36 2b 12 ce ea 57 f5 f7 
@@ -2453,15 +2660,7 @@ TH_4 (CBOR Data Item) (34 bytes)
 58 20 4a 3a ef 0c a6 0c d7 5c 94 6a e9 fe ab 44 cb 19 b8 a1 5b f8 84 3b 
 3a 3e 6e a1 1b b4 d1 be 85 ab 
 
-info for OSCORE Master Secret (CBOR Sequence) (58 bytes)
-0a 58 20 4a 3a ef 0c a6 0c d7 5c 94 6a e9 fe ab 44 cb 19 b8 a1 5b f8 84 
-3b 3a 3e 6e a1 1b b4 d1 be 85 ab 74 4f 53 43 4f 52 45 20 4d 61 73 74 65 
-72 20 53 65 63 72 65 74 40 10 
-
-info for OSCORE Master Salt (CBOR Sequence) (56 bytes)
-0a 58 20 4a 3a ef 0c a6 0c d7 5c 94 6a e9 fe ab 44 cb 19 b8 a1 5b f8 84 
-3b 3a 3e 6e a1 1b b4 d1 be 85 ab 72 4f 53 43 4f 52 45 20 4d 61 73 74 65 
-72 20 53 61 6c 74 40 08 
+EAD_4 (CBOR Sequence) (0 bytes)
 
 P_4ae (CBOR Sequence) (0 bytes)
 
@@ -2488,11 +2687,24 @@ IV_4ae (Raw Value) (13 bytes)
 CIPHERTEXT_4 (8 bytes)
 69 2f eb 16 c4 2e 0e 32 
 
+CIPHERTEXT_4 (CBOR Data Item) (9 bytes)
+48 69 2f eb 16 c4 2e 0e 32 
+
 message_4 (CBOR Sequence) (9 bytes)
 48 69 2f eb 16 c4 2e 0e 32 
 
+info for OSCORE Master Secret (CBOR Sequence) (58 bytes)
+0a 58 20 4a 3a ef 0c a6 0c d7 5c 94 6a e9 fe ab 44 cb 19 b8 a1 5b f8 84 
+3b 3a 3e 6e a1 1b b4 d1 be 85 ab 74 4f 53 43 4f 52 45 20 4d 61 73 74 65 
+72 20 53 65 63 72 65 74 40 10 
+
 OSCORE Master Secret (Raw Value) (16 bytes)
 fb 04 8c 40 bd 8b 93 5e 88 3d 1a 03 fb d5 cb 9a 
+
+info for OSCORE Master Salt (CBOR Sequence) (56 bytes)
+0a 58 20 4a 3a ef 0c a6 0c d7 5c 94 6a e9 fe ab 44 cb 19 b8 a1 5b f8 84 
+3b 3a 3e 6e a1 1b b4 d1 be 85 ab 72 4f 53 43 4f 52 45 20 4d 61 73 74 65 
+72 20 53 61 6c 74 40 08 
 
 OSCORE Master Salt (Raw Value) (8 bytes)
 cf 84 bb e0 60 0a 9b 9c 
@@ -2646,8 +2858,14 @@ f1 91 33 5a c7 61 db 4a 1b 4c 10
 MAC_2 (Raw Value) (16 bytes)
 21 e6 2e 3c 97 3d 9f df 2c 72 e9 5c bc 48 af 8f 
 
+MAC_2 (CBOR Data Item) (17 bytes)
+50 21 e6 2e 3c 97 3d 9f df 2c 72 e9 5c bc 48 af 8f 
+
 Signature_or_MAC_2 (Raw Value) (16 bytes)
 21 e6 2e 3c 97 3d 9f df 2c 72 e9 5c bc 48 af 8f 
+
+Signature_or_MAC_2 (CBOR Data Item) (17 bytes)
+50 21 e6 2e 3c 97 3d 9f df 2c 72 e9 5c bc 48 af 8f 
 
 PLAINTEXT_2 (CBOR Sequence) (18 bytes)
 30 50 21 e6 2e 3c 97 3d 9f df 2c 72 e9 5c bc 48 af 8f 
@@ -2662,6 +2880,9 @@ KEYSTREAM_2 (Raw Value) (18 bytes)
 
 CIPHERTEXT_2 (Raw Value) (18 bytes)
 77 05 7e a7 4c c2 d1 a0 f1 ff 69 9b 85 d7 b5 37 7a bf 
+
+CIPHERTEXT_2 (CBOR Data Item) (19 bytes)
+52 77 05 7e a7 4c c2 d1 a0 f1 ff 69 9b 85 d7 b5 37 7a bf 
 
 message_2 (CBOR Sequence) (53 bytes)
 58 32 3d ea 3b f1 e5 72 b5 70 b9 8a 97 94 3e 3f 76 b6 dc fd 78 71 da bd 
@@ -2721,8 +2942,14 @@ fe 45 5c 1c 9f b3 bb 5f 34 33 09 a0 65 4d 41 43 5f 33 58 4a a1 04 32 a2
 MAC_3 (Raw Value) (16 bytes)
 08 0e b9 1e 06 fe 21 26 39 84 a9 9e 8e cc 9d d0 
 
+MAC_3 (CBOR Data Item) (17 bytes)
+50 08 0e b9 1e 06 fe 21 26 39 84 a9 9e 8e cc 9d d0 
+
 Signature_or_MAC_3 (Raw Value) (16 bytes)
 08 0e b9 1e 06 fe 21 26 39 84 a9 9e 8e cc 9d d0 
+
+Signature_or_MAC_3 (CBOR Data Item) (17 bytes)
+50 08 0e b9 1e 06 fe 21 26 39 84 a9 9e 8e cc 9d d0 
 
 P_3ae (CBOR Sequence) (18 bytes)
 32 50 08 0e b9 1e 06 fe 21 26 39 84 a9 9e 8e cc 9d d0 
@@ -2749,6 +2976,10 @@ CIPHERTEXT_3 (Raw Value) (34 bytes)
 59 4e 05 3c f8 18 55 18 ae 39 bb 4b aa 5e 9b 36 ba ea d8 24 fc 0a ee 8b 
 6c dd 3b c8 da 71 f1 0f 9e 48 
 
+CIPHERTEXT_3 (CBOR Data Item) (36 bytes)
+58 22 59 4e 05 3c f8 18 55 18 ae 39 bb 4b aa 5e 9b 36 ba ea d8 24 fc 0a 
+ee 8b 6c dd 3b c8 da 71 f1 0f 9e 48 
+
 message_3 (CBOR Sequence) (36 bytes)
 58 22 59 4e 05 3c f8 18 55 18 ae 39 bb 4b aa 5e 9b 36 ba ea d8 24 fc 0a 
 ee 8b 6c dd 3b c8 da 71 f1 0f 9e 48 
@@ -2770,15 +3001,7 @@ TH_4 (CBOR Data Item) (34 bytes)
 58 20 b2 4d 89 1e 73 3e e8 97 53 53 e8 ba 74 35 5b cb 34 34 5d 9c 1d da 
 a2 d9 c7 b2 c7 fa 1c 96 0e 61 
 
-info for OSCORE Master Secret (CBOR Sequence) (59 bytes)
-18 1e 58 20 b2 4d 89 1e 73 3e e8 97 53 53 e8 ba 74 35 5b cb 34 34 5d 9c 
-1d da a2 d9 c7 b2 c7 fa 1c 96 0e 61 74 4f 53 43 4f 52 45 20 4d 61 73 74 
-65 72 20 53 65 63 72 65 74 40 10 
-
-info for OSCORE Master Salt (CBOR Sequence) (57 bytes)
-18 1e 58 20 b2 4d 89 1e 73 3e e8 97 53 53 e8 ba 74 35 5b cb 34 34 5d 9c 
-1d da a2 d9 c7 b2 c7 fa 1c 96 0e 61 72 4f 53 43 4f 52 45 20 4d 61 73 74 
-65 72 20 53 61 6c 74 40 08 
+EAD_4 (CBOR Sequence) (0 bytes)
 
 P_4ae (CBOR Sequence) (0 bytes)
 
@@ -2805,11 +3028,24 @@ IV_4ae (Raw Value) (13 bytes)
 CIPHERTEXT_4 (16 bytes)
 7d d7 f2 b7 12 1b 98 cd 5f 59 42 58 6e 52 f7 a0 
 
+CIPHERTEXT_4 (CBOR Data Item) (17 bytes)
+50 7d d7 f2 b7 12 1b 98 cd 5f 59 42 58 6e 52 f7 a0 
+
 message_4 (CBOR Sequence) (17 bytes)
 50 7d d7 f2 b7 12 1b 98 cd 5f 59 42 58 6e 52 f7 a0 
 
+info for OSCORE Master Secret (CBOR Sequence) (59 bytes)
+18 1e 58 20 b2 4d 89 1e 73 3e e8 97 53 53 e8 ba 74 35 5b cb 34 34 5d 9c 
+1d da a2 d9 c7 b2 c7 fa 1c 96 0e 61 74 4f 53 43 4f 52 45 20 4d 61 73 74 
+65 72 20 53 65 63 72 65 74 40 10 
+
 OSCORE Master Secret (Raw Value) (16 bytes)
 92 bd 4c 30 4b 84 ba 3d 99 76 7f 79 53 eb 97 b6 
+
+info for OSCORE Master Salt (CBOR Sequence) (57 bytes)
+18 1e 58 20 b2 4d 89 1e 73 3e e8 97 53 53 e8 ba 74 35 5b cb 34 34 5d 9c 
+1d da a2 d9 c7 b2 c7 fa 1c 96 0e 61 72 4f 53 43 4f 52 45 20 4d 61 73 74 
+65 72 20 53 61 6c 74 40 08 
 
 OSCORE Master Salt (Raw Value) (8 bytes)
 00 51 37 30 95 27 18 a0 
@@ -2965,6 +3201,10 @@ MAC_2 (Raw Value) (32 bytes)
 0c df 5f c9 37 3a 6d 78 3b 31 63 39 48 bc 5e 54 4d 59 76 88 c0 30 48 67 
 b9 74 8b 60 b1 30 6e 11 
 
+MAC_2 (CBOR Data Item) (34 bytes)
+58 20 0c df 5f c9 37 3a 6d 78 3b 31 63 39 48 bc 5e 54 4d 59 76 88 c0 30 
+48 67 b9 74 8b 60 b1 30 6e 11 
+
 Message to be signed 2 (CBOR Data Item) (216 bytes)
 84 6a 53 69 67 6e 61 74 75 72 65 31 4e a1 18 22 82 2e 48 9c 94 55 73 82 
 c9 66 75 58 99 58 20 fb 5f be f6 d2 00 e5 7b 8b bb 66 51 da 11 a9 6a 7f 
@@ -2980,6 +3220,11 @@ Signature_or_MAC_2 (Raw Value) (64 bytes)
 f4 ee 65 d1 77 59 bc a3 a9 19 33 99 59 d5 8a 10 38 cb 05 bb 41 0a 35 94 
 f9 a3 0d 2c 9b b0 94 76 0e 53 c8 55 fa 40 35 cf fc d5 c2 34 31 05 3f 64 
 57 d8 f0 bf f0 9a 8f f1 f1 86 d0 cb de 88 1d 0f 
+
+Signature_or_MAC_2 (CBOR Data Item) (66 bytes)
+58 40 f4 ee 65 d1 77 59 bc a3 a9 19 33 99 59 d5 8a 10 38 cb 05 bb 41 0a 
+35 94 f9 a3 0d 2c 9b b0 94 76 0e 53 c8 55 fa 40 35 cf fc d5 c2 34 31 05 
+3f 64 57 d8 f0 bf f0 9a 8f f1 f1 86 d0 cb de 88 1d 0f 
 
 PLAINTEXT_2 (CBOR Sequence) (80 bytes)
 a1 18 22 82 2e 48 9c 94 55 73 82 c9 66 75 58 40 f4 ee 65 d1 77 59 bc a3 
@@ -3003,6 +3248,12 @@ CIPHERTEXT_2 (Raw Value) (80 bytes)
 75 c5 91 20 e3 dd cb 86 6a b6 7d f0 3b e9 de 6b 12 59 d0 86 90 c9 aa 25 
 b5 38 da 76 e4 fb 6a 48 c6 74 d5 f7 b6 77 55 ff db 2d fc 06 53 52 35 a8 
 5c 1d 4c d8 90 14 3c 44 
+
+CIPHERTEXT_2 (CBOR Data Item) (82 bytes)
+58 50 5b fc e1 2d d9 e6 61 68 b6 cb 41 55 b1 c4 1f 5c ff 83 39 c8 a2 9c 
+59 2c 75 c5 91 20 e3 dd cb 86 6a b6 7d f0 3b e9 de 6b 12 59 d0 86 90 c9 
+aa 25 b5 38 da 76 e4 fb 6a 48 c6 74 d5 f7 b6 77 55 ff db 2d fc 06 53 52 
+35 a8 5c 1d 4c d8 90 14 3c 44 
 
 message_2 (CBOR Sequence) (115 bytes)
 58 70 5f 01 96 0e 11 74 e3 36 b9 f5 cb 83 3e 3b 25 54 d5 81 37 02 62 8a 
@@ -3068,6 +3319,10 @@ MAC_3 (Raw Value) (32 bytes)
 60 bd 1c c6 c2 36 cd 99 af 5f 89 b1 17 56 38 6c e6 d7 27 cd c1 90 bd 45 
 93 14 b2 6a 48 ed 2e b4 
 
+MAC_3 (CBOR Data Item) (34 bytes)
+58 20 60 bd 1c c6 c2 36 cd 99 af 5f 89 b1 17 56 38 6c e6 d7 27 cd c1 90 
+bd 45 93 14 b2 6a 48 ed 2e b4 
+
 Message to be signed 3 (CBOR Data Item) (210 bytes)
 84 6a 53 69 67 6e 61 74 75 72 65 31 4e a1 18 22 82 2e 48 60 78 0e 94 51 
 bd c4 3c 58 93 58 20 2a 50 5d 43 38 e6 19 72 99 29 94 53 9e d1 2d 8c f8 
@@ -3083,6 +3338,11 @@ Signature_or_MAC_3 (Raw Value) (64 bytes)
 bf 1d 91 7d 1e 49 e6 93 55 dc 90 b4 18 0c 27 5a d6 e8 d8 62 48 b4 78 51 
 d2 3e 74 a8 79 75 98 a5 ca 95 3b 23 d9 c1 c2 63 0b 30 ec cd 3a 1b b3 d2 
 af 37 55 d6 69 d9 9e 83 99 09 c7 33 00 26 1f 0f 
+
+Signature_or_MAC_3 (CBOR Data Item) (66 bytes)
+58 40 bf 1d 91 7d 1e 49 e6 93 55 dc 90 b4 18 0c 27 5a d6 e8 d8 62 48 b4 
+78 51 d2 3e 74 a8 79 75 98 a5 ca 95 3b 23 d9 c1 c2 63 0b 30 ec cd 3a 1b 
+b3 d2 af 37 55 d6 69 d9 9e 83 99 09 c7 33 00 26 1f 0f 
 
 P_3ae (CBOR Sequence) (80 bytes)
 a1 18 22 82 2e 48 60 78 0e 94 51 bd c4 3c 58 40 bf 1d 91 7d 1e 49 e6 93 
@@ -3114,6 +3374,13 @@ d9 fe 8d a5 60 12 78 66 29 b0 08 72 46 40 5c 75 66 a0 20 24 1c 15 8d 96
 8f 95 a7 3f 2e 92 8a 64 01 41 74 2c 97 36 92 4b 33 70 32 40 5c 2d ac fd 
 74 63 6b 10 8d 69 f7 e5 7c ca 86 71 27 7c 57 ca fa 4f da d7 e2 aa 5a 2e 
 
+CIPHERTEXT_3 (CBOR Data Item) (98 bytes)
+58 60 17 46 66 7f 68 8f ef 9e 10 0f 42 5d d4 56 bf a1 7d 99 34 92 11 09 
+70 e0 d9 fe 8d a5 60 12 78 66 29 b0 08 72 46 40 5c 75 66 a0 20 24 1c 15 
+8d 96 8f 95 a7 3f 2e 92 8a 64 01 41 74 2c 97 36 92 4b 33 70 32 40 5c 2d 
+ac fd 74 63 6b 10 8d 69 f7 e5 7c ca 86 71 27 7c 57 ca fa 4f da d7 e2 aa 
+5a 2e 
+
 message_3 (CBOR Sequence) (98 bytes)
 58 60 17 46 66 7f 68 8f ef 9e 10 0f 42 5d d4 56 bf a1 7d 99 34 92 11 09 
 70 e0 d9 fe 8d a5 60 12 78 66 29 b0 08 72 46 40 5c 75 66 a0 20 24 1c 15 
@@ -3141,15 +3408,7 @@ TH_4 (CBOR Data Item) (34 bytes)
 58 20 2d 43 92 f4 16 07 26 c3 f9 62 cf c8 41 3b 9a a8 e2 68 c2 86 17 e2 
 ef 41 c8 05 87 3f 6c 59 e6 dd 
 
-info for OSCORE Master Secret (CBOR Sequence) (59 bytes)
-18 1e 58 20 2d 43 92 f4 16 07 26 c3 f9 62 cf c8 41 3b 9a a8 e2 68 c2 86 
-17 e2 ef 41 c8 05 87 3f 6c 59 e6 dd 74 4f 53 43 4f 52 45 20 4d 61 73 74 
-65 72 20 53 65 63 72 65 74 40 10 
-
-info for OSCORE Master Salt (CBOR Sequence) (57 bytes)
-18 1e 58 20 2d 43 92 f4 16 07 26 c3 f9 62 cf c8 41 3b 9a a8 e2 68 c2 86 
-17 e2 ef 41 c8 05 87 3f 6c 59 e6 dd 72 4f 53 43 4f 52 45 20 4d 61 73 74 
-65 72 20 53 61 6c 74 40 08 
+EAD_4 (CBOR Sequence) (0 bytes)
 
 P_4ae (CBOR Sequence) (0 bytes)
 
@@ -3176,11 +3435,24 @@ fa 7c b7 82 2f 5b c2 a7 4f c8 12 4d 85
 CIPHERTEXT_4 (16 bytes)
 fe f4 71 ed 5d cc 97 14 f0 0b bf c2 ca 80 d0 1e 
 
+CIPHERTEXT_4 (CBOR Data Item) (17 bytes)
+50 fe f4 71 ed 5d cc 97 14 f0 0b bf c2 ca 80 d0 1e 
+
 message_4 (CBOR Sequence) (17 bytes)
 50 fe f4 71 ed 5d cc 97 14 f0 0b bf c2 ca 80 d0 1e 
 
+info for OSCORE Master Secret (CBOR Sequence) (59 bytes)
+18 1e 58 20 2d 43 92 f4 16 07 26 c3 f9 62 cf c8 41 3b 9a a8 e2 68 c2 86 
+17 e2 ef 41 c8 05 87 3f 6c 59 e6 dd 74 4f 53 43 4f 52 45 20 4d 61 73 74 
+65 72 20 53 65 63 72 65 74 40 10 
+
 OSCORE Master Secret (Raw Value) (16 bytes)
 dd e1 46 93 47 83 6a 7b cf 84 a2 3a a0 f4 57 84 
+
+info for OSCORE Master Salt (CBOR Sequence) (57 bytes)
+18 1e 58 20 2d 43 92 f4 16 07 26 c3 f9 62 cf c8 41 3b 9a a8 e2 68 c2 86 
+17 e2 ef 41 c8 05 87 3f 6c 59 e6 dd 72 4f 53 43 4f 52 45 20 4d 61 73 74 
+65 72 20 53 61 6c 74 40 08 
 
 OSCORE Master Salt (Raw Value) (8 bytes)
 d9 8d b4 b9 ad 97 8b dc 
@@ -3340,8 +3612,14 @@ a2 02 6b 65 78 61 6d 70 6c 65 2e 65 64 75 08 a1 01 a4 01 01 02 19 3b a4
 MAC_2 (Raw Value) (8 bytes)
 72 d4 ee 7a 0d 29 f1 c5 
 
+MAC_2 (CBOR Data Item) (9 bytes)
+48 72 d4 ee 7a 0d 29 f1 c5 
+
 Signature_or_MAC_2 (Raw Value) (8 bytes)
 72 d4 ee 7a 0d 29 f1 c5 
+
+Signature_or_MAC_2 (CBOR Data Item) (9 bytes)
+48 72 d4 ee 7a 0d 29 f1 c5 
 
 PLAINTEXT_2 (CBOR Sequence) (59 bytes)
 19 3b a4 48 72 d4 ee 7a 0d 29 f1 c5 18 3a fb 40 09 1e b8 51 eb 85 1f 12 
@@ -3362,6 +3640,11 @@ CIPHERTEXT_2 (Raw Value) (59 bytes)
 98 e5 37 49 8e 2e f8 dd a0 b2 b3 9b 2a 20 ed c4 2c 75 19 13 a6 41 c6 93 
 da 87 0c 08 5f 31 6f 17 1d ae 01 aa 47 27 df fc 2b 0e fe da 39 b4 e5 a9 
 1c 72 c7 3b a4 f1 8f d6 d7 69 8e 
+
+CIPHERTEXT_2 (CBOR Data Item) (61 bytes)
+58 3b 98 e5 37 49 8e 2e f8 dd a0 b2 b3 9b 2a 20 ed c4 2c 75 19 13 a6 41 
+c6 93 da 87 0c 08 5f 31 6f 17 1d ae 01 aa 47 27 df fc 2b 0e fe da 39 b4 
+e5 a9 1c 72 c7 3b a4 f1 8f d6 d7 69 8e 
 
 message_2 (CBOR Sequence) (96 bytes)
 58 5b a0 60 ed 7b 4d 02 52 d8 c1 77 52 0d 2e 56 4e 64 fc c7 68 1b 18 8c 
@@ -3428,8 +3711,14 @@ a2 02 77 34 32 2d 35 30 2d 33 31 2d 46 46 2d 45 46 2d 33 37 2d 33 32 2d
 MAC_3 (Raw Value) (8 bytes)
 ee 52 c4 04 e8 73 6b e5 
 
+MAC_3 (CBOR Data Item) (9 bytes)
+48 ee 52 c4 04 e8 73 6b e5 
+
 Signature_or_MAC_3 (Raw Value) (8 bytes)
 ee 52 c4 04 e8 73 6b e5 
+
+Signature_or_MAC_3 (CBOR Data Item) (9 bytes)
+48 ee 52 c4 04 e8 73 6b e5 
 
 P_3ae (CBOR Sequence) (43 bytes)
 19 3b 1e 48 ee 52 c4 04 e8 73 6b e5 18 3a a1 f6 48 00 01 02 03 04 05 06 
@@ -3458,6 +3747,11 @@ dc 49 46 08 72 33 a5 a5 f4 84 9c 03 60 e1 84 92 d1 04 7b ad 11 4e e6 6a
 91 95 b4 89 a5 d9 79 46 57 e2 39 58 bf 07 67 7f 71 c6 c1 2a d7 78 a9 36 
 0a 93 c8 
 
+CIPHERTEXT_3 (CBOR Data Item) (53 bytes)
+58 33 dc 49 46 08 72 33 a5 a5 f4 84 9c 03 60 e1 84 92 d1 04 7b ad 11 4e 
+e6 6a 91 95 b4 89 a5 d9 79 46 57 e2 39 58 bf 07 67 7f 71 c6 c1 2a d7 78 
+a9 36 0a 93 c8 
+
 message_3 (CBOR Sequence) (53 bytes)
 58 33 dc 49 46 08 72 33 a5 a5 f4 84 9c 03 60 e1 84 92 d1 04 7b ad 11 4e 
 e6 6a 91 95 b4 89 a5 d9 79 46 57 e2 39 58 bf 07 67 7f 71 c6 c1 2a d7 78 
@@ -3481,15 +3775,9 @@ TH_4 (CBOR Data Item) (34 bytes)
 58 20 de 9e 37 3c f4 16 4b e2 c7 0f 7e ad 85 78 24 15 9f ec 76 ff 03 77 
 69 64 11 94 df 9e 18 dc 46 6c 
 
-info for OSCORE Master Secret (CBOR Sequence) (58 bytes)
-0a 58 20 de 9e 37 3c f4 16 4b e2 c7 0f 7e ad 85 78 24 15 9f ec 76 ff 03 
-77 69 64 11 94 df 9e 18 dc 46 6c 74 4f 53 43 4f 52 45 20 4d 61 73 74 65 
-72 20 53 65 63 72 65 74 40 10 
-
-info for OSCORE Master Salt (CBOR Sequence) (56 bytes)
-0a 58 20 de 9e 37 3c f4 16 4b e2 c7 0f 7e ad 85 78 24 15 9f ec 76 ff 03 
-77 69 64 11 94 df 9e 18 dc 46 6c 72 4f 53 43 4f 52 45 20 4d 61 73 74 65 
-72 20 53 61 6c 74 40 08 
+EAD_4 (CBOR Sequence) (48 bytes)
+18 4e 19 0a cd 18 5f 82 48 00 01 02 03 04 05 06 07 48 00 01 02 03 04 05 
+06 07 18 57 82 49 00 01 02 03 04 05 06 07 08 48 00 01 02 03 04 05 06 07 
 
 P_4ae (CBOR Sequence) (48 bytes)
 18 4e 19 0a cd 18 5f 82 48 00 01 02 03 04 05 06 07 48 00 01 02 03 04 05 
@@ -3520,13 +3808,28 @@ dd 64 1a 52 d1 81 48 cf 73 32 a3 4d af 76 84 d4 11 6f 47 49 a8 88 d5 69
 85 fb ce 17 38 55 b8 a9 34 7e f7 61 8c 1c 20 7f e9 ad 3d f2 4e a3 68 7f 
 9d 5c dc b7 9c a8 0c 9d 
 
+CIPHERTEXT_4 (CBOR Data Item) (58 bytes)
+58 38 dd 64 1a 52 d1 81 48 cf 73 32 a3 4d af 76 84 d4 11 6f 47 49 a8 88 
+d5 69 85 fb ce 17 38 55 b8 a9 34 7e f7 61 8c 1c 20 7f e9 ad 3d f2 4e a3 
+68 7f 9d 5c dc b7 9c a8 0c 9d 
+
 message_4 (CBOR Sequence) (58 bytes)
 58 38 dd 64 1a 52 d1 81 48 cf 73 32 a3 4d af 76 84 d4 11 6f 47 49 a8 88 
 d5 69 85 fb ce 17 38 55 b8 a9 34 7e f7 61 8c 1c 20 7f e9 ad 3d f2 4e a3 
 68 7f 9d 5c dc b7 9c a8 0c 9d 
 
+info for OSCORE Master Secret (CBOR Sequence) (58 bytes)
+0a 58 20 de 9e 37 3c f4 16 4b e2 c7 0f 7e ad 85 78 24 15 9f ec 76 ff 03 
+77 69 64 11 94 df 9e 18 dc 46 6c 74 4f 53 43 4f 52 45 20 4d 61 73 74 65 
+72 20 53 65 63 72 65 74 40 10 
+
 OSCORE Master Secret (Raw Value) (16 bytes)
 a9 b8 ea 27 50 dc 4c d3 0d 05 21 63 71 d6 11 33 
+
+info for OSCORE Master Salt (CBOR Sequence) (56 bytes)
+0a 58 20 de 9e 37 3c f4 16 4b e2 c7 0f 7e ad 85 78 24 15 9f ec 76 ff 03 
+77 69 64 11 94 df 9e 18 dc 46 6c 72 4f 53 43 4f 52 45 20 4d 61 73 74 65 
+72 20 53 61 6c 74 40 08 
 
 OSCORE Master Salt (Raw Value) (8 bytes)
 e9 32 3a 03 58 59 7e 8b 
@@ -3688,6 +3991,10 @@ MAC_2 (Raw Value) (32 bytes)
 a3 64 b8 1b ea cf 22 2f dd de 67 dc 3f 8a 21 92 fb 2b 66 98 16 34 3d bd 
 ec 12 6e ae af 0f 35 7e 
 
+MAC_2 (CBOR Data Item) (34 bytes)
+58 20 a3 64 b8 1b ea cf 22 2f dd de 67 dc 3f 8a 21 92 fb 2b 66 98 16 34 
+3d bd ec 12 6e ae af 0f 35 7e 
+
 Message to be signed 2 (CBOR Data Item) (270 bytes)
 84 6a 53 69 67 6e 61 74 75 72 65 31 4e a1 18 22 82 2e 48 86 54 47 fc 4f 
 ae 01 47 58 cf 58 20 b6 10 ac 81 8b a0 37 8a f9 bf a7 f8 ca b8 89 fb b3 
@@ -3706,6 +4013,11 @@ Signature_or_MAC_2 (Raw Value) (64 bytes)
 b1 14 9a df 69 27 b7 f8 d1 b0 f5 36 40 75 2f 5f 0f a0 9e 2a 78 b1 0c 80 
 4c cb 35 ea 5d 47 aa c7 18 c1 51 07 44 58 37 c5 28 a0 34 43 a2 1a 6a 6f 
 70 b6 66 c1 a4 88 8a d4 df bc a1 55 49 0f 9e 09 
+
+Signature_or_MAC_2 (CBOR Data Item) (66 bytes)
+58 40 b1 14 9a df 69 27 b7 f8 d1 b0 f5 36 40 75 2f 5f 0f a0 9e 2a 78 b1 
+0c 80 4c cb 35 ea 5d 47 aa c7 18 c1 51 07 44 58 37 c5 28 a0 34 43 a2 1a 
+6a 6f 70 b6 66 c1 a4 88 8a d4 df bc a1 55 49 0f 9e 09 
 
 PLAINTEXT_2 (CBOR Sequence) (127 bytes)
 a1 18 22 82 2e 48 86 54 47 fc 4f ae 01 47 58 40 b1 14 9a df 69 27 b7 f8 
@@ -3735,6 +4047,14 @@ c9 3e 8c c1 14 05 11 fb 5a 5a 22 e3 99 64 46 b5 13 64 ff 3d 01 af e3 26
 28 bc 65 3b 04 04 68 fb 09 ab 91 9c f2 b0 52 2f 04 51 3e 9d 95 8f 14 3d 
 b6 e4 f3 bf 40 d7 14 92 92 cb 94 9c 2d 72 77 20 fe 53 77 4f 20 44 cf d6 
 21 8b af 1f 77 38 1f 
+
+CIPHERTEXT_2 (CBOR Data Item) (129 bytes)
+58 7f c9 3e 8c c1 14 05 11 fb 5a 5a 22 e3 99 64 46 b5 13 64 ff 3d 01 af 
+e3 26 4c fc f0 3a dc 90 a6 96 04 8c 9e ed 8c 81 06 60 66 21 d6 0e 63 04 
+66 4c 8f 2b ae 56 f7 c7 65 e9 91 38 83 37 1b 38 ac cf ff bb 16 f0 a5 0e 
+5a 4e 28 bc 65 3b 04 04 68 fb 09 ab 91 9c f2 b0 52 2f 04 51 3e 9d 95 8f 
+14 3d b6 e4 f3 bf 40 d7 14 92 92 cb 94 9c 2d 72 77 20 fe 53 77 4f 20 44 
+cf d6 21 8b af 1f 77 38 1f 
 
 message_2 (CBOR Sequence) (164 bytes)
 58 9f 1d 61 44 34 35 72 e2 e3 be 79 c8 03 f9 0c 0b 24 6a 4c 5b 00 01 5f 
@@ -3806,6 +4126,10 @@ MAC_3 (Raw Value) (32 bytes)
 de 6b 26 33 9a 8a 05 81 62 da d8 dd 39 85 2d 3b 26 10 28 01 41 d8 db 81 
 c5 8a 48 cf 8b db 30 8f 
 
+MAC_3 (CBOR Data Item) (34 bytes)
+58 20 de 6b 26 33 9a 8a 05 81 62 da d8 dd 39 85 2d 3b 26 10 28 01 41 d8 
+db 81 c5 8a 48 cf 8b db 30 8f 
+
 Message to be signed 3 (CBOR Data Item) (230 bytes)
 84 6a 53 69 67 6e 61 74 75 72 65 31 4e a1 18 22 82 2e 48 47 1f b9 43 aa 
 23 c5 11 58 a7 58 20 09 2e 78 44 19 5b aa 85 3b b5 e0 e9 6a da be 38 74 
@@ -3822,6 +4146,11 @@ Signature_or_MAC_3 (Raw Value) (64 bytes)
 ca b0 05 ab b4 ba eb e9 f2 b5 b8 80 57 d8 79 3f 67 8a ff 2a 15 d2 22 bb 
 e6 96 a4 f1 e3 0a e2 b3 e6 01 6d bb d8 7b 9d fd 00 46 eb 1d f0 f5 41 12 
 a5 05 f9 5a 8d af 04 8c 71 60 90 4e 15 77 18 0d 
+
+Signature_or_MAC_3 (CBOR Data Item) (66 bytes)
+58 40 ca b0 05 ab b4 ba eb e9 f2 b5 b8 80 57 d8 79 3f 67 8a ff 2a 15 d2 
+22 bb e6 96 a4 f1 e3 0a e2 b3 e6 01 6d bb d8 7b 9d fd 00 46 eb 1d f0 f5 
+41 12 a5 05 f9 5a 8d af 04 8c 71 60 90 4e 15 77 18 0d 
 
 P_3ae (CBOR Sequence) (83 bytes)
 a1 18 22 82 2e 48 47 1f b9 43 aa 23 c5 11 58 40 ca b0 05 ab b4 ba eb e9 
@@ -3853,6 +4182,12 @@ de 3b 13 a5 16 85 85 d0 24 3b e7 e0 3c ee 19 5f 80 eb 25 ac 74 64 86 ab
 21 88 a5 bf dd 32 62 ff e7 c2 ee 6a 73 73 8e 95 a0 a0 6d 47 63 e8 9d 70 
 d0 c9 a0 05 3d be 2e 51 f1 df 2a 66 ce 6a 95 07 54 7e ac 
 
+CIPHERTEXT_3 (CBOR Data Item) (93 bytes)
+58 5b de 3b 13 a5 16 85 85 d0 24 3b e7 e0 3c ee 19 5f 80 eb 25 ac 74 64 
+86 ab 86 63 eb 10 b0 0d 77 1d 87 eb 7b 90 17 c2 be b8 99 5d 8c ae af 06 
+ab 3e 21 88 a5 bf dd 32 62 ff e7 c2 ee 6a 73 73 8e 95 a0 a0 6d 47 63 e8 
+9d 70 d0 c9 a0 05 3d be 2e 51 f1 df 2a 66 ce 6a 95 07 54 7e ac 
+
 message_3 (CBOR Sequence) (93 bytes)
 58 5b de 3b 13 a5 16 85 85 d0 24 3b e7 e0 3c ee 19 5f 80 eb 25 ac 74 64 
 86 ab 86 63 eb 10 b0 0d 77 1d 87 eb 7b 90 17 c2 be b8 99 5d 8c ae af 06 
@@ -3879,15 +4214,8 @@ TH_4 (CBOR Data Item) (34 bytes)
 58 20 ce 46 35 94 0b 79 4f f8 c8 8f 9c 33 79 39 71 11 2e 70 44 fd cd a7 
 2c b7 bd a2 28 a1 d9 3a 94 19 
 
-info for OSCORE Master Secret (CBOR Sequence) (58 bytes)
-0a 58 20 ce 46 35 94 0b 79 4f f8 c8 8f 9c 33 79 39 71 11 2e 70 44 fd cd 
-a7 2c b7 bd a2 28 a1 d9 3a 94 19 74 4f 53 43 4f 52 45 20 4d 61 73 74 65 
-72 20 53 65 63 72 65 74 40 10 
-
-info for OSCORE Master Salt (CBOR Sequence) (56 bytes)
-0a 58 20 ce 46 35 94 0b 79 4f f8 c8 8f 9c 33 79 39 71 11 2e 70 44 fd cd 
-a7 2c b7 bd a2 28 a1 d9 3a 94 19 72 4f 53 43 4f 52 45 20 4d 61 73 74 65 
-72 20 53 61 6c 74 40 08 
+EAD_4 (CBOR Sequence) (22 bytes)
+18 29 4e 00 01 02 03 04 05 06 07 08 09 0a 0b 0c 0d 18 55 19 0e 85 
 
 P_4ae (CBOR Sequence) (22 bytes)
 18 29 4e 00 01 02 03 04 05 06 07 08 09 0a 0b 0c 0d 18 55 19 0e 85 
@@ -3916,12 +4244,26 @@ CIPHERTEXT_4 (30 bytes)
 40 f8 f5 70 c0 61 0c 56 f2 1b b3 36 c8 37 33 6c 05 c3 9e 3c 67 20 81 60 
 0a 79 f5 71 40 ba 
 
+CIPHERTEXT_4 (CBOR Data Item) (32 bytes)
+58 1e 40 f8 f5 70 c0 61 0c 56 f2 1b b3 36 c8 37 33 6c 05 c3 9e 3c 67 20 
+81 60 0a 79 f5 71 40 ba 
+
 message_4 (CBOR Sequence) (32 bytes)
 58 1e 40 f8 f5 70 c0 61 0c 56 f2 1b b3 36 c8 37 33 6c 05 c3 9e 3c 67 20 
 81 60 0a 79 f5 71 40 ba 
 
+info for OSCORE Master Secret (CBOR Sequence) (58 bytes)
+0a 58 20 ce 46 35 94 0b 79 4f f8 c8 8f 9c 33 79 39 71 11 2e 70 44 fd cd 
+a7 2c b7 bd a2 28 a1 d9 3a 94 19 74 4f 53 43 4f 52 45 20 4d 61 73 74 65 
+72 20 53 65 63 72 65 74 40 10 
+
 OSCORE Master Secret (Raw Value) (16 bytes)
 f4 9c c7 18 a1 d5 7f e4 cd a5 41 7a bd ff c1 37 
+
+info for OSCORE Master Salt (CBOR Sequence) (56 bytes)
+0a 58 20 ce 46 35 94 0b 79 4f f8 c8 8f 9c 33 79 39 71 11 2e 70 44 fd cd 
+a7 2c b7 bd a2 28 a1 d9 3a 94 19 72 4f 53 43 4f 52 45 20 4d 61 73 74 65 
+72 20 53 61 6c 74 40 08 
 
 OSCORE Master Salt (Raw Value) (8 bytes)
 95 45 cc 92 0f 3d e2 3d 

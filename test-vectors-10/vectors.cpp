@@ -543,13 +543,16 @@ void test_vectors( EDHOCKeyType type_I, EDHOCKeyType type_R, int selected_suite,
         print( "EAD_2 (CBOR Sequence)", EAD_2 );   
         print( "info for MAC_2 (CBOR Sequence)", info_MAC_2 );   
         print( "MAC_2 (Raw Value)", MAC_2 );   
+        print( "MAC_2 (CBOR Data Item)", cbor( MAC_2 ) );   
         if ( type_R == sig )
             print( "Message to be signed 2 (CBOR Data Item)", M_2 );   
         print( "Signature_or_MAC_2 (Raw Value)", signature_or_MAC_2 );
+        print( "Signature_or_MAC_2 (CBOR Data Item)", cbor( signature_or_MAC_2 ) );
         print( "PLAINTEXT_2 (CBOR Sequence)", PLAINTEXT_2 );   
         print( "info for KEYSTREAM_2 (CBOR Sequence)", info_KEYSTREAM_2 );   
         print( "KEYSTREAM_2 (Raw Value)", KEYSTREAM_2 );
         print( "CIPHERTEXT_2 (Raw Value)", CIPHERTEXT_2 );   
+        print( "CIPHERTEXT_2 (CBOR Data Item)", cbor( CIPHERTEXT_2 ) );   
     }
     print( "message_2 (CBOR Sequence)", message_2 );
     cout << endl  << endl << endl  << endl;
@@ -577,9 +580,11 @@ void test_vectors( EDHOCKeyType type_I, EDHOCKeyType type_R, int selected_suite,
         print( "EAD_3 (CBOR Sequence)", EAD_3 );   
         print( "info for MAC_3 (CBOR Sequence)", info_MAC_3 );   
         print( "MAC_3 (Raw Value)", MAC_3 );   
+        print( "MAC_3 (CBOR Data Item)", cbor( MAC_3 ) );   
         if ( type_I == sig )
             print( "Message to be signed 3 (CBOR Data Item)", M_3 );   
         print( "Signature_or_MAC_3 (Raw Value)", signature_or_MAC_3 );
+        print( "Signature_or_MAC_3 (CBOR Data Item)", cbor( signature_or_MAC_3 ) );
         print( "P_3ae (CBOR Sequence)", P_3ae );   
         print( "A_3ae (CBOR Data Item)", A_3ae );   
         print( "info for K_3ae (CBOR Sequence)", info_K_3ae );   
@@ -587,6 +592,7 @@ void test_vectors( EDHOCKeyType type_I, EDHOCKeyType type_R, int selected_suite,
         print( "info for IV_3ae (CBOR Sequence)", info_IV_3ae );   
         print( "IV_3ae (Raw Value)", IV_3ae );   
         print( "CIPHERTEXT_3 (Raw Value)", CIPHERTEXT_3 );   
+        print( "CIPHERTEXT_3 (CBOR Data Item)", cbor( CIPHERTEXT_3 ) );   
     }
     print( "message_3 (CBOR Sequence)", message_3 );
     cout << endl  << endl << endl  << endl;
@@ -597,8 +603,7 @@ void test_vectors( EDHOCKeyType type_I, EDHOCKeyType type_R, int selected_suite,
         print( "Input to calculate TH_4 (CBOR Sequence)", TH_4_input );
         print( "TH_4 (Raw Value)", TH_4 );
         print( "TH_4 (CBOR Data Item)", cbor( TH_4 ) );
-        print( "info for OSCORE Master Secret (CBOR Sequence)", info_OSCORE_secret );
-        print( "info for OSCORE Master Salt (CBOR Sequence)", info_OSCORE_salt );   
+        print( "EAD_4 (CBOR Sequence)", EAD_4 );   
         print( "P_4ae (CBOR Sequence)", P_4ae );   
         print( "A_4ae (CBOR Data Item)", A_4ae );   
         print( "info for K_4ae (CBOR Sequence)", info_K_4ae );   
@@ -606,9 +611,12 @@ void test_vectors( EDHOCKeyType type_I, EDHOCKeyType type_R, int selected_suite,
         print( "info for IV_4ae (CBOR Sequence)", info_IV_4ae );   
         print( "IV_4ae (Raw Value)", IV_4ae );   
         print( "CIPHERTEXT_4", CIPHERTEXT_4 );   
+        print( "CIPHERTEXT_4 (CBOR Data Item)", cbor( CIPHERTEXT_4 ) );   
     }
     print( "message_4 (CBOR Sequence)", message_4 );
+    print( "info for OSCORE Master Secret (CBOR Sequence)", info_OSCORE_secret );
     print( "OSCORE Master Secret (Raw Value)", OSCORE_secret );
+    print( "info for OSCORE Master Salt (CBOR Sequence)", info_OSCORE_salt );   
     print( "OSCORE Master Salt (Raw Value)", OSCORE_salt );
     print( "Client's OSCORE Sender ID (Raw Value)", OSCORE_id( C_R ) );
     print( "Server's OSCORE Sender ID (Raw Value)", OSCORE_id( C_I ) );
