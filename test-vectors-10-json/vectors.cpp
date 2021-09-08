@@ -512,15 +512,18 @@ void test_vectors( EDHOCKeyType type_I, EDHOCKeyType type_R, int selected_suite,
     print( "id_cred_r", ID_CRED_R );
     print( "cred_r", CRED_R );
     print( "ead_2", EAD_2 );   
-    print( "info_mac_2", info_MAC_2 );   
+    print( "info_mac_2", info_MAC_2 ); 
     print( "mac_2_raw", MAC_2 );   
+    print( "mac_2", cbor( MAC_2 ) );   
     if ( type_R == sig )
         print( "m_2", M_2 );   
     print( "sig_or_mac_2_raw", signature_or_MAC_2 );
+    print( "sig_or_mac_2", cbor( signature_or_MAC_2 ) );
     print( "plaintext_2", PLAINTEXT_2 );   
     print( "info_keystream_2", info_KEYSTREAM_2 );   
     print( "keystream_2_raw", KEYSTREAM_2 );
     print( "ciphertext_2_raw", CIPHERTEXT_2 );   
+    print( "ciphertext_2", cbor( CIPHERTEXT_2 ) );   
     print( "message_2", message_2 );
 
     // message_3
@@ -542,9 +545,11 @@ void test_vectors( EDHOCKeyType type_I, EDHOCKeyType type_R, int selected_suite,
     print( "ead_3", EAD_3 );   
     print( "info_mac_3", info_MAC_3 );   
     print( "mac_3_raw", MAC_3 );   
+    print( "mac_3", cbor( MAC_3 ) );   
     if ( type_I == sig )
         print( "m_3", M_3 );   
     print( "sig_or_mac_3_raw", signature_or_MAC_3 );
+    print( "sig_or_mac_3", cbor( signature_or_MAC_3 ) );
     print( "p_3ae", P_3ae );   
     print( "a_3ae", A_3ae );   
     print( "info_k_3ae", info_K_3ae );   
@@ -552,12 +557,14 @@ void test_vectors( EDHOCKeyType type_I, EDHOCKeyType type_R, int selected_suite,
     print( "info_iv3ae", info_IV_3ae );   
     print( "iv_3ae_raw", IV_3ae );   
     print( "ciphertext_3_raw", CIPHERTEXT_3 );   
+    print( "ciphertext_3", cbor( CIPHERTEXT_3 ) );   
     print( "message_3", message_3 );
 
     // message_4 and exporter
     print( "input_th_4", TH_4_input );
     print( "th_4_raw", TH_4 );
     print( "th_4", cbor( TH_4 ) );
+    print( "ead_4", EAD_4 );
     print( "p_4ae", P_4ae );   
     print( "a_4ae", A_4ae );   
     print( "info_k_4ae", info_K_4ae );   
@@ -565,6 +572,7 @@ void test_vectors( EDHOCKeyType type_I, EDHOCKeyType type_R, int selected_suite,
     print( "info_iv_4ae", info_IV_4ae );   
     print( "iv_4ae_raw", IV_4ae );   
     print( "ciphertext_4_raw", CIPHERTEXT_4 );   
+    print( "ciphertext_4", cbor( CIPHERTEXT_4 ) );   
     print( "message_4", message_4 );
     print( "info_oscore_secret", info_OSCORE_secret );
     print( "oscore_secret_raw", OSCORE_secret );
