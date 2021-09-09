@@ -1242,7 +1242,7 @@ If supported by the device, it is RECOMMENDED that at least the long-term privat
 
 ## EDHOC Exporter Label Registry {#exporter-label}
 
-IANA has created a new registry titled "EDHOC Exporter Label" under the new heading "EDHOC". The registration procedure is "Expert Review". The columns of the registry are Label, Description, and Reference. All columns are text strings. The initial contents of the registry are:
+IANA has created a new registry titled "EDHOC Exporter Label" under the new group name "Ephemeral Diffie-Hellman Over COSE (EDHOC)". The registration procedure is "Expert Review". The columns of the registry are Label, Description, and Reference. All columns are text strings. The initial contents of the registry are:
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 Label: EDHOC_message_4_Key
@@ -1273,7 +1273,7 @@ Reference: [[this document]]
 
 ## EDHOC Cipher Suites Registry {#suites-registry}
 
-IANA has created a new registry titled "EDHOC Cipher Suites" under the new heading "EDHOC". The registration procedure is "Expert Review". The columns of the registry are Value, Array, Description, and Reference, where Value is an integer and the other columns are text strings. The initial contents of the registry are:
+IANA has created a new registry titled "EDHOC Cipher Suites" under the new group name "Ephemeral Diffie-Hellman Over COSE (EDHOC)". The registration procedure is "Expert Review". The columns of the registry are Value, Array, Description, and Reference, where Value is an integer and the other columns are text strings. The initial contents of the registry are:
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 Value: -24
@@ -1377,22 +1377,22 @@ Reference: [[this document]]
 
 ## EDHOC Method Type Registry {#method-types}
 
-IANA has created a new registry entitled "EDHOC Method Type" under the new heading "EDHOC". The registration procedure is "Expert Review". The columns of the registry are Value, Description, and Reference, where Value is an integer and the other columns are text strings. The initial contents of the registry are shown in {{fig-method-types}}.
+IANA has created a new registry entitled "EDHOC Method Type" under the new group name "Ephemeral Diffie-Hellman Over COSE (EDHOC)". The registration procedure is "Expert Review". The columns of the registry are Value, Description, and Reference, where Value is an integer and the other columns are text strings. The initial contents of the registry are shown in {{fig-method-types}}.
 
 ## EDHOC Error Codes Registry
 
-IANA has created a new registry entitled "EDHOC Error Codes" under the new heading "EDHOC". The registration procedure is "Specification Required". The columns of the registry are ERR_CODE, ERR_INFO Type and Description, where ERR_CODE is an integer, ERR_INFO is a CDDL defined type, and Description is a text string. The initial contents of the registry are shown in {{fig-error-codes}}.
+IANA has created a new registry entitled "EDHOC Error Codes" under the new group name "Ephemeral Diffie-Hellman Over COSE (EDHOC)". The registration procedure is "Specification Required". The columns of the registry are ERR_CODE, ERR_INFO Type and Description, where ERR_CODE is an integer, ERR_INFO is a CDDL defined type, and Description is a text string. The initial contents of the registry are shown in {{fig-error-codes}}.
 
 ## EDHOC External Authorization Data Registry {#iana-ead}
 
 IANA has created a new registry entitled "EDHOC External Authorization Data"
-under the new heading "EDHOC". The registration procedure is "Expert Review".
+under the new group name "Ephemeral Diffie-Hellman Over COSE (EDHOC)". The registration procedure is "Expert Review".
 The columns of the registry are Value, Description, and Reference, where Value is
 an integer and the other columns are text strings.
 
 ## COSE Header Parameters Registry {#cwt-header-param}
 
-This document registers the following entries in the "COSE Header Parameters" registry under the "CBOR Object Signing and Encryption (COSE)" heading. The value of the 'cwt' header parameter is a COSE Web Token (CWT) {{RFC8392}} and the value of the 'uccs' header parameter is an Unprotected CWT Claims Set (UCCS), see {{term}}.
+IANA has registered the following entries in the "COSE Header Parameters" registry under the group name "CBOR Object Signing and Encryption (COSE)". The value of the 'cwt' header parameter is a COSE Web Token (CWT) {{RFC8392}} and the value of the 'uccs' header parameter is an Unprotected CWT Claims Set (UCCS), see {{term}}. The Value Registry for this item is empty and omitted from the table below.
 
 ~~~~~~~~~~~
 +-----------+-------+----------------+---------------------------+
@@ -1407,7 +1407,7 @@ This document registers the following entries in the "COSE Header Parameters" re
 
 ## COSE Header Parameters Registry {#kid-header-param}
 
-IANA has extended the Value Type of the COSE Header Parameter 'kid' to also allow the Value Type int. The resulting Value Type is bstr / int. The 'kid' parameter can be used to identify a key stored in a UCCS, in a CWT, or in a public key certificate. (The Value Registry for this item is empty and omitted from the table below.)
+IANA has extended the Value Type of 'kid' in the "COSE Header Parameters" registry under the group name "CBOR Object Signing and Encryption (COSE)" to also allow the Value Type int. The resulting Value Type is bstr / int. The Value Registry for this item is empty and omitted from the table below.
 
 ~~~~~~~~~~~
 +------+-------+------------+----------------+-------------------+
@@ -1420,7 +1420,7 @@ IANA has extended the Value Type of the COSE Header Parameter 'kid' to also allo
 
 ## COSE Key Common Parameters Registry {#kid-key-common-param}
 
-IANA has extended the Value Type of the COSE Key Common Parameter 'kid' to the COSE Key Value Type int. The resulting Value Type is bstr / int. (The Value Registry for this item is empty and omitted from the table below.)
+IANA has extended the Value Type of 'kid' in the "COSE Key Common Parameters" registry under the group name "CBOR Object Signing and Encryption (COSE)" to also allow the Value Type int. The resulting Value Type is bstr / int. The Value Registry for this item is empty and omitted from the table below.
 
 ~~~~~~~~~~~
 +------+-------+------------+----------------+-------------------+
@@ -1436,7 +1436,7 @@ IANA has extended the Value Type of the COSE Key Common Parameter 'kid' to the C
 
 ## CWT Confirmation Methods Registry {#kid-cwt-conf-meth-param}
 
-IANA has extended the Value Type of the WT Confirmation Methods 'kid' to the COSE Key Value Type int. The incorrect term binary string has been corrected to bstr. The resulting Value Type is bstr / int. The new updated content for the 'kid' method is shown in the list below.
+IANA has extended the Value Type of 'kid' in the "CWT Confirmation Methods" registry under the group name "CBOR Web Token (CWT) Claims" to also allow the Value Type int. The incorrect term binary string has been corrected to bstr. The resulting Value Type is bstr / int. The new updated content for the 'kid' method is shown in the list below.
 
 - Confirmation Method Name: kid
 
@@ -1454,7 +1454,7 @@ IANA has extended the Value Type of the WT Confirmation Methods 'kid' to the COS
 
 ## The Well-Known URI Registry
 
-IANA has added the well-known URI "edhoc" to the Well-Known URIs registry.
+IANA has added the well-known URI "edhoc" to the "Well-Known URIs" registry under the group name "Well-Known URIs".
 
 - URI suffix: edhoc
 
@@ -1466,7 +1466,7 @@ IANA has added the well-known URI "edhoc" to the Well-Known URIs registry.
 
 ## Media Types Registry
 
-IANA has added the media type "application/edhoc" to the Media Types registry.
+IANA has added the media type "application/edhoc" to the "Media Types" registry.
 
 - Type name: application
 
@@ -1508,7 +1508,7 @@ IANA has added the media type "application/edhoc" to the Media Types registry.
 
 ## CoAP Content-Formats Registry
 
-IANA has added the media type "application/edhoc" to the CoAP Content-Formats registry.
+IANA has added the media type "application/edhoc" to the "CoAP Content-Formats" registry under the group name "Constrained RESTful Environments (CoRE) Parameters". 
 
 -  Media Type: application/edhoc
 
@@ -1520,7 +1520,7 @@ IANA has added the media type "application/edhoc" to the CoAP Content-Formats re
 
 ## Resource Type (rt=) Link Target Attribute Values Registry
 
-IANA has added a new Resource Type (rt=) Link Target Attribute in the "Resource Type (rt=) Link Target Attribute Values" subregistry under the "Constrained RESTful Environments (CoRE) Parameters" registry.
+IANA has added the resource type "core.edhoc" to the "Resource Type (rt=) Link Target Attribute Values" registry under the group name "Constrained RESTful Environments (CoRE) Parameters".
 
 -  Value: "core.edhoc"
 
