@@ -800,7 +800,7 @@
       "oscore_secret_key_update_raw": "c87a46fae3be6579a45dd51a54b62828",
       "oscore_salt_key_update_raw": "2c57ff1d851eb104"
    },
-   test_vector_a: {
+   test_vector_10: {
       "method": "03",
       "suites_i": "00",
       "x_raw": "6fb8289321158027b1fec6d27d26902ace0f10a58d9719ebae25b8ad93d41769",
@@ -889,7 +889,7 @@
       "oscore_secret_key_update_raw": "854bdaff251b5b9794a302b506e4a1a0",
       "oscore_salt_key_update_raw": "458754e7daf67e90"
    },
-   test_vector_b: {
+   test_vector_11: {
       "method": "00",
       "suites_i": "00",
       "x_raw": "eb73eb825949751fedc3e19c7e4db8abe0cc04089260bf781fce1380d8744838",

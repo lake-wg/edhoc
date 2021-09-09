@@ -3456,7 +3456,7 @@ OSCORE Master Salt after KeyUpdate (Raw Value) (8 bytes)
 
 
 ---------------------------------------------------------------
-Test Vector a
+Test Vector 10
 ---------------------------------------------------------------
 
 METHOD (CBOR Data Item) (1 bytes)
@@ -3830,7 +3830,7 @@ OSCORE Master Salt after KeyUpdate (Raw Value) (8 bytes)
 
 
 ---------------------------------------------------------------
-Test Vector b
+Test Vector 11
 ---------------------------------------------------------------
 
 METHOD (CBOR Data Item) (1 bytes)

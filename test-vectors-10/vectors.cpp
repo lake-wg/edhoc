@@ -26,7 +26,7 @@ enum COSEKTP { x = -2, crv = -1, OKP = 1 };
 enum CWTClaims { sub = 2, cnf = 8 };
 enum ConfMethod { COSE_Key = 1 };
 
-const bool isjson = true;
+const bool isjson = false;
 int vector_nr = 1;
 
 // Concatenates two vectors
@@ -501,7 +501,7 @@ void test_vectors( EDHOCKeyType type_I, EDHOCKeyType type_R, int selected_suite,
     ///////////////////////////////////////////////////////////////////////////////////////////
 
     if ( isjson == true ) {
-        cout << endl << "   test_vector_" << vector_nr++ << ": {";
+        cout << endl << "   test_vector_" << dec << vector_nr++ << ": {";
         // message_1
         print_json( "method", METHOD );
         print_json( "suites_i", SUITES_I );
@@ -618,7 +618,7 @@ void test_vectors( EDHOCKeyType type_I, EDHOCKeyType type_R, int selected_suite,
             cout << ",";
     } else {
         cout << endl << "---------------------------------------------------------------" << endl;
-        cout << "Test Vector " << vector_nr++;
+        cout << "Test Vector " << dec << vector_nr++;
         cout << endl << "---------------------------------------------------------------" << endl;
 
         // message_1 ////////////////////////////////////////////////////////////////////////////
