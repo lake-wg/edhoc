@@ -1518,6 +1518,18 @@ IANA has added the media type "application/edhoc" to the CoAP Content-Formats re
 
 -  Reference: \[\[this document\]\]
 
+## Resource Type (rt=) Link Target Attribute Values Registry
+
+IANA has added a new Resource Type (rt=) Link Target Attribute in the "Resource Type (rt=) Link Target Attribute Values" subregistry under the "Constrained RESTful Environments (CoRE) Parameters" registry.
+
+-  Value: "core.edhoc"
+
+-  Description: EDHOC resource.
+
+-  Reference: \[\[this document\]\]
+
+Client applications can use this resource type to discover a server's resource for EDHOC, where to send a request for executing the EDHOC protocol.
+
 
 ## Expert Review Instructions
 
