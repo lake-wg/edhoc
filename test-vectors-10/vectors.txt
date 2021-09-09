@@ -33,15 +33,8 @@ Example error message with ERR_CODE = 2 (Wrong selected cipher suite) (6 bytes)
 
 
 ---------------------------------------------------------------
-Test Vector for EHDOC
+Test Vector 1
 ---------------------------------------------------------------
-
-Test Vector Seed (int)
-34400
-
-
-
-
 
 METHOD (CBOR Data Item) (1 bytes)
 03 
@@ -372,15 +365,8 @@ OSCORE Master Salt after KeyUpdate (Raw Value) (8 bytes)
 
 
 ---------------------------------------------------------------
-Test Vector for EHDOC
+Test Vector 2
 ---------------------------------------------------------------
-
-Test Vector Seed (int)
-27400
-
-
-
-
 
 METHOD (CBOR Data Item) (1 bytes)
 02 
@@ -750,15 +736,8 @@ be b1 21 87 c5 81 b4 57
 
 
 ---------------------------------------------------------------
-Test Vector for EHDOC
+Test Vector 3
 ---------------------------------------------------------------
-
-Test Vector Seed (int)
-44400
-
-
-
-
 
 METHOD (CBOR Data Item) (1 bytes)
 01 
@@ -1126,15 +1105,8 @@ OSCORE Master Salt after KeyUpdate (Raw Value) (8 bytes)
 
 
 ---------------------------------------------------------------
-Test Vector for EHDOC
+Test Vector 4
 ---------------------------------------------------------------
-
-Test Vector Seed (int)
-37400
-
-
-
-
 
 METHOD (CBOR Data Item) (1 bytes)
 00 
@@ -1538,15 +1510,8 @@ OSCORE Master Salt after KeyUpdate (Raw Value) (8 bytes)
 
 
 ---------------------------------------------------------------
-Test Vector for EHDOC
+Test Vector 5
 ---------------------------------------------------------------
-
-Test Vector Seed (int)
-68500
-
-
-
-
 
 METHOD (CBOR Data Item) (1 bytes)
 03 
@@ -1910,15 +1875,8 @@ OSCORE Master Salt after KeyUpdate (Raw Value) (8 bytes)
 
 
 ---------------------------------------------------------------
-Test Vector for EHDOC
+Test Vector 6
 ---------------------------------------------------------------
-
-Test Vector Seed (int)
-56200
-
-
-
-
 
 METHOD (CBOR Data Item) (1 bytes)
 02 
@@ -2371,15 +2329,8 @@ OSCORE Master Salt after KeyUpdate (Raw Value) (8 bytes)
 
 
 ---------------------------------------------------------------
-Test Vector for EHDOC
+Test Vector 7
 ---------------------------------------------------------------
-
-Test Vector Seed (int)
-67200
-
-
-
-
 
 METHOD (CBOR Data Item) (1 bytes)
 02 
@@ -2763,15 +2714,8 @@ OSCORE Master Salt after KeyUpdate (Raw Value) (8 bytes)
 
 
 ---------------------------------------------------------------
-Test Vector for EHDOC
+Test Vector 8
 ---------------------------------------------------------------
-
-Test Vector Seed (int)
-34410
-
-
-
-
 
 METHOD (CBOR Data Item) (1 bytes)
 03 
@@ -3108,15 +3052,8 @@ eb 68 75 86 f4 fa e7 9a
 
 
 ---------------------------------------------------------------
-Test Vector for EHDOC
+Test Vector 9
 ---------------------------------------------------------------
-
-Test Vector Seed (int)
-37410
-
-
-
-
 
 METHOD (CBOR Data Item) (1 bytes)
 00 
@@ -3519,15 +3456,8 @@ OSCORE Master Salt after KeyUpdate (Raw Value) (8 bytes)
 
 
 ---------------------------------------------------------------
-Test Vector for EHDOC
+Test Vector a
 ---------------------------------------------------------------
-
-Test Vector Seed (int)
-34401
-
-
-
-
 
 METHOD (CBOR Data Item) (1 bytes)
 03 
@@ -3900,15 +3830,8 @@ OSCORE Master Salt after KeyUpdate (Raw Value) (8 bytes)
 
 
 ---------------------------------------------------------------
-Test Vector for EHDOC
+Test Vector b
 ---------------------------------------------------------------
-
-Test Vector Seed (int)
-37401
-
-
-
-
 
 METHOD (CBOR Data Item) (1 bytes)
 00 

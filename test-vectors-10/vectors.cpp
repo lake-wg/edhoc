@@ -26,7 +26,8 @@ enum COSEKTP { x = -2, crv = -1, OKP = 1 };
 enum CWTClaims { sub = 2, cnf = 8 };
 enum ConfMethod { COSE_Key = 1 };
 
-const bool isjson = false;
+const bool isjson = true;
+int vector_nr = 1;
 
 // Concatenates two vectors
 vec operator+( vec a, vec b ) {
@@ -59,17 +60,21 @@ void print( string s, vec v ) {
 }
 
 // Print an int to cout
-void print_json( string s, int i ) {
-    cout << endl << dec << "   \"" << s << "\": " << i << ",";
+void print_json( string s, int i, bool comma = true ) {
+    cout << endl << dec << "      \"" << s << "\": " << i;
+    if ( comma == true )
+        cout << ",";
 }
 
 // Print a vec to cout
-void print_json( string s, vec v ) {
-    cout << endl << dec << "   \"" << s << "\": \"";
+void print_json( string s, vec v, bool comma = true  ) {
+    cout << endl << dec << "      \"" << s << "\": \"";
     for ( int i = 1; i <= v.size(); i++ ) {
         cout << hex << setfill('0') << setw( 2 ) << (int)v[i-1];        
     }
-    cout << "\",";
+    cout << "\"";
+    if ( comma == true )
+        cout << ",";
 }
 
 // Helper funtion for CBOR encoding
@@ -211,7 +216,7 @@ vec random_ead() {
 // TODO other COSE algorithms like ECDSA, P-256, SHA-384, P-384, AES-GCM, ChaCha20-Poly1305
 void test_vectors( EDHOCKeyType type_I, EDHOCKeyType type_R, int selected_suite,
                    COSEHeader attr_I, COSEHeader attr_R,
-                   bool full_output, bool complex ) {
+                   bool full_output, bool complex, bool comma = true ) {
 
     // METHOD and seed random number generation
     int method = 2 * type_I + type_R;
@@ -496,7 +501,7 @@ void test_vectors( EDHOCKeyType type_I, EDHOCKeyType type_R, int selected_suite,
     ///////////////////////////////////////////////////////////////////////////////////////////
 
     if ( isjson == true ) {
-        cout << "{";
+        cout << endl << "   test_vector_" << vector_nr++ << ": {";
         // message_1
         print_json( "method", METHOD );
         print_json( "suites_i", SUITES_I );
@@ -606,19 +611,15 @@ void test_vectors( EDHOCKeyType type_I, EDHOCKeyType type_R, int selected_suite,
         print_json( "key_update_nonce_raw", nonce );
         print_json( "prk_4x3m_key_update_raw", PRK_4x3m_new );   
         print_json( "oscore_secret_key_update_raw", OSCORE_secretFS );
-        print_json( "oscore_salt_key_update_raw", OSCORE_saltFS );
+        print_json( "oscore_salt_key_update_raw", OSCORE_saltFS, false );
 
-        cout << endl << "}";
-        cout << endl  << endl << endl  << endl;
+        cout << endl << "   }";
+        if ( comma == true )
+            cout << ",";
     } else {
         cout << endl << "---------------------------------------------------------------" << endl;
-        cout << "Test Vector for EHDOC";
+        cout << "Test Vector " << vector_nr++;
         cout << endl << "---------------------------------------------------------------" << endl;
-
-        if ( full_output == true ) {
-            print( "Test Vector Seed", seed ); 
-        }
-        cout << endl  << endl << endl  << endl;
 
         // message_1 ////////////////////////////////////////////////////////////////////////////
 
@@ -764,7 +765,9 @@ int main( void ) {
     if ( sodium_init() == -1 )
         syntax_error( "sodium_init()" );
 
-    if ( isjson == false ) {
+    if ( isjson == true ) {
+        cout << "{";
+    } else {
         // Error ////////////////////////////////////////////////////////////////////////////
 
         cout << endl << "---------------------------------------------------------------" << endl;
@@ -808,5 +811,9 @@ int main( void ) {
 
     // More complex, with long id, EAD
     test_vectors( sdh, sdh, 0, kid, kid, true, true );
-    test_vectors( sig, sig, 0, x5t, x5t, true, true );
+    test_vectors( sig, sig, 0, x5t, x5t, true, true, false );
+
+    if ( isjson == true ) {
+        cout << endl << "}";
+    }
 }
