@@ -367,6 +367,10 @@ d5 cf 15 4f 45 6e 31 04 0d 71 8e d2 1d 53 64 5c
 OSCORE Master Salt after KeyUpdate (Raw Value) (8 bytes)
 03 0f 98 e6 24 5e be ec 
 
+
+
+
+
 ---------------------------------------------------------------
 Test Vector for EHDOC
 ---------------------------------------------------------------
@@ -741,6 +745,10 @@ d3 4c 37 e5 17 a2 d5 20 12 b1 37 8f 42 92 21 71
 OSCORE Master Salt after KeyUpdate (Raw Value) (8 bytes)
 be b1 21 87 c5 81 b4 57 
 
+
+
+
+
 ---------------------------------------------------------------
 Test Vector for EHDOC
 ---------------------------------------------------------------
@@ -1112,6 +1120,10 @@ b2 e7 3e 57 bc 7e 5f 2e db a1 73 8b e2 8f 73 58
 
 OSCORE Master Salt after KeyUpdate (Raw Value) (8 bytes)
 31 db f4 64 c5 e0 4d 7b 
+
+
+
+
 
 ---------------------------------------------------------------
 Test Vector for EHDOC
@@ -1521,6 +1533,10 @@ OSCORE Master Secret after KeyUpdate (Raw Value) (16 bytes)
 OSCORE Master Salt after KeyUpdate (Raw Value) (8 bytes)
 78 b1 52 3e e0 1a 62 70 
 
+
+
+
+
 ---------------------------------------------------------------
 Test Vector for EHDOC
 ---------------------------------------------------------------
@@ -1888,6 +1904,10 @@ OSCORE Master Secret after KeyUpdate (Raw Value) (16 bytes)
 
 OSCORE Master Salt after KeyUpdate (Raw Value) (8 bytes)
 2c 4d 5e de bc 65 df 0d 
+
+
+
+
 
 ---------------------------------------------------------------
 Test Vector for EHDOC
@@ -2346,6 +2366,10 @@ fe 3c a0 58 8f 02 c1 7f 7f a8 25 a6 a5 d9 21 80
 OSCORE Master Salt after KeyUpdate (Raw Value) (8 bytes)
 96 6f 99 4d 6f b4 d0 0b 
 
+
+
+
+
 ---------------------------------------------------------------
 Test Vector for EHDOC
 ---------------------------------------------------------------
@@ -2734,6 +2758,10 @@ cc d7 0a 24 d5 d7 00 a9 54 71 18 9e a7 ec 0f 2f
 OSCORE Master Salt after KeyUpdate (Raw Value) (8 bytes)
 34 1d ff b9 03 b8 ca 85 
 
+
+
+
+
 ---------------------------------------------------------------
 Test Vector for EHDOC
 ---------------------------------------------------------------
@@ -3074,6 +3102,10 @@ OSCORE Master Secret after KeyUpdate (Raw Value) (16 bytes)
 
 OSCORE Master Salt after KeyUpdate (Raw Value) (8 bytes)
 eb 68 75 86 f4 fa e7 9a 
+
+
+
+
 
 ---------------------------------------------------------------
 Test Vector for EHDOC
@@ -3482,6 +3514,10 @@ c8 7a 46 fa e3 be 65 79 a4 5d d5 1a 54 b6 28 28
 OSCORE Master Salt after KeyUpdate (Raw Value) (8 bytes)
 2c 57 ff 1d 85 1e b1 04 
 
+
+
+
+
 ---------------------------------------------------------------
 Test Vector for EHDOC
 ---------------------------------------------------------------
@@ -3858,6 +3894,10 @@ OSCORE Master Secret after KeyUpdate (Raw Value) (16 bytes)
 
 OSCORE Master Salt after KeyUpdate (Raw Value) (8 bytes)
 45 87 54 e7 da f6 7e 90 
+
+
+
+
 
 ---------------------------------------------------------------
 Test Vector for EHDOC
@@ -4292,3 +4332,7 @@ OSCORE Master Secret after KeyUpdate (Raw Value) (16 bytes)
 
 OSCORE Master Salt after KeyUpdate (Raw Value) (8 bytes)
 da 6d df 65 43 86 57 15 
+
+
+
+

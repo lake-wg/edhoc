@@ -26,6 +26,8 @@ enum COSEKTP { x = -2, crv = -1, OKP = 1 };
 enum CWTClaims { sub = 2, cnf = 8 };
 enum ConfMethod { COSE_Key = 1 };
 
+const bool isjson = false;
+
 // Concatenates two vectors
 vec operator+( vec a, vec b ) {
     a.insert( a.end(), b.begin(), b.end() );
@@ -43,11 +45,6 @@ void print( string s, int i ) {
     cout << endl << dec << s << " (int)" << endl << i << endl;    
 }
 
-// Print a string to cout
-void print( string s, string s2 ) {
-    cout << endl << s << " (text string)" << endl << "\"" << s2 << "\"" << endl;    
-}
-
 // Print a vec to cout
 void print( string s, vec v ) {
     cout << endl << dec << s << " (" << v.size() << " bytes)";
@@ -59,6 +56,20 @@ void print( string s, vec v ) {
             cout << endl;
     }
     cout << endl;
+}
+
+// Print an int to cout
+void print_json( string s, int i ) {
+    cout << endl << dec << "   \"" << s << "\": " << i << ",";
+}
+
+// Print a vec to cout
+void print_json( string s, vec v ) {
+    cout << endl << dec << "   \"" << s << "\": \"";
+    for ( int i = 1; i <= v.size(); i++ ) {
+        cout << hex << setfill('0') << setw( 2 ) << (int)v[i-1];        
+    }
+    cout << "\",";
 }
 
 // Helper funtion for CBOR encoding
@@ -484,181 +495,301 @@ void test_vectors( EDHOCKeyType type_I, EDHOCKeyType type_R, int selected_suite,
     // Print stuff ////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////
 
-    cout << endl << "---------------------------------------------------------------" << endl;
-    cout << "Test Vector for EHDOC";
-    cout << endl << "---------------------------------------------------------------" << endl;
+    if ( isjson == true ) {
+        cout << "{";
+        // message_1
+        print_json( "method", METHOD );
+        print_json( "suites_i", SUITES_I );
+        print_json( "x_raw", X );
+        print_json( "g_x_raw", G_X );
+        print_json( "g_x", cbor( G_X ) );
+        print_json( "c_i", C_I );
+        print_json( "ead_1", EAD_1 );   
+        print_json( "message_1", message_1 );
 
-    if ( full_output == true ) {
-        print( "Test Vector Seed", seed ); 
-    }
-    cout << endl  << endl << endl  << endl;
-
-    // message_1 ////////////////////////////////////////////////////////////////////////////
-
-    if ( full_output == true ) {
-        print( "METHOD (CBOR Data Item)", METHOD );
-        print( "SUITES_I (CBOR Data Item)", SUITES_I );
-    }
-    print( "X (Raw Value) (Initiator's ephemeral private key)", X );
-    if ( full_output == true ) {
-        print( "G_X (Raw Value) (Initiator's ephemeral public key)", G_X );
-        print( "G_X (CBOR Data Item) (Initiator's ephemeral public key)", cbor( G_X ) );
-        print( "C_I (CBOR Data Item) (Connection identifier chosen by Initiator)", C_I );
-        print( "EAD_1 (CBOR Sequence)", EAD_1 );   
-    }
-    print( "message_1 (CBOR Sequence)", message_1 );
-    cout << endl  << endl << endl  << endl;
-  
-    // message_2 ////////////////////////////////////////////////////////////////////////////
-
-    print( "Y (Raw Value) (Responder's ephemeral private key)", Y );
-    if ( full_output == true ) {
-        print( "G_Y (Raw Value) (Responder's ephemeral public key)", G_Y );
-        print( "G_Y (CBOR Data Item) (Responder's ephemeral public key)", cbor( G_Y ) );
-        print( "G_XY (Raw Value) (ECDH shared secret)", G_XY );
-        print( "salt (Raw Value)", salt );
-        print( "PRK_2e (Raw Value)", PRK_2e );   
-    }
-    if ( type_R == sig ) {
-        print( "SK_R (Raw Value) (Responders's private authentication key)", SK_R );
-        print( "PK_R (Raw Value) (Responders's public authentication key)", PK_R );
-    }
-    if ( type_R == sdh ) {
-        print( "R (Raw Value) (Responder's private authentication key)", R );
-        if ( full_output == true ) {
-            print( "G_R (Raw Value) (Responder's public authentication key)", G_R );
-            print( "G_RX (Raw Value) (ECDH shared secret)", G_RX );    
+        // message_2
+        print_json( "y_raw", Y );
+        print_json( "g_y_raw", G_Y );
+        print_json( "g_y", cbor( G_Y ) );
+        print_json( "g_xy_raw", G_XY );
+        print_json( "salt_raw", salt );
+        print_json( "prk_2e_raw", PRK_2e );   
+        if ( type_R == sig ) {
+            print_json( "sk_r_raw", SK_R );
+            print_json( "pk_r_raw", PK_R );
         }
-    }
-    if ( full_output == true ) {
-        print( "PRK_3e2m (Raw Value)", PRK_3e2m );   
-        print( "C_R (CBOR Data Item) (Connection identifier chosen by Responder)", C_R );
-        print( "H(message_1) (Raw Value)", hash_message_1 );
-        print( "H(message_1) (CBOR Data Item)", cbor( hash_message_1 ) );
-        print( "Input to calculate TH_2 (CBOR Sequence)", TH_2_input );
-        print( "TH_2 (Raw Value)", TH_2 );
-        print( "TH_2 (CBOR Data Item)", cbor( TH_2 ) );
-        print( "ID_CRED_R (CBOR Data Item)", ID_CRED_R );
-        print( "CRED_R (CBOR Data Item)", CRED_R );
-        print( "EAD_2 (CBOR Sequence)", EAD_2 );   
-        print( "info for MAC_2 (CBOR Sequence)", info_MAC_2 );   
-        print( "MAC_2 (Raw Value)", MAC_2 );   
-        print( "MAC_2 (CBOR Data Item)", cbor( MAC_2 ) );   
+        if ( type_R == sdh ) {
+            print_json( "r_raw", R );
+            print_json( "g_r_raw", G_R );
+            print_json( "g_rx_raw", G_RX );    
+        }
+        print_json( "prk_3e2m_raw", PRK_3e2m );   
+        print_json( "c_r", C_R );
+        print_json( "h_message_1_raw", hash_message_1 );
+        print_json( "h_message_1", cbor( hash_message_1 ) );
+        print_json( "input_th_2", TH_2_input );
+        print_json( "th_2_raw", TH_2 );
+        print_json( "th_2", cbor( TH_2 ) );
+        print_json( "id_cred_r", ID_CRED_R );
+        print_json( "cred_r", CRED_R );
+        print_json( "ead_2", EAD_2 );   
+        print_json( "info_mac_2", info_MAC_2 ); 
+        print_json( "mac_2_raw", MAC_2 );   
+        print_json( "mac_2", cbor( MAC_2 ) );   
         if ( type_R == sig )
-            print( "Message to be signed 2 (CBOR Data Item)", M_2 );   
-        print( "Signature_or_MAC_2 (Raw Value)", signature_or_MAC_2 );
-        print( "Signature_or_MAC_2 (CBOR Data Item)", cbor( signature_or_MAC_2 ) );
-        print( "PLAINTEXT_2 (CBOR Sequence)", PLAINTEXT_2 );   
-        print( "info for KEYSTREAM_2 (CBOR Sequence)", info_KEYSTREAM_2 );   
-        print( "KEYSTREAM_2 (Raw Value)", KEYSTREAM_2 );
-        print( "CIPHERTEXT_2 (Raw Value)", CIPHERTEXT_2 );   
-        print( "CIPHERTEXT_2 (CBOR Data Item)", cbor( CIPHERTEXT_2 ) );   
-    }
-    print( "message_2 (CBOR Sequence)", message_2 );
-    cout << endl  << endl << endl  << endl;
+            print_json( "m_2", M_2 );   
+        print_json( "sig_or_mac_2_raw", signature_or_MAC_2 );
+        print_json( "sig_or_mac_2", cbor( signature_or_MAC_2 ) );
+        print_json( "plaintext_2", PLAINTEXT_2 );   
+        print_json( "info_keystream_2", info_KEYSTREAM_2 );   
+        print_json( "keystream_2_raw", KEYSTREAM_2 );
+        print_json( "ciphertext_2_raw", CIPHERTEXT_2 );   
+        print_json( "ciphertext_2", cbor( CIPHERTEXT_2 ) );   
+        print_json( "message_2", message_2 );
 
-    // message_3 ////////////////////////////////////////////////////////////////////////////
-
-    if ( type_I == sig ) {
-        print( "SK_I (Raw Value) (Initiator's private authentication key)", SK_I );
-        print( "PK_I (Raw Value) (Responders's public authentication key)", PK_I );
-    }
-    if ( type_I == sdh ) {
-            print( "I (Raw Value) (Initiator's private authentication key)", I );
-        if ( full_output == true ) {
-            print( "G_I (Raw Value) (Initiator's public authentication key)", G_I );
-            print( "G_IY (Raw Value) (ECDH shared secret)", G_IY );
+        // message_3
+        if ( type_I == sig ) {
+            print_json( "sk_i_raw", SK_I );
+            print_json( "pk_i_raw", PK_I );
         }
-    }
-    if ( full_output == true ) {
-        print( "PRK_4x3m (Raw Value)", PRK_4x3m );   
-        print( "Input to calculate TH_3 (CBOR Sequence)", TH_3_input );
-        print( "TH_3 (Raw Value)", TH_3);
-        print( "TH_3 (CBOR Data Item)", cbor( TH_3) );
-        print( "ID_CRED_I (CBOR Data Item)", ID_CRED_I );
-        print( "CRED_I (CBOR Data Item)", CRED_I );
-        print( "EAD_3 (CBOR Sequence)", EAD_3 );   
-        print( "info for MAC_3 (CBOR Sequence)", info_MAC_3 );   
-        print( "MAC_3 (Raw Value)", MAC_3 );   
-        print( "MAC_3 (CBOR Data Item)", cbor( MAC_3 ) );   
+        if ( type_I == sdh ) {
+            print_json( "i_raw", I );
+            print_json( "g_i_raw", G_I );
+            print_json( "g_iy_raw", G_IY );
+        }
+        print_json( "prk_4x3m_raw", PRK_4x3m );   
+        print_json( "input_TH_3", TH_3_input );
+        print_json( "th_3_raw", TH_3);
+        print_json( "th_3", cbor( TH_3) );
+        print_json( "id_cred_i", ID_CRED_I );
+        print_json( "cred_i", CRED_I );
+        print_json( "ead_3", EAD_3 );   
+        print_json( "info_mac_3", info_MAC_3 );   
+        print_json( "mac_3_raw", MAC_3 );   
+        print_json( "mac_3", cbor( MAC_3 ) );   
         if ( type_I == sig )
-            print( "Message to be signed 3 (CBOR Data Item)", M_3 );   
-        print( "Signature_or_MAC_3 (Raw Value)", signature_or_MAC_3 );
-        print( "Signature_or_MAC_3 (CBOR Data Item)", cbor( signature_or_MAC_3 ) );
-        print( "P_3ae (CBOR Sequence)", P_3ae );   
-        print( "A_3ae (CBOR Data Item)", A_3ae );   
-        print( "info for K_3ae (CBOR Sequence)", info_K_3ae );   
-        print( "K_3ae (Raw Value)", K_3ae );   
-        print( "info for IV_3ae (CBOR Sequence)", info_IV_3ae );   
-        print( "IV_3ae (Raw Value)", IV_3ae );   
-        print( "CIPHERTEXT_3 (Raw Value)", CIPHERTEXT_3 );   
-        print( "CIPHERTEXT_3 (CBOR Data Item)", cbor( CIPHERTEXT_3 ) );   
-    }
-    print( "message_3 (CBOR Sequence)", message_3 );
-    cout << endl  << endl << endl  << endl;
+            print_json( "m_3", M_3 );   
+        print_json( "sig_or_mac_3_raw", signature_or_MAC_3 );
+        print_json( "sig_or_mac_3", cbor( signature_or_MAC_3 ) );
+        print_json( "p_3ae", P_3ae );   
+        print_json( "a_3ae", A_3ae );   
+        print_json( "info_k_3ae", info_K_3ae );   
+        print_json( "k_3ae_raw", K_3ae );   
+        print_json( "info_iv3ae", info_IV_3ae );   
+        print_json( "iv_3ae_raw", IV_3ae );   
+        print_json( "ciphertext_3_raw", CIPHERTEXT_3 );   
+        print_json( "ciphertext_3", cbor( CIPHERTEXT_3 ) );   
+        print_json( "message_3", message_3 );
 
-    // message_4 and Exporter ////////////////////////////////////////////////////////////////////////////
+        // message_4 and exporter
+        print_json( "input_th_4", TH_4_input );
+        print_json( "th_4_raw", TH_4 );
+        print_json( "th_4", cbor( TH_4 ) );
+        print_json( "ead_4", EAD_4 );
+        print_json( "p_4ae", P_4ae );   
+        print_json( "a_4ae", A_4ae );   
+        print_json( "info_k_4ae", info_K_4ae );   
+        print_json( "k_4ae_raw", K_4ae );   
+        print_json( "info_iv_4ae", info_IV_4ae );   
+        print_json( "iv_4ae_raw", IV_4ae );   
+        print_json( "ciphertext_4_raw", CIPHERTEXT_4 );   
+        print_json( "ciphertext_4", cbor( CIPHERTEXT_4 ) );   
+        print_json( "message_4", message_4 );
+        print_json( "info_oscore_secret", info_OSCORE_secret );
+        print_json( "oscore_secret_raw", OSCORE_secret );
+        print_json( "info_oscore_salt", info_OSCORE_salt );   
+        print_json( "oscore_salt_raw", OSCORE_salt );
+        print_json( "client_sender_id_raw", OSCORE_id( C_R ) );
+        print_json( "server_sender_id_raw", OSCORE_id( C_I ) );
+        print_json( "oscore_aead_alg", oscore_aead_alg );
+        print_json( "oscore_hash_alg", oscore_hash_alg );
+        print_json( "key_update_nonce_raw", nonce );
+        print_json( "prk_4x3m_key_update_raw", PRK_4x3m_new );   
+        print_json( "oscore_secret_key_update_raw", OSCORE_secretFS );
+        print_json( "oscore_salt_key_update_raw", OSCORE_saltFS );
 
-    if ( full_output == true ) {
-        print( "Input to calculate TH_4 (CBOR Sequence)", TH_4_input );
-        print( "TH_4 (Raw Value)", TH_4 );
-        print( "TH_4 (CBOR Data Item)", cbor( TH_4 ) );
-        print( "EAD_4 (CBOR Sequence)", EAD_4 );   
-        print( "P_4ae (CBOR Sequence)", P_4ae );   
-        print( "A_4ae (CBOR Data Item)", A_4ae );   
-        print( "info for K_4ae (CBOR Sequence)", info_K_4ae );   
-        print( "K_4ae (Raw Value)", K_4ae );   
-        print( "info for IV_4ae (CBOR Sequence)", info_IV_4ae );   
-        print( "IV_4ae (Raw Value)", IV_4ae );   
-        print( "CIPHERTEXT_4", CIPHERTEXT_4 );   
-        print( "CIPHERTEXT_4 (CBOR Data Item)", cbor( CIPHERTEXT_4 ) );   
-    }
-    print( "message_4 (CBOR Sequence)", message_4 );
-    print( "info for OSCORE Master Secret (CBOR Sequence)", info_OSCORE_secret );
-    print( "OSCORE Master Secret (Raw Value)", OSCORE_secret );
-    print( "info for OSCORE Master Salt (CBOR Sequence)", info_OSCORE_salt );   
-    print( "OSCORE Master Salt (Raw Value)", OSCORE_salt );
-    print( "Client's OSCORE Sender ID (Raw Value)", OSCORE_id( C_R ) );
-    print( "Server's OSCORE Sender ID (Raw Value)", OSCORE_id( C_I ) );
-    print( "OSCORE AEAD Algorithm", oscore_aead_alg );
-    print( "OSCORE Hash Algorithm", oscore_hash_alg );
+        cout << endl << "}";
+        cout << endl  << endl << endl  << endl;
+    } else {
+        cout << endl << "---------------------------------------------------------------" << endl;
+        cout << "Test Vector for EHDOC";
+        cout << endl << "---------------------------------------------------------------" << endl;
 
-    print( "KeyUpdate Nonce (Raw Value)", nonce );
-    if ( full_output == true ) {
-        print( "PRK_4x3m  after KeyUpdate (Raw Value)", PRK_4x3m_new );   
+        if ( full_output == true ) {
+            print( "Test Vector Seed", seed ); 
+        }
+        cout << endl  << endl << endl  << endl;
+
+        // message_1 ////////////////////////////////////////////////////////////////////////////
+
+        if ( full_output == true ) {
+            print( "METHOD (CBOR Data Item)", METHOD );
+            print( "SUITES_I (CBOR Data Item)", SUITES_I );
+        }
+        print( "X (Raw Value) (Initiator's ephemeral private key)", X );
+        if ( full_output == true ) {
+            print( "G_X (Raw Value) (Initiator's ephemeral public key)", G_X );
+            print( "G_X (CBOR Data Item) (Initiator's ephemeral public key)", cbor( G_X ) );
+            print( "C_I (CBOR Data Item) (Connection identifier chosen by Initiator)", C_I );
+            print( "EAD_1 (CBOR Sequence)", EAD_1 );   
+        }
+        print( "message_1 (CBOR Sequence)", message_1 );
+        cout << endl  << endl << endl  << endl;
+    
+        // message_2 ////////////////////////////////////////////////////////////////////////////
+
+        print( "Y (Raw Value) (Responder's ephemeral private key)", Y );
+        if ( full_output == true ) {
+            print( "G_Y (Raw Value) (Responder's ephemeral public key)", G_Y );
+            print( "G_Y (CBOR Data Item) (Responder's ephemeral public key)", cbor( G_Y ) );
+            print( "G_XY (Raw Value) (ECDH shared secret)", G_XY );
+            print( "salt (Raw Value)", salt );
+            print( "PRK_2e (Raw Value)", PRK_2e );   
+        }
+        if ( type_R == sig ) {
+            print( "SK_R (Raw Value) (Responders's private authentication key)", SK_R );
+            print( "PK_R (Raw Value) (Responders's public authentication key)", PK_R );
+        }
+        if ( type_R == sdh ) {
+            print( "R (Raw Value) (Responder's private authentication key)", R );
+            if ( full_output == true ) {
+                print( "G_R (Raw Value) (Responder's public authentication key)", G_R );
+                print( "G_RX (Raw Value) (ECDH shared secret)", G_RX );    
+            }
+        }
+        if ( full_output == true ) {
+            print( "PRK_3e2m (Raw Value)", PRK_3e2m );   
+            print( "C_R (CBOR Data Item) (Connection identifier chosen by Responder)", C_R );
+            print( "H(message_1) (Raw Value)", hash_message_1 );
+            print( "H(message_1) (CBOR Data Item)", cbor( hash_message_1 ) );
+            print( "Input to calculate TH_2 (CBOR Sequence)", TH_2_input );
+            print( "TH_2 (Raw Value)", TH_2 );
+            print( "TH_2 (CBOR Data Item)", cbor( TH_2 ) );
+            print( "ID_CRED_R (CBOR Data Item)", ID_CRED_R );
+            print( "CRED_R (CBOR Data Item)", CRED_R );
+            print( "EAD_2 (CBOR Sequence)", EAD_2 );   
+            print( "info for MAC_2 (CBOR Sequence)", info_MAC_2 );   
+            print( "MAC_2 (Raw Value)", MAC_2 );   
+            print( "MAC_2 (CBOR Data Item)", cbor( MAC_2 ) );   
+            if ( type_R == sig )
+                print( "Message to be signed 2 (CBOR Data Item)", M_2 );   
+            print( "Signature_or_MAC_2 (Raw Value)", signature_or_MAC_2 );
+            print( "Signature_or_MAC_2 (CBOR Data Item)", cbor( signature_or_MAC_2 ) );
+            print( "PLAINTEXT_2 (CBOR Sequence)", PLAINTEXT_2 );   
+            print( "info for KEYSTREAM_2 (CBOR Sequence)", info_KEYSTREAM_2 );   
+            print( "KEYSTREAM_2 (Raw Value)", KEYSTREAM_2 );
+            print( "CIPHERTEXT_2 (Raw Value)", CIPHERTEXT_2 );   
+            print( "CIPHERTEXT_2 (CBOR Data Item)", cbor( CIPHERTEXT_2 ) );   
+        }
+        print( "message_2 (CBOR Sequence)", message_2 );
+        cout << endl  << endl << endl  << endl;
+
+        // message_3 ////////////////////////////////////////////////////////////////////////////
+
+        if ( type_I == sig ) {
+            print( "SK_I (Raw Value) (Initiator's private authentication key)", SK_I );
+            print( "PK_I (Raw Value) (Responders's public authentication key)", PK_I );
+        }
+        if ( type_I == sdh ) {
+                print( "I (Raw Value) (Initiator's private authentication key)", I );
+            if ( full_output == true ) {
+                print( "G_I (Raw Value) (Initiator's public authentication key)", G_I );
+                print( "G_IY (Raw Value) (ECDH shared secret)", G_IY );
+            }
+        }
+        if ( full_output == true ) {
+            print( "PRK_4x3m (Raw Value)", PRK_4x3m );   
+            print( "Input to calculate TH_3 (CBOR Sequence)", TH_3_input );
+            print( "TH_3 (Raw Value)", TH_3);
+            print( "TH_3 (CBOR Data Item)", cbor( TH_3) );
+            print( "ID_CRED_I (CBOR Data Item)", ID_CRED_I );
+            print( "CRED_I (CBOR Data Item)", CRED_I );
+            print( "EAD_3 (CBOR Sequence)", EAD_3 );   
+            print( "info for MAC_3 (CBOR Sequence)", info_MAC_3 );   
+            print( "MAC_3 (Raw Value)", MAC_3 );   
+            print( "MAC_3 (CBOR Data Item)", cbor( MAC_3 ) );   
+            if ( type_I == sig )
+                print( "Message to be signed 3 (CBOR Data Item)", M_3 );   
+            print( "Signature_or_MAC_3 (Raw Value)", signature_or_MAC_3 );
+            print( "Signature_or_MAC_3 (CBOR Data Item)", cbor( signature_or_MAC_3 ) );
+            print( "P_3ae (CBOR Sequence)", P_3ae );   
+            print( "A_3ae (CBOR Data Item)", A_3ae );   
+            print( "info for K_3ae (CBOR Sequence)", info_K_3ae );   
+            print( "K_3ae (Raw Value)", K_3ae );   
+            print( "info for IV_3ae (CBOR Sequence)", info_IV_3ae );   
+            print( "IV_3ae (Raw Value)", IV_3ae );   
+            print( "CIPHERTEXT_3 (Raw Value)", CIPHERTEXT_3 );   
+            print( "CIPHERTEXT_3 (CBOR Data Item)", cbor( CIPHERTEXT_3 ) );   
+        }
+        print( "message_3 (CBOR Sequence)", message_3 );
+        cout << endl  << endl << endl  << endl;
+
+        // message_4 and Exporter ////////////////////////////////////////////////////////////////////////////
+
+        if ( full_output == true ) {
+            print( "Input to calculate TH_4 (CBOR Sequence)", TH_4_input );
+            print( "TH_4 (Raw Value)", TH_4 );
+            print( "TH_4 (CBOR Data Item)", cbor( TH_4 ) );
+            print( "EAD_4 (CBOR Sequence)", EAD_4 );   
+            print( "P_4ae (CBOR Sequence)", P_4ae );   
+            print( "A_4ae (CBOR Data Item)", A_4ae );   
+            print( "info for K_4ae (CBOR Sequence)", info_K_4ae );   
+            print( "K_4ae (Raw Value)", K_4ae );   
+            print( "info for IV_4ae (CBOR Sequence)", info_IV_4ae );   
+            print( "IV_4ae (Raw Value)", IV_4ae );   
+            print( "CIPHERTEXT_4", CIPHERTEXT_4 );   
+            print( "CIPHERTEXT_4 (CBOR Data Item)", cbor( CIPHERTEXT_4 ) );   
+        }
+        print( "message_4 (CBOR Sequence)", message_4 );
+        print( "info for OSCORE Master Secret (CBOR Sequence)", info_OSCORE_secret );
+        print( "OSCORE Master Secret (Raw Value)", OSCORE_secret );
+        print( "info for OSCORE Master Salt (CBOR Sequence)", info_OSCORE_salt );   
+        print( "OSCORE Master Salt (Raw Value)", OSCORE_salt );
+        print( "Client's OSCORE Sender ID (Raw Value)", OSCORE_id( C_R ) );
+        print( "Server's OSCORE Sender ID (Raw Value)", OSCORE_id( C_I ) );
+        print( "OSCORE AEAD Algorithm", oscore_aead_alg );
+        print( "OSCORE Hash Algorithm", oscore_hash_alg );
+
+        print( "KeyUpdate Nonce (Raw Value)", nonce );
+        if ( full_output == true ) {
+            print( "PRK_4x3m  after KeyUpdate (Raw Value)", PRK_4x3m_new );   
+        }
+        print( "OSCORE Master Secret after KeyUpdate (Raw Value)", OSCORE_secretFS );
+        print( "OSCORE Master Salt after KeyUpdate (Raw Value)", OSCORE_saltFS ); 
+        cout << endl  << endl << endl  << endl;
     }
-    print( "OSCORE Master Secret after KeyUpdate (Raw Value)", OSCORE_secretFS );
-    print( "OSCORE Master Salt after KeyUpdate (Raw Value)", OSCORE_saltFS ); 
 }
 
 int main( void ) {
     if ( sodium_init() == -1 )
         syntax_error( "sodium_init()" );
 
-    // Error ////////////////////////////////////////////////////////////////////////////
+    if ( isjson == false ) {
+        // Error ////////////////////////////////////////////////////////////////////////////
 
-    cout << endl << "---------------------------------------------------------------" << endl;
-    cout << "Example EDHOC error messages";
-    cout << endl << "---------------------------------------------------------------" << endl;
+        cout << endl << "---------------------------------------------------------------" << endl;
+        cout << "Example EDHOC error messages";
+        cout << endl << "---------------------------------------------------------------" << endl;
 
-    vec error0 = cbor( 0 ) + cbor_map( 3 ) + cbor( "sub" ) + cbor( "Skynet" )
-                                           + cbor( "time" ) + cbor( "1997-08-29T02:14:00+05:00" )
-                                           + cbor( "cert hash" ) + cbor( vec{ 0x57, 0xe9, 0xc0, 0x28, 0x0a, 0x85, 0x90, 0xe0, 0x51, 0xa7, 0xd3, 0x24, 0x1b, 0x82, 0x40, 0xfe } );
-    vec error11 = cbor( 1 ) + cbor( "COSE header parameter x5u not supported" );
-    vec error12 = cbor( 1 ) + cbor( "CA not trusted" );
-    vec error13 = cbor( 1 ) + cbor( "Malformed message_2" );
-    vec error14 = cbor( 1 ) + cbor( "Comic Sans MUST be used!" );
-    vec error21 = cbor( 2 ) + cbor( 3 );
-    vec error22 = cbor( 2 ) + cbor_arr( 2 ) + cbor( 25 ) + cbor( 24 );
+        vec error0 = cbor( 0 ) + cbor_map( 3 ) + cbor( "sub" ) + cbor( "Skynet" )
+                                            + cbor( "time" ) + cbor( "1997-08-29T02:14:00+05:00" )
+                                            + cbor( "cert hash" ) + cbor( vec{ 0x57, 0xe9, 0xc0, 0x28, 0x0a, 0x85, 0x90, 0xe0, 0x51, 0xa7, 0xd3, 0x24, 0x1b, 0x82, 0x40, 0xfe } );
+        vec error11 = cbor( 1 ) + cbor( "COSE header parameter x5u not supported" );
+        vec error12 = cbor( 1 ) + cbor( "CA not trusted" );
+        vec error13 = cbor( 1 ) + cbor( "Malformed message_2" );
+        vec error14 = cbor( 1 ) + cbor( "Comic Sans MUST be used!" );
+        vec error21 = cbor( 2 ) + cbor( 3 );
+        vec error22 = cbor( 2 ) + cbor_arr( 2 ) + cbor( 25 ) + cbor( 24 );
 
-    print( "Example error message with ERR_CODE = 0 (Success)", error0 ); 
-    print( "Example error message with ERR_CODE = 1 (Unspecified)", error11 ); 
-    print( "Example error message with ERR_CODE = 1 (Unspecified)", error12 ); 
-    print( "Example error message with ERR_CODE = 1 (Unspecified)", error13 ); 
-    print( "Example error message with ERR_CODE = 1 (Unspecified)", error14 ); 
-    print( "Example error message with ERR_CODE = 2 (Wrong selected cipher suite)", error21 ); 
-    print( "Example error message with ERR_CODE = 2 (Wrong selected cipher suite)", error22 ); 
-    cout << endl  << endl << endl  << endl;
+        print( "Example error message with ERR_CODE = 0 (Success)", error0 ); 
+        print( "Example error message with ERR_CODE = 1 (Unspecified)", error11 ); 
+        print( "Example error message with ERR_CODE = 1 (Unspecified)", error12 ); 
+        print( "Example error message with ERR_CODE = 1 (Unspecified)", error13 ); 
+        print( "Example error message with ERR_CODE = 1 (Unspecified)", error14 ); 
+        print( "Example error message with ERR_CODE = 2 (Wrong selected cipher suite)", error21 ); 
+        print( "Example error message with ERR_CODE = 2 (Wrong selected cipher suite)", error22 ); 
+        cout << endl  << endl << endl  << endl;
+    }
 
     // The four methods with COSE header parameters kid and x5t
     test_vectors( sdh, sdh, 0, kid, kid, true, false );
