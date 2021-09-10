@@ -573,16 +573,16 @@ In order to reduce round trips and number of messages or to simplify processing,
 
 EDHOC allows opaque external authorization data (EAD) to be sent in the EDHOC messages. External authorization data sent in message_1 (EAD_1) or message_2 (EAD_2) should be considered unprotected by EDHOC, see {{unprot-data}}. External authorization data sent in message_3 (EAD_3) or message_4 (EAD_4) is protected between Initiator and Responder.
 
-External authorization data is a CBOR sequence (see {{CBOR}}) consisting of one or more (ead_type, ead_value) pairs as defined below:
+External authorization data is a CBOR sequence (see {{CBOR}}) consisting of one or more (ead_label, ead_data) pairs as defined below:
 
 ~~~~~~~~~~~ CDDL
 ead = 1* (
-  ead_type : int,
+  ead_label : int,
   ead_value : any,
 )
 ~~~~~~~~~~~
 
-where ead_value is authorization related data defined in a separate specification and its type is an int. There is a register for different types of external authorization data, see {{iana-ead}}. The exact CBOR type of ead_value is determined by the ead_type.
+Applications using external authorization data need to specify format, processing, and security considerations and register the (ead_label, ead_data) pair, see {{iana-ead}}. The CDDL type of ead_value is determined by the int ead_label.
 
 The EAD fields of EDHOC are not intended for generic application data. Since data carried in EAD_1 and EAD_2 fields may not be protected, special considerations need to be made such that it does not violate security and privacy requirements of the service which uses this data. Moreover, the content in an EAD field may impact the security properties provided by EDHOC. Security applications making use of the EAD fields must perform the necessary security analysis.
 
@@ -1397,7 +1397,7 @@ IANA has created a new registry entitled "EDHOC Error Codes" under the new group
 
 ## EDHOC External Authorization Data Registry {#iana-ead}
 
-IANA has created a new registry entitled "EDHOC External Authorization Data" under the new group name "Ephemeral Diffie-Hellman Over COSE (EDHOC)". The registration procedure is "Expert Review". The columns of the registry are Value, Description, and Reference, where Value is an integer and the other columns are text strings.
+IANA has created a new registry entitled "EDHOC External Authorization Data" under the new group name "Ephemeral Diffie-Hellman Over COSE (EDHOC)". The registration procedure is "Expert Review". The columns of the registry are Label, Description, Value Type, and Reference, where Label is an integer and the other columns are text strings.
 
 ## COSE Header Parameters Registry {#cwt-header-param}
 
@@ -1736,7 +1736,7 @@ suite = int
 suites = [ 2* suite ] / suite
 
 ead = 1* (
-  ead_type : int,
+  ead_label : int,
   ead_value : any,
 )
 
