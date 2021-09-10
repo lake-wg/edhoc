@@ -1166,7 +1166,7 @@ If the selected cipher suite is not the first cipher suite which the Responder s
 
 # Mandatory-to-Implement Compliance Requirements {#mti}
 
-An implementation may support only Initiator or only Responder. An implementation may support only a single method. None of the methods are mandatory-to-implement. Implementations MUST support the EDHOC-Exporter. Implementations SHOULD support EDHOC-KeyUpdate. Implementaions MAY support message_4.
+An implementation may support only Initiator or only Responder. An implementation may support only a single method. None of the methods are mandatory-to-implement. Implementations MUST support the EDHOC-Exporter. Implementations SHOULD support EDHOC-KeyUpdate. Implementaions MAY support message_4. Implementations MUST support 'kid' parameters of type int.
 
 Editor's note: Is any COSE header parameters (kid, cwt, uccs, x5t, c5c, etc. ) MTI? 
 Editor's note: Is any credential type (UCCS, CWT, X.509, C509) MTI?
