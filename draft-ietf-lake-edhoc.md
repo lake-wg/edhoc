@@ -297,7 +297,7 @@ Initiator                                                   Responder
 |                             message_3                             |
 |                                                                   |
 |                           AEAD( EAD_4 )                           |
-|<------------------------------------------------------------------+
+|<- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - +
 |                             message_4                             |
 ~~~~~~~~~~~
 {: #fig-flow title="EDHOC Message Flow with the Optional Fourth Message"}
@@ -573,7 +573,7 @@ In order to reduce round trips and number of messages or to simplify processing,
 
 EDHOC allows opaque external authorization data (EAD) to be sent in the EDHOC messages. External authorization data sent in message_1 (EAD_1) or message_2 (EAD_2) should be considered unprotected by EDHOC, see {{unprot-data}}. External authorization data sent in message_3 (EAD_3) or message_4 (EAD_4) is protected between Initiator and Responder.
 
-External authorization data is a CBOR sequence (see {{CBOR}}) consisting of one or more (ead_label, ead_data) pairs as defined below:
+External authorization data is a CBOR sequence (see {{CBOR}}) consisting of one or more (ead_label, ead_value) pairs as defined below:
 
 ~~~~~~~~~~~ CDDL
 ead = 1* (
