@@ -222,7 +222,7 @@ Editor's note: If {{I-D.ietf-rats-uccs}} completes before this draft, make it a 
 
 EDHOC specifies different authentication methods of the Diffie-Hellman key exchange: digital signatures and static Diffie-Hellman keys. This section outlines the digital signature-based method. Further details of protocol elements and other authentication methods are provided in the remainder of this document.
 
-SIGMA (SIGn-and-MAc) is a family of theoretical protocols with a large number of variants {{SIGMA}}. Like IKEv2 {{RFC7296}} and (D)TLS 1.3 {{RFC8446}}, EDHOC authenticated with digital signatures is built on a variant of the SIGMA protocol which provides identity protection of the initiator (SIGMA-I), and like IKEv2 {{RFC7296}}, EDHOC implements the SIGMA-I variant as MAC-then-Sign. The Mac-then-Sign variant of the SIGMA-I protocol is shown in {{fig-sigma}}.
+SIGMA (SIGn-and-MAc) is a family of theoretical protocols with a large number of variants {{SIGMA}}. Like IKEv2 {{RFC7296}} and (D)TLS 1.3 {{RFC8446}}, EDHOC authenticated with digital signatures is built on a variant of the SIGMA protocol which provides identity protection of the initiator (SIGMA-I), and like IKEv2 {{RFC7296}}, EDHOC implements the SIGMA-I variant as MAC-then-Sign. The MAC-then-Sign variant of the SIGMA-I protocol is shown in {{fig-sigma}}.
 
 ~~~~~~~~~~~
 Initiator                                                   Responder
@@ -236,7 +236,7 @@ Initiator                                                   Responder
 +------------------------------------------------------------------>|
 |                                                                   |
 ~~~~~~~~~~~
-{: #fig-sigma title="Mac-then-Sign variant of the SIGMA-I protocol."}
+{: #fig-sigma title="MAC-then-Sign variant of the SIGMA-I protocol."}
 {: artwork-align="center"}
 
 The parties exchanging messages are called Initiator (I) and Responder (R). They exchange ephemeral public keys, compute a shared secret, and derive symmetric application keys used to protect application data.
