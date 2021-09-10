@@ -54,7 +54,7 @@ void print( string s, vec v ) {
     for ( int i = 1; i <= v.size(); i++ ) {
         cout << hex << setfill('0') << setw( 2 ) << (int)v[i-1];        
         if ( i < v.size() ) {
-            if ( i % 24 == 0 ) {
+            if ( i % 23 == 0 ) {
                 cout << endl;
             } else {
                 cout << " ";
