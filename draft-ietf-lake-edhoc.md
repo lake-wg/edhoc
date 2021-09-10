@@ -221,21 +221,21 @@ Editor's note: If {{I-D.ietf-rats-uccs}} completes before this draft, make it a 
 
 EDHOC specifies different authentication methods of the Diffie-Hellman key exchange: digital signatures and static Diffie-Hellman keys. This section outlines the digital signature-based method. Further details of protocol elements and other authentication methods are provided in the remainder of this document.
 
-SIGMA (SIGn-and-MAc) is a family of theoretical protocols with a large number of variants {{SIGMA}}. Like IKEv2 {{RFC7296}} and (D)TLS 1.3 {{RFC8446}}, EDHOC authenticated with digital signatures is built on a variant of the SIGMA protocol which provides identity protection of the initiator (SIGMA-I), and like IKEv2 {{RFC7296}}, EDHOC implements the SIGMA-I variant as MAC-then-Sign. The SIGMA-I protocol using an authenticated encryption algorithm is shown in {{fig-sigma}}.
+SIGMA (SIGn-and-MAc) is a family of theoretical protocols with a large number of variants {{SIGMA}}. Like IKEv2 {{RFC7296}} and (D)TLS 1.3 {{RFC8446}}, EDHOC authenticated with digital signatures is built on a variant of the SIGMA protocol which provides identity protection of the initiator (SIGMA-I), and like IKEv2 {{RFC7296}}, EDHOC implements the SIGMA-I variant as MAC-then-Sign. The Mac-then-Sign variant of the SIGMA-I protocol is shown in {{fig-sigma}}.
 
 ~~~~~~~~~~~
-Initiator                                               Responder
-   |                           G_X                           |
-   +-------------------------------------------------------->|
-   |                                                         |
-   |  G_Y, AEAD( K_2; ID_CRED_R, Sig(R; CRED_R, G_X, G_Y) )  |
-   |<--------------------------------------------------------+
-   |                                                         |
-   |     AEAD( K_3; ID_CRED_I, Sig(I; CRED_I, G_Y, G_X) )    |
-   +-------------------------------------------------------->|
-   |                                                         |
+Initiator                                                   Responder
+|                                G_X                                |
++------------------------------------------------------------------>|
+|                                                                   |
+|      G_Y, Enc( ID_CRED_R, Sig( R; MAC( CRED_R, G_X, G_Y ) ) )     |
+|<------------------------------------------------------------------+
+|                                                                   |
+|        AEAD( ID_CRED_I, Sig( I; MAC( CRED_I, G_Y, G_X ) ) )       |
++------------------------------------------------------------------>|
+|                                                                   |
 ~~~~~~~~~~~
-{: #fig-sigma title="Authenticated encryption variant of the SIGMA-I protocol."}
+{: #fig-sigma title="Mac-then-Sign variant of the SIGMA-I protocol."}
 {: artwork-align="center"}
 
 The parties exchanging messages are called Initiator (I) and Responder (R). They exchange ephemeral public keys, compute a shared secret, and derive symmetric application keys used to protect application data.
@@ -248,7 +248,7 @@ The parties exchanging messages are called Initiator (I) and Responder (R). They
 
 * Sig(I; . ) and Sig(R; . ) denote signatures made with the private authentication key of I and R, respectively.
 
-* AEAD(K; . ) denotes authenticated encryption with additional data using a key K derived from the shared secret.
+* Enc(), AEAD(), and MAC() denotes encryption, authenticated encryption with additional data, and message authentication code using a keys derived from the shared secret.
 
 In order to create a "full-fledged" protocol some additional protocol elements are needed. EDHOC adds:
 
@@ -276,11 +276,11 @@ To simplify for implementors, the use of CBOR and COSE in EDHOC is summarized in
 
 ## General
 
-The EDHOC protocol consists of three mandatory messages (message_1, message_2, message_3) between Initiator and Responder, an optional fourth message (message_4), plus an error message. EDHOC messages are CBOR Sequences {{RFC8742}}. {{fig-flow}} illustrates an EDHOC message flow with three messages. The protocol elements in the figure are introduced in the following sections. Message formatting and processing is specified in {{asym}} and {{error}}. An implementation may support only Initiator or only Responder.
+The EDHOC protocol consists of three mandatory messages (message_1, message_2, message_3) between Initiator and Responder, an optional fourth message (message_4), and an error message. All EDHOC messages are CBOR Sequences {{RFC8742}}. {{fig-flow}} illustrates an EDHOC message flow with the optional fourth message as well as the content of each message. The protocol elements in the figure are introduced in the following sections. Message formatting and processing is specified in {{asym}} and {{error}}. An implementation may support only Initiator or only Responder.
 
 Application data may protected using the agreed application algorithms (AEAD, hash) in the selected cipher suite (see {{cs}}) and the application can make use of the established connection identifiers C_I and C_R (see {{ci}}). EDHOC may be used with the media type application/edhoc defined in {{iana}}.
 
-The Initiator can derive symmetric application keys after creating EDHOC message_3, see {{exporter}}. Protected application data can therefore be sent in parallel or together with EDHOC message_3.
+The Initiator can derive symmetric application keys after creating EDHOC message_3, see {{exporter}}. Protected application data can therefore be sent in parallel or together with EDHOC message_3. EDHOC message_4 is typically not sent.
 
 ~~~~~~~~~~~
 Initiator                                                   Responder
@@ -288,15 +288,19 @@ Initiator                                                   Responder
 +------------------------------------------------------------------>|
 |                             message_1                             |
 |                                                                   |
-|        G_Y, Enc(ID_CRED_R, Signature_or_MAC_2, EAD_2), C_R        |
+|       G_Y, Enc( ID_CRED_R, Signature_or_MAC_2, EAD_2 ), C_R       |
 |<------------------------------------------------------------------+
 |                             message_2                             |
 |                                                                   |
-|         AEAD(K_3ae; ID_CRED_I, Signature_or_MAC_3, EAD_3)         |
+|            AEAD( ID_CRED_I, Signature_or_MAC_3, EAD_3 )           |
 +------------------------------------------------------------------>|
 |                             message_3                             |
+|                                                                   |
+|                           AEAD( EAD_4 )                           |
+|<------------------------------------------------------------------+
+|                             message_4                             |
 ~~~~~~~~~~~
-{: #fig-flow title="EDHOC Message Flow"}
+{: #fig-flow title="EDHOC Message Flow with the Optional Fourth Message"}
 {: artwork-align="center"}
 
 
