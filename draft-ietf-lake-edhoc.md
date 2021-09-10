@@ -1084,7 +1084,7 @@ where:
 * ERR_CODE - error code encoded as an integer. The value 0 is used for success, all other values (negative or positive) indicate errors.
 * ERR_INFO - error information. Content and encoding depend on error code.
 
-The remainder of this section specifies the currently defined error codes, see {{fig-error-codes}}. Error codes 1 and 2 MUST be supported. Additional error codes and corresponding error information may be specified.
+The remainder of this section specifies the currently defined error codes, see {{fig-error-codes}}. Additional error codes and corresponding error information may be specified.
 
 ~~~~~~~~~~~
 +----------+---------------+----------------------------------------+
@@ -1167,10 +1167,20 @@ If the selected cipher suite is not the first cipher suite which the Responder s
 
 # Mandatory-to-Implement Compliance Requirements {#mti}
 
-An implementation may support only Initiator or only Responder. An implementation may support only a single method. None of the methods are mandatory-to-implement. Implementations MUST support the EDHOC-Exporter. Implementations SHOULD support EDHOC-KeyUpdate. Implementaions MAY support message_4. Implementations MUST support 'kid' parameters of type int.
+An implementation may support only Initiator or only Responder.
+
+An implementation may support only a single method. None of the methods are mandatory-to-implement.
+
+Implementations MUST support the EDHOC-Exporter. Implementations SHOULD support EDHOC-KeyUpdate.
+
+Implementaions MAY support message_4. Error codes 1 and 2 MUST be supported.
+
+Implementations MUST support 'kid' parameters of type int.
 
 Editor's note: Is any COSE header parameters (kid, cwt, uccs, x5t, c5c, etc. ) MTI? 
+
 Editor's note: Is any credential type (UCCS, CWT, X.509, C509) MTI?
+
 Editor's note: Is support of EAD MTI? 
 
 For many constrained IoT devices it is problematic to support more than one cipher suite. Existing devices can be expected to support either ECDSA or EdDSA. To enable as much interoperability as we can reasonably achieve, less constrained devices SHOULD implement both cipher suite 0 (AES-CCM-16-64-128, SHA-256, 8, X25519, EdDSA, AES-CCM-16-64-128, SHA-256) and cipher suite 2 (AES-CCM-16-64-128, SHA-256, 8, P-256, ES256, AES-CCM-16-64-128, SHA-256). Constrained endpoints SHOULD implement cipher suite 0 or cipher suite 2. Implementations only need to implement the algorithms needed for their supported methods.
