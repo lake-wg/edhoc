@@ -248,7 +248,7 @@ The parties exchanging messages are called Initiator (I) and Responder (R). They
 
 * Sig(I; . ) and Sig(R; . ) denote signatures made with the private authentication key of I and R, respectively.
 
-* Enc(), AEAD(), and MAC() denotes encryption, authenticated encryption with additional data, and message authentication code using a keys derived from the shared secret.
+* Enc(), AEAD(), and MAC() denotes encryption, authenticated encryption with additional data, and message authentication code using keys derived from the shared secret.
 
 In order to create a "full-fledged" protocol some additional protocol elements are needed. EDHOC adds:
 
