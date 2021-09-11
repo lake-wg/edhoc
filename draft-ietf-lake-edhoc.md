@@ -482,7 +482,7 @@ Credentials of type CWT and UCCS are transported with the COSE header parameters
 
 * ID_CRED_x = { TBD2 : UCCS }, for x = I or R.
 
-It is RECOMMENDED that ID_CRED_x uniquely identify the public authentication key as the recipient may otherwise have to try several keys. ID_CRED_I and ID_CRED_R are transported in the 'ciphertext', see {{asym-msg3-proc}} and {{asym-msg2-proc}}.
+As stated in Section 3.1 of {{I-D.ietf-cose-rfc8152bis-struct}}, applications MUST NOT assume that 'kid' values are unique and several keys associated with a 'kid' may need to be checked before the correct one is found. Applications might use additional information such as 'kid context' or lower layers to determine which key to try first. Applications should strive to make ID_CRED_x as unique as possible to as the recipient may otherwise have to try several keys. ID_CRED_I and ID_CRED_R are transported in the 'ciphertext', see {{asym-msg3-proc}} and {{asym-msg2-proc}}.
 
 When ID_CRED_x does not contain the actual credential, it may be very short, e.g., if the endpoints have agreed to use a key identifier parameter 'kid':
 
