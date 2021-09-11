@@ -583,7 +583,7 @@ ead = 1* (
 )
 ~~~~~~~~~~~
 
-Applications using external authorization data need to specify format, processing, and security considerations and register the (ead_label, ead_data) pair, see {{iana-ead}}. The CDDL type of ead_value is determined by the int ead_label.
+Applications using external authorization data need to specify format, processing, and security considerations and register the (ead_label, ead_data) pair, see {{iana-ead}}. The CDDL type of ead_value is determined by the int ead_label and MUST be specified.
 
 The EAD fields of EDHOC are not intended for generic application data. Since data carried in EAD_1 and EAD_2 fields may not be protected, special considerations need to be made such that it does not violate security and privacy requirements of the service which uses this data. Moreover, the content in an EAD field may impact the security properties provided by EDHOC. Security applications making use of the EAD fields must perform the necessary security analysis.
 
