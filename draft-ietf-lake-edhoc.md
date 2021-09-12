@@ -184,7 +184,7 @@ EDHOC enables the reuse of the same lightweight primitives as OSCORE: CBOR for e
 
 ## Message Size Examples
 
-Compared to the DTLS 1.3 handshake {{I-D.ietf-tls-dtls13}} with ECDHE and connection ID, the number of bytes in EDHOC + CoAP can be less than 1/6 when RPK authentication is used, see {{I-D.ietf-lwig-security-protocol-comparison}}. {{fig-sizes}} shows examples of message sizes for EDHOC with different kinds of authentication keys and different COSE header parameters for identification: static Diffie-Hellman keys or signature keys in CWT or UCCS and identified by 'kid' {{I-D.ietf-cose-rfc8152bis-struct}} or X.509 certificates identified by a hash value using 'x5t' {{I-D.ietf-cose-x509}}.
+Compared to the DTLS 1.3 handshake {{I-D.ietf-tls-dtls13}} with ECDHE and connection ID, the number of bytes in EDHOC + CoAP can be less than 1/6 when RPK authentication is used, see {{I-D.ietf-lwig-security-protocol-comparison}}. {{fig-sizes}} shows examples of message sizes for EDHOC with different kinds of authentication keys and different COSE header parameters for identification: static Diffie-Hellman keys or signature keys in CWT or UCCS identified by a key identifier using 'kid' {{I-D.ietf-cose-rfc8152bis-struct}} or X.509 certificates identified by a hash value using 'x5t' {{I-D.ietf-cose-x509}}.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 ========================================================
