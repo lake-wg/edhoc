@@ -194,9 +194,9 @@ Compared to the DTLS 1.3 handshake {{I-D.ietf-tls-dtls13}} with ECDHE and connec
 --------------------------------------------------------
 message_1            37         37         37         37
 message_2            45         58        102        115
-message_3            19         32         77         90
+message_3            19         33         77         90
 --------------------------------------------------------
-Total               101        127        216        242
+Total               101        128        216        242
 ========================================================
 ~~~~~~~~~~~~~~~~~~~~~~~
 {: #fig-sizes title="Example of message sizes in bytes." artwork-align="center"}
