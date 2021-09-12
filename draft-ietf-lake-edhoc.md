@@ -184,18 +184,20 @@ EDHOC enables the reuse of the same lightweight primitives as OSCORE: CBOR for e
 
 ## Message Size Examples
 
-Compared to the DTLS 1.3 handshake {{I-D.ietf-tls-dtls13}} with ECDHE and connection ID, the number of bytes in EDHOC + CoAP can be less than 1/6 when RPK authentication is used, see {{I-D.ietf-lwig-security-protocol-comparison}}. {{fig-sizes}} shows two examples of message sizes for EDHOC with different kinds of authentication keys and different COSE header parameters for identification: static Diffie-Hellman keys identified by 'kid' {{I-D.ietf-cose-rfc8152bis-struct}}, and X.509 signature certificates identified by a hash value using 'x5t' {{I-D.ietf-cose-x509}}.
+Compared to the DTLS 1.3 handshake {{I-D.ietf-tls-dtls13}} with ECDHE and connection ID, the number of bytes in EDHOC + CoAP can be less than 1/6 when RPK authentication is used, see {{I-D.ietf-lwig-security-protocol-comparison}}. {{fig-sizes}} shows examples of message sizes for EDHOC with different kinds of authentication keys and different COSE header parameters for identification: static Diffie-Hellman keys or signature keys in CWT or UCCS and identified by 'kid' {{I-D.ietf-cose-rfc8152bis-struct}} or X.509 certificates identified by a hash value using 'x5t' {{I-D.ietf-cose-x509}}.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
-=================================
-                    kid       x5t
----------------------------------
-message_1            37        37
-message_2            45       115
-message_3            19        90
----------------------------------
-Total               101       242
-=================================
+========================================================
+                    Static DH Keys        Signature Keys
+                    --------------        --------------
+                    kid        x5t        kid        x5t
+--------------------------------------------------------
+message_1            37         37         37         37
+message_2            45         58        102        115
+message_3            19         32         77         90
+--------------------------------------------------------
+Total               101        127        216        242
+========================================================
 ~~~~~~~~~~~~~~~~~~~~~~~
 {: #fig-sizes title="Example of message sizes in bytes." artwork-align="center"}
 
