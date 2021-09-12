@@ -805,8 +805,8 @@ message_1 = (
   ? EAD_1 : ead,
 )
 
-suite = int
 suites = [ 2* suite ] / suite
+suite = int
 ~~~~~~~~~~~
 
 where:
