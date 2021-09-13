@@ -80,7 +80,7 @@ NOTE 2. If not clear from the context, remember that CBOR sequences and CBOR arr
 
 A more extensive test vector suite and related code that was used to generate them can be found at: https://github.com/lake-wg/edhoc/tree/master/test-vectors-10.
 
-# Authentication with static DH, RPK identified by 'kid'
+# Authentication with static DH, UCCS identified by 'kid'
 
 In this example I and R are authenticated with ephemeral-static Diffie-Hellman (METHOD = 3). The public keys are represented as raw public keys (RPK), encoded in an unprotected CWT claims set (UCCS) and identified by the COSE header parameter 'kid'. 
 
