@@ -1978,8 +1978,7 @@ OSCORE Master Salt after KeyUpdate (Raw Value) (8 bytes)
 
 # Security Considerations {#security}
 
-This document contains examples of EDHOC {{I-D.ietf-lake-edhoc}} whose security considerations apply.
-In particular, the "private" keys printed in these examples cannot be considered secret and must not be used.
+This document contains examples of EDHOC {{I-D.ietf-lake-edhoc}} whose security considerations apply. The keys printed in these examples cannot be considered secret and must not be used.
 
 # IANA Considerations {#iana}
 
