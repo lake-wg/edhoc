@@ -328,7 +328,9 @@ The Initiator and the Responder need to have agreed on a single method to be use
 
 ## Connection Identifiers {#ci}
 
-EDHOC includes the selection of connection identifiers (C_I, C_R) identifying a connection for which keys are agreed. Connection identifiers may be used in the ongoing EDHOC protocol (see {{ci-edhoc}}) or in a subsequent application protocol, e.g., OSCORE (see {{ci-oscore}}). The connection identifiers do not have any cryptographic purpose in EDHOC.
+EDHOC includes the selection of connection identifiers (C_I, C_R) identifying a connection for which keys are agreed.
+
+Connection identifiers may be used to correlate EDHOC messages and facilitate the retrieval of protocol state during EDHOC protocol execution (see {{transport}}) or in a subsequent application protocol, e.g., OSCORE (see {{ci-oscore}}). The connection identifiers do not have any cryptographic purpose in EDHOC.
 
 Connection identifiers in EDHOC are byte strings or integers, encoded in CBOR. One byte connection identifiers (the integers -24 to 23 and the empty byte string h'') are realistic in many scenarios as most constrained devices only have a few connections.
 
@@ -337,12 +339,6 @@ Connection identifiers in EDHOC are byte strings or integers, encoded in CBOR. O
 C_I and C_R are chosen by I and R, respectively. The Initiator selects C_I and sends it in message_1 for the Responder to use as a reference to the connection in communications with the Initiator. The Responder selects C_R and sends in message_2 for the Initiator to use as a reference to the connection in communications with the Responder.
 
 If connection identifiers are used by an application protocol for which EDHOC establishes keys then the selected connection identifiers SHALL adhere to the requirements for that protocol, see {{ci-oscore}} for an example.
-
-### Use of Connection Identifiers with EDHOC {#ci-edhoc}
-
-Connection identifiers may be used to correlate EDHOC messages and facilitate the retrieval of protocol state during EDHOC protocol execution.  EDHOC transports that do not inherently provide correlation across all messages of an exchange can send connection identifiers along with EDHOC messages to gain that required
-capability, see {{transport}}.  For an example of using connection identifiers when CoAP is used as transport, see {{coap}}.
-
 
 ### Use of Connection Identifiers with OSCORE {#ci-oscore}
 
@@ -356,13 +352,17 @@ Cryptographically, EDHOC does not put requirements on the lower layers. EDHOC is
 * message reordering,
 * message duplication,
 * fragmentation,
-* demultiplex EDHOC messages from other types of messages, and
-* denial-of-service protection.
-
-Besides these common transport-oriented properties, EDHOC transport additionally needs to support the correlation between EDHOC messages, including an indication of a message being message_1. The correlation may reuse existing mechanisms in the transport protocol. For example, the CoAP Token may be used to correlate EDHOC messages in a CoAP response and an associated CoAP request. In the absence of correlation between a message received and a message previously sent inherent to the transport, the EDHOC connection identifiers may be added, e.g., by prepending the appropriate connection identifier (when available from the EDHOC protocol) to the EDHOC message. Transport of EDHOC in CoAP payloads is described in {{coap}}, which also
-shows how to use connection identifiers and message_1 indication with CoAP.
+* demultiplex EDHOC messages from other types of messages,
+* denial-of-service protection,
+* message correlation.
 
 The Initiator and the Responder need to have agreed on a transport to be used for EDHOC, see {{applicability}}.
+
+### Use of Connection Identifiers for EDHOC Message Correlation {#ci-edhoc}
+
+The transport needs to support the correlation between EDHOC messages and facilitate the retrieval of protocol state during EDHOC protocol execution, including an indication of a message being message_1. The correlation may reuse existing mechanisms in the transport protocol. For example, the CoAP Token may be used to correlate EDHOC messages in a CoAP response and an associated CoAP request.
+
+Connection identifiers may be used to correlate EDHOC messages and facilitate the retrieval of protocol state during EDHOC protocol execution.  EDHOC transports that do not inherently provide correlation across all messages of an exchange can send connection identifiers along with EDHOC messages to gain that required capability, e.g., by prepending the appropriate connection identifier (when available from the EDHOC protocol) to the EDHOC message. Transport of EDHOC in CoAP payloads is described in {{coap}}, which also shows how to use connection identifiers and message_1 indication with CoAP.
 
 ## Authentication Parameters {#auth-key-id}
 
