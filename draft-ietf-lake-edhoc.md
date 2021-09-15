@@ -1179,11 +1179,11 @@ Implementaions MAY support message_4. Error codes 1 and 2 MUST be supported.
 
 Implementations MUST support 'kid' parameters of type int.
 
-Editor's note: Is any COSE header parameters (kid, cwt, uccs, x5t, c5c, etc. ) MTI? 
+Editor's note: Is any COSE header parameters (kid, cwt, uccs, x5t, c5c, etc. ) MTI?
 
 Editor's note: Is any credential type (UCCS, CWT, X.509, C509) MTI?
 
-Editor's note: Is support of EAD MTI? 
+Editor's note: Is support of EAD MTI?
 
 For many constrained IoT devices it is problematic to support more than one cipher suite. Existing devices can be expected to support either ECDSA or EdDSA. To enable as much interoperability as we can reasonably achieve, less constrained devices SHOULD implement both cipher suite 0 (AES-CCM-16-64-128, SHA-256, 8, X25519, EdDSA, AES-CCM-16-64-128, SHA-256) and cipher suite 2 (AES-CCM-16-64-128, SHA-256, 8, P-256, ES256, AES-CCM-16-64-128, SHA-256). Constrained endpoints SHOULD implement cipher suite 0 or cipher suite 2. Implementations only need to implement the algorithms needed for their supported methods.
 
@@ -1530,7 +1530,7 @@ IANA has added the media type "application/edhoc" to the "Media Types" registry.
 
 ## CoAP Content-Formats Registry
 
-IANA has added the media type "application/edhoc" to the "CoAP Content-Formats" registry under the group name "Constrained RESTful Environments (CoRE) Parameters". 
+IANA has added the media type "application/edhoc" to the "CoAP Content-Formats" registry under the group name "Constrained RESTful Environments (CoRE) Parameters".
 
 -  Media Type: application/edhoc
 
@@ -1718,7 +1718,7 @@ The Concise Binary Object Representation (CBOR) {{RFC8949}} is a data format des
 CBOR data items are encoded to or decoded from byte strings using a type-length-value encoding scheme, where the three highest order bits of the initial byte contain information about the major type. CBOR supports several different types of data items, in addition to integers (int, uint), simple values, byte strings (bstr), and text strings (tstr), CBOR also supports arrays \[\]  of data items, maps {} of pairs of data items, and sequences {{RFC8742}} of data items. Some examples are given below.
 
 The EDHOC specification sometimes use CDDL names in CBOR dignostic notation as in e.g., << ID_CRED_R, ? EAD_2 >>. This means that EAD_2 is optional and that ID_CRED_R and EAD_2 should be substituted with their values before evaluation. I.e., if ID_CRED_R = { 4 : h'' } and EAD_2 is omitted then << ID_CRED_R, ? EAD_2 >> = << { 4 : h'' } >>, which encodes to 0x43a10440.
- 
+
 For a complete specification and more examples, see {{RFC8949}} and {{RFC8610}}. We recommend implementors to get used to CBOR by using the CBOR playground {{CborMe}}.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -1962,7 +1962,7 @@ RFC Editor: Please remove this appendix.
    * Updated security considerations
    * Updated text on cipher suite negotiation and key confirmation
    * Test vector for static DH
-o 
+o
 * From -00 to -01:
    * Removed PSK method
    * Removed references to certificate by value
