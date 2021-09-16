@@ -751,6 +751,8 @@ The transcript hash TH_4 is a CBOR encoded bstr and the input to the hash functi
 
 where H() is the hash function in the selected cipher suite. Examples of use of the EDHOC-Exporter are given in {{asym-msg4-proc}} and {{transfer}}.
 
+* K_4 and IV_4 are derived with the EDHOC-Exporter using the empty byte string h'' as context, and labels "EDHOC_message_4_Key" and "EDHOC_message_4_Nonce", respectively. IVs are only used if the EDHOC AEAD algorithm uses IVs.
+
 ## EDHOC-KeyUpdate {#keyupdate}
 
 To provide forward secrecy in an even more efficient way than re-running EDHOC, EDHOC provides the function EDHOC-KeyUpdate. When EDHOC-KeyUpdate is called the old PRK_4x3m is deleted and the new PRK_4x3m is calculated as a "hash" of the old key using the Extract function as illustrated by the following pseudocode:
@@ -1033,15 +1035,15 @@ The Responder SHALL compose message_4 as follows:
 * Compute a COSE_Encrypt0 as defined in Section 5.3 of {{I-D.ietf-cose-rfc8152bis-struct}}, with the EDHOC AEAD algorithm in the selected cipher suite, and the following parameters. The protected header SHALL be empty.
 
    * protected = h''
-
    * external_aad = TH_4
+   * plaintext = ( ? EAD_4 ), where EAD_4 is protected external authorization data, see {{AD}}
+   * Key K_4 = EDHOC-Exporter( "EDHOC_message_4_Key", h'', length )
+   * IV IV_4 = EDHOC-Exporter( "EDHOC_message_4_Nonce", h'', length )
 
-   * plaintext = ( ? EAD_4 )
+   COSE constructs the input to the AEAD {{RFC5116}} as follows:
 
-   where EAD_4 is protected external authorization data, see {{AD}}. COSE constructs the input to the AEAD {{RFC5116}} as follows:
-
-   * Key K = EDHOC-Exporter( "EDHOC_message_4_Key", h'', length )
-   * Nonce N = EDHOC-Exporter( "EDHOC_message_4_Nonce", h'', length )
+   * Key K = K_4
+   * Nonce N = IV_4
    * Plaintext P = ( ? EAD_4 )
    * Associated data A = \[ "Encrypt0", h'', TH_4 \]
 
