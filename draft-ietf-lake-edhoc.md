@@ -751,7 +751,7 @@ The transcript hash TH_4 is a CBOR encoded bstr and the input to the hash functi
 
 where H() is the hash function in the selected cipher suite. Examples of use of the EDHOC-Exporter are given in {{asym-msg4-proc}} and {{transfer}}.
 
-* K_4 and IV_4 are derived with the EDHOC-Exporter using the empty byte string h'' as context, and labels "EDHOC_message_4_Key" and "EDHOC_message_4_Nonce", respectively. IVs are only used if the EDHOC AEAD algorithm uses IVs.
+* K_4 and IV_4 are derived with the EDHOC-Exporter using the empty byte string h'' as context, and labels "EDHOC_message_4_Key" and "EDHOC_message_4_IV", respectively. IVs are only used if the EDHOC AEAD algorithm uses IVs.
 
 ## EDHOC-KeyUpdate {#keyupdate}
 
@@ -1038,7 +1038,7 @@ The Responder SHALL compose message_4 as follows:
    * external_aad = TH_4
    * plaintext = ( ? EAD_4 ), where EAD_4 is protected external authorization data, see {{AD}}
    * Key K_4 = EDHOC-Exporter( "EDHOC_message_4_Key", h'', length )
-   * IV IV_4 = EDHOC-Exporter( "EDHOC_message_4_Nonce", h'', length )
+   * IV IV_4 = EDHOC-Exporter( "EDHOC_message_4_IV", h'', length )
 
    COSE constructs the input to the AEAD {{RFC5116}} as follows:
 
@@ -1278,19 +1278,19 @@ Reference: [[this document]]
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 ~~~~~~~~~~~~~~~~~~~~~~~
-Label: EDHOC_message_4_Nonce
-Description: Nonce used to protect EDHOC message_4
+Label: EDHOC_message_4_IV
+Description: IV used to protect EDHOC message_4
 Reference: [[this document]]
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 ~~~~~~~~~~~~~~~~~~~~~~~
-Label: OSCORE Master Secret
+Label: OSCORE_Master_Secret
 Description: Derived OSCORE Master Secret
 Reference: [[this document]]
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 ~~~~~~~~~~~~~~~~~~~~~~~
-Label: OSCORE Master Salt
+Label: OSCORE_Master_Salt
 Description: Derived OSCORE Master Salt
 Reference: [[this document]]
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -1596,15 +1596,15 @@ After successful processing of EDHOC message_3, Client and Server derive Securit
 
 * The Master Secret and Master Salt are derived by using the EDHOC-Exporter interface, see {{exporter}}.
 
-The EDHOC Exporter Labels for deriving the OSCORE Master Secret and the OSCORE Master Salt, are "OSCORE Master Secret" and "OSCORE Master Salt", respectively.
+The EDHOC Exporter Labels for deriving the OSCORE Master Secret and the OSCORE Master Salt, are "OSCORE_Master_Secret" and "OSCORE_Master_Salt", respectively.
 
 The context parameter is h'' (0x40), the empty CBOR byte string.
 
 By default, key_length is the key length (in bytes) of the application AEAD Algorithm of the selected cipher suite for the EDHOC session. Also by default, salt_length has value 8. The Initiator and Responder MAY agree out-of-band on a longer key_length than the default and on a different salt_length.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
-Master Secret = EDHOC-Exporter("OSCORE Master Secret", h'', key_length)
-Master Salt   = EDHOC-Exporter("OSCORE Master Salt", h'', salt_length)
+Master Secret = EDHOC-Exporter("OSCORE_Master_Secret", h'', key_length)
+Master Salt   = EDHOC-Exporter("OSCORE_Master_Salt", h'', salt_length)
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 * The AEAD Algorithm is the application AEAD algorithm of the selected cipher suite for the EDHOC session.
