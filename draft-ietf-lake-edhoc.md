@@ -708,7 +708,7 @@ where
 
   + transcript_hash is a bstr set to one of the transcript hashes TH_2, TH_3, or TH_4 as defined in Sections {{asym-msg2-form}}{: format="counter"}, {{asym-msg3-form}}{: format="counter"}, and {{exporter}}{: format="counter"}.
 
-  + label is a tstr set to the name of the derived key, IV or MAC; i.e., "KEYSTREAM_2", "MAC_2", "K_3ae", "IV_3ae", or "MAC_3".
+  + label is a tstr set to the name of the derived key, IV or MAC; i.e., "KEYSTREAM_2", "MAC_2", "K_3", "IV_3", or "MAC_3".
 
   + context is a bstr
 
@@ -727,10 +727,10 @@ The keys, IVs and MACs are derived as follows:
 
 * KEYSTREAM_2 is derived using the transcript hash TH_2 and the pseudorandom key PRK_2e.
 * MAC_2 is derived using the transcript hash TH_2 and the pseudorandom key PRK_3e2m.
-* K_3ae and IV_3ae are derived using the transcript hash TH_3 and the pseudorandom key PRK_3e2m. IVs are only used if the EDHOC AEAD algorithm uses IVs.
+* K_3 and IV_3 are derived using the transcript hash TH_3 and the pseudorandom key PRK_3e2m. IVs are only used if the EDHOC AEAD algorithm uses IVs.
 * MAC_3 is derived using the transcript hash TH_3 and the pseudorandom key PRK_4x3m.
 
-KEYSTREAM_2, K_3ae, and IV_3ae use an empty byte string h'' as context. MAC_2 and MAC_3 use context as defined in {{asym-msg2-proc}} and {{asym-msg3-proc}}, respectively.
+KEYSTREAM_2, K_3, and IV_3 use an empty byte string h'' as context. MAC_2 and MAC_3 use context as defined in {{asym-msg2-proc}} and {{asym-msg3-proc}}, respectively.
 
 ## EDHOC-Exporter {#exporter}
 
@@ -963,7 +963,7 @@ The Initiator SHALL compose message_3 as follows:
 
      \[ "Signature1", << ID_CRED_I >>, << TH_3, CRED_I, ? EAD_3 >>, MAC_3 \]
 
-* Compute an outer COSE_Encrypt0 as defined in Section 5.3 of {{I-D.ietf-cose-rfc8152bis-struct}}, with the EDHOC AEAD algorithm in the selected cipher suite, K_3ae, IV_3ae, and the following parameters. The protected header SHALL be empty.
+* Compute an outer COSE_Encrypt0 as defined in Section 5.3 of {{I-D.ietf-cose-rfc8152bis-struct}}, with the EDHOC AEAD algorithm in the selected cipher suite, K_3, IV_3, and the following parameters. The protected header SHALL be empty.
 
    * external_aad = TH_3
 
@@ -973,8 +973,8 @@ The Initiator SHALL compose message_3 as follows:
 
    COSE constructs the input to the AEAD {{RFC5116}} as follows:
 
-   * Key K = EDHOC-KDF( PRK_3e2m, TH_3, "K_3ae", h'', length )
-   * Nonce N = EDHOC-KDF( PRK_3e2m, TH_3, "IV_3ae", h'', length )
+   * Key K = EDHOC-KDF( PRK_3e2m, TH_3, "K_3", h'', length )
+   * Nonce N = EDHOC-KDF( PRK_3e2m, TH_3, "IV_3", h'', length )
    * Plaintext P = ( ID_CRED_I / bstr / int, Signature_or_MAC_3, ? EAD_3 )
    * Associated data A = \[ "Encrypt0", h'', TH_3 \]
 
@@ -994,7 +994,7 @@ The Responder SHALL process message_3 as follows:
 
 * Retrieve the protocol state using the message correlation provided by the transport (e.g., the CoAP Token and the 5-tuple as a client, or the prepended C_R as a server).
 
-* Decrypt and verify the outer COSE_Encrypt0 as defined in Section 5.3 of {{I-D.ietf-cose-rfc8152bis-struct}}, with the EDHOC AEAD algorithm in the selected cipher suite, K_3ae, and IV_3ae.
+* Decrypt and verify the outer COSE_Encrypt0 as defined in Section 5.3 of {{I-D.ietf-cose-rfc8152bis-struct}}, with the EDHOC AEAD algorithm in the selected cipher suite, K_3, and IV_3.
 
 * Pass EAD_3 to the security application.
 
