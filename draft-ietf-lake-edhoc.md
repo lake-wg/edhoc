@@ -694,11 +694,11 @@ where info is encoded as the CBOR sequence
 
 ~~~~~~~~~~~ CDDL
 info = (
-   selected_suite : int,
-   transcript_hash : bstr,
-   label : tstr,
-   context : bstr,
-   length : uint,
+  selected_suite : int,
+  transcript_hash : bstr,
+  label : tstr,
+  context : bstr,
+  length : uint,
 )
 ~~~~~~~~~~~
 
@@ -1781,11 +1781,11 @@ error = (
 )
 
 info = (
-   edhoc_aead_id : int / tstr,
-   transcript_hash : bstr,
-   label : tstr,
-   context : bstr,
-   length : uint,
+  selected_suite : int,
+  transcript_hash : bstr,
+  label : tstr,
+  context : bstr,
+  length : uint,
 )
 ~~~~~~~~~~~
 
