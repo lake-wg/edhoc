@@ -694,7 +694,7 @@ where info is encoded as the CBOR sequence
 
 ~~~~~~~~~~~ CDDL
 info = (
-   edhoc_aead_id : int / tstr,
+   selected_suite : int,
    transcript_hash : bstr,
    label : tstr,
    context : bstr,
@@ -704,7 +704,7 @@ info = (
 
 where
 
-  + edhoc_aead_id is an int or tstr containing the algorithm identifier of the EDHOC AEAD algorithm in the selected cipher suite encoded as defined in {{I-D.ietf-cose-rfc8152bis-algs}}. Note that a single fixed edhoc_aead_id is used in all invocations of EDHOC-KDF, including the derivation of KEYSTREAM_2 and invocations of the EDHOC-Exporter (see {{exporter}}).
+  + selected_suite is an int containing the selected cipher suite. 
 
   + transcript_hash is a bstr set to one of the transcript hashes TH_2, TH_3, or TH_4 as defined in Sections {{asym-msg2-form}}{: format="counter"}, {{asym-msg3-form}}{: format="counter"}, and {{exporter}}{: format="counter"}.
 
@@ -807,8 +807,7 @@ message_1 = (
   ? EAD_1 : ead,
 )
 
-suites = [ 2* suite ] / suite
-suite = int
+suites = [ 2* int ] / int
 ~~~~~~~~~~~
 
 where:
@@ -1748,9 +1747,7 @@ h'12cd'             0x4212cd             byte string
 This sections compiles the CDDL definitions for ease of reference.
 
 ~~~~~~~~~~~ CDDL
-suite = int
-
-suites = [ 2* suite ] / suite
+suites = [ 2* int ] / int
 
 ead = 1* (
   ead_label : int,
