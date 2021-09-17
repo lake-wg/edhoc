@@ -399,7 +399,7 @@ void test_vectors( EDHOCKeyType type_I, COSECred credtype_I, COSEHeader attr_I,
 
     // Creates the info parameter and derives output key matrial with HKDF-Expand
     auto KDF = [=] ( vec PRK, vec transcript_hash, string label, vec context, int length ) {
-        vec info = cbor( edhoc_aead_alg ) + cbor( transcript_hash ) + cbor( label ) + cbor( context ) + cbor( length );
+        vec info = cbor( selected_suite ) + cbor( transcript_hash ) + cbor( label ) + cbor( context ) + cbor( length );
         vec OKM = hkdf_expand( edhoc_hash_alg, PRK, info, length );
         return make_tuple( info, OKM );
     };
@@ -469,11 +469,11 @@ void test_vectors( EDHOCKeyType type_I, COSECred credtype_I, COSEHeader attr_I,
         signature_or_MAC_3 = sign( SK_I, M_3 );
 
     // Calculate CIPHERTEXT_3
-    vec P_3ae = compress_id_cred( ID_CRED_I ) + cbor( signature_or_MAC_3 ) + EAD_3;
-    vec A_3ae = A( cbor( vec{} ), cbor( TH_3 ) );
-    auto [ info_K_3ae,   K_3ae ] = KDF( PRK_3e2m, TH_3, "K_3ae",  vec{}, 16 );
-    auto [ info_IV_3ae, IV_3ae ] = KDF( PRK_3e2m, TH_3, "IV_3ae", vec{}, 13 );
-    vec CIPHERTEXT_3 = AEAD( K_3ae, IV_3ae, P_3ae, A_3ae );
+    vec P_3 = compress_id_cred( ID_CRED_I ) + cbor( signature_or_MAC_3 ) + EAD_3;
+    vec A_3 = A( cbor( vec{} ), cbor( TH_3 ) );
+    auto [ info_K_3,   K_3 ] = KDF( PRK_3e2m, TH_3, "K_3",  vec{}, 16 );
+    auto [ info_IV_3, IV_3 ] = KDF( PRK_3e2m, TH_3, "IV_3", vec{}, 13 );
+    vec CIPHERTEXT_3 = AEAD( K_3, IV_3, P_3, A_3 );
 
     // Calculate message_3
     vec message_3 = cbor( CIPHERTEXT_3 );
@@ -488,23 +488,23 @@ void test_vectors( EDHOCKeyType type_I, COSECred credtype_I, COSEHeader attr_I,
     auto Export = [=] ( string label, vec context, int length ) { return KDF( PRK_4x3m, TH_4, label, context, length ); };
 
     // Calculate message_4
-    vec P_4ae = EAD_4;
-    vec A_4ae = A( cbor( vec{} ), cbor( TH_4 ) );
-    auto [ info_K_4ae,   K_4ae ] = Export( "EDHOC_message_4_Key",   vec{}, 16 );
-    auto [ info_IV_4ae, IV_4ae ] = Export( "EDHOC_message_4_Nonce", vec{}, 13 );
-    vec CIPHERTEXT_4 = AEAD( K_4ae, IV_4ae, P_4ae, A_4ae );
+    vec P_4 = EAD_4;
+    vec A_4 = A( cbor( vec{} ), cbor( TH_4 ) );
+    auto [ info_K_4,   K_4 ] = Export( "EDHOC_K_4",   vec{}, 16 );
+    auto [ info_IV_4, IV_4 ] = Export( "EDHOC_IV_4", vec{}, 13 );
+    vec CIPHERTEXT_4 = AEAD( K_4, IV_4, P_4, A_4 );
     vec message_4 = cbor( CIPHERTEXT_4 );
 
     // Derive OSCORE Master Secret and Salt
-    auto [ info_OSCORE_secret, OSCORE_secret ] = Export( "OSCORE Master Secret", vec{}, 16 );
-    auto [ info_OSCORE_salt,   OSCORE_salt ]   = Export( "OSCORE Master Salt",   vec{},  8 );
+    auto [ info_OSCORE_secret, OSCORE_secret ] = Export( "OSCORE_Master_Secret", vec{}, 16 );
+    auto [ info_OSCORE_salt,   OSCORE_salt ]   = Export( "OSCORE_Master_Salt",   vec{},  8 );
 
     // KeyUpdate funtion
     vec nonce = random_vector( 16 );
     vec PRK_4x3m_new = hkdf_extract( nonce, PRK_4x3m );
     auto Export2 = [=] ( string label, vec context, int length ) { return KDF( PRK_4x3m_new, TH_4, label, context, length ); };
-    auto [ info_OSCORE_secretFS, OSCORE_secretFS ] = Export2( "OSCORE Master Secret", vec{}, 16 );
-    auto [ info_OSCORE_saltFS,   OSCORE_saltFS ]   = Export2( "OSCORE Master Salt",   vec{},  8 );
+    auto [ info_OSCORE_secretFS, OSCORE_secretFS ] = Export2( "OSCORE_Master_Secret", vec{}, 16 );
+    auto [ info_OSCORE_saltFS,   OSCORE_saltFS ]   = Export2( "OSCORE_Master_Salt",   vec{},  8 );
 
     // Print stuff ////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////
@@ -585,12 +585,12 @@ void test_vectors( EDHOCKeyType type_I, COSECred credtype_I, COSEHeader attr_I,
             print_json( "m_3", M_3 );   
         print_json( "sig_or_mac_3_raw", signature_or_MAC_3 );
         print_json( "sig_or_mac_3", cbor( signature_or_MAC_3 ) );
-        print_json( "p_3ae", P_3ae );   
-        print_json( "a_3ae", A_3ae );   
-        print_json( "info_k_3ae", info_K_3ae );   
-        print_json( "k_3ae_raw", K_3ae );   
-        print_json( "info_iv3ae", info_IV_3ae );   
-        print_json( "iv_3ae_raw", IV_3ae );   
+        print_json( "p_3", P_3 );   
+        print_json( "a_3", A_3 );   
+        print_json( "info_k_3", info_K_3 );   
+        print_json( "k_3_raw", K_3 );   
+        print_json( "info_iv_3", info_IV_3 );   
+        print_json( "iv_3_raw", IV_3 );   
         print_json( "ciphertext_3_raw", CIPHERTEXT_3 );   
         print_json( "ciphertext_3", cbor( CIPHERTEXT_3 ) );   
         print_json( "message_3", message_3 );
@@ -610,12 +610,12 @@ void test_vectors( EDHOCKeyType type_I, COSECred credtype_I, COSEHeader attr_I,
         print_json( "oscore_hash_alg", oscore_hash_alg );
 
         print_json( "ead_4", EAD_4 );
-        print_json( "p_4ae", P_4ae );   
-        print_json( "a_4ae", A_4ae );   
-        print_json( "info_k_4ae", info_K_4ae );   
-        print_json( "k_4ae_raw", K_4ae );   
-        print_json( "info_iv_4ae", info_IV_4ae );   
-        print_json( "iv_4ae_raw", IV_4ae );   
+        print_json( "p_4", P_4 );   
+        print_json( "a_4", A_4 );   
+        print_json( "info_k_4", info_K_4 );   
+        print_json( "k_4_raw", K_4 );   
+        print_json( "info_iv_4", info_IV_4 );   
+        print_json( "iv_4_raw", IV_4 );   
         print_json( "ciphertext_4_raw", CIPHERTEXT_4 );   
         print_json( "ciphertext_4", cbor( CIPHERTEXT_4 ) );   
         print_json( "message_4", message_4 );
@@ -712,12 +712,12 @@ void test_vectors( EDHOCKeyType type_I, COSECred credtype_I, COSEHeader attr_I,
             print( "Message to be signed 3 (CBOR Data Item)", M_3 );   
         print( "Signature_or_MAC_3 (Raw Value)", signature_or_MAC_3 );
         print( "Signature_or_MAC_3 (CBOR Data Item)", cbor( signature_or_MAC_3 ) );
-        print( "P_3ae (CBOR Sequence)", P_3ae );   
-        print( "A_3ae (CBOR Data Item)", A_3ae );   
-        print( "info for K_3ae (CBOR Sequence)", info_K_3ae );   
-        print( "K_3ae (Raw Value)", K_3ae );   
-        print( "info for IV_3ae (CBOR Sequence)", info_IV_3ae );   
-        print( "IV_3ae (Raw Value)", IV_3ae );   
+        print( "P_3 (CBOR Sequence)", P_3 );   
+        print( "A_3 (CBOR Data Item)", A_3 );   
+        print( "info for K_3 (CBOR Sequence)", info_K_3 );   
+        print( "K_3 (Raw Value)", K_3 );   
+        print( "info for IV_3 (CBOR Sequence)", info_IV_3 );   
+        print( "IV_3 (Raw Value)", IV_3 );   
         print( "CIPHERTEXT_3 (Raw Value)", CIPHERTEXT_3 );   
         print( "CIPHERTEXT_3 (CBOR Data Item)", cbor( CIPHERTEXT_3 ) );   
         print( "message_3 (CBOR Sequence)", message_3 );
@@ -739,12 +739,12 @@ void test_vectors( EDHOCKeyType type_I, COSECred credtype_I, COSEHeader attr_I,
         print( "OSCORE Hash Algorithm", oscore_hash_alg );
 
         print( "EAD_4 (CBOR Sequence)", EAD_4 );   
-        print( "P_4ae (CBOR Sequence)", P_4ae );   
-        print( "A_4ae (CBOR Data Item)", A_4ae );   
-        print( "info for K_4ae (CBOR Sequence)", info_K_4ae );   
-        print( "K_4ae (Raw Value)", K_4ae );   
-        print( "info for IV_4ae (CBOR Sequence)", info_IV_4ae );   
-        print( "IV_4ae (Raw Value)", IV_4ae );   
+        print( "P_4 (CBOR Sequence)", P_4 );   
+        print( "A_4 (CBOR Data Item)", A_4 );   
+        print( "info for K_4 (CBOR Sequence)", info_K_4 );   
+        print( "K_4 (Raw Value)", K_4 );   
+        print( "info for IV_4 (CBOR Sequence)", info_IV_4 );   
+        print( "IV_4 (Raw Value)", IV_4 );   
         print( "CIPHERTEXT_4", CIPHERTEXT_4 );   
         print( "CIPHERTEXT_4 (CBOR Data Item)", cbor( CIPHERTEXT_4 ) );   
         print( "message_4 (CBOR Sequence)", message_4 );
