@@ -751,7 +751,7 @@ The transcript hash TH_4 is a CBOR encoded bstr and the input to the hash functi
 
 where H() is the hash function in the selected cipher suite. Examples of use of the EDHOC-Exporter are given in {{asym-msg4-proc}} and {{transfer}}.
 
-* K_4 and IV_4 are derived with the EDHOC-Exporter using the empty byte string h'' as context, and labels "EDHOC_message_4_Key" and "EDHOC_message_4_IV", respectively. IVs are only used if the EDHOC AEAD algorithm uses IVs.
+* K_4 and IV_4 are derived with the EDHOC-Exporter using the empty byte string h'' as context, and labels "EDHOC_K_4" and "EDHOC_IV_4", respectively. IVs are only used if the EDHOC AEAD algorithm uses IVs.
 
 ## EDHOC-KeyUpdate {#keyupdate}
 
@@ -1037,8 +1037,8 @@ The Responder SHALL compose message_4 as follows:
    * protected = h''
    * external_aad = TH_4
    * plaintext = ( ? EAD_4 ), where EAD_4 is protected external authorization data, see {{AD}}
-   * Key K_4 = EDHOC-Exporter( "EDHOC_message_4_Key", h'', length )
-   * IV IV_4 = EDHOC-Exporter( "EDHOC_message_4_IV", h'', length )
+   * Key K_4 = EDHOC-Exporter( "EDHOC_K_4", h'', length )
+   * IV IV_4 = EDHOC-Exporter( "EDHOC_IV_4", h'', length )
 
    COSE constructs the input to the AEAD {{RFC5116}} as follows:
 
@@ -1272,13 +1272,13 @@ If supported by the device, it is RECOMMENDED that at least the long-term privat
 IANA has created a new registry titled "EDHOC Exporter Label" under the new group name "Ephemeral Diffie-Hellman Over COSE (EDHOC)". The registration procedure is "Expert Review". The columns of the registry are Label, Description, and Reference. All columns are text strings. The initial contents of the registry are:
 
 ~~~~~~~~~~~~~~~~~~~~~~~
-Label: EDHOC_message_4_Key
+Label: EDHOC_K_4
 Description: Key used to protect EDHOC message_4
 Reference: [[this document]]
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 ~~~~~~~~~~~~~~~~~~~~~~~
-Label: EDHOC_message_4_IV
+Label: EDHOC_IV_4
 Description: IV used to protect EDHOC message_4
 Reference: [[this document]]
 ~~~~~~~~~~~~~~~~~~~~~~~
