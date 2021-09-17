@@ -1268,7 +1268,7 @@ If supported by the device, it is RECOMMENDED that at least the long-term privat
 
 ## EDHOC Exporter Label Registry {#exporter-label}
 
-IANA has created a new registry titled "EDHOC Exporter Label" under the new group name "Ephemeral Diffie-Hellman Over COSE (EDHOC)". The registration procedure is "Expert Review". The columns of the registry are Label, Description, and Reference. All columns are text strings. The initial contents of the registry are:
+IANA has created a new registry titled "EDHOC Exporter Label" under the new group name "Ephemeral Diffie-Hellman Over COSE (EDHOC)". The registration procedure is "Expert Review". The columns of the registry are Label, Description, and Reference. All columns are text strings where Label consists only of the printable ASCII characters 0x21 - 0x7e. Labels beginning with "PRIVATE" MAY be used for private use without registration. All other label values MUST be registered. The initial contents of the registry are:
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 Label: EDHOC_K_4
