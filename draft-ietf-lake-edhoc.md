@@ -1855,6 +1855,15 @@ may need ... no, they don't need anything special: after an error, the next thin
 
 RFC Editor: Please remove this appendix.
 
+* From -10 to -11:
+  * Changed several of the KDF and Exporter labels
+  * Replaced edhoc_aead_id with selected_suite in info
+  * Added MTI section
+  * EAD: changes CDDL names and added value type to registry
+  * Updated Figures 1, 2, and 3
+  * Some correction and clarifications
+  * Added core.edhoc to CoRE Resource Type registry
+
 * From -09 to -10:
    * SUITES_I simplified to only contain the selected and more preferred suites
    * Info is a CBOR sequence and context is a bstr
