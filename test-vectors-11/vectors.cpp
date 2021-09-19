@@ -1,7 +1,7 @@
 // EDHOC Test Vectors
 //
-// These test vectors are based on the -10 version of the draft
-// https://datatracker.ietf.org/doc/html/draft-ietf-lake-edhoc-10
+// These test vectors are based on the -11 version of the draft
+// https://datatracker.ietf.org/doc/html/draft-ietf-lake-edhoc-11
 //
 // Copyright (c) 2021, Ericsson and John Preuß Mattsson <john.mattsson@ericsson.com>
 //
