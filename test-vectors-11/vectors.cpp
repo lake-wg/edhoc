@@ -399,7 +399,7 @@ void test_vectors( EDHOCKeyType type_I, COSECred credtype_I, COSEHeader attr_I,
 
     // Creates the info parameter and derives output key matrial with HKDF-Expand
     auto KDF = [=] ( vec PRK, vec transcript_hash, string label, vec context, int length ) {
-        vec info = cbor( selected_suite ) + cbor( transcript_hash ) + cbor( label ) + cbor( context ) + cbor( length );
+        vec info = cbor( transcript_hash ) + cbor( label ) + cbor( context ) + cbor( length );
         vec OKM = hkdf_expand( edhoc_hash_alg, PRK, info, length );
         return make_tuple( info, OKM );
     };
