@@ -694,7 +694,6 @@ where info is encoded as the CBOR sequence
 
 ~~~~~~~~~~~ CDDL
 info = (
-  selected_suite : int,
   transcript_hash : bstr,
   label : tstr,
   context : bstr,
@@ -703,8 +702,6 @@ info = (
 ~~~~~~~~~~~
 
 where
-
-  + selected_suite is an int containing the selected cipher suite. 
 
   + transcript_hash is a bstr set to one of the transcript hashes TH_2, TH_3, or TH_4 as defined in Sections {{asym-msg2-form}}{: format="counter"}, {{asym-msg3-form}}{: format="counter"}, and {{exporter}}{: format="counter"}.
 
@@ -1781,7 +1778,6 @@ error = (
 )
 
 info = (
-  selected_suite : int,
   transcript_hash : bstr,
   label : tstr,
   context : bstr,
