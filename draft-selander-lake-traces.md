@@ -36,7 +36,7 @@ informative:
 
   I-D.ietf-lake-edhoc:
   RFC8949:
-  
+
   CborMe:
     target: http://cbor.me/
     title: CBOR Playground
@@ -65,7 +65,7 @@ Both I and R are assumed to support cipher suite 0, which determines the algorit
 * EDHOC AEAD algorithm = AES-CCM-16-64-128
 * EDHOC hash algorithm = SHA-256
 * EDHOC MAC length in bytes (Static DH) = 8
-* EDHOC key exchange algorithm (ECDH curve) = X25519 
+* EDHOC key exchange algorithm (ECDH curve) = X25519
 * EDHOC signature algorithm = EdDSA
 * Application AEAD algorithm = AES-CCM-16-64-128
 * Application hash algorithm = SHA-256
@@ -82,7 +82,7 @@ A more extensive test vector suite and related code that was used to generate th
 
 # Authentication with static DH, UCCS identified by 'kid'
 
-In this example I and R are authenticated with ephemeral-static Diffie-Hellman (METHOD = 3). The public keys are represented as raw public keys (RPK), encoded in an unprotected CWT claims set (UCCS) and identified by the COSE header parameter 'kid'. 
+In this example I and R are authenticated with ephemeral-static Diffie-Hellman (METHOD = 3). The public keys are represented as raw public keys (RPK), encoded in an unprotected CWT claims set (UCCS) and identified by the COSE header parameter 'kid'.
 
 
 ## message_1
@@ -128,7 +128,7 @@ C_I (CBOR Data Item) (Connection identifier chosen by I) (1 bytes)
 ~~~~~~~~
 
   No external authorization data:
-  
+
 ~~~~~~~~
 EAD_1 (CBOR Sequence) (0 bytes)
 ~~~~~~~~
@@ -211,7 +211,7 @@ e6 6f 35 59 90 22 3c 3f 6c af f8 62 e4 07 ed d1 17 4d 07 01 a0 9e cd
 ~~~~~~~~
 
   PRK_3e2m is specified in Section 4.1.2 of {{I-D.ietf-lake-edhoc}}.
-  
+
   Since R authenticates with static DH (METHOD = 3), PRK_3e2m is derived
   from G_RX using Extract() with the EDHOC hash algorithm:
 
@@ -239,7 +239,7 @@ C_R (CBOR Data Item) (Connection identifier chosen by R) (1 bytes)
 ~~~~~~~~
 
 The transcript hash TH_2 is calculated using the EDHOC hash algorithm:
- 
+
 TH_2 = H(H(message_1), G_Y, C_R)
 
 ~~~~~~~~
@@ -276,12 +276,12 @@ TH_2 (CBOR Data Item) (34 bytes)
 
 R constructs the remaining input needed to calculate MAC_2:
 
-MAC_2 = EDHOC-KDF(PRK_3e2m, TH_2, "MAC_2", 
+MAC_2 = EDHOC-KDF(PRK_3e2m, TH_2, "MAC_2",
             << ID_CRED_R, CRED_R, ? EAD_2 >>, mac_length_2)
 
 CRED_R is identified by a 'kid' with integer value 5:
 
-    ID_CRED_R = 
+    ID_CRED_R =
     {
      4 : 5
     }
@@ -319,10 +319,10 @@ a2 02 6b 65 78 61 6d 70 6c 65 2e 65 64 75 08 a1 01 a4 01 01 02 05 20
 EAD_2 (CBOR Sequence) (0 bytes)
 ~~~~~~~~
 
-MAC_2 is computed through Expand() using the 
+MAC_2 is computed through Expand() using the
 EDHOC hash algorithm, see Section 4.2 of {{I-D.ietf-lake-edhoc}}:
 
-MAC_2 = HKDF-Expand(PRK_3e2m, info, mac_length_2) 
+MAC_2 = HKDF-Expand(PRK_3e2m, info, mac_length_2)
 
 Since METHOD = 3, mac_length_2 is given by the EDHOC MAC length.
 
@@ -429,7 +429,7 @@ R constructs message_2:
      C_R
     )
 
-where G_Y_CIPHERTEXT_2 is the bstr encoding of the concatenation of 
+where G_Y_CIPHERTEXT_2 is the bstr encoding of the concatenation of
 the raw values of G_Y and CIPHERTEXT_2.
 
 ~~~~~~~~
@@ -442,7 +442,7 @@ d9 48 01 8b 41 90 f7 d1 61 82 4e b2 68 f4 e3 7d 77 d9 ad 29 e5 40
 ## message_3
 
 Since METHOD = 3, I authenticates using static DH.
-  
+
 I's static key pair for use with the EDHOC key exchange algorithm is:
 
 ~~~~~~~~
@@ -456,7 +456,7 @@ G_I (Raw Value) (Initiator's public authentication key) (32 bytes)
 c4 2a 2e ed 33 de 79 ed 77
 ~~~~~~~~
 
-PRK_4x3m is derived as specified in Section 4.1.3 of {{I-D.ietf-lake-edhoc}}. 
+PRK_4x3m is derived as specified in Section 4.1.3 of {{I-D.ietf-lake-edhoc}}.
 Since I authenticates with static DH (METHOD = 3), PRK_4x3m is derived
 from G_IY using Extract() with the EDHOC hash algorithm:
 
@@ -468,7 +468,7 @@ from G_IY using Extract() with the EDHOC hash algorithm:
 ~~~~~~~~
 G_IY (Raw Value) (ECDH shared secret) (32 bytes)
 0a f4 2a d5 12 dc 3e 97 2b 3a c4 d4 7b a3 3f fc 21 f1 ae 6f 07 f2 f8
-94 85 4a 5a 47 44 33 85 48 
+94 85 4a 5a 47 44 33 85 48
 ~~~~~~~~
 ~~~~~~~~
 PRK_4x3m (Raw Value) (32 bytes)
@@ -477,15 +477,15 @@ b8 cc df 14 20 b5 b0 c8 2a 58 7e 7d 26 dd 7b 70 48 57 4c 3a 48 df 9f
 ~~~~~~~~
 
 The transcript hash TH_3 is calculated using the EDHOC hash algorithm:
- 
+
 TH_3 = H(TH_2, CIPHERTEXT_2)
- 
+
 ~~~~~~~~
 Input to calculate TH_3 (CBOR Sequence) (45 bytes)
 58 20 71 a6 c7 c5 ba 9a d4 7f e7 2d a4 dc 35 9b f6 b2 76 d3 51 59 68
 71 1b 9a 91 1c 71 fc 09 6a ee 0e 4a b2 68 f4 e3 7d 77 d9 ad 29 e5
 ~~~~~~~~
-  
+
 ~~~~~~~~
 TH_3 (Raw Value) (32 bytes)
 95 2b 9b 9c dd 53 b6 a7 92 60 4f 84 5e 2b fb 54 06 29 2a a1 70 d4 9a
@@ -541,7 +541,7 @@ ed 77
 
 EAD_3 (CBOR Sequence) (0 bytes)
 
-  MAC_3 is computed through Expand() using the 
+  MAC_3 is computed through Expand() using the
   EDHOC hash algorithm, see Section 4.2 of {{I-D.ietf-lake-edhoc}}:
 
     MAC_3 = HKDF-Expand(PRK_4x3m, info, mac_length_3)
@@ -634,7 +634,7 @@ A_3ae (CBOR Data Item) (45 bytes)
     K_3ae = EDHOC-KDF(PRK_3e2m, TH_3, "K_3ae", h'', length) =
                 = HKDF-Expand(PRK_3e2m, info, length),
 
-  where length is the key length of EDHOC AEAD algorithm, 
+  where length is the key length of EDHOC AEAD algorithm,
   and info for K_3ae is:
 
     info =
@@ -664,7 +664,7 @@ de d3 52 81 bc 7c 7a c7 46 c3 aa cf e8 95 52 d4
     IV_3ae = EDHOC-KDF(PRK_3e2m, TH_3, "IV_3ae", h'', length) =
            = HKDF-Expand(PRK_3e2m, info, length),
 
-  where length is the nonce length of EDHOC AEAD algorithm, 
+  where length is the nonce length of EDHOC AEAD algorithm,
   and info for IV_3ae is:
 
     info =
@@ -676,7 +676,7 @@ de d3 52 81 bc 7c 7a c7 46 c3 aa cf e8 95 52 d4
      13
     )
 
-  where the first value is the COSE algorithm value of the EDHOC AEAD algorithm, 
+  where the first value is the COSE algorithm value of the EDHOC AEAD algorithm,
   and the last value is the nonce length of EDHOC AEAD algorithm.
 
 ~~~~~~~~
@@ -765,7 +765,7 @@ fb 9b 69 89 79 eb 5c 5f e6 7b de 0c ee 4f 72 01 1b 24 70 8f 10 b1
           = EDHOC-KDF(PRK_4x3m, TH_4, "EDHOC_message_4_Key", h'', length)
           = HKDF-Expand(PRK_4x3m, info, length)
 
-  where length is the key length of the EDHOC AEAD algorithm, 
+  where length is the key length of the EDHOC AEAD algorithm,
   and info for EDHOC_message_4_Key is:
 
     info =
@@ -793,12 +793,12 @@ bf c4 3b 25 2d 37 49 ad e1 f2 5f ff 07 05 a1 4e
 
   R constructs the input needed to derive the EDHOC message_4 nonce, see Section 4.2 of {{I-D.ietf-lake-edhoc}}, using the EDHOC hash algorithm:
 
-           IV_4ae = 
+           IV_4ae =
            = EDHOC-Exporter( "EDHOC_message_4_Nonce", h'', length )
            = EDHOC-KDF(PRK_4x3m, TH_4, "EDHOC_message_4_Nonce", h'', length)
            = HKDF-Expand(PRK_4x3m, info, length)
 
-  where length is the nonce length of EDHOC AEAD algorithm, 
+  where length is the nonce length of EDHOC AEAD algorithm,
   and info for EDHOC_message_4_Nonce is:
 
     info =
@@ -810,7 +810,7 @@ bf c4 3b 25 2d 37 49 ad e1 f2 5f ff 07 05 a1 4e
      13
     )
 
-  where the first value is the COSE algorithm value of the EDHOC AEAD algorithm, 
+  where the first value is the COSE algorithm value of the EDHOC AEAD algorithm,
   and the last value is the nonce length of EDHOC AEAD algorithm.
 
 ~~~~~~~~
@@ -859,7 +859,7 @@ Application Hash Algorithm (int)
 
   The mapping from EDHOC connection identifiers to OSCORE Sender/Recipient IDs is defined in Section A.1of {{I-D.ietf-lake-edhoc}}.
 
-  C_R is mapped to the Recipient ID of the server, i.e., the Sender ID of the client. Since C_R is byte valued it the OSCORE Sender/Recipient ID equals the byte string (in this case the empty byte string). 
+  C_R is mapped to the Recipient ID of the server, i.e., the Sender ID of the client. Since C_R is byte valued it the OSCORE Sender/Recipient ID equals the byte string (in this case the empty byte string).
 
 ~~~~~~~~
 Client's OSCORE Sender ID (Raw Value) (0 bytes)
@@ -872,7 +872,7 @@ Server's OSCORE Sender ID (Raw Value) (1 bytes)
 0c
 ~~~~~~~~
 
-  The OSCORE master secret is computed through Expand() using the 
+  The OSCORE master secret is computed through Expand() using the
   Application hash algorithm, see Section 4.2 of {{I-D.ietf-lake-edhoc}}:
 
     OSCORE Master Secret =
@@ -880,12 +880,12 @@ Server's OSCORE Sender ID (Raw Value) (1 bytes)
     = EDHOC-KDF(PRK_4x3m, TH_4, "OSCORE Master Secret", h'', key_length)
     = HKDF-Expand(PRK_4x3m, info, key_length)
 
-  where key_length is by default the key length of the Application AEAD 
+  where key_length is by default the key length of the Application AEAD
   algorithm, and info for the OSCORE Master Secret is:
 
     info =
     (
-     10, 
+     10,
      h'A7FA7E1506653CF587CEFB9B698979EB5C5FE67BDE0CEE4F72011B24708F10B1',
      "OSCORE Master Secret"
      h'',
@@ -905,10 +905,10 @@ de 0c ee 4f 72 01 1b 24 70 8f 10 b1 74 4f 53 43 4f 52 45 20 4d 61 73
 
 ~~~~~~~~
 OSCORE Master Secret (Raw Value) (16 bytes)
-6b e2 df 0b a9 ca 9a d1 61 0b 70 33 17 a0 78 c1 
+6b e2 df 0b a9 ca 9a d1 61 0b 70 33 17 a0 78 c1
 ~~~~~~~~
 
-  The OSCORE master salt is computed through Expand() using the 
+  The OSCORE master salt is computed through Expand() using the
   Application hash algorithm, see Section 4.2 of {{I-D.ietf-lake-edhoc}}:
 
     OSCORE Master Salt =
@@ -940,7 +940,7 @@ de 0c ee 4f 72 01 1b 24 70 8f 10 b1 72 4f 53 43 4f 52 45 20 4d 61 73
 
 ~~~~~~~~
 OSCORE Master Salt (Raw Value) (8 bytes)
-c7 ba e4 50 27 2c 94 f6 
+c7 ba e4 50 27 2c 94 f6
 ~~~~~~~~
 
 
@@ -997,7 +997,7 @@ In this example the Initiator (I) and Responder (R) are authenticated with digit
 
 ~~~~~~~~
 METHOD (CBOR Data Item) (1 bytes)
-00 
+00
 ~~~~~~~~
 
 I selects cipher suite 0. A single cipher suite is encoded as an int:
@@ -1043,7 +1043,7 @@ EAD_1 (CBOR Sequence) (0 bytes)
     (
      0,
      0,
-     h'E31EC15EE8039427DFC4727EF17E2E0E69C54437F3C5828019EF0A6388C12552', 
+     h'E31EC15EE8039427DFC4727EF17E2E0E69C54437F3C5828019EF0A6388C12552',
      14
     )
 
@@ -1074,7 +1074,7 @@ G_Y (CBOR Data Item) (Responder's ephemeral public key) (34 bytes)
 ~~~~~~~~
 
   PRK_2e is specified in Section 4.1.1 of {{I-D.ietf-lake-edhoc}}.
-  
+
   First, the ECDH shared secret G_XY is computed from G_X and Y, or G_Y and X:
 
 ~~~~~~~~
@@ -1114,7 +1114,7 @@ e4 9d a6 93 5e df 53 cd c5
 ~~~~~~~~
 
   PRK_3e2m is specified in Section 4.1.2 of {{I-D.ietf-lake-edhoc}}.
-  
+
   Since R authenticates with signatures PRK_3e2m = PRK_2e.
 
 ~~~~~~~~
@@ -1131,7 +1131,7 @@ C_R (CBOR Data Item) (Connection identifier chosen by R) (1 bytes)
 ~~~~~~~~
 
 The transcript hash TH_2 is calculated using the EDHOC hash algorithm:
- 
+
 TH_2 = H(H(message_1), G_Y, C_R)
 
 ~~~~~~~~
@@ -1171,10 +1171,10 @@ TH_2 (CBOR Data Item) (34 bytes)
 
 R constructs the remaining input needed to calculate MAC_2:
 
-MAC_2 = EDHOC-KDF(PRK_3e2m, TH_2, "MAC_2", 
+MAC_2 = EDHOC-KDF(PRK_3e2m, TH_2, "MAC_2",
             << ID_CRED_R, CRED_R, ? EAD_2 >>, mac_length_2)
 
-CRED_R is identified by a 64-bit hash: 
+CRED_R is identified by a 64-bit hash:
 
     ID_CRED_R =
     {
@@ -1195,7 +1195,7 @@ CRED_R (CBOR Data Item) (113 bytes)
 15 16 17 18 19 1a 1b 1c 1d 1e 1f 20 21 22 23 24 25 26 27 28 29 2a 2b
 2c 2d 2e 2f 30 31 32 33 34 35 36 37 38 39 3a 3b 3c 3d 3e 3f 40 41 42
 43 44 45 46 47 48 49 4a 4b 4c 4d 4e 4f 50 51 52 53 54 55 56 57 58 59
-5a 5b 5c 5d 5e 5f 60 61 62 63 64 65 66 67 68 69 6a 6b 6c 6d 6e 
+5a 5b 5c 5d 5e 5f 60 61 62 63 64 65 66 67 68 69 6a 6b 6c 6d 6e
 ~~~~~~~~
 
   No external authorization data:
@@ -1206,25 +1206,25 @@ EAD_2 (CBOR Sequence) (0 bytes)
 
 MAC_2 is computed through Expand() using the EDHOC hash algorithm, Section 4.2 of {{I-D.ietf-lake-edhoc}}:
 
-MAC_2 = HKDF-Expand(PRK_3e2m, info, mac_length_2) 
+MAC_2 = HKDF-Expand(PRK_3e2m, info, mac_length_2)
 
 Since METHOD = 0, mac_length_2 is given by the EDHOC hash algorithm.
 
 info for MAC_2 is:
 
-    info = 
+    info =
     (
      10,
-     h'0782DBB687C30288A30B706B074BED789574573F24443E91833D68CDDD7F9B39', 
+     h'0782DBB687C30288A30B706B074BED789574573F24443E91833D68CDDD7F9B39',
      "MAC_2",
      h'A11822822E4860780E9451BDC43C586F000102030405060708090A0B0C0D0E0F10
        1112131415161718191A1B1C1D1E1F202122232425262728292A2B2C2D2E2F3031
        32333435363738393A3B3C3D3E3F404142434445464748494A4B4C4D4E4F505152
-       535455565758595A5B5C5D5E5F606162636465666768696A6B6C6D6E', 
+       535455565758595A5B5C5D5E5F606162636465666768696A6B6C6D6E',
      32
     )
-    
-  where the first value is the COSE algorithm value of the EDHOC AEAD algorithm, 
+
+  where the first value is the COSE algorithm value of the EDHOC AEAD algorithm,
   and the last value is the output size of the EDHOC hash algorithm.
 
 ~~~~~~~~
@@ -1248,13 +1248,13 @@ cb b9 18 62 9b 8d 5f dc 2e fa 14 98 40 5b 5e 68 2c ad ab e3 31 e8 48
 ~~~~~~~~
 MAC_2 (CBOR Data Item) (34 bytes)
 58 20 cb b9 18 62 9b 8d 5f dc 2e fa 14 98 40 5b 5e 68 2c ad ab e3 31
-e8 48 2c eb b6 49 44 ca 1b db 39 
+e8 48 2c eb b6 49 44 ca 1b db 39
 ~~~~~~~~
 
 
 
-  Since METHOD = 0, Signature_or_MAC_2 is the 'signature' of the 
-  COSE_Sign1 object.  
+  Since METHOD = 0, Signature_or_MAC_2 is the 'signature' of the
+  COSE_Sign1 object.
 
   R constructs the message to be signed:
 
@@ -1326,12 +1326,12 @@ f5 11 da 14 9c d2 b4 a6 db 46 0f
 
   where length is the length of PLAINTEXT_2, and info for KEYSTREAM_2 is:
 
-    info = 
+    info =
     (
      10,
-     h'0782DBB687C30288A30B706B074BED789574573F24443E91833D68CDDD7F9B39', 
+     h'0782DBB687C30288A30B706B074BED789574573F24443E91833D68CDDD7F9B39',
      "KEYSTREAM_2",
-     h'', 
+     h'',
      80
     )
 
@@ -1371,7 +1371,7 @@ f7 0b 5b ec 25 65 6d e6 c4 9f a9 84 67 a9 a0 37 6a 88 03 6f e0 b4 57
      C_R
     )
 
-  where G_Y_CIPHERTEXT_2 is the bstr encoding of the concatenation of 
+  where G_Y_CIPHERTEXT_2 is the bstr encoding of the concatenation of
   the raw values of G_Y and CIPHERTEXT_2.
 
 ~~~~~~~~
@@ -1386,7 +1386,7 @@ c5 1b 65 ae 4f fb c1 7d db 20 a8 45 05 e7 1d 62 30 3a be 4a 77 2f e1
 
 ## message_3
 
-  Since METHOD = 0, I authenticates using signatures. 
+  Since METHOD = 0, I authenticates using signatures.
   I's signature key pair for use with the EDHOC signature algorithm is:
 
 ~~~~~~~~
@@ -1402,7 +1402,7 @@ ec 2c 2e b6 cd d9 57 82 a8 cd 0b 2e 9c 44 27 07 74 dc bd 31 bf be 23
 ~~~~~~~~
 
   PRK_3e2m is specified in Section 4.1.2 of {{I-D.ietf-lake-edhoc}}.
-  
+
   Since R authenticates with signatures PRK_4x3m = PRK_3e2m.
 
 ~~~~~~~~
@@ -1412,7 +1412,7 @@ fc 70 a8 c0 02 20 a5 ba 1a
 ~~~~~~~~
 
 The transcript hash TH_3 is calculated using the EDHOC hash algorithm:
- 
+
 TH_3 = H(TH_2, CIPHERTEXT_2)
 
 ~~~~~~~~
@@ -1442,7 +1442,7 @@ TH_3 (CBOR Data Item) (34 bytes)
     MAC_3 = EDHOC-KDF(PRK_4x3m, TH_3, "MAC_3",
             << ID_CRED_I, CRED_I, ? EAD_3 >>, mac_length_3)
 
-  CRED_I is identified by a 64-bit hash: 
+  CRED_I is identified by a 64-bit hash:
 
     ID_CRED_I =
     {
@@ -1476,7 +1476,7 @@ CRED_I (CBOR Data Item) (139 bytes)
 EAD_3 (CBOR Sequence) (0 bytes)
 ~~~~~~~~
 
-  MAC_3 is computed through Expand() using the 
+  MAC_3 is computed through Expand() using the
   EDHOC hash algorithm, see Section 4.2 of {{I-D.ietf-lake-edhoc}}:
 
     MAC_3 = HKDF-Expand(PRK_4x3m, info, mac_length_3)
@@ -1498,7 +1498,7 @@ EAD_3 (CBOR Sequence) (0 bytes)
      32
     )
 
-  where the first value is the COSE algorithm value of the EDHOC AEAD algorithm, 
+  where the first value is the COSE algorithm value of the EDHOC AEAD algorithm,
   and the last value is the output size of the EDHOC hash algorithm.
 
 ~~~~~~~~
@@ -1511,7 +1511,7 @@ ee 14 87 80 c3 c2 e7 34 13 72 cb ad 65 4d 41 43 5f 33 58 99 a1 18 22
 38 39 3a 3b 3c 3d 3e 3f 40 41 42 43 44 45 46 47 48 49 4a 4b 4c 4d 4e
 4f 50 51 52 53 54 55 56 57 58 59 5a 5b 5c 5d 5e 5f 60 61 62 63 64 65
 66 67 68 69 6a 6b 6c 6d 6e 6f 70 71 72 73 74 75 76 77 78 79 7a 7b 7c
-7d 7e 7f 80 81 82 83 84 85 86 87 88 18 20 
+7d 7e 7f 80 81 82 83 84 85 86 87 88 18 20
 ~~~~~~~~
 
 ~~~~~~~~
@@ -1526,8 +1526,8 @@ MAC_3 (CBOR Data Item) (34 bytes)
 ad 75 26 9f 5d ae a8 e3 6d 33 79
 ~~~~~~~~
 
-  Since METHOD = 0, Signature_or_MAC_3 is the 'signature' of the 
-  COSE_Sign1 object.  
+  Since METHOD = 0, Signature_or_MAC_3 is the 'signature' of the
+  COSE_Sign1 object.
 
   I constructs the message to be signed:
 
@@ -1535,7 +1535,7 @@ ad 75 26 9f 5d ae a8 e3 6d 33 79
      << TH_3, CRED_I, ? EAD_3 >>, MAC_3 ] =
 
     [
-     "Signature1", 
+     "Signature1",
      h'A11822822E4881D45BE06329D63A',
      h'58205AA25B46397C2F145EB792ED0D17EA2B078C73E4EE148780C3C2E7341372
        CBAD5889000102030405060708090A0B0C0D0E0F101112131415161718191A1B
@@ -1607,7 +1607,7 @@ A_3ae (CBOR Data Item) (45 bytes)
     K_3ae = EDHOC-KDF(PRK_3e2m, TH_3, "K_3ae", h'', length) =
                 = HKDF-Expand(PRK_3e2m, info, length),
 
-  where length is the key length of EDHOC AEAD algorithm, 
+  where length is the key length of EDHOC AEAD algorithm,
   and info for K_3ae is:
 
     info =
@@ -1639,7 +1639,7 @@ K_3ae (Raw Value) (16 bytes)
     IV_3ae = EDHOC-KDF(PRK_3e2m, TH_3, "IV_3ae", h'', length) =
            = HKDF-Expand(PRK_3e2m, info, length),
 
-  where length is the nonce length of EDHOC AEAD algorithm, 
+  where length is the nonce length of EDHOC AEAD algorithm,
   and info for IV_3ae is:
 
     info =
@@ -1651,7 +1651,7 @@ K_3ae (Raw Value) (16 bytes)
      13
     )
 
-  where the first value is the COSE algorithm value of the EDHOC AEAD algorithm, 
+  where the first value is the COSE algorithm value of the EDHOC AEAD algorithm,
   and the last value is the nonce length of EDHOC AEAD algorithm.
 
 ~~~~~~~~
@@ -1724,8 +1724,8 @@ EAD_4 (CBOR Sequence) (0 bytes)
 
   R constructs the plaintext P_4ae:
 
-    P_4ae = 
-    ( 
+    P_4ae =
+    (
      ? EAD_4
     )
 
@@ -1754,7 +1754,7 @@ A_4ae (CBOR Data Item) (45 bytes)
           = EDHOC-KDF(PRK_4x3m, TH_4, "EDHOC_message_4_Key", h'', length)
           = HKDF-Expand(PRK_4x3m, info, length)
 
-  where length is the key length of the EDHOC AEAD algorithm, 
+  where length is the key length of the EDHOC AEAD algorithm,
   and info for EDHOC_message_4_Key is:
 
     info =
@@ -1783,12 +1783,12 @@ be f7 e1 59 a9 33 89 8c 25 a9 b0 85 a3 83 67 34
 
  R constructs the input needed to derive the EDHOC message_4 nonce, see Section 4.2 of {{I-D.ietf-lake-edhoc}}, using the EDHOC hash algorithm:
 
-           IV_4ae = 
+           IV_4ae =
            = EDHOC-Exporter( "EDHOC_message_4_Nonce", h'', length )
            = EDHOC-KDF(PRK_4x3m, TH_4, "EDHOC_message_4_Nonce", h'', length)
            = HKDF-Expand(PRK_4x3m, info, length)
 
-  where length is the nonce length of EDHOC AEAD algorithm, 
+  where length is the nonce length of EDHOC AEAD algorithm,
   and info for EDHOC_message_4_Nonce is:
 
     info =
@@ -1800,7 +1800,7 @@ be f7 e1 59 a9 33 89 8c 25 a9 b0 85 a3 83 67 34
      13
     )
 
-  where the first value is the COSE algorithm value of the EDHOC AEAD algorithm, 
+  where the first value is the COSE algorithm value of the EDHOC AEAD algorithm,
   and the last value is the nonce length of EDHOC AEAD algorithm.
 
 ~~~~~~~~
@@ -1851,7 +1851,7 @@ Application Hash Algorithm (int)
 
   The mapping from EDHOC connection identifiers to OSCORE Sender/Recipient IDs is defined in Appendix A.1 of {{I-D.ietf-lake-edhoc}}.
 
-  C_R is mapped to the Recipient ID of the server, i.e., the Sender ID of the client. Since C_R is a numeric, it is converted to a byte string equal to its CBOR encoded form. 
+  C_R is mapped to the Recipient ID of the server, i.e., the Sender ID of the client. Since C_R is a numeric, it is converted to a byte string equal to its CBOR encoded form.
 
 ~~~~~~~~
 Client's OSCORE Sender ID (Raw Value) (1 bytes)
@@ -1865,7 +1865,7 @@ Server's OSCORE Sender ID (Raw Value) (1 bytes)
 0e
 ~~~~~~~~
 
-  The OSCORE master secret is computed through Expand() using the 
+  The OSCORE master secret is computed through Expand() using the
   Application hash algorithm, see Section 4.2 of {{I-D.ietf-lake-edhoc}}:
 
     OSCORE Master Secret =
@@ -1873,10 +1873,10 @@ Server's OSCORE Sender ID (Raw Value) (1 bytes)
     = EDHOC-KDF(PRK_4x3m, TH_4, "OSCORE Master Secret", h'', key_length)
     = HKDF-Expand(PRK_4x3m, info, key_length)
 
-  where key_length is by default the key length of the Application AEAD 
+  where key_length is by default the key length of the Application AEAD
   algorithm, and info for the OSCORE Master Secret is:
 
-    info = 
+    info =
     (
      10,
      h'D84A43C32B481DBE5C2138CB9AB1BD58970E3C30367D8E005F9F633340D2CAE3',
@@ -1900,7 +1900,7 @@ OSCORE Master Secret (Raw Value) (16 bytes)
 9c 99 44 87 2b 2e 8a c1 9f 1d 24 a0 13 c4 b6 58
 ~~~~~~~~
 
-  The OSCORE master salt is computed through Expand() using the 
+  The OSCORE master salt is computed through Expand() using the
   Application hash algorithm, see Section 4.2 of {{I-D.ietf-lake-edhoc}}:
 
     OSCORE Master Salt =
@@ -1910,12 +1910,12 @@ OSCORE Master Secret (Raw Value) (16 bytes)
 
   where salt_length is the length of the salt, and info for the OSCORE Master Salt is:
 
-    info = 
+    info =
     (
-     10, 
+     10,
      h'D84A43C32B481DBE5C2138CB9AB1BD58970E3C30367D8E005F9F633340D2CAE3',
      "OSCORE Master Salt"
-     h'', 
+     h'',
      8
     )
 
