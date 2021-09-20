@@ -329,7 +329,7 @@ EDHOC includes the selection of connection identifiers (C_I, C_R) identifying a 
 
 Connection identifiers may be used to correlate EDHOC messages and facilitate the retrieval of protocol state during EDHOC protocol execution (see {{transport}}) or in a subsequent application protocol, e.g., OSCORE (see {{ci-oscore}}). The connection identifiers do not have any cryptographic purpose in EDHOC.
 
-Connection identifiers in EDHOC are byte strings or integers, encoded in CBOR. One byte connection identifiers (the integers -24 to 23 and the empty byte string h'') are realistic in many scenarios as most constrained devices only have a few connections.
+Connection identifiers in EDHOC are byte strings or integers, encoded in CBOR. One byte connection identifiers (the integers -24 to 23 and the empty CBOR byte string h'') are realistic in many scenarios as most constrained devices only have a few connections.
 
 ### Selection of Connection Identifiers
 
@@ -646,7 +646,7 @@ The definition of Extract depends on the EDHOC hash algorithm of the selected ci
 
 PRK_2e is used to derive a keystream to encrypt message_2. PRK_2e is derived with the following input:
 
-* The salt SHALL be the empty byte string. Note that {{RFC5869}} specifies that if the salt is not provided, it is set to a string of zeros (see Section 2.2 of {{RFC5869}}). For implementation purposes, not providing the salt is the same as setting the salt to the empty byte string.
+* The salt SHALL be a zero-length byte string. Note that {{RFC5869}} specifies that if the salt is not provided, it is set to a string of zeros (see Section 2.2 of {{RFC5869}}). For implementation purposes, not providing the salt is the same as setting the salt to the zero-length byte string (0x).
 
 * The IKM SHALL be the ECDH shared secret G_XY (calculated from G_X and Y or G_Y and X) as defined in Section 6.3.1 of {{I-D.ietf-cose-rfc8152bis-algs}}.
 
@@ -662,7 +662,7 @@ Example: Assuming the use of SHA-256 the extract phase of HKDF produces PRK_2e a
    PRK_2e = HMAC-SHA-256( salt, G_XY )
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-where salt = 0x (the empty byte string).
+where salt = 0x (zero-length byte string).
 
 ### PRK_3e2m
 
@@ -724,7 +724,7 @@ The keys, IVs and MACs are derived as follows:
 * K_3 and IV_3 are derived using the transcript hash TH_3 and the pseudorandom key PRK_3e2m. IVs are only used if the EDHOC AEAD algorithm uses IVs.
 * MAC_3 is derived using the transcript hash TH_3 and the pseudorandom key PRK_4x3m.
 
-KEYSTREAM_2, K_3, and IV_3 use an empty byte string h'' as context. MAC_2 and MAC_3 use context as defined in {{asym-msg2-proc}} and {{asym-msg3-proc}}, respectively.
+KEYSTREAM_2, K_3, and IV_3 use an empty CBOR byte string h'' as context. MAC_2 and MAC_3 use context as defined in {{asym-msg2-proc}} and {{asym-msg3-proc}}, respectively.
 
 ## EDHOC-Exporter {#exporter}
 
@@ -745,7 +745,7 @@ The transcript hash TH_4 is a CBOR encoded bstr and the input to the hash functi
 
 where H() is the hash function in the selected cipher suite. Examples of use of the EDHOC-Exporter are given in {{asym-msg4-proc}} and {{transfer}}.
 
-* K_4 and IV_4 are derived with the EDHOC-Exporter using the empty byte string h'' as context, and labels "EDHOC_K_4" and "EDHOC_IV_4", respectively. IVs are only used if the EDHOC AEAD algorithm uses IVs.
+* K_4 and IV_4 are derived with the EDHOC-Exporter using the empty CBOR byte string h'' as context, and labels "EDHOC_K_4" and "EDHOC_IV_4", respectively. IVs are only used if the EDHOC AEAD algorithm uses IVs.
 
 ## EDHOC-KeyUpdate {#keyupdate}
 
@@ -956,10 +956,10 @@ The Initiator SHALL compose message_3 as follows:
 
      \[ "Signature1", << ID_CRED_I >>, << TH_3, CRED_I, ? EAD_3 >>, MAC_3 \]
 
-* Compute an outer COSE_Encrypt0 as defined in Section 5.3 of {{I-D.ietf-cose-rfc8152bis-struct}}, with the EDHOC AEAD algorithm in the selected cipher suite, K_3, IV_3, and the following parameters. The protected header SHALL be empty.
+* Compute an outer COSE_Encrypt0 as defined in Section 5.3 of {{I-D.ietf-cose-rfc8152bis-struct}}, with the EDHOC AEAD algorithm in the selected cipher suite, K_3, IV_3, and the following parameters. The protected header SHALL be the empty CBOR byte string.
 
+   * protected = h''
    * external_aad = TH_3
-
    * plaintext = ( ID_CRED_I / bstr / int, Signature_or_MAC_3, ? EAD_3 )
 
       * Note that if ID_CRED_I contains a single 'kid' parameter, i.e., ID_CRED_I = { 4 : kid_I }, only the byte string or integer kid_I is conveyed in the plaintext encoded as a bstr or int.
@@ -1025,7 +1025,7 @@ message_4 = (
 The Responder SHALL compose message_4 as follows:
 
 
-* Compute a COSE_Encrypt0 as defined in Section 5.3 of {{I-D.ietf-cose-rfc8152bis-struct}}, with the EDHOC AEAD algorithm in the selected cipher suite, and the following parameters. The protected header SHALL be empty.
+* Compute a COSE_Encrypt0 as defined in Section 5.3 of {{I-D.ietf-cose-rfc8152bis-struct}}, with the EDHOC AEAD algorithm in the selected cipher suite, and the following parameters. The protected header SHALL be the empty CBOR byte string.
 
    * protected = h''
    * external_aad = TH_4
@@ -1727,6 +1727,7 @@ Diagnostic          Encoded              Type
 -24                 0x37                 negative integer
 -25                 0x3818               negative integer
 true                0xf5                 simple value
+h''                 0x40                 byte string
 h'12cd'             0x4212cd             byte string
 '12cd'              0x4431326364         byte string
 "12cd"              0x6431326364         text string
@@ -1805,7 +1806,7 @@ For use of EDHOC in the XX protocol, the following assumptions are made:
 2. METHOD = 1 (I uses signature key, R uses static DH key.)
 3. CRED_I is an IEEE 802.1AR IDevID encoded as a C509 certificate of type 0 {{I-D.ietf-cose-cbor-encoded-cert}}.
     * R acquires CRED_I out-of-band, indicated in EAD_1.
-    * ID_CRED_I = {4: h''} is a 'kid' with value empty byte string.
+    * ID_CRED_I = {4: h''} is a 'kid' with value empty CBOR byte string.
 4. CRED_R is a CCS of type OKP as specified in {{auth-cred}}.
    * The CBOR map has parameters 1 (kty), -1 (crv), and -2 (x-coordinate).
    * ID_CRED_R is {TBD2 : CCS}.   Editor's note: TBD2 is the COSE header parameter value of 'kccs', see {{cwt-header-param}}
