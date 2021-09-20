@@ -75,7 +75,6 @@ informative:
   I-D.ietf-cose-cbor-encoded-cert:
   I-D.ietf-lake-reqs:
   I-D.ietf-lwig-security-protocol-comparison:
-  I-D.ietf-rats-uccs:
   I-D.ietf-tls-dtls13:
   I-D.mattsson-cfrg-det-sigs-with-noise:
   I-D.selander-ace-ake-authz:
@@ -172,7 +171,7 @@ Some security solutions for such settings exist already. CBOR Object Signing and
 
 This document specifies Ephemeral Diffie-Hellman Over COSE (EDHOC), a lightweight authenticated key exchange protocol providing good security properties including forward secrecy, identity protection, and cipher suite negotiation. Authentication can be based on raw public keys (RPK) or public key certificates and requires the application to provide input on how to verify that endpoints are trusted. This specification focuses on referencing instead of transporting credentials to reduce message overhead. EDHOC does currently not support pre-shared key (PSK) authentication as authentication with static Diffie-Hellman public keys by reference produces equally small message sizes but with much simpler key distribution and identity protection.
 
-EDHOC makes use of known protocol constructions, such as SIGMA {{SIGMA}} and Extract-and-Expand {{RFC5869}}. EDHOC uses COSE for cryptography and identification of credentials (COSE_Key, CWT, UCCS, X.509, C509, etc.). COSE provides crypto agility and enables the use of future algorithms and credentials targeting IoT.
+EDHOC makes use of known protocol constructions, such as SIGMA {{SIGMA}} and Extract-and-Expand {{RFC5869}}. EDHOC uses COSE for cryptography and identification of credentials (COSE_Key, CWT, CCS, X.509, C509, etc.). COSE provides crypto agility and enables the use of future algorithms and credentials targeting IoT.
 
 ## Use of EDHOC
 
@@ -184,7 +183,7 @@ EDHOC enables the reuse of the same lightweight primitives as OSCORE: CBOR for e
 
 ## Message Size Examples
 
-Compared to the DTLS 1.3 handshake {{I-D.ietf-tls-dtls13}} with ECDHE and connection ID, the number of bytes in EDHOC + CoAP can be less than 1/6 when RPK authentication is used, see {{I-D.ietf-lwig-security-protocol-comparison}}. {{fig-sizes}} shows examples of message sizes for EDHOC with different kinds of authentication keys and different COSE header parameters for identification: static Diffie-Hellman keys or signature keys in CWT or UCCS identified by a key identifier using 'kid' {{I-D.ietf-cose-rfc8152bis-struct}} or X.509 certificates identified by a hash value using 'x5t' {{I-D.ietf-cose-x509}}.
+Compared to the DTLS 1.3 handshake {{I-D.ietf-tls-dtls13}} with ECDHE and connection ID, the number of bytes in EDHOC + CoAP can be less than 1/6 when RPK authentication is used, see {{I-D.ietf-lwig-security-protocol-comparison}}. {{fig-sizes}} shows examples of message sizes for EDHOC with different kinds of authentication keys and different COSE header parameters for identification: static Diffie-Hellman keys or signature keys in CWT or CCS identified by a key identifier using 'kid' {{I-D.ietf-cose-rfc8152bis-struct}} or X.509 certificates identified by a hash value using 'x5t' {{I-D.ietf-cose-x509}}.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 ========================================================
@@ -214,9 +213,7 @@ Readers are expected to be familiar with the terms and concepts described in CBO
 
 The single output from authenticated encryption (including the authentication tag) is called "ciphertext", following {{RFC5116}}.
 
-We use the term Unprotected CWT Claims Set (UCCS) just as in {{I-D.ietf-rats-uccs}} to denote a CBOR Web Token {{RFC8392}} without wrapping it into a COSE object, i.e., a CBOR map consisting of claims.
-
-Editor's note: If {{I-D.ietf-rats-uccs}} completes before this draft, make it a normative reference.
+We use the term CWT Claims Set (CCS) as in {{RFC8392}} to denote a CBOR Web Token (CWT) without wrapping it into a COSE object, i.e., a CBOR map that contains the claims conveyed by a CWT.
 
 
 
@@ -379,13 +376,13 @@ The choice of authentication key has an impact on the message size (see {{auth-k
 * X.509 v3 certificate {{RFC5280}}
 * C509 certificate {{I-D.ietf-cose-cbor-encoded-cert}}
 * CBOR Web Token (CWT, {{RFC8392}})
-* Unprotected CWT Claims Set (UCCS, see {{term}})
+* CWT Claims Set (CCS, {{RFC8392}})
 
-For CWT and UCCS, the authentication key is represented with a 'cnf' claim {{RFC8747}} containing a COSE_Key {{I-D.ietf-cose-rfc8152bis-struct}}. UCCS can be seen as a generic representation of a raw public key, see {{auth-cred}} for an example. COSE_Key is omitted from the list above because of limitations to represent the identity (see {{identities}}) and because it can easily be embedded in a UCCS.
+For CWT and CCS, the authentication key is represented with a 'cnf' claim {{RFC8747}} containing a COSE_Key {{I-D.ietf-cose-rfc8152bis-struct}}. CCS can be seen as a generic representation of a raw public key, see {{auth-cred}} for an example. COSE_Key is omitted from the list above because of limitations to represent the identity (see {{identities}}) and because it can easily be embedded in a CCS.
 
 Identical authentication credentials need to be established in both endpoints to accomplish item 1 above (see {{auth-cred}}) but for many settings it is not necessary to transport the authentication credential over constrained links. It may, for example, be pre-provisioned or acquired out-of-band over less constrained links. ID_CRED_x contains the authentication credential CRED_x in case it is transported, or else contains a reference to the authentication credential to facilitate its retrieval (see {{id_cred}}).
 
-The choice of authentication credential also depends on the trust model. For example, a certificate or CWT may rely on a trusted third party, whereas a UCCS may be used when trust in the public key can be achieved by other means, or in the case of trust-on-first-use. A UCCS as authentication credential provides essentially the same trustworthiness as a self-signed certificate or CWT but has smaller size.
+The choice of authentication credential also depends on the trust model. For example, a certificate or CWT may rely on a trusted third party, whereas a CCS may be used when trust in the public key can be achieved by other means, or in the case of trust-on-first-use. A CCS as authentication credential provides essentially the same trustworthiness as a self-signed certificate or CWT but has smaller size.
 
 More details are provided in the following subsections.
 
@@ -404,16 +401,16 @@ The authentication key algorithm needs to be specified with enough parameters to
 ### Authentication Credentials {#auth-cred}
 
 The authentication credentials, CRED_I and CRED_R, contain the public authentication key of the Initiator and the Responder, respectively.
-The Initiator and the Responder MAY use different types of credentials, e.g., one uses an UCCS and the other uses an X.509 certificate.
+The Initiator and the Responder MAY use different types of credentials, e.g., one uses an CCS and the other uses an X.509 certificate.
 
 The credentials CRED_I and CRED_R are MACed by the Initiator and the Responder, respectively, see {{asym-msg3-proc}} and {{asym-msg2-proc}}, and thus included in the message integrity calculation.
 
 To prevent misbinding attacks in systems where an attacker can register public keys without proving knowledge of the private key, SIGMA {{SIGMA}} enforces a MAC to be calculated over the "identity".
-EDHOC follows SIGMA by calculating a MAC over the whole credential, which in case of a X.509 or C509 certificate includes the "subject" and "subjectAltName" fields, and in the case of CWT or UCCS includes the "sub" claim, see {{identities}}. While the SIGMA paper only focuses on the identity, the same principle is true for any information such as policies connected to the public key.
+EDHOC follows SIGMA by calculating a MAC over the whole credential, which in case of a X.509 or C509 certificate includes the "subject" and "subjectAltName" fields, and in the case of CWT or CCS includes the "sub" claim, see {{identities}}. While the SIGMA paper only focuses on the identity, the same principle is true for any information such as policies connected to the public key.
 
 When the credential is a certificate, CRED_x is an end-entity certificate (i.e., not the certificate chain). In X.509 and C509 certificates, signature keys typically have key usage "digitalSignature" and Diffie-Hellman public keys typically have key usage "keyAgreement".
 
-In case of elliptic curve based credential the claims set for CWT or UCCS includes:
+In case of elliptic curve based credential the claims set for CWT or CCS includes:
 
 * the 'cnf' claim with value COSE_Key, see {{RFC8747}}, where the public key parameters depend on key type:
     * for OKP the CBOR map typically includes the parameters 1 (kty), -1 (crv), and -2 (x-coordinate)
@@ -422,10 +419,10 @@ In case of elliptic curve based credential the claims set for CWT or UCCS includ
 
 CRED_x needs to be defined such that it is identical when generated by Initiator or Responder, see {{applicability}}. The parameters SHALL be encoded in bytewise lexicographic order of their deterministic encodings as specified in Section 4.2.1 of {{RFC8949}}.
 
-An example of CRED_x being a UCCS in bytewise lexicographic order containing an X25519 static Diffie-Hellman key and an EUI-64 identity is shown below:
+An example of CRED_x being a CCS in bytewise lexicographic order containing an X25519 static Diffie-Hellman key and an EUI-64 identity is shown below:
 
 ~~~~~~~~~~~
-{                                              /UCCS/
+{                                              /CCS/
   2 : "42-50-31-FF-EF-37-32-39",               /sub/
   8 : {                                        /cnf/
     1 : {                                      /COSE_Key/
@@ -447,9 +444,9 @@ The EDHOC implementation or the application must enforce information about the i
 
 * When a Public Key Infrastructure (PKI) is used with certificates, the trust anchor is a Certification Authority (CA) certificate, and the identity is the subject whose unique name (e.g., a domain name, NAI, or EUI) is included in the endpoint's certificate. Before running EDHOC each party needs at least one CA public key certificate, or just the public key, and a specific identity or set of identities it is allowed to communicate with. Only validated public-key certificates with an allowed subject name, as specified by the application, are to be accepted. EDHOC provides proof that the other party possesses the private authentication key corresponding to the public authentication key in its certificate. The certification path provides proof that the subject of the certificate owns the public key in the certificate.
 
-* Similarly, when a PKI is used with CWTs, each party needs to have a trusted third party public key as trust anchor to verify the end-entity CWTs, and a specific identity or set of identities in the 'sub'(subject) claim of the CWT to determine if it is allowed to communicate with. The trusted third party public key can e.g., be stored in a self-signed CWT or in a UCCS.
+* Similarly, when a PKI is used with CWTs, each party needs to have a trusted third party public key as trust anchor to verify the end-entity CWTs, and a specific identity or set of identities in the 'sub'(subject) claim of the CWT to determine if it is allowed to communicate with. The trusted third party public key can e.g., be stored in a self-signed CWT or in a CCS.
 
-* When PKI is not used (UCCS, self-signed certificate/CWT), the trust anchor is the authentication key of the other party. In this case, the identity is typically directly associated to the authentication key of the other party. For example, the name of the subject may be a canonical representation of the public key. Alternatively, if identities can be expressed in the form of unique subject names assigned to public keys, then a binding to identity can be achieved by including both public key and associated subject name in the protocol message computation: CRED_I or CRED_R may be a self-signed certificate/CWT or UCCS containing the authentication key and the subject name, see {{auth-cred}}. Before running EDHOC, each endpoint needs a specific authentication key/unique associated subject name, or a set of public authentication keys/unique associated subject names, which it is allowed to communicate with. EDHOC provides proof that the other party possesses the private authentication key corresponding to the public authentication key.
+* When PKI is not used (CCS, self-signed certificate/CWT), the trust anchor is the authentication key of the other party. In this case, the identity is typically directly associated to the authentication key of the other party. For example, the name of the subject may be a canonical representation of the public key. Alternatively, if identities can be expressed in the form of unique subject names assigned to public keys, then a binding to identity can be achieved by including both public key and associated subject name in the protocol message computation: CRED_I or CRED_R may be a self-signed certificate/CWT or CCS containing the authentication key and the subject name, see {{auth-cred}}. Before running EDHOC, each endpoint needs a specific authentication key/unique associated subject name, or a set of public authentication keys/unique associated subject names, which it is allowed to communicate with. EDHOC provides proof that the other party possesses the private authentication key corresponding to the public authentication key.
 
 
 ### Identification of Credentials {#id_cred}
@@ -478,11 +475,11 @@ Public key certificates can be identified in different ways. COSE header paramet
 
 ID_CRED_x MAY contain the actual credential used for authentication, CRED_x. For example, a certificate chain can be transported in ID_CRED_x with COSE header parameter c5c or x5chain, defined in {{I-D.ietf-cose-cbor-encoded-cert}} and {{I-D.ietf-cose-x509}}.
 
-Credentials of type CWT and UCCS are transported with the COSE header parameters registered in {{cwt-header-param}}:
+Credentials of type CWT and CCS are transported with the COSE header parameters registered in {{cwt-header-param}}:
 
 * ID_CRED_x = { TBD1 : CWT }, for x = I or R,
 
-* ID_CRED_x = { TBD2 : UCCS }, for x = I or R.
+* ID_CRED_x = { TBD2 : CCS }, for x = I or R.
 
 As stated in Section 3.1 of {{I-D.ietf-cose-rfc8152bis-struct}}, applications MUST NOT assume that 'kid' values are unique and several keys associated with a 'kid' may need to be checked before the correct one is found. Applications might use additional information such as 'kid context' or lower layers to determine which key to try first. Applications should strive to make ID_CRED_x as unique as possible, since the recipient may otherwise have to try several keys. ID_CRED_I and ID_CRED_R are transported in the 'ciphertext', see {{asym-msg3-proc}} and {{asym-msg2-proc}}.
 
@@ -599,7 +596,7 @@ The purpose of the applicability statement is to describe the intended use of ED
 1. How the endpoint detects that an EDHOC message is received. This includes how EDHOC messages are transported, for example in the payload of a CoAP message with a certain Uri-Path or Content-Format; see {{coap}}.
    * The method of transporting EDHOC messages may also describe data carried along with the messages that are needed for the transport to satisfy the requirements of {{transport}}, e.g., connection identifiers used with certain messages, see {{coap}}.
 1. Authentication method (METHOD; see {{method}}).
-3. Profile for authentication credentials (CRED_I, CRED_R; see {{auth-cred}}), e.g., profile for certificate or UCCS, including supported authentication key algorithms (subject public key algorithm in X.509 or C509 certificate).
+3. Profile for authentication credentials (CRED_I, CRED_R; see {{auth-cred}}), e.g., profile for certificate or CCS, including supported authentication key algorithms (subject public key algorithm in X.509 or C509 certificate).
 4. Type used to identify authentication credentials (ID_CRED_I, ID_CRED_R; see {{id_cred}}).
 5. Use and type of external authorization data (EAD_1, EAD_2, EAD_3, EAD_4; see {{AD}}).
 6. Identifier used as identity of endpoint; see {{identities}}.
@@ -1179,7 +1176,7 @@ Implementations MUST support 'kid' parameters of type int.
 
 Editor's note: Is any COSE header parameters (kid, kcwt, kccs, x5t, c5c, etc. ) MTI?
 
-Editor's note: Is any credential type (UCCS, CWT, X.509, C509) MTI?
+Editor's note: Is any credential type (CCS, CWT, X.509, C509) MTI?
 
 Editor's note: Is support of EAD MTI?
 
@@ -1412,7 +1409,7 @@ IANA has created a new registry entitled "EDHOC External Authorization Data" und
 
 ## COSE Header Parameters Registry {#cwt-header-param}
 
-IANA has registered the following entries in the "COSE Header Parameters" registry under the group name "CBOR Object Signing and Encryption (COSE)". The value of the 'kcwt' header parameter is a COSE Web Token (CWT) {{RFC8392}}, and the value of the 'kccs' header parameter is an Unprotected CWT Claims Set (UCCS), see {{term}}. The CWT/UCCS must contain a COSE_Key in a 'cnf' claim {{RFC8747}}. The Value Registry for this item is empty and omitted from the table below.
+IANA has registered the following entries in the "COSE Header Parameters" registry under the group name "CBOR Object Signing and Encryption (COSE)". The value of the 'kcwt' header parameter is a COSE Web Token (CWT) {{RFC8392}}, and the value of the 'kccs' header parameter is an CWT Claims Set (CCS), see {{term}}. The CWT/CCS must contain a COSE_Key in a 'cnf' claim {{RFC8747}}. The Value Registry for this item is empty and omitted from the table below.
 
 ~~~~~~~~~~~
 +-----------+-------+----------------+---------------------------+
@@ -1422,9 +1419,9 @@ IANA has registered the following entries in the "COSE Header Parameters" regist
 |           |       |                | containing a COSE_Key in  |
 |           |       |                | a 'cnf' claim             |
 +-----------+-------+----------------+---------------------------+
-| kccs      | TBD2  | map            | An Unprotected CWT Claims |
-|           |       |                | Set (UCCS) containing a   |
-|           |       |                | COSE_Key in a 'cnf' claim |
+| kccs      | TBD2  | map            | A CWT Claims Set (CCS)    |
+|           |       |                | containing a COSE_Key in  |
+|           |       |                | a 'cnf' claim             |
 +-----------+-------+----------------+---------------------------+
 ~~~~~~~~~~~
 
@@ -1809,9 +1806,9 @@ For use of EDHOC in the XX protocol, the following assumptions are made:
 3. CRED_I is an IEEE 802.1AR IDevID encoded as a C509 certificate of type 0 {{I-D.ietf-cose-cbor-encoded-cert}}.
     * R acquires CRED_I out-of-band, indicated in EAD_1.
     * ID_CRED_I = {4: h''} is a 'kid' with value empty byte string.
-4. CRED_R is a UCCS of type OKP as specified in {{auth-cred}}.
+4. CRED_R is a CCS of type OKP as specified in {{auth-cred}}.
    * The CBOR map has parameters 1 (kty), -1 (crv), and -2 (x-coordinate).
-   * ID_CRED_R is {TBD2 : UCCS}.   Editor's note: TBD2 is the COSE header parameter value of 'kccs', see {{cwt-header-param}}
+   * ID_CRED_R is {TBD2 : CCS}.   Editor's note: TBD2 is the COSE header parameter value of 'kccs', see {{cwt-header-param}}
 5. External authorization data is defined and processed as specified in {{I-D.selander-ace-ake-authz}}.
 6. EUI-64 used as identity of endpoint.
 7. No use of message_4: the application sends protected messages from R to I.
@@ -1855,7 +1852,8 @@ may need ... no, they don't need anything special: after an error, the next thin
 RFC Editor: Please remove this appendix.
 
 * From -10 to -11:
-  * Changed names and description of COSE header parameters for CWT/UCCS
+  * Changed UCCS to CCS 
+  * Changed names and description of COSE header parameters for CWT/CCS
   * Changed several of the KDF and Exporter labels
   * Removed edhoc_aead_id from info (already in transcript_hash)
   * Added MTI section
