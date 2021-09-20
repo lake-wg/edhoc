@@ -172,7 +172,7 @@ Some security solutions for such settings exist already. CBOR Object Signing and
 
 This document specifies Ephemeral Diffie-Hellman Over COSE (EDHOC), a lightweight authenticated key exchange protocol providing good security properties including forward secrecy, identity protection, and cipher suite negotiation. Authentication can be based on raw public keys (RPK) or public key certificates and requires the application to provide input on how to verify that endpoints are trusted. This specification focuses on referencing instead of transporting credentials to reduce message overhead. EDHOC does currently not support pre-shared key (PSK) authentication as authentication with static Diffie-Hellman public keys by reference produces equally small message sizes but with much simpler key distribution and identity protection.
 
-EDHOC makes use of known protocol constructions, such as SIGMA {{SIGMA}} and Extract-and-Expand {{RFC5869}}. EDHOC uses COSE for cryptography and identification of credentials (COSE_Key, UCCS, CWT, X.509, C509, etc.). COSE provides crypto agility and enables the use of future algorithms and credentials targeting IoT.
+EDHOC makes use of known protocol constructions, such as SIGMA {{SIGMA}} and Extract-and-Expand {{RFC5869}}. EDHOC uses COSE for cryptography and identification of credentials (COSE_Key, CWT, UCCS, X.509, C509, etc.). COSE provides crypto agility and enables the use of future algorithms and credentials targeting IoT.
 
 ## Use of EDHOC
 
@@ -1177,7 +1177,7 @@ Implementaions MAY support message_4. Error codes 1 and 2 MUST be supported.
 
 Implementations MUST support 'kid' parameters of type int.
 
-Editor's note: Is any COSE header parameters (kid, cwt, uccs, x5t, c5c, etc. ) MTI?
+Editor's note: Is any COSE header parameters (kid, kcwt, kccs, x5t, c5c, etc. ) MTI?
 
 Editor's note: Is any credential type (UCCS, CWT, X.509, C509) MTI?
 
@@ -1412,16 +1412,19 @@ IANA has created a new registry entitled "EDHOC External Authorization Data" und
 
 ## COSE Header Parameters Registry {#cwt-header-param}
 
-IANA has registered the following entries in the "COSE Header Parameters" registry under the group name "CBOR Object Signing and Encryption (COSE)". The value of the 'cwt' header parameter is a COSE Web Token (CWT) {{RFC8392}} and the value of the 'uccs' header parameter is an Unprotected CWT Claims Set (UCCS), see {{term}}. The Value Registry for this item is empty and omitted from the table below.
+IANA has registered the following entries in the "COSE Header Parameters" registry under the group name "CBOR Object Signing and Encryption (COSE)". The value of the 'kcwt' header parameter is a COSE Web Token (CWT) {{RFC8392}}, and the value of the 'kccs' header parameter is an Unprotected CWT Claims Set (UCCS), see {{term}}. The CWT/UCCS must contain a COSE_Key in a 'cnf' claim {{RFC8747}}. The Value Registry for this item is empty and omitted from the table below.
 
 ~~~~~~~~~~~
 +-----------+-------+----------------+---------------------------+
 | Name      | Label | Value Type     | Description               |
 +===========+=======+================+===========================+
-| cwt       |  TBD1 | COSE_Messages  | A CBOR Web Token (CWT)    |
+| kcwt      | TBD1  | COSE_Messages  | A CBOR Web Token (CWT)    |
+|           |       |                | containing a COSE_Key in  |
+|           |       |                | a 'cnf' claim             |
 +-----------+-------+----------------+---------------------------+
-| uccs      |  TBD2 | map            | An Unprotected CWT Claims |
-|           |       |                | Set (UCCS)                |
+| kccs      | TBD2  | map            | An Unprotected CWT Claims |
+|           |       |                | Set (UCCS) containing a   |
+|           |       |                | COSE_Key in a 'cnf' claim |
 +-----------+-------+----------------+---------------------------+
 ~~~~~~~~~~~
 
@@ -1808,7 +1811,7 @@ For use of EDHOC in the XX protocol, the following assumptions are made:
     * ID_CRED_I = {4: h''} is a 'kid' with value empty byte string.
 4. CRED_R is a UCCS of type OKP as specified in {{auth-cred}}.
    * The CBOR map has parameters 1 (kty), -1 (crv), and -2 (x-coordinate).
-   * ID_CRED_R = CRED_R
+   * ID_CRED_R is {TBD2 : UCCS}.   Editor's note: TBD2 is the COSE header parameter value of 'kccs', see {{cwt-header-param}}
 5. External authorization data is defined and processed as specified in {{I-D.selander-ace-ake-authz}}.
 6. EUI-64 used as identity of endpoint.
 7. No use of message_4: the application sends protected messages from R to I.
@@ -1852,6 +1855,7 @@ may need ... no, they don't need anything special: after an error, the next thin
 RFC Editor: Please remove this appendix.
 
 * From -10 to -11:
+  * Changed names and description of COSE header parameters for CWT/UCCS
   * Changed several of the KDF and Exporter labels
   * Removed edhoc_aead_id from info (already in transcript_hash)
   * Added MTI section
