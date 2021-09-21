@@ -209,15 +209,15 @@ e6 6f 35 59 90 22 3c 3f 6c af f8 62 e4 07 ed d1 17 4d 07 01 a0 9e cd
 6a 15 ce e2 c6 ce 21 aa 50
 ~~~~~~~~
 
-  PRK_3e2m is specified in Section 4.1.2 of {{I-D.ietf-lake-edhoc}}.
+PRK_3e2m is specified in Section 4.1.2 of {{I-D.ietf-lake-edhoc}}.
 
-  Since R authenticates with static DH (METHOD = 3), PRK_3e2m is derived
-  from G_RX using Extract() with the EDHOC hash algorithm:
+Since R authenticates with static DH (METHOD = 3), PRK_3e2m is derived
+from G_RX using Extract() with the EDHOC hash algorithm:
 
     PRK_3e2m = Extract(PRK_2e, G_RX) =
              = HMAC-SHA-256(PRK_2e, G_RX)
 
-  where G_RX is the ECDH shared secret calculated from G_X and R, or G_R and X.
+where G_RX is the ECDH shared secret calculated from G_X and R, or G_R and X.
 
 ~~~~~~~~
 G_RX (Raw Value) (ECDH shared secret) (32 bytes)
@@ -329,7 +329,6 @@ info for MAC_2 is:
 
     info =
     (
-     10,
      h'71A6C7C5BA9AD47FE72DA4DC359BF6B276D3515968711B9A911C71FC096AEE0E',
      "MAC_2",
      h'A10405A2026B6578616D706C652E65647508A101A4010102052004215820E6
@@ -337,8 +336,7 @@ info for MAC_2 is:
      8
     )
 
-where the first value is the COSE algorithm value of the EDHOC AEAD algorithm,
-and the last value is the EDHOC MAC length.
+where the last value is the EDHOC MAC length.
 
 ~~~~~~~~
 info for MAC_2 (CBOR Sequence) (106 bytes)
@@ -396,14 +394,13 @@ where length is the length of PLAINTEXT_2, and info for KEYSTREAM_2 is:
 
     info =
     (
-     10,
      h'71A6C7C5BA9AD47FE72DA4DC359BF6B276D3515968711B9A911C71FC096AEE0E',
      "KEYSTREAM_2",
      h'',
      10
     )
 
-where the first value is the COSE algorithm value of the EDHOC AEAD algorithm and the last value is the length of PLAINTEXT_2
+where last value is the length of PLAINTEXT_2.
 
 ~~~~~~~~
 info for KEYSTREAM_2 (CBOR Sequence) (49 bytes)
@@ -553,7 +550,6 @@ info for MAC_3 is:
 
     info =
     (
-     10,
      h'952B9B9CDD53B6A792604F845E2BFB5406292AA170D49A2BC3874B43AE182918',
      "MAC_3",
      h'A10429A2027734322D35302D33312D46462D45462D33372D33322D333908A101
@@ -562,7 +558,7 @@ info for MAC_3 is:
      8
     )
 
-where the first value is the COSE algorithm value of the EDHOC AEAD algorithm, and the last value is the EDHOC MAC length.
+where the last value is the EDHOC MAC length.
 
 ~~~~~~~~
 info for MAC_3 (CBOR Sequence) (118 bytes)
@@ -638,15 +634,13 @@ where length is the key length of EDHOC AEAD algorithm, and info for K_3ae is:
 
     info =
     (
-     10,
      h'952B9B9CDD53B6A792604F845E2BFB5406292AA170D49A2BC3874B43AE182918',
      "K_3ae",
      h'',
      16
     )
 
-  where the first value is the COSE algorithm value of the EDHOC AEAD algorithm,
-  and the last value is the key length of EDHOC AEAD algorithm.
+  where the last value is the key length of EDHOC AEAD algorithm.
 
 ~~~~~~~~
 info for K_3ae (CBOR Sequence) (43 bytes)
@@ -667,15 +661,13 @@ where length is the nonce length of EDHOC AEAD algorithm, and info for IV_3ae is
 
     info =
     (
-     10,
      h'952B9B9CDD53B6A792604F845E2BFB5406292AA170D49A2BC3874B43AE182918',
      "IV_3ae",
      h'',
      13
     )
 
-where the first value is the COSE algorithm value of the EDHOC AEAD algorithm,
-and the last value is the nonce length of EDHOC AEAD algorithm.
+where the last value is the nonce length of EDHOC AEAD algorithm.
 
 ~~~~~~~~
 info for IV_3ae (CBOR Sequence) (44 bytes)
@@ -760,24 +752,22 @@ fb 9b 69 89 79 eb 5c 5f e6 7b de 0c ee 4f 72 01 1b 24 70 8f 10 b1
 R constructs the input needed to derive the EDHOC message_4 key, see Section
 4.2 of {{I-D.ietf-lake-edhoc}}, using the EDHOC hash algorithm:
 
-    K_4ae = EDHOC-Exporter("EDHOC_message_4_Key", h'', length)
-          = EDHOC-KDF(PRK_4x3m, TH_4, "EDHOC_message_4_Key", h'', length)
+    K_4ae = EDHOC-Exporter("EDHOC_K_4", h'', length)
+          = EDHOC-KDF(PRK_4x3m, TH_4, "EDHOC_K_4", h'', length)
           = HKDF-Expand(PRK_4x3m, info, length)
 
 where length is the key length of the EDHOC AEAD algorithm,
-and info for EDHOC_message_4_Key is:
+and info for EDHOC_K_4 is:
 
     info =
     (
-     10,
      h'A7FA7E1506653CF587CEFB9B698979EB5C5FE67BDE0CEE4F72011B24708F10B1',
-     "EDHOC_message_4_Key"
+     "EDHOC_K_4",
      h'',
      16
     )
 
-where the first value is the COSE algorithm value of the EDHOC AEAD algorithm,
-and the last value is the key length of EDHOC AEAD algorithm
+where the last value is the key length of EDHOC AEAD algorithm.
 
 ~~~~~~~~
 info for K_4ae (CBOR Sequence) (57 bytes)
@@ -794,24 +784,22 @@ R constructs the input needed to derive the EDHOC message_4 nonce,
 see Section 4.2 of {{I-D.ietf-lake-edhoc}}, using the EDHOC hash algorithm:
 
            IV_4ae =
-           = EDHOC-Exporter( "EDHOC_message_4_Nonce", h'', length )
-           = EDHOC-KDF(PRK_4x3m, TH_4, "EDHOC_message_4_Nonce", h'', length)
+           = EDHOC-Exporter( "EDHOC_IV_4", h'', length )
+           = EDHOC-KDF(PRK_4x3m, TH_4, "EDHOC_IV_4", h'', length)
            = HKDF-Expand(PRK_4x3m, info, length)
 
 where length is the nonce length of EDHOC AEAD algorithm,
-and info for EDHOC_message_4_Nonce is:
+and info for EDHOC_IV_4 is:
 
     info =
     (
-     10,
      h'A7FA7E1506653CF587CEFB9B698979EB5C5FE67BDE0CEE4F72011B24708F10B1',
-     "EDHOC_message_4_Nonce"
+     "EDHOC_IV_4",
      h'',
      13
     )
 
-where the first value is the COSE algorithm value of the EDHOC AEAD algorithm,
-and the last value is the nonce length of EDHOC AEAD algorithm.
+where the last value is the nonce length of EDHOC AEAD algorithm.
 
 ~~~~~~~~
 info for IV_4ae (CBOR Sequence) (59 bytes)
@@ -878,23 +866,21 @@ Server's OSCORE Sender ID (Raw Value) (1 bytes)
 The OSCORE Master Secret is computed through Expand() using the Application hash algorithm, see Section 4.2 of {{I-D.ietf-lake-edhoc}}:
 
     OSCORE Master Secret =
-    = EDHOC-Exporter("OSCORE Master Secret", h'', key_length)
-    = EDHOC-KDF(PRK_4x3m, TH_4, "OSCORE Master Secret", h'', key_length)
+    = EDHOC-Exporter("OSCORE_Master_Secret", h'', key_length)
+    = EDHOC-KDF(PRK_4x3m, TH_4, "OSCORE_Master_Secret", h'', key_length)
     = HKDF-Expand(PRK_4x3m, info, key_length)
 
 where key_length is by default the key length of the Application AEAD algorithm, and info for the OSCORE Master Secret is:
 
     info =
     (
-     10,
      h'A7FA7E1506653CF587CEFB9B698979EB5C5FE67BDE0CEE4F72011B24708F10B1',
-     "OSCORE Master Secret"
+     "OSCORE_Master_Secret",
      h'',
      16
     )
 
-where the first value is the COSE algorithm value of the Application AEAD algorithm,
-and the last value is the key length of Application AEAD algorithm.
+where the last value is the key length of Application AEAD algorithm.
 
 ~~~~~~~~
 info for OSCORE Master Secret (CBOR Sequence) (58 bytes)
@@ -912,22 +898,21 @@ OSCORE Master Secret (Raw Value) (16 bytes)
 The OSCORE Master Salt is computed through Expand() using the Application hash algorithm, see Section 4.2 of {{I-D.ietf-lake-edhoc}}:
 
     OSCORE Master Salt =
-    = EDHOC-Exporter("OSCORE Master Salt", h'', salt_length)
-    = EDHOC-KDF(PRK_4x3m, TH_4, "OSCORE Master Salt", h'', salt_length)
+    = EDHOC-Exporter("OSCORE_Master_Salt", h'', salt_length)
+    = EDHOC-KDF(PRK_4x3m, TH_4, "OSCORE_Master_Salt", h'', salt_length)
     = HKDF-Expand(PRK_4x3m, info, salt_length)
 
 where salt_length is the length of the OSCORE Master Salt, and info for the OSCORE Master Salt is:
 
     info =
     (
-     10,
      h'A7FA7E1506653CF587CEFB9B698979EB5C5FE67BDE0CEE4F72011B24708F10B1',
-     "OSCORE Master Salt"
+     "OSCORE_Master_Salt",
      h'',
      8
     )
 
-where the first value is the COSE algorithm value of the Application AEAD algorithm, and the last value is the length of the OSCORE Master Salt
+where the last value is the length of the OSCORE Master Salt.
 
 
 ~~~~~~~~
@@ -1212,7 +1197,6 @@ info for MAC_2 is:
 
     info =
     (
-     10,
      h'0782DBB687C30288A30B706B074BED789574573F24443E91833D68CDDD7F9B39',
      "MAC_2",
      h'A11822822E4860780E9451BDC43C586F000102030405060708090A0B0C0D0E0F10
@@ -1222,8 +1206,7 @@ info for MAC_2 is:
      32
     )
 
-where the first value is the COSE algorithm value of the EDHOC AEAD algorithm,
-and the last value is the output size of the EDHOC hash algorithm.
+where the last value is the output size of the EDHOC hash algorithm.
 
 ~~~~~~~~
 info for MAC_2 (CBOR Sequence) (172 bytes)
@@ -1326,15 +1309,13 @@ where length is the length of PLAINTEXT_2, and info for KEYSTREAM_2 is:
 
     info =
     (
-     10,
      h'0782DBB687C30288A30B706B074BED789574573F24443E91833D68CDDD7F9B39',
      "KEYSTREAM_2",
      h'',
      80
     )
 
-where the first value is the COSE algorithm value of the EDHOC AEAD algorithm
-and the last value is the length of PLAINTEXT_2
+where the last value is the length of PLAINTEXT_2.
 
 ~~~~~~~~
 info for KEYSTREAM_2 (CBOR Sequence) (50 bytes)
@@ -1485,7 +1466,6 @@ info for MAC_3 is:
 
     info =
     (
-     10,
      h'5AA25B46397C2F145EB792ED0D17EA2B078C73E4EE148780C3C2E7341372CBAD',
      "MAC_3",
      h'A11822822E4881D45BE06329D63A5889000102030405060708090A0B0C0D0E0F
@@ -1496,8 +1476,7 @@ info for MAC_3 is:
      32
     )
 
-where the first value is the COSE algorithm value of the EDHOC AEAD algorithm,
-and the last value is the output size of the EDHOC hash algorithm.
+where the last value is the output size of the EDHOC hash algorithm.
 
 ~~~~~~~~
 info for MAC_3 (CBOR Sequence) (198 bytes)
@@ -1609,15 +1588,13 @@ where length is the key length of EDHOC AEAD algorithm, and info for K_3ae is:
 
     info =
     (
-     10,
      h'5AA25B46397C2F145EB792ED0D17EA2B078C73E4EE148780C3C2E7341372CBAD',
      "K_3ae",
      h'',
      16
     )
 
-where the first value is the COSE algorithm value of the EDHOC AEAD algorithm,
-and the last value is the key length of EDHOC AEAD algorithm.
+where the last value is the key length of EDHOC AEAD algorithm.
 
 
 ~~~~~~~~
@@ -1640,15 +1617,13 @@ where length is the nonce length of EDHOC AEAD algorithm, and info for IV_3ae is
 
     info =
     (
-     10,
      h'5AA25B46397C2F145EB792ED0D17EA2B078C73E4EE148780C3C2E7341372CBAD',
      "IV_3ae",
      h'',
      13
     )
 
-where the first value is the COSE algorithm value of the EDHOC AEAD algorithm,
-and the last value is the nonce length of EDHOC AEAD algorithm.
+where the last value is the nonce length of EDHOC AEAD algorithm.
 
 ~~~~~~~~
 info for IV_3ae (CBOR Sequence) (44 bytes)
@@ -1744,24 +1719,22 @@ A_4ae (CBOR Data Item) (45 bytes)
 38 cb 9a b1 bd 58 97 0e 3c 30 36 7d 8e 00 5f 9f 63 33 40 d2 ca e3
 ~~~~~~R constructs the input needed to derive the EDHOC message_4 key, see Section 4.2 of {{I-D.ietf-lake-edhoc}}, using the EDHOC hash algorithm:
 
-    K_4ae = EDHOC-Exporter("EDHOC_message_4_Key", h'', length)
-          = EDHOC-KDF(PRK_4x3m, TH_4, "EDHOC_message_4_Key", h'', length)
+    K_4ae = EDHOC-Exporter("EDHOC_K_4", h'', length)
+          = EDHOC-KDF(PRK_4x3m, TH_4, "EDHOC_K_4", h'', length)
           = HKDF-Expand(PRK_4x3m, info, length)
 
   where length is the key length of the EDHOC AEAD algorithm,
-  and info for EDHOC_message_4_Key is:
+  and info for EDHOC_K_4 is:
 
     info =
     (
-     10,
      h'D84A43C32B481DBE5C2138CB9AB1BD58970E3C30367D8E005F9F633340D2CAE3',
-     "EDHOC_message_4_Key"
+     "EDHOC_K_4",
      h'',
      16
     )
 
-  where the first value is the COSE algorithm value of the EDHOC AEAD algorithm,
-  and the last value is the key length of EDHOC AEAD algorithm
+where the last value is the key length of EDHOC AEAD algorithm.
 
 ~~~~~~~~
 info for K_4ae (CBOR Sequence) (57 bytes)
@@ -1778,24 +1751,22 @@ be f7 e1 59 a9 33 89 8c 25 a9 b0 85 a3 83 67 34
  R constructs the input needed to derive the EDHOC message_4 nonce, see Section 4.2 of {{I-D.ietf-lake-edhoc}}, using the EDHOC hash algorithm:
 
            IV_4ae =
-           = EDHOC-Exporter( "EDHOC_message_4_Nonce", h'', length )
-           = EDHOC-KDF(PRK_4x3m, TH_4, "EDHOC_message_4_Nonce", h'', length)
+           = EDHOC-Exporter( "EDHOC_IV_4", h'', length )
+           = EDHOC-KDF(PRK_4x3m, TH_4, "EDHOC_IV_4", h'', length)
            = HKDF-Expand(PRK_4x3m, info, length)
 
   where length is the nonce length of EDHOC AEAD algorithm,
-  and info for EDHOC_message_4_Nonce is:
+  and info for EDHOC_IV_4 is:
 
     info =
     (
-     10,
      h'D84A43C32B481DBE5C2138CB9AB1BD58970E3C30367D8E005F9F633340D2CAE3',
-     "EDHOC_message_4_Nonce"
+     "EDHOC_IV_4",
      h'',
      13
     )
 
-  where the first value is the COSE algorithm value of the EDHOC AEAD algorithm,
-  and the last value is the nonce length of EDHOC AEAD algorithm.
+where the last value is the nonce length of EDHOC AEAD algorithm.
 
 ~~~~~~~~
 info for IV_4ae (CBOR Sequence) (59 bytes)
@@ -1863,8 +1834,8 @@ The OSCORE Master Secret is computed through Expand() using the
 Application hash algorithm, see Section 4.2 of {{I-D.ietf-lake-edhoc}}:
 
     OSCORE Master Secret =
-    = EDHOC-Exporter("OSCORE Master Secret", h'', key_length)
-    = EDHOC-KDF(PRK_4x3m, TH_4, "OSCORE Master Secret", h'', key_length)
+    = EDHOC-Exporter("OSCORE_Master_Secret", h'', key_length)
+    = EDHOC-KDF(PRK_4x3m, TH_4, "OSCORE_Master_Secret", h'', key_length)
     = HKDF-Expand(PRK_4x3m, info, key_length)
 
 where key_length is by default the key length of the Application AEAD
@@ -1872,15 +1843,13 @@ algorithm, and info for the OSCORE Master Secret is:
 
     info =
     (
-     10,
      h'D84A43C32B481DBE5C2138CB9AB1BD58970E3C30367D8E005F9F633340D2CAE3',
-     "OSCORE Master Secret"
+     "OSCORE_Master_Secret",
      h'',
      16
     )
 
-where the first value is the COSE algorithm value of the Application AEAD algorithm,
-and the last value is the key length of Application AEAD algorithm.
+where the last value is the key length of Application AEAD algorithm.
 
 ~~~~~~~~
 info for OSCORE Master Secret (CBOR Sequence) (58 bytes)
@@ -1897,22 +1866,21 @@ OSCORE Master Secret (Raw Value) (16 bytes)
 The OSCORE Master Salt is computed through Expand() using the Application hash algorithm, see Section 4.2 of {{I-D.ietf-lake-edhoc}}:
 
     OSCORE Master Salt =
-    = EDHOC-Exporter("OSCORE Master Salt", h'', salt_length)
-    = EDHOC-KDF(PRK_4x3m, TH_4, "OSCORE Master Salt", h'', salt_length)
+    = EDHOC-Exporter("OSCORE_Master_Salt", h'', salt_length)
+    = EDHOC-KDF(PRK_4x3m, TH_4, "OSCORE_Master_Salt", h'', salt_length)
     = HKDF-Expand(PRK_4x3m, info, salt_length)
 
 where salt_length is the length of the OSCORE Master Salt, and info for the OSCORE Master Salt is:
 
     info =
     (
-     10,
      h'D84A43C32B481DBE5C2138CB9AB1BD58970E3C30367D8E005F9F633340D2CAE3',
-     "OSCORE Master Salt"
+     "OSCORE_Master_Salt",
      h'',
      8
     )
 
-where the first value is the COSE algorithm value of the Application AEAD algorithm, and the last value is the length of the OSCORE Master Salt.
+where the last value is the length of the OSCORE Master Salt.
 
 ~~~~~~~~
 info for OSCORE Master Salt (CBOR Sequence) (56 bytes)
