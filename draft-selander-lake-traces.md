@@ -78,11 +78,11 @@ NOTE 1. The same name is used for hexadecimal byte strings and their CBOR encodi
 
 NOTE 2. If not clear from the context, remember that CBOR sequences and CBOR arrays assume CBOR encoded data items as elements.
 
-A more extensive test vector suite and related code that was used to generate them can be found at: https://github.com/lake-wg/edhoc/tree/master/test-vectors-10.
+The traces in this draft are based on draft-ietf-lake-edhoc-11. A more extensive test vector suite and related code that was used to generate them can be found at: https://github.com/lake-wg/edhoc/tree/master/test-vectors-11.
 
-# Authentication with static DH, UCCS identified by 'kid'
+# Authentication with static DH, CCS identified by 'kid'
 
-In this example I and R are authenticated with ephemeral-static Diffie-Hellman (METHOD = 3). The public keys are represented as raw public keys (RPK), encoded in an unprotected CWT claims set (UCCS) and identified by the COSE header parameter 'kid'.
+In this example I and R are authenticated with ephemeral-static Diffie-Hellman (METHOD = 3). The public keys are represented as raw public keys (RPK), encoded in an CWT Claims Set (CCS) and identified by the COSE header parameter 'kid'.
 
 
 ## message_1
@@ -291,9 +291,9 @@ ID_CRED_R (CBOR Data Item) (3 bytes)
 a1 04 05
 ~~~~~~~~
 
-  CRED_R is an RPK encoded as a UCCS:
+  CRED_R is an RPK encoded as a CCS:
 
-    {                                              /UCCS/
+    {                                              /CCS/
       2 : "example.edu",                           /sub/
       8 : {                                        /cnf/
         1 : {                                      /COSE_Key/
@@ -513,9 +513,9 @@ d4 9a 2b c3 87 4b 43 ae 18 29 18
 ID_CRED_I (CBOR Data Item) (3 bytes)
 a1 04 29
 
-  CRED_I is an RPK encoded as a UCCS:
+  CRED_I is an RPK encoded as a CCS:
 
-    {                                              /UCCS/
+    {                                              /CCS/
       2 : "42-50-31-FF-EF-37-32-39",               /sub/
       8 : {                                        /cnf/
         1 : {                                      /COSE_Key/
