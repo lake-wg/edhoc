@@ -78,6 +78,8 @@ NOTE 1. The same name is used for hexadecimal byte strings and their CBOR encodi
 
 NOTE 2. If not clear from the context, remember that CBOR sequences and CBOR arrays assume CBOR encoded data items as elements.
 
+NOTE 3. When the protocol transporting EDHOC messages does not inherently provide correlation across all messages, like CoAP, then some messages typically are prepended with connection identifiers and potentially a message_1 indicator (see Section 3.4.1 and Appendix A.3 of {{I-D.ietf-lake-edhoc}}). Those bytes are not included in the traces in this document.
+
 The traces in this draft are based on draft-ietf-lake-edhoc-11. A more extensive test vector suite and related code that was used to generate them can be found at: https://github.com/lake-wg/edhoc/tree/master/test-vectors-11.
 
 # Authentication with static DH, CCS identified by 'kid'
