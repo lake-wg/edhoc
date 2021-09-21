@@ -599,9 +599,9 @@ Signature_or_MAC_3 (CBOR Data Item) (9 bytes)
 48 db 0b 8f 75 27 09 53 da
 ~~~~~~~~
 
-I constructs the plaintext P_3ae:
+I constructs the plaintext P_3:
 
-    P_3ae =
+    P_3 =
     (
      ID_CRED_I / bstr / int,
      Signature_or_MAC_3,
@@ -613,13 +613,13 @@ int -10 is included in the plaintext.
 
 
 ~~~~~~~~
-P_3ae (CBOR Sequence) (10 bytes)
+P_3 (CBOR Sequence) (10 bytes)
 29 48 db 0b 8f 75 27 09 53 da
 ~~~~~~~~
 
 I constructs the associated data for message_3:
 
-    A_3ae =
+    A_3 =
     (
      "Encrypt0",
      h'',
@@ -627,22 +627,22 @@ I constructs the associated data for message_3:
     )
 
 ~~~~~~~~
-A_3ae (CBOR Data Item) (45 bytes)
+A_3 (CBOR Data Item) (45 bytes)
 83 68 45 6e 63 72 79 70 74 30 40 58 20 a4 90 07 ce 54 76 2e 46 7c 4e
 4a 44 69 2f 20 70 d3 e9 eb 00 f9 5a c2 62 9b 2b be f7 fb 24 a3 70
 ~~~~~~~~
 
-I constructs the input needed to derive the key K_3ae, see Section 4.2 of {{I-D.ietf-lake-edhoc}}, using the EDHOC hash algorithm:
+I constructs the input needed to derive the key K_3, see Section 4.2 of {{I-D.ietf-lake-edhoc}}, using the EDHOC hash algorithm:
 
-    K_3ae = EDHOC-KDF(PRK_3e2m, TH_3, "K_3ae", h'', length) =
+    K_3 = EDHOC-KDF(PRK_3e2m, TH_3, "K_3", h'', length) =
                 = HKDF-Expand(PRK_3e2m, info, length),
 
-where length is the key length of EDHOC AEAD algorithm, and info for K_3ae is:
+where length is the key length of EDHOC AEAD algorithm, and info for K_3 is:
 
     info =
     (
      h'952B9B9CDD53B6A792604F845E2BFB5406292AA170D49A2BC3874B43AE182918',
-     "K_3ae",
+     "K_3",
      h'',
      16
     )
@@ -650,27 +650,27 @@ where length is the key length of EDHOC AEAD algorithm, and info for K_3ae is:
   where the last value is the key length of EDHOC AEAD algorithm.
 
 ~~~~~~~~
-info for K_3ae (CBOR Sequence) (40 bytes)
+info for K_3 (CBOR Sequence) (40 bytes)
 58 20 a4 90 07 ce 54 76 2e 46 7c 4e 4a 44 69 2f 20 70 d3 e9 eb 00 f9
 5a c2 62 9b 2b be f7 fb 24 a3 70 63 4b 5f 33 40 10
 ~~~~~~~~
 ~~~~~~~~
-K_3ae (Raw Value) (16 bytes)
+K_3 (Raw Value) (16 bytes)
 2a 30 e4 f6 bc 55 8d 0e 7a 8c 63 ee 7b b5 45 7f
 ~~~~~~~~
 
-I constructs the input needed to derive the nonce IV_3ae, see Section 4.2 of
+I constructs the input needed to derive the nonce IV_3, see Section 4.2 of
 {{I-D.ietf-lake-edhoc}}, using the EDHOC hash algorithm:
 
-    IV_3ae = EDHOC-KDF(PRK_3e2m, TH_3, "IV_3ae", h'', length) =
+    IV_3 = EDHOC-KDF(PRK_3e2m, TH_3, "IV_3", h'', length) =
            = HKDF-Expand(PRK_3e2m, info, length),
 
-where length is the nonce length of EDHOC AEAD algorithm, and info for IV_3ae is:
+where length is the nonce length of EDHOC AEAD algorithm, and info for IV_3 is:
 
     info =
     (
      h'952B9B9CDD53B6A792604F845E2BFB5406292AA170D49A2BC3874B43AE182918',
-     "IV_3ae",
+     "IV_3",
      h'',
      13
     )
@@ -678,18 +678,18 @@ where length is the nonce length of EDHOC AEAD algorithm, and info for IV_3ae is
 where the last value is the nonce length of EDHOC AEAD algorithm.
 
 ~~~~~~~~
-info for IV_3ae (CBOR Sequence) (41 bytes)
+info for IV_3 (CBOR Sequence) (41 bytes)
 58 20 a4 90 07 ce 54 76 2e 46 7c 4e 4a 44 69 2f 20 70 d3 e9 eb 00 f9
 5a c2 62 9b 2b be f7 fb 24 a3 70 64 49 56 5f 33 40 0d
 ~~~~~~~~
 ~~~~~~~~
-IV_3ae (Raw Value) (13 bytes)
+IV_3 (Raw Value) (13 bytes)
 b3 8f b6 31 e3 44 a8 10 52 56 32 ed f8
 ~~~~~~~~
 
 I calculates CIPHERTEXT_3 as 'ciphertext' of COSE_Encrypt0 applied
-using the EDHOC AEAD algorithm with plaintext P_3ae, additional data
-A_3ae, key K_3ae and nonce IV_3ae.
+using the EDHOC AEAD algorithm with plaintext P_3, additional data
+A_3, key K_3 and nonce IV_3.
 
 ~~~~~~~~
 CIPHERTEXT_3 (Raw Value) (18 bytes)
@@ -733,18 +733,18 @@ No external authorization data:
 
 EAD_4 (CBOR Sequence) (0 bytes)
 
-R constructs the plaintext P_4ae:
+R constructs the plaintext P_4:
 
-    P_4ae =
+    P_4 =
     (
      ? EAD_4
     )
 
-P_4ae (CBOR Sequence) (0 bytes)
+P_4 (CBOR Sequence) (0 bytes)
 
 R constructs the associated data for message_4:
 
-    A_4ae =
+    A_4 =
     (
      "Encrypt0",
      h'',
@@ -752,7 +752,7 @@ R constructs the associated data for message_4:
     )
 
 ~~~~~~~~
-A_4ae (CBOR Data Item) (45 bytes)
+A_4 (CBOR Data Item) (45 bytes)
 83 68 45 6e 63 72 79 70 74 30 40 58 20 4b 9a dd 2a 9e eb 88 49 71 6c
 79 68 78 4f 55 40 dd 64 a3 bb 07 f8 d0 00 ad ce 88 b6 30 d8 84 eb
 ~~~~~~~~
@@ -760,7 +760,7 @@ A_4ae (CBOR Data Item) (45 bytes)
 R constructs the input needed to derive the EDHOC message_4 key, see Section
 4.2 of {{I-D.ietf-lake-edhoc}}, using the EDHOC hash algorithm:
 
-    K_4ae = EDHOC-Exporter("EDHOC_K_4", h'', length)
+    K_4 = EDHOC-Exporter("EDHOC_K_4", h'', length)
           = EDHOC-KDF(PRK_4x3m, TH_4, "EDHOC_K_4", h'', length)
           = HKDF-Expand(PRK_4x3m, info, length)
 
@@ -778,19 +778,19 @@ and info for EDHOC_K_4 is:
 where the last value is the key length of EDHOC AEAD algorithm.
 
 ~~~~~~~~
-info for K_4ae (CBOR Sequence) (46 bytes)
+info for K_4 (CBOR Sequence) (46 bytes)
 58 20 4b 9a dd 2a 9e eb 88 49 71 6c 79 68 78 4f 55 40 dd 64 a3 bb 07
 f8 d0 00 ad ce 88 b6 30 d8 84 eb 69 45 44 48 4f 43 5f 4b 5f 34 40 10
 ~~~~~~~~
 ~~~~~~~~
-K_4ae (Raw Value) (16 bytes)
+K_4 (Raw Value) (16 bytes)
 55 b5 7d 59 a8 26 f4 56 38 86 9b 75 07 0b 11 17
 ~~~~~~~~
 
 R constructs the input needed to derive the EDHOC message_4 nonce,
 see Section 4.2 of {{I-D.ietf-lake-edhoc}}, using the EDHOC hash algorithm:
 
-           IV_4ae =
+           IV_4 =
            = EDHOC-Exporter( "EDHOC_IV_4", h'', length )
            = EDHOC-KDF(PRK_4x3m, TH_4, "EDHOC_IV_4", h'', length)
            = HKDF-Expand(PRK_4x3m, info, length)
@@ -809,19 +809,19 @@ and info for EDHOC_IV_4 is:
 where the last value is the nonce length of EDHOC AEAD algorithm.
 
 ~~~~~~~~
-info for IV_4ae (CBOR Sequence) (47 bytes)
+info for IV_4 (CBOR Sequence) (47 bytes)
 58 20 4b 9a dd 2a 9e eb 88 49 71 6c 79 68 78 4f 55 40 dd 64 a3 bb 07
 f8 d0 00 ad ce 88 b6 30 d8 84 eb 6a 45 44 48 4f 43 5f 49 56 5f 34 40
 0d
 ~~~~~~~~
 ~~~~~~~~
-IV_4ae (Raw Value) (13 bytes)
+IV_4 (Raw Value) (13 bytes)
 20 7a 4e fc 25 a6 58 96 45 11 f1 63 76
 ~~~~~~~~
 
   R calculates CIPHERTEXT_4 as 'ciphertext' of COSE_Encrypt0 applied
-  using the EDHOC AEAD algorithm with plaintext P_4ae, additional data
-  A_4ae, key K_4ae and nonce IV_4ae.
+  using the EDHOC AEAD algorithm with plaintext P_4, additional data
+  A_4, key K_4 and nonce IV_4.
 
 ~~~~~~~~
 CIPHERTEXT_4 (8 bytes)
@@ -1556,7 +1556,7 @@ Signature_or_MAC_3 (Raw Value) (64 bytes)
 
 R constructs the plaintext:
 
-    P_3ae =
+    P_3 =
     (
      ID_CRED_I / bstr / int,
      Signature_or_MAC_3,
@@ -1564,7 +1564,7 @@ R constructs the plaintext:
     )
 
 ~~~~~~~~
-P_3ae (CBOR Sequence) (80 bytes)
+P_3 (CBOR Sequence) (80 bytes)
 a1 18 22 82 2e 48 81 d4 5b e0 63 29 d6 3a 58 40 74 8a 59 cb 36 b6 1d
 aa bd aa 7b 60 1a 0b 78 3d 44 9b 6f 2c 91 20 e1 00 96 b3 3a 1c 01 96
 31 f3 d0 47 5e cb 92 e6 d3 d3 76 1d 30 9a 79 6d 90 92 ab ba b5 ba 00
@@ -1573,7 +1573,7 @@ fc 29 69 35 b4 1f 69 fb 92 1d 03
 
 I constructs the associated data for message_3:
 
-    A_3ae =
+    A_3 =
     (
      "Encrypt0",
      h'',
@@ -1581,22 +1581,22 @@ I constructs the associated data for message_3:
     )
 
 ~~~~~~~~
-A_3ae (CBOR Data Item) (45 bytes)
+A_3 (CBOR Data Item) (45 bytes)
 83 68 45 6e 63 72 79 70 74 30 40 58 20 5a a2 5b 46 39 7c 2f 14 5e b7
 92 ed 0d 17 ea 2b 07 8c 73 e4 ee 14 87 80 c3 c2 e7 34 13 72 cb ad
 ~~~~~~~~
 
-I constructs the input needed to derive the key K_3ae, see Section 4.2 of {{I-D.ietf-lake-edhoc}}, using the EDHOC hash algorithm:
+I constructs the input needed to derive the key K_3, see Section 4.2 of {{I-D.ietf-lake-edhoc}}, using the EDHOC hash algorithm:
 
-    K_3ae = EDHOC-KDF(PRK_3e2m, TH_3, "K_3ae", h'', length) =
+    K_3 = EDHOC-KDF(PRK_3e2m, TH_3, "K_3", h'', length) =
                 = HKDF-Expand(PRK_3e2m, info, length),
 
-where length is the key length of EDHOC AEAD algorithm, and info for K_3ae is:
+where length is the key length of EDHOC AEAD algorithm, and info for K_3 is:
 
     info =
     (
      h'5AA25B46397C2F145EB792ED0D17EA2B078C73E4EE148780C3C2E7341372CBAD',
-     "K_3ae",
+     "K_3",
      h'',
      16
     )
@@ -1605,27 +1605,27 @@ where the last value is the key length of EDHOC AEAD algorithm.
 
 
 ~~~~~~~~
-info for K_3ae (CBOR Sequence) (43 bytes)
+info for K_3 (CBOR Sequence) (43 bytes)
 0a 58 20 5a a2 5b 46 39 7c 2f 14 5e b7 92 ed 0d 17 ea 2b 07 8c 73 e4
 ee 14 87 80 c3 c2 e7 34 13 72 cb ad 65 4b 5f 33 61 65 40 10
 ~~~~~~~~
 
 ~~~~~~~~
-K_3ae (Raw Value) (16 bytes)
+K_3 (Raw Value) (16 bytes)
 98 46 8b 5e 85 a1 6d bc 73 5e 12 6e b8 f3 2f 68
 ~~~~~~~~
 
-I constructs the input needed to derive the nonce IV_3ae, see Section 4.2 of {{I-D.ietf-lake-edhoc}}, using the EDHOC hash algorithm:
+I constructs the input needed to derive the nonce IV_3, see Section 4.2 of {{I-D.ietf-lake-edhoc}}, using the EDHOC hash algorithm:
 
-    IV_3ae = EDHOC-KDF(PRK_3e2m, TH_3, "IV_3ae", h'', length) =
+    IV_3 = EDHOC-KDF(PRK_3e2m, TH_3, "IV_3", h'', length) =
            = HKDF-Expand(PRK_3e2m, info, length),
 
-where length is the nonce length of EDHOC AEAD algorithm, and info for IV_3ae is:
+where length is the nonce length of EDHOC AEAD algorithm, and info for IV_3 is:
 
     info =
     (
      h'5AA25B46397C2F145EB792ED0D17EA2B078C73E4EE148780C3C2E7341372CBAD',
-     "IV_3ae",
+     "IV_3",
      h'',
      13
     )
@@ -1633,19 +1633,19 @@ where length is the nonce length of EDHOC AEAD algorithm, and info for IV_3ae is
 where the last value is the nonce length of EDHOC AEAD algorithm.
 
 ~~~~~~~~
-info for IV_3ae (CBOR Sequence) (44 bytes)
+info for IV_3 (CBOR Sequence) (44 bytes)
 0a 58 20 5a a2 5b 46 39 7c 2f 14 5e b7 92 ed 0d 17 ea 2b 07 8c 73 e4
 ee 14 87 80 c3 c2 e7 34 13 72 cb ad 66 49 56 5f 33 61 65 40 0d
 ~~~~~~~~
 
 ~~~~~~~~
-IV_3ae (Raw Value) (13 bytes)
+IV_3 (Raw Value) (13 bytes)
 37 dc 12 8d 11 49 8f bb 00 36 e6 ff 9d
 ~~~~~~~~
 
 I calculates CIPHERTEXT_3 as 'ciphertext' of COSE_Encrypt0 applied
-using the EDHOC AEAD algorithm with plaintext P_3ae, additional data
-A_3ae, key K_3ae and nonce IV_3ae.
+using the EDHOC AEAD algorithm with plaintext P_3, additional data
+A_3, key K_3 and nonce IV_3.
 
 ~~~~~~~~
 CIPHERTEXT_3 (Raw Value) (88 bytes)
@@ -1700,20 +1700,20 @@ No external authorization data:
 EAD_4 (CBOR Sequence) (0 bytes)
 ~~~~~~~~
 
-R constructs the plaintext P_4ae:
+R constructs the plaintext P_4:
 
-    P_4ae =
+    P_4 =
     (
      ? EAD_4
     )
 
 ~~~~~~~~
-P_4ae (CBOR Sequence) (0 bytes)
+P_4 (CBOR Sequence) (0 bytes)
 ~~~~~~~~
 
 R constructs the associated data for message_4:
 
-    A_4ae =
+    A_4 =
     (
      "Encrypt0",
      h'',
@@ -1721,12 +1721,12 @@ R constructs the associated data for message_4:
     )
 
 ~~~~~~~~
-A_4ae (CBOR Data Item) (45 bytes)
+A_4 (CBOR Data Item) (45 bytes)
 83 68 45 6e 63 72 79 70 74 30 40 58 20 d8 4a 43 c3 2b 48 1d be 5c 21
 38 cb 9a b1 bd 58 97 0e 3c 30 36 7d 8e 00 5f 9f 63 33 40 d2 ca e3
 ~~~~~~R constructs the input needed to derive the EDHOC message_4 key, see Section 4.2 of {{I-D.ietf-lake-edhoc}}, using the EDHOC hash algorithm:
 
-    K_4ae = EDHOC-Exporter("EDHOC_K_4", h'', length)
+    K_4 = EDHOC-Exporter("EDHOC_K_4", h'', length)
           = EDHOC-KDF(PRK_4x3m, TH_4, "EDHOC_K_4", h'', length)
           = HKDF-Expand(PRK_4x3m, info, length)
 
@@ -1744,20 +1744,20 @@ A_4ae (CBOR Data Item) (45 bytes)
 where the last value is the key length of EDHOC AEAD algorithm.
 
 ~~~~~~~~
-info for K_4ae (CBOR Sequence) (57 bytes)
+info for K_4 (CBOR Sequence) (57 bytes)
 0a 58 20 d8 4a 43 c3 2b 48 1d be 5c 21 38 cb 9a b1 bd 58 97 0e 3c 30
 36 7d 8e 00 5f 9f 63 33 40 d2 ca e3 73 45 44 48 4f 43 5f 6d 65 73 73
 61 67 65 5f 34 5f 4b 65 79 40 10
 ~~~~~~~~
 
 ~~~~~~~~
-K_4ae (Raw Value) (16 bytes)
+K_4 (Raw Value) (16 bytes)
 be f7 e1 59 a9 33 89 8c 25 a9 b0 85 a3 83 67 34
 ~~~~~~~~
 
  R constructs the input needed to derive the EDHOC message_4 nonce, see Section 4.2 of {{I-D.ietf-lake-edhoc}}, using the EDHOC hash algorithm:
 
-           IV_4ae =
+           IV_4 =
            = EDHOC-Exporter( "EDHOC_IV_4", h'', length )
            = EDHOC-KDF(PRK_4x3m, TH_4, "EDHOC_IV_4", h'', length)
            = HKDF-Expand(PRK_4x3m, info, length)
@@ -1776,20 +1776,20 @@ be f7 e1 59 a9 33 89 8c 25 a9 b0 85 a3 83 67 34
 where the last value is the nonce length of EDHOC AEAD algorithm.
 
 ~~~~~~~~
-info for IV_4ae (CBOR Sequence) (59 bytes)
+info for IV_4 (CBOR Sequence) (59 bytes)
 0a 58 20 d8 4a 43 c3 2b 48 1d be 5c 21 38 cb 9a b1 bd 58 97 0e 3c 30
 36 7d 8e 00 5f 9f 63 33 40 d2 ca e3 75 45 44 48 4f 43 5f 6d 65 73 73
 61 67 65 5f 34 5f 4e 6f 6e 63 65 40 0d
 ~~~~~~~~
 
 ~~~~~~~~
-IV_4ae (Raw Value) (13 bytes)
+IV_4 (Raw Value) (13 bytes)
 47 56 e9 42 0d 99 3e f8 06 86 09 6e 45
 ~~~~~~~~
 
 R calculates CIPHERTEXT_4 as 'ciphertext' of COSE_Encrypt0 applied
-using the EDHOC AEAD algorithm with plaintext P_4ae, additional data
-A_4ae, key K_4ae and nonce IV_4ae.
+using the EDHOC AEAD algorithm with plaintext P_4, additional data
+A_4, key K_4 and nonce IV_4.
 
 
 ~~~~~~~~
