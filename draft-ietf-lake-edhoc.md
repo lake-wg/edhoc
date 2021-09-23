@@ -358,15 +358,19 @@ Connection identifiers may be used to correlate EDHOC messages and facilitate th
 
 ## Authentication Parameters {#auth-key-id}
  
-EDHOC supports various settings for how the other endpoint's public key is transported, identified, and trusted. The authentication key (i.e., the public key) is stored in an authentication credential that also contains the authentication key algorithm and optionally other parameters such as identity, key usage, expiry, issuer, etc. EDHOC relies on COSE for identification of authentication credentials (see {{id_cred}}) and supports all credential types for which COSE header parameters are defined (see {{auth-cred}}). The authentication key and credential is used in several parts of EDHOC:
+EDHOC supports various settings for how the other endpoint's public key is transported, identified, and trusted as described in this section.
 
-1. the authentication credential CRED_x is included in the integrity calculation
+The authentication key (i.e., the public key, see {{auth-keys}}) is used in several parts of EDHOC:
+
+1. as part of the authentication credential CRED_x included in the integrity calculation
 2. for verification of the Signature_or_MAC field in message_2 and message_3 (see {{asym-msg2-proc}} and {{asym-msg3-proc}})
 3. in the key derivation (in case of a static Diffie-Hellman key, see {{key-der}}).
 
-Identical authentication credentials need to be established in both endpoints to accomplish item 1 above (see {{auth-cred}}) but for many settings it is not necessary to transport the authentication credential over constrained links. It may, for example, be pre-provisioned or acquired out-of-band over less constrained links. 
- 
-The type of authentication key, authentication credential, and the way to identify the credential have a large impact on the message size. The choice of authentication credential also depends on the trust model. For example, a certificate or CWT may rely on a trusted third party, whereas a CCS or a self-signed certificate or CWT may be used when trust in the public key can be achieved by other means, or in the case of trust-on-first-use. The size of a CCS is much smaller than a self-signed certificate or CWT.
+The authentication credential, in addition to the authentication key, also contains the authentication key algorithm and optionally other parameters such as identity, key usage, expiry, issuer, etc., see {{auth-cred}}. Identical authentication credentials need to be established in both endpoints to accomplish item 1 above but for many settings it is not necessary to transport the authentication credential within EDHOC over constrained links. It may, for example, be pre-provisioned or acquired out-of-band over less constrained links.
+
+EDHOC relies on COSE for identification of authentication credentials (see {{id_cred}}) and supports all credential types for which COSE header parameters are defined (see {{auth-cred}}). The choice of authentication credential depends on the trust model, see {{identities}}. For example, a certificate or CWT may rely on a trusted third party, whereas a CCS or a self-signed certificate or CWT may be used when trust in the public key can be achieved by other means, or in the case of trust-on-first-use.
+
+The type of authentication key, authentication credential, and the way to identify the credential have a large impact on the message size. For example, a CCS is much smaller than a self-signed certificate or CWT, but if it is possible to reference the credential with a COSE header like 'kid' then that is typically much smaller than a CCS.
  
 ### Identities and trust achors {#identities}
 
@@ -392,15 +396,13 @@ For X.509 the authentication key is represented with a SubjectPublicKeyInfo fiel
 
 ### Authentication Credentials {#auth-cred}
 
-The authentication credentials, CRED_I and CRED_R, contain the public authentication key of the Initiator and the Responder. CRED_x is an end-entity X.509 or C509 certificate / CWT (i.e., not a chain or bag). In X.509 and C509 certificates, signature keys typically have key usage "digitalSignature" and Diffie-Hellman public keys typically have key usage "keyAgreement". 
+The authentication credentials, CRED_I and CRED_R, contain the public authentication key of the Initiator and the Responder, respectively.
 
-EDHOC relies on COSE for identification of authentication credentials (see {{id_cred}}) and supports all credential types for which COSE header parameters are defined including X.509, C509, CWT and CCS.
+EDHOC relies on COSE for identification of authentication credentials (see {{id_cred}}) and supports all credential types for which COSE header parameters are defined including X.509, C509, CWT and CCS. When the identified credential is a chain or bag, CRED_x is just the end-entity X.509 or C509 certificate / CWT. In X.509 and C509 certificates, signature keys typically have key usage "digitalSignature" and Diffie-Hellman public keys typically have key usage "keyAgreement".
 
 CRED_x needs to be defined such that it is identical when used by Initiator or Responder. The Initiator and Responder are expected to agree on a specific encoding of the credential, see {{applicability}}. It is RECOMMENDED that the COSE 'kid' parameter, when used, refers to a specific encoding. The Initiator and Responder SHOULD use an available authentication credential without re-encoding.
 
-If for some reason re-encoding of the authentication credntial may occur, then a potential common encoding for CBOR based credentials is bytewise lexicographic order of their deterministic encodings as specified in Section 4.2.1 of {{RFC8949}}.
-
-The common encoding is needed in particular when the credential is not transported, e.g., when using the COSE 'kid' parameter for identification. A preferred common encoding for a CBOR based credential is bytewise lexicographic order of their deterministic encodings as specified in Section 4.2.1 of {{RFC8949}}, but for performance reasons it is not recommended to always re-encode the credentials before use.
+If for some reason re-encoding of the authentication credential may occur, then a potential common encoding for CBOR based credentials is bytewise lexicographic order of their deterministic encodings as specified in Section 4.2.1 of {{RFC8949}}.
 
 * When the authentication credential is a X.509 certificate, CRED_x SHALL be the end-entity DER encoded certificate wrapped in a bstr {{I-D.ietf-cose-x509}}.
 * When the authentication credential is a C509 certificate, CRED_x SHALL be the end-entity C509Certificate {{I-D.ietf-cose-cbor-encoded-cert}}
