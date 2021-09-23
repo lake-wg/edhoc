@@ -358,7 +358,7 @@ Connection identifiers may be used to correlate EDHOC messages and facilitate th
 
 ## Authentication Parameters {#auth-key-id}
  
-EDHOC supports various settings for how the other endpoint's public key is transported, identified, and trusted. The authentication key (i.e., the public key) is stored in an authentication credential that also contains the authentication key algorithm and optionally other parameters such as identity, key usage, expiry, issuer, etc. EDHOC relies on COSE for identification of authentication credentials and supports all credential types for which COSE header parameters are defined, see {{auth-cred}}. The authentication key and credential is used in several parts of EDHOC:
+EDHOC supports various settings for how the other endpoint's public key is transported, identified, and trusted. The authentication key (i.e., the public key) is stored in an authentication credential that also contains the authentication key algorithm and optionally other parameters such as identity, key usage, expiry, issuer, etc. EDHOC relies on COSE for identification of authentication credentials (see {{id_cred}}) and supports all credential types for which COSE header parameters are defined (see {{auth-cred}}). The authentication key and credential is used in several parts of EDHOC:
 
 1. the authentication credential CRED_x is included in the integrity calculation
 2. for verification of the Signature_or_MAC field in message_2 and message_3 (see {{asym-msg2-proc}} and {{asym-msg3-proc}})
@@ -396,7 +396,11 @@ The authentication credentials, CRED_I and CRED_R, contain the public authentica
 
 EDHOC relies on COSE for identification of authentication credentials (see {{id_cred}}) and supports all credential types for which COSE header parameters are defined including X.509, C509, CWT and CCS.
 
-CRED_x needs to be defined such that it is identical when used by Initiator or Responder. The Initiator and Responder are expected to agree on a specific encoding of the credential, see {{applicability}}. The common encoding is needed in particular when the credential is not transported, e.g., when using the COSE 'kid' parameter for identification. A preferred common encoding for a CBOR based credential is bytewise lexicographic order of their deterministic encodings as specified in Section 4.2.1 of {{RFC8949}}, but for performance reasons it is not recommended to always re-encode the credentials before use.
+CRED_x needs to be defined such that it is identical when used by Initiator or Responder. The Initiator and Responder are expected to agree on a specific encoding of the credential, see {{applicability}}. It is RECOMMENDED that the COSE 'kid' parameter, when used, refers to a specific encoding. The Initiator and Responder SHOULD use an available authentication credential without re-encoding.
+
+If for some reason re-encoding of the authentication credntial may occur, then a potential common encoding for CBOR based credentials is bytewise lexicographic order of their deterministic encodings as specified in Section 4.2.1 of {{RFC8949}}.
+
+The common encoding is needed in particular when the credential is not transported, e.g., when using the COSE 'kid' parameter for identification. A preferred common encoding for a CBOR based credential is bytewise lexicographic order of their deterministic encodings as specified in Section 4.2.1 of {{RFC8949}}, but for performance reasons it is not recommended to always re-encode the credentials before use.
 
 * When the authentication credential is a X.509 certificate, CRED_x SHALL be the end-entity DER encoded certificate wrapped in a bstr {{I-D.ietf-cose-x509}}.
 * When the authentication credential is a C509 certificate, CRED_x SHALL be the end-entity C509Certificate {{I-D.ietf-cose-cbor-encoded-cert}}
@@ -1749,8 +1753,6 @@ CBOR Object Signing and Encryption (COSE) {{I-D.ietf-cose-rfc8152bis-struct}} de
 
 * Signatures in message_2 of method 0 and 2, and in message_3 of method 0 and 1, consist of a subset of the single signer data object COSE_Sign1, which is described in Sections 4.2-4.4 of {{I-D.ietf-cose-rfc8152bis-struct}}. The signature is computed over a Sig_structure containing payload, protected headers and externally supplied data (external_aad) using a private signature key and verified using the corresponding public signature key.
 
-EDHOC relies on COSE for identification of authentication credentials and supports all COSE header parameters used to identify authentication credentials such X.509, C509, CWT and CCS.
-
 Different header parameters to identify X.509 or C509 certificates by reference are defined in {{I-D.ietf-cose-x509}} and {{I-D.ietf-cose-cbor-encoded-cert}}:
 
 * by a hash value with the 'x5t' or 'c5t' parameters, respectively:
@@ -1769,7 +1771,11 @@ When ID_CRED_x does not contain the actual credential, it may be very short, e.g
 
 * ID_CRED_x = { 4 : key_id_x }, where key_id_x : kid, for x = I or R.
 
-ID_CRED_x MAY also identify the the authentication credential by value. For example, a certificate chain can be transported in ID_CRED_x with COSE header parameter c5c or x5chain, defined in {{I-D.ietf-cose-cbor-encoded-cert}} and {{I-D.ietf-cose-x509}} and credentials of type CWT and CCS can be transported with the COSE header parameters registered in {{cwt-header-param}}:
+Note that a COSE header map can contain several header parameters, for example { x5u, x5t } or { kid, kid_context }.
+
+ID_CRED_x MAY also identify the authentication credential by value. For example, a certificate chain can be transported in ID_CRED_x with COSE header parameter c5c or x5chain, defined in {{I-D.ietf-cose-cbor-encoded-cert}} and {{I-D.ietf-cose-x509}} and credentials of type CWT and CCS can be transported with the COSE header parameters registered in {{cwt-header-param}}.
+
+
 
 # Applicability Template {#appl-temp}
 
