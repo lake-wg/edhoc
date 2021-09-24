@@ -171,7 +171,7 @@ Some security solutions for such settings exist already. CBOR Object Signing and
 
 This document specifies Ephemeral Diffie-Hellman Over COSE (EDHOC), a lightweight authenticated key exchange protocol providing good security properties including forward secrecy, identity protection, and cipher suite negotiation. Authentication can be based on raw public keys (RPK) or public key certificates and requires the application to provide input on how to verify that endpoints are trusted. This specification focuses on referencing instead of transporting credentials to reduce message overhead. EDHOC does currently not support pre-shared key (PSK) authentication as authentication with static Diffie-Hellman public keys by reference produces equally small message sizes but with much simpler key distribution and identity protection.
 
-EDHOC makes use of known protocol constructions, such as SIGMA {{SIGMA}} and Extract-and-Expand {{RFC5869}}. EDHOC uses COSE for cryptography and identification of credentials (including COSE_Key, CWT, CCS, X.509, C509, see {{auth-key-id}}). COSE provides crypto agility and enables the use of future algorithms and credentials targeting IoT.
+EDHOC makes use of known protocol constructions, such as SIGMA {{SIGMA}} and Extract-and-Expand {{RFC5869}}. EDHOC uses COSE for cryptography and identification of credentials (including COSE_Key, CWT, CCS, X.509, C509, see {{auth-cred}). COSE provides crypto agility and enables the use of future algorithms and credentials targeting IoT.
 
 ## Use of EDHOC
 
@@ -209,19 +209,14 @@ The remainder of the document is organized as follows: {{background}} outlines E
 
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in BCP 14 {{RFC2119}} {{RFC8174}} when, and only when, they appear in all capitals, as shown here.
 
-Readers are expected to be familiar with the terms and concepts described in CBOR {{RFC8949}}, CBOR Sequences {{RFC8742}}, COSE structures and process {{I-D.ietf-cose-rfc8152bis-struct}}, COSE algorithms {{I-D.ietf-cose-rfc8152bis-algs}}, and CDDL {{RFC8610}}. The Concise Data Definition Language (CDDL) is used to express CBOR data structures {{RFC8949}}. Examples of CBOR and CDDL are provided in {{CBOR}}. When referring to CBOR, this specification always refers to Deterministically Encoded CBOR as specified in Sections 4.2.1 and 4.2.2 of {{RFC8949}}.
-
-The single output from authenticated encryption (including the authentication tag) is called "ciphertext", following {{RFC5116}}.
-
-We use the term CWT Claims Set (CCS) as in {{RFC8392}} to denote a CBOR Web Token (CWT) without wrapping it into a COSE object, i.e., a CBOR map that contains the claims conveyed by a CWT.
-
+Readers are expected to be familiar with the terms and concepts described in CBOR {{RFC8949}}, CBOR Sequences {{RFC8742}}, COSE structures and processing {{I-D.ietf-cose-rfc8152bis-struct}}, COSE algorithms {{I-D.ietf-cose-rfc8152bis-algs}}, CWT and CWT Claims Set {{RFC8392}}, and CDDL {{RFC8610}}. The Concise Data Definition Language (CDDL) is used to express CBOR data structures {{RFC8949}}. Examples of CBOR and CDDL are provided in {{CBOR}}. When referring to CBOR, this specification always refers to Deterministically Encoded CBOR as specified in Sections 4.2.1 and 4.2.2 of {{RFC8949}}. The single output from authenticated encryption (including the authentication tag) is called "ciphertext", following {{RFC5116}}.
 
 
 # EDHOC Outline {#background}
 
 EDHOC specifies different authentication methods of the Diffie-Hellman key exchange: digital signatures and static Diffie-Hellman keys. This section outlines the digital signature-based method. Further details of protocol elements and other authentication methods are provided in the remainder of this document.
 
-SIGMA (SIGn-and-MAc) is a family of theoretical protocols with a large number of variants {{SIGMA}}. Like IKEv2 {{RFC7296}} and (D)TLS 1.3 {{RFC8446}}, EDHOC authenticated with digital signatures is built on a variant of the SIGMA protocol which provides identity protection of the initiator (SIGMA-I), and like IKEv2 {{RFC7296}}, EDHOC implements the SIGMA-I variant as MAC-then-Sign. The MAC-then-Sign variant of the SIGMA-I protocol is shown in {{fig-sigma}}.
+SIGMA (SIGn-and-MAc) is a family of theoretical protocols with a large number of variants {{SIGMA}}. Like IKEv2 {{RFC7296}} and (D)TLS 1.3 {{RFC8446}}, EDHOC authenticated with digital signatures is built on a variant of the SIGMA protocol which provides identity protection of the initiator (SIGMA-I), and like IKEv2 {{RFC7296}}, EDHOC implements the MAC-then-Sign variant of the SIGMA-I protocol shown in {{fig-sigma}}.
 
 ~~~~~~~~~~~
 Initiator                                                   Responder
@@ -306,7 +301,7 @@ Initiator                                                   Responder
 
 ## Method {#method}
 
-The data item METHOD in message_1 (see {{asym-msg1-form}}), is an integer specifying the authentication method. EDHOC supports authentication with signature or static Diffie-Hellman keys, as defined in the four authentication methods: 0, 1, 2, and 3, see {{fig-method-types}}. When using a static Diffie-Hellman key the authentication is provided by a Message Authentication Code (MAC) computed from an ephemeral-static ECDH shared secret which enables significant reductions in message sizes. (Method 0 corresponds to the case outlined in {{background}} where both Initiator and Responder authenticate with signature keys.)
+The data item METHOD in message_1 (see {{asym-msg1-form}}), is an integer specifying the authentication method. EDHOC supports authentication with signature or static Diffie-Hellman keys, as defined in the four authentication methods: 0, 1, 2, and 3, see {{fig-method-types}}. When using a static Diffie-Hellman key the authentication is provided by a Message Authentication Code (MAC) computed from an ephemeral-static ECDH shared secret which enables significant reductions in message sizes.
 
 The Initiator and the Responder need to have agreed on a single method to be used for EDHOC, see {{applicability}}.
 
@@ -363,63 +358,59 @@ Connection identifiers may be used to correlate EDHOC messages and facilitate th
 
 ## Authentication Parameters {#auth-key-id}
 
-EDHOC enables public-key based authentication and supports various settings for how the other endpoint's public key is transported, identified, and trusted.
+EDHOC supports various settings for how the other endpoint's authentication (public) key is transported, identified, and trusted as described in this section.
 
-The authentication key (i.e., the public key) appears in different functions:
+The authentication key (see {{auth-keys}}) is used in several parts of EDHOC:
 
-1. as part of the authentication credential CRED_x included in the integrity calculation
+1. as part of the authentication credential included in the integrity calculation
 2. for verification of the Signature_or_MAC field in message_2 and message_3 (see {{asym-msg2-proc}} and {{asym-msg3-proc}})
 3. in the key derivation (in case of a static Diffie-Hellman key, see {{key-der}}).
 
-The choice of authentication key has an impact on the message size (see {{auth-keys}}), and even more so the choice of authentication credential (see {{auth-cred}}) in case it is transported within the protocol (see {{id_cred}}). EDHOC supports authentication credentials for which COSE header parameters are defined, including:
+The authentication credential (CRED_x) contains, in addition to the authentication key, also the authentication key algorithm and optionally other parameters such as identity, key usage, expiry, issuer, etc. (see {{auth-cred}}). Identical authentication credentials need to be established in both endpoints to be able to verify integrity. For many settings it is not necessary to transport the authentication credential within EDHOC over constrained links, for example, it may be pre-provisioned or acquired out-of-band over less constrained links.
 
-* X.509 v3 certificate {{RFC5280}}
-* C509 certificate {{I-D.ietf-cose-cbor-encoded-cert}}
-* CBOR Web Token (CWT, {{RFC8392}})
-* CWT Claims Set (CCS, {{RFC8392}})
+EDHOC relies on COSE for identification of authentication credentials (using ID_CRED_x, see {{id_cred}}) and supports all credential types for which COSE header parameters are defined (see {{auth-cred}}).
 
-For CWT and CCS, the authentication key is represented with a 'cnf' claim {{RFC8747}} containing a COSE_Key {{I-D.ietf-cose-rfc8152bis-struct}}. CCS can be seen as a generic representation of a raw public key, see {{auth-cred}} for an example. COSE_Key is omitted from the list above because of limitations to represent the identity (see {{identities}}) and because it can easily be embedded in a CCS.
+The choice of authentication credential depends also on the trust model (see {{identities}}). For example, a certificate or CWT may rely on a trusted third party, whereas a CCS or a self-signed certificate/CWT may be used when trust in the public key can be achieved by other means, or in the case of trust-on-first-use.
 
-Identical authentication credentials need to be established in both endpoints to accomplish item 1 above (see {{auth-cred}}) but for many settings it is not necessary to transport the authentication credential over constrained links. It may, for example, be pre-provisioned or acquired out-of-band over less constrained links. ID_CRED_x contains the authentication credential CRED_x in case it is transported, or else contains a reference to the authentication credential to facilitate its retrieval (see {{id_cred}}).
+The type of authentication key, authentication credential, and the way to identify the credential have a large impact on the message size. For example, the signature_or_MAC field is much smaller with a static DH key than with a signature key. A CCS is much smaller than a self-signed certificate/CWT, but if it is possible to reference the credential with a COSE header like 'kid', then that is typically much smaller than to transport a CCS.
 
-The choice of authentication credential also depends on the trust model. For example, a certificate or CWT may rely on a trusted third party, whereas a CCS may be used when trust in the public key can be achieved by other means, or in the case of trust-on-first-use. A CCS as authentication credential provides essentially the same trustworthiness as a self-signed certificate or CWT but has smaller size.
+### Identities and trust achors {#identities}
 
-More details are provided in the following subsections.
+Policies for what connections to allow are typically set based on the identity of the other party, and parties typically only allow connections from a specific identity or a small restricted set of identities. For example, in the case of a device connecting to a network, the network may only allow connections from devices which authenticate with certificates having a particular range of serial numbers and signed by a particular CA. On the other hand, the device may only be allowed to connect to a network which authenticates with a particular public key (information of which may be provisioned, e.g., out of band or in the external authorization data, see {{AD}}). The EDHOC implementation or the application must enforce information about the intended endpoint, and in particular whether it is a specific identity or a set of identities. Either EDHOC passes information about identity to the application for a decision, or EDHOC needs to have access to relevant information and makes the decision on its own.
+
+EDHOC assumes the existence of mechanisms (certification authority, trusted third party, pre-provisioning, etc.) for specifying and distributing authentication credentials.
+
+* When a Public Key Infrastructure (PKI) is used with certificates, the trust anchor is a Certification Authority (CA) certificate, and the identity is the subject whose unique name (e.g., a domain name, NAI, or EUI) is included in the endpoint's certificate. In order to run EDHOC each party needs at least one CA public key certificate, or just the public key, and a specific identity or set of identities it is allowed to communicate with. Only validated public-key certificates with an allowed subject name, as specified by the application, are to be accepted. EDHOC provides proof that the other party possesses the private authentication key corresponding to the public authentication key in its certificate. The certification path provides proof that the subject of the certificate owns the public key in the certificate.
+
+* Similarly, when a PKI is used with CWTs, each party needs to have a trusted third party public key as trust anchor to verify the end-entity CWTs, and a specific identity or set of identities in the 'sub' (subject) claim of the CWT to determine if it is allowed to communicate with. The trusted third party public key can, e.g., be stored in a self-signed CWT or in a CCS.
+
+* When PKI is not used (CCS, self-signed certificate/CWT), the trust anchor is the authentication key of the other party. In this case, the identity is typically directly associated to the authentication key of the other party. For example, the name of the subject may be a canonical representation of the public key. Alternatively, if identities can be expressed in the form of unique subject names assigned to public keys, then a binding to identity can be achieved by including both public key and associated subject name in the protocol message computation: CRED_I or CRED_R may be a self-signed certificate/CWT or CCS containing the authentication key and the subject name, see {{auth-cred}}. In order to run EDHOC, each endpoint needs a specific authentication key/unique associated subject name, or a set of public authentication keys/unique associated subject names, which it is allowed to communicate with. EDHOC provides the proof that the other party possesses the private authentication key corresponding to the public authentication key.
+
+To prevent misbinding attacks in systems where an attacker can register public keys without proving knowledge of the private key, SIGMA {{SIGMA}} enforces a MAC to be calculated over the "identity". EDHOC follows SIGMA by calculating a MAC over the whole credential, which in case of a X.509 or C509 certificate includes the "subject" and "subjectAltName" fields, and in the case of CWT or CCS includes the "sub" claim. While the SIGMA paper only focuses on the identity, the same principle is true for other information such as policies associated to the public key.
 
 ### Authentication Keys {#auth-keys}
 
-The authentication key MUST be a signature key or static Diffie-Hellman key. The Initiator and the Responder
-MAY use different types of authentication keys, e.g., one uses a signature key and the other uses a static Diffie-Hellman key. When using a signature key, the authentication is provided by a signature. When using a static Diffie-Hellman key the authentication is provided by a Message Authentication Code (MAC) computed from an ephemeral-static ECDH shared secret which enables significant reductions in message sizes. When using static Diffie-Hellman keys the Initiator's and Responder's private authentication keys are called I and R, respectively, and the public authentication keys are called G_I and G_R, respectively.
+The authentication key (i.e. the public key used for authentication) MUST be a signature key or static Diffie-Hellman key. The Initiator and the Responder MAY use different types of authentication keys, e.g., one uses a signature key and the other uses a static Diffie-Hellman key. The authentication key algorithm needs to be compatible with the method and the cipher suite. The authentication key algorithm needs to be compatible with the EDHOC key exchange algorithm when static Diffie-Hellman authentication is used and compatible with the EDHOC signature algorithm when signature authentication is used.
 
-The authentication key algorithm needs to be specified with enough parameters to make it completely determined. Note that for most signature algorithms, the signature is determined jointly by the signature algorithm and the authentication key algorithm. For example, the curve used in the signature is typically determined by the authentication key parameters.
+Note that for most signature algorithms, the signature is determined by the signature algorithm and the authentication key algorithm together. When using static Diffie-Hellman keys the Initiator's and Responder's private authentication keys are called I and R, respectively, and the public authentication keys are called G_I and G_R, respectively.
 
-* Only the Responder SHALL have access to the Responder's private authentication key.
-
-* Only the Initiator SHALL have access to the Initiator's private authentication key.
-
+For X.509 the authentication key is represented with a SubjectPublicKeyInfo field. For CWT and CCS, the authentication key is represented with a 'cnf' claim {{RFC8747}} containing a COSE_Key {{I-D.ietf-cose-rfc8152bis-struct}}.
 
 ### Authentication Credentials {#auth-cred}
 
 The authentication credentials, CRED_I and CRED_R, contain the public authentication key of the Initiator and the Responder, respectively.
-The Initiator and the Responder MAY use different types of credentials, e.g., one uses an CCS and the other uses an X.509 certificate.
 
-The credentials CRED_I and CRED_R are MACed by the Initiator and the Responder, respectively, see {{asym-msg3-proc}} and {{asym-msg2-proc}}, and thus included in the message integrity calculation.
+EDHOC relies on COSE for identification of authentication credentials (see {{id_cred}}) and supports all credential types for which COSE header parameters are defined including X.509 {{RFC5280}}, C509 {{I-D.ietf-cose-cbor-encoded-cert}}, CWT {{RFC8392}} and CWT Claims Set (CCS) {{RFC8392}}. When the identified credential is a chain or bag, CRED_x is just the end-entity X.509 or C509 certificate / CWT. In X.509 and C509 certificates, signature keys typically have key usage "digitalSignature" and Diffie-Hellman public keys typically have key usage "keyAgreement".
 
-To prevent misbinding attacks in systems where an attacker can register public keys without proving knowledge of the private key, SIGMA {{SIGMA}} enforces a MAC to be calculated over the "identity".
-EDHOC follows SIGMA by calculating a MAC over the whole credential, which in case of a X.509 or C509 certificate includes the "subject" and "subjectAltName" fields, and in the case of CWT or CCS includes the "sub" claim, see {{identities}}. While the SIGMA paper only focuses on the identity, the same principle is true for any information such as policies connected to the public key.
+CRED_x needs to be defined such that it is identical when used by Initiator or Responder. The Initiator and Responder are expected to agree on a specific encoding of the credential, see {{applicability}}. It is RECOMMENDED that the COSE 'kid' parameter, when used, refers to a specific encoding. The Initiator and Responder SHOULD use an available authentication credential (transported in EDHOC or otherwise provisioned) without re-encoding. If for some reason re-encoding of the authentication credential may occur, then a potential common encoding for CBOR based credentials is bytewise lexicographic order of their deterministic encodings as specified in Section 4.2.1 of {{RFC8949}}.
 
-When the credential is a certificate, CRED_x is an end-entity certificate (i.e., not the certificate chain). In X.509 and C509 certificates, signature keys typically have key usage "digitalSignature" and Diffie-Hellman public keys typically have key usage "keyAgreement".
+* When the authentication credential is a X.509 certificate, CRED_x SHALL be the end-entity DER encoded certificate wrapped in a bstr {{I-D.ietf-cose-x509}}.
+* When the authentication credential is a C509 certificate, CRED_x SHALL be the end-entity C509Certificate {{I-D.ietf-cose-cbor-encoded-cert}}
+* When the authentication credential is a COSE_Key in a CWT, CRED_x SHALL be the untagged CWT.
+* When the authentication credential is a COSE_Key but not in a CWT, CRED_x SHALL be an untagged CCS.
+      * Naked COSE_Keys are thus dressed as CCS when used in EDHOC, which is done by prefixing the COSE_Key with 0xA108A101.
 
-In case of elliptic curve based credential the claims set for CWT or CCS includes:
-
-* the 'cnf' claim with value COSE_Key, see {{RFC8747}}, where the public key parameters depend on key type:
-    * for OKP the CBOR map typically includes the parameters 1 (kty), -1 (crv), and -2 (x-coordinate)
-    * for EC2 the CBOR map typically includes the parameters 1 (kty), -1 (crv), -2 (x-coordinate), and -3 (y-coordinate)
-*  the 'sub' (subject) claim containing the "identity", if the parties have agreed on an identity besides the public key.
-
-CRED_x needs to be defined such that it is identical when generated by Initiator or Responder, see {{applicability}}. The parameters SHALL be encoded in bytewise lexicographic order of their deterministic encodings as specified in Section 4.2.1 of {{RFC8949}}.
-
-An example of CRED_x being a CCS in bytewise lexicographic order containing an X25519 static Diffie-Hellman key and an EUI-64 identity is shown below:
+An example of a CRED_x is shown below:
 
 ~~~~~~~~~~~
 {                                              /CCS/
@@ -435,60 +426,30 @@ An example of CRED_x being a CCS in bytewise lexicographic order containing an X
   }
 }
 ~~~~~~~~~~~
-
-### Identities {#identities}
-
-EDHOC assumes the existence of mechanisms (certification authority, trusted third party, pre-provisioning, etc.) for specifying and distributing authentication keys and identities. Policies are typically set based on the identity of the other party, and parties typically only allow connections from a specific identity or a small restricted set of identities. For example, in the case of a device connecting to a network, the network may only allow connections from devices which authenticate with certificates having a particular range of serial numbers in the subject field and signed by a particular CA. On the other side, the device may only be allowed to connect to a network which authenticates with a particular public key (information of which may be provisioned, e.g., out of band or in the external authorization data, see {{AD}}).
-
-The EDHOC implementation or the application must enforce information about the intended endpoint, and in particular whether it is a specific identity or a set of identities. Either EDHOC passes information about identity to the application for a decision, or EDHOC needs to have access to relevant information and makes the decision on its own.
-
-* When a Public Key Infrastructure (PKI) is used with certificates, the trust anchor is a Certification Authority (CA) certificate, and the identity is the subject whose unique name (e.g., a domain name, NAI, or EUI) is included in the endpoint's certificate. Before running EDHOC each party needs at least one CA public key certificate, or just the public key, and a specific identity or set of identities it is allowed to communicate with. Only validated public-key certificates with an allowed subject name, as specified by the application, are to be accepted. EDHOC provides proof that the other party possesses the private authentication key corresponding to the public authentication key in its certificate. The certification path provides proof that the subject of the certificate owns the public key in the certificate.
-
-* Similarly, when a PKI is used with CWTs, each party needs to have a trusted third party public key as trust anchor to verify the end-entity CWTs, and a specific identity or set of identities in the 'sub'(subject) claim of the CWT to determine if it is allowed to communicate with. The trusted third party public key can e.g., be stored in a self-signed CWT or in a CCS.
-
-* When PKI is not used (CCS, self-signed certificate/CWT), the trust anchor is the authentication key of the other party. In this case, the identity is typically directly associated to the authentication key of the other party. For example, the name of the subject may be a canonical representation of the public key. Alternatively, if identities can be expressed in the form of unique subject names assigned to public keys, then a binding to identity can be achieved by including both public key and associated subject name in the protocol message computation: CRED_I or CRED_R may be a self-signed certificate/CWT or CCS containing the authentication key and the subject name, see {{auth-cred}}. Before running EDHOC, each endpoint needs a specific authentication key/unique associated subject name, or a set of public authentication keys/unique associated subject names, which it is allowed to communicate with. EDHOC provides proof that the other party possesses the private authentication key corresponding to the public authentication key.
+{: title="A CCS Containing an X25519 Static Diffie-Hellman Key and an EUI-64 Identity."}
 
 
 ### Identification of Credentials {#id_cred}
 
-ID_CRED_I and ID_CRED_R are used to identify and optionally transport the public authentication keys of the Initiator and the Responder, respectively. ID_CRED_I and ID_CRED_R do not have any cryptographic purpose in EDHOC.
+ID_CRED_R and ID_CRED_I are transported in message_2 and message_3, respectively (see {{asym-msg2-proc}} and {{asym-msg3-proc}}). They are used to identify and optionally transport the authentication keys of the Initiator and the Responder, respectively. ID_CRED_I and ID_CRED_R do not have any cryptographic purpose in EDHOC since EDHOC integrity protects the authentication credential. EDHOC relies on COSE for identification of authentication credentials and supports all COSE header parameters used to identify authentication credentials including X.509, C509, CWT and CCS.
 
-* ID_CRED_R is intended to facilitate for the Initiator to retrieve the Responder's public authentication key.
+* ID_CRED_R is intended to facilitate for the Initiator to retrieve the Responder's authentication key.
 
-* ID_CRED_I is intended to facilitate for the Responder to retrieve the Initiator's public authentication key.
+* ID_CRED_I is intended to facilitate for the Responder to retrieve the Initiator's authentication key.
 
-The identifiers ID_CRED_I and ID_CRED_R are registered in the "COSE Header Parameters" IANA registry. As such, ID_CRED_I and ID_CRED_R typically also provide information about the format of authentication credential, CRED_I and CRED_R, respectively. ID_CRED_I and ID_CRED_R MAY be of different types.
+ID_CRED_I and ID_CRED_R are COSE header maps and contains one or more COSE header parameter. ID_CRED_I and ID_CRED_R MAY contain different header parameters. The header parameters typically provide some information about the format of authentication credential.
 
-Public key certificates can be identified in different ways. COSE header parameters for identifying  X.509 or C509 certificates are defined in {{I-D.ietf-cose-x509}} and {{I-D.ietf-cose-cbor-encoded-cert}}, for example:
+Example: X.509 certificates can be identified by a hash value using the 'x5t' parameter:
 
-* by a hash value with the 'x5t' or 'c5t' parameters, respectively:
+* ID_CRED_x = { 34 : COSE_CertHash }, for x = I or R,
 
-   * ID_CRED_x = { 34 : COSE_CertHash }, for x = I or R,
-
-   * ID_CRED_x = { TBD3 : COSE_CertHash }, for x = I or R;
-
-* or by a URI with the 'x5u' or 'c5u' parameters, respectively:
-
-   * ID_CRED_x = { 35 : uri }, for x = I or R,
-
-   * ID_CRED_x = { TBD4 : uri }, for x = I or R.
-
-ID_CRED_x MAY contain the actual credential used for authentication, CRED_x. For example, a certificate chain can be transported in ID_CRED_x with COSE header parameter c5c or x5chain, defined in {{I-D.ietf-cose-cbor-encoded-cert}} and {{I-D.ietf-cose-x509}}.
-
-Credentials of type CWT and CCS are transported with the COSE header parameters registered in {{cwt-header-param}}:
-
-* ID_CRED_x = { TBD1 : CWT }, for x = I or R,
-
-* ID_CRED_x = { TBD2 : CCS }, for x = I or R.
-
-As stated in Section 3.1 of {{I-D.ietf-cose-rfc8152bis-struct}}, applications MUST NOT assume that 'kid' values are unique and several keys associated with a 'kid' may need to be checked before the correct one is found. Applications might use additional information such as 'kid context' or lower layers to determine which key to try first. Applications should strive to make ID_CRED_x as unique as possible, since the recipient may otherwise have to try several keys. ID_CRED_I and ID_CRED_R are transported in the 'ciphertext', see {{asym-msg3-proc}} and {{asym-msg2-proc}}.
-
-When ID_CRED_x does not contain the actual credential, it may be very short, e.g., if the endpoints have agreed to use a key identifier parameter 'kid':
+Example: CWT or CCS can be identified by a key identifier using the 'kid' parameter:
 
 * ID_CRED_x = { 4 : key_id_x }, where key_id_x : kid, for x = I or R.
 
-Note that 'kid' is extended to support int values to allow more one-byte identifiers (see {{kid-header-param}} and {{kid-key-common-param}}) which may be useful in many scenarios since constrained devices only have a few keys.
+Note that 'kid' is extended to support int values to allow more one-byte identifiers (see {{kid-header-param}} and {{kid-key-common-param}}) which may be useful in many scenarios since constrained devices only have a few keys. As stated in Section 3.1 of {{I-D.ietf-cose-rfc8152bis-struct}}, applications MUST NOT assume that 'kid' values are unique and several keys associated with a 'kid' may need to be checked before the correct one is found. Applications might use additional information such as 'kid context' or lower layers to determine which key to try first. Applications should strive to make ID_CRED_x as unique as possible, since the recipient may otherwise have to try several keys.
 
+See {{COSE}} for more examples.
 
 ## Cipher Suites {#cs}
 
@@ -1033,7 +994,7 @@ The Responder SHALL compose message_4 as follows:
    * Key K_4 = EDHOC-Exporter( "EDHOC_K_4", h'', length )
    * IV IV_4 = EDHOC-Exporter( "EDHOC_IV_4", h'', length )
 
-   COSE constructs the input to the AEAD {{RFC5116}} as follows:
+  COSE constructs the input to the AEAD {{RFC5116}} as follows:
 
    * Key K = K_4
    * Nonce N = IV_4
@@ -1250,7 +1211,7 @@ fault injection attacks due to their determinism. See e.g., Section 1 of {{I-D.m
 
 All private keys, symmetric keys, and IVs MUST be secret. Implementations should provide countermeasures to side-channel attacks such as timing attacks. Intermediate computed values such as ephemeral ECDH keys and ECDH shared secrets MUST be deleted after key derivation is completed.
 
-The Initiator and the Responder are responsible for verifying the integrity of certificates. The selection of trusted CAs should be done very carefully and certificate revocation should be supported. The private authentication keys MUST be kept secret.
+The Initiator and the Responder are responsible for verifying the integrity of certificates. The selection of trusted CAs should be done very carefully and certificate revocation should be supported. The private authentication keys MUST be kept secret, only the Responder SHALL have access to the Responder's private authentication key and only the Initiator SHALL have access to the Initiator's private authentication key.
 
 The Initiator and the Responder are allowed to select the connection identifiers C_I and C_R, respectively, for the other party to use in the ongoing EDHOC protocol as well as in a subsequent application protocol (e.g., OSCORE {{RFC8613}}). The choice of connection identifier is not security critical in EDHOC but intended to simplify the retrieval of the right security context in combination with using short identifiers. If the wrong connection identifier of the other party is used in a protocol message it will result in the receiving party not being able to retrieve a security context (which will terminate the protocol) or retrieve the wrong security context (which also terminates the protocol as the message cannot be verified).
 
@@ -1419,7 +1380,7 @@ IANA has registered the following entries in the "COSE Header Parameters" regist
 |           |       |                | containing a COSE_Key in  |
 |           |       |                | a 'cnf' claim             |
 +-----------+-------+----------------+---------------------------+
-| kccs      | TBD2  | map            | A CWT Claims Set (CCS)    |
+| kccs      | TBD2  | map / #6(map)  | A CWT Claims Set (CCS)    |
 |           |       |                | containing a COSE_Key in  |
 |           |       |                | a 'cnf' claim             |
 +-----------+-------+----------------+---------------------------+
@@ -1594,7 +1555,7 @@ After successful processing of EDHOC message_3, Client and Server derive Securit
 
 The EDHOC Exporter Labels for deriving the OSCORE Master Secret and the OSCORE Master Salt, are "OSCORE_Master_Secret" and "OSCORE_Master_Salt", respectively.
 
-The context parameter is h'', the empty CBOR byte string.
+The context parameter is h'' (0x40), the empty CBOR byte string.
 
 By default, key_length is the key length (in bytes) of the application AEAD Algorithm of the selected cipher suite for the EDHOC session. Also by default, salt_length has value 8. The Initiator and Responder MAY agree out-of-band on a longer key_length than the default and on a different salt_length.
 
@@ -1715,7 +1676,9 @@ The Concise Binary Object Representation (CBOR) {{RFC8949}} is a data format des
 
 CBOR data items are encoded to or decoded from byte strings using a type-length-value encoding scheme, where the three highest order bits of the initial byte contain information about the major type. CBOR supports several different types of data items, in addition to integers (int, uint), simple values, byte strings (bstr), and text strings (tstr), CBOR also supports arrays \[\]  of data items, maps {} of pairs of data items, and sequences {{RFC8742}} of data items. Some examples are given below.
 
-The EDHOC specification sometimes use CDDL names in CBOR diagnostic notation as in e.g., << ID_CRED_R, ? EAD_2 >>. This means that EAD_2 is optional and that ID_CRED_R, and EAD_2 should be substituted with their values before evaluation. I.e., if ID_CRED_R = { 4 : h'' } and EAD_2 is omitted then << ID_CRED_R, ? EAD_2 >> = << { 4 : h'' } >>, which encodes to 0x43a10440.
+The EDHOC specification sometimes use CDDL names in CBOR dignostic notation as in e.g., << ID_CRED_R, ? EAD_2 >>. This means that EAD_2 is optional and that ID_CRED_R and EAD_2 should be substituted with their values before evaluation. I.e., if ID_CRED_R = { 4 : h'' } and EAD_2 is omitted then << ID_CRED_R, ? EAD_2 >> = << { 4 : h'' } >>, which encodes to 0x43a10440.
+
+For a complete specification and more examples, see {{RFC8949}} and {{RFC8610}}. We recommend implementors to get used to CBOR by using the CBOR playground {{CborMe}}.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 Diagnostic          Encoded              Type
@@ -1737,9 +1700,6 @@ h'12cd'             0x4212cd             byte string
 ------------------------------------------------------------------
 ~~~~~~~~~~~~~~~~~~~~~~~
 {: artwork-align="center"}
-
-For a complete specification and more examples, see {{RFC8949}} and {{RFC8610}}. We recommend implementors to get used to CBOR by using the CBOR playground {{CborMe}}.
-
 
 ## CDDL Definitions
 
@@ -1796,6 +1756,30 @@ CBOR Object Signing and Encryption (COSE) {{I-D.ietf-cose-rfc8152bis-struct}} de
 * Certain ciphertexts in message_2 and message_3 consist of a subset of the single recipient encrypted data object COSE_Encrypt0, which is described in Sections 5.2-5.3 of {{I-D.ietf-cose-rfc8152bis-struct}}. The ciphertext is computed over the plaintext and associated data,  using an encryption key and a nonce. The associated data is an Enc_structure consisting of protected headers and externally supplied data (external_aad).
 
 * Signatures in message_2 of method 0 and 2, and in message_3 of method 0 and 1, consist of a subset of the single signer data object COSE_Sign1, which is described in Sections 4.2-4.4 of {{I-D.ietf-cose-rfc8152bis-struct}}. The signature is computed over a Sig_structure containing payload, protected headers and externally supplied data (external_aad) using a private signature key and verified using the corresponding public signature key.
+
+Different header parameters to identify X.509 or C509 certificates by reference are defined in {{I-D.ietf-cose-x509}} and {{I-D.ietf-cose-cbor-encoded-cert}}:
+
+* by a hash value with the 'x5t' or 'c5t' parameters, respectively:
+
+   * ID_CRED_x = { 34 : COSE_CertHash }, for x = I or R,
+
+   * ID_CRED_x = { TBD3 : COSE_CertHash }, for x = I or R;
+
+* or by a URI with the 'x5u' or 'c5u' parameters, respectively:
+
+   * ID_CRED_x = { 35 : uri }, for x = I or R,
+
+   * ID_CRED_x = { TBD4 : uri }, for x = I or R.
+
+When ID_CRED_x does not contain the actual credential, it may be very short, e.g., if the endpoints have agreed to use a key identifier parameter 'kid':
+
+* ID_CRED_x = { 4 : key_id_x }, where key_id_x : kid, for x = I or R.
+
+Note that a COSE header map can contain several header parameters, for example { x5u, x5t } or { kid, kid_context }.
+
+ID_CRED_x MAY also identify the authentication credential by value. For example, a certificate chain can be transported in ID_CRED_x with COSE header parameter c5c or x5chain, defined in {{I-D.ietf-cose-cbor-encoded-cert}} and {{I-D.ietf-cose-x509}} and credentials of type CWT and CCS can be transported with the COSE header parameters registered in {{cwt-header-param}}.
+
+
 
 # Applicability Template {#appl-temp}
 
