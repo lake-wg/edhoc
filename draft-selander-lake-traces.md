@@ -198,7 +198,9 @@ f5 b5 01 06 95 04 3b 0e b7
 ~~~~~~~~
 
 Since METHOD = 3, R authenticates using static DH.
-R's static key pair for use with the EDHOC key exchange algorithm is:
+
+R's static key pair for use with the EDHOC key exchange algorithm is based on
+the same curve as for the ephemeral keys, X25519:
 
 ~~~~~~~~
 R (Raw Value) (Responder's private authentication key) (32 bytes)
@@ -445,7 +447,8 @@ d9 48 01 8b 41 90 f7 d1 61 82 4e 0f f0 4c 29 4f 4a c6 02 cf 78 40
 
 Since METHOD = 3, I authenticates using static DH.
 
-I's static key pair for use with the EDHOC key exchange algorithm is:
+I's static key pair for use with the EDHOC key exchange algorithm is based on
+the same curve as for the ephemeral keys, X25519:
 
 ~~~~~~~~
 I (Raw Value) (Initiator's private authentication key) (32 bytes)
@@ -1086,8 +1089,8 @@ PRK_2e (Raw Value) (32 bytes)
 fc 70 a8 c0 02 20 a5 ba 1a
 ~~~~~~~~
 
-Since METHOD = 0, R authenticates using signatures.
-R's signature key pair for use with the EDHOC signature algorithm is:
+Since METHOD = 0, R authenticates using signatures with the EDHOC signature algorithm.
+R's signature key pair using Ed25519 is (note that Ed448 would also be compatible with EdDSA):
 
 ~~~~~~~~
 SK_R (Raw Value) (Responders's private authentication key) (32 bytes)
@@ -1369,8 +1372,8 @@ e7 64 36 fc 26 a8 1d ae b7 35 c3 4f eb 1f 72 54 bd a2 b7 d0 14 f3 32
 
 ## message_3
 
-Since METHOD = 0, I authenticates using signatures.
-I's signature key pair for use with the EDHOC signature algorithm is:
+Since METHOD = 0, I authenticates using signatures with the EDHOC signature algorithm.
+I's signature key pair using Ed25519 is (note that Ed448 would also be compatible with EdDSA):
 
 ~~~~~~~~
 SK_I (Raw Value) (Initiator's private authentication key) (32 bytes)
