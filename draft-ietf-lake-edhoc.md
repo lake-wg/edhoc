@@ -374,7 +374,7 @@ The choice of authentication credential depends also on the trust model (see {{i
 
 The type of authentication key, authentication credential, and the way to identify the credential have a large impact on the message size. For example, the signature_or_MAC field is much smaller with a static DH key than with a signature key. A CCS is much smaller than a self-signed certificate/CWT, but if it is possible to reference the credential with a COSE header like 'kid', then that is typically much smaller than to transport a CCS.
 
-### Identities and trust achors {#identities}
+### Identities and trust anchors {#identities}
 
 Policies for what connections to allow are typically set based on the identity of the other party, and parties typically only allow connections from a specific identity or a small restricted set of identities. For example, in the case of a device connecting to a network, the network may only allow connections from devices which authenticate with certificates having a particular range of serial numbers and signed by a particular CA. On the other hand, the device may only be allowed to connect to a network which authenticates with a particular public key (information of which may be provisioned, e.g., out of band or in the external authorization data, see {{AD}}). The EDHOC implementation or the application must enforce information about the intended endpoint, and in particular whether it is a specific identity or a set of identities. Either EDHOC passes information about identity to the application for a decision, or EDHOC needs to have access to relevant information and makes the decision on its own.
 
@@ -1838,6 +1838,7 @@ may need ... no, they don't need anything special: after an error, the next thin
 RFC Editor: Please remove this appendix.
 
 * From -10 to -11:
+  * Restructured section on authentication parameters
   * Changed UCCS to CCS
   * Changed names and description of COSE header parameters for CWT/CCS
   * Changed several of the KDF and Exporter labels
