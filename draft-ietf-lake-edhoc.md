@@ -357,7 +357,7 @@ The transport needs to support the correlation between EDHOC messages and facili
 Connection identifiers may be used to correlate EDHOC messages and facilitate the retrieval of protocol state during EDHOC protocol execution.  EDHOC transports that do not inherently provide correlation across all messages of an exchange can send connection identifiers along with EDHOC messages to gain that required capability, e.g., by prepending the appropriate connection identifier (when available from the EDHOC protocol) to the EDHOC message. Transport of EDHOC in CoAP payloads is described in {{coap}}, which also shows how to use connection identifiers and message_1 indication with CoAP.
 
 ## Authentication Parameters {#auth-key-id}
- 
+
 EDHOC supports various settings for how the other endpoint's public key is transported, identified, and trusted as described in this section.
 
 The authentication key (i.e., the public key, see {{auth-keys}}) is used in several parts of EDHOC:
@@ -371,7 +371,7 @@ The authentication credential, in addition to the authentication key, also conta
 EDHOC relies on COSE for identification of authentication credentials (see {{id_cred}}) and supports all credential types for which COSE header parameters are defined (see {{auth-cred}}). The choice of authentication credential depends on the trust model, see {{identities}}. For example, a certificate or CWT may rely on a trusted third party, whereas a CCS or a self-signed certificate or CWT may be used when trust in the public key can be achieved by other means, or in the case of trust-on-first-use.
 
 The type of authentication key, authentication credential, and the way to identify the credential have a large impact on the message size. For example, a CCS is much smaller than a self-signed certificate or CWT, but if it is possible to reference the credential with a COSE header like 'kid' then that is typically much smaller than a CCS.
- 
+
 ### Identities and trust achors {#identities}
 
 Policies for what connections to allow are typically set based on the identity of the other party, and parties typically only allow connections from a specific identity or a small restricted set of identities. For example, in the case of a device connecting to a network, the network may only allow connections from devices which authenticate with certificates having a particular range of serial numbers and signed by a particular CA. On the other hand, the device may only be allowed to connect to a network which authenticates with a particular public key (information of which may be provisioned, e.g., out of band or in the external authorization data, see {{AD}}). The EDHOC implementation or the application must enforce information about the intended endpoint, and in particular whether it is a specific identity or a set of identities. Either EDHOC passes information about identity to the application for a decision, or EDHOC needs to have access to relevant information and makes the decision on its own.
@@ -407,8 +407,8 @@ If for some reason re-encoding of the authentication credential may occur, then 
 * When the authentication credential is a X.509 certificate, CRED_x SHALL be the end-entity DER encoded certificate wrapped in a bstr {{I-D.ietf-cose-x509}}.
 * When the authentication credential is a C509 certificate, CRED_x SHALL be the end-entity C509Certificate {{I-D.ietf-cose-cbor-encoded-cert}}
 * When the authentication credential is a COSE_Key in a CWT {{RFC8392}}, CRED_x SHALL be the untagged CWT.
-* When the authentication credential is a COSE_Key but not in a CWT, CRED_x SHALL be an untagged CCS. 
-      * Naked COSE_Keys are thus dressed as CCS when used in EDHOC, which is done by prefixing the COSE_Key with 0xA108A101.  
+* When the authentication credential is a COSE_Key but not in a CWT, CRED_x SHALL be an untagged CCS.
+      * Naked COSE_Keys are thus dressed as CCS when used in EDHOC, which is done by prefixing the COSE_Key with 0xA108A101.
 
 An example of a CRED_x is shown below; a CCS containing an X25519 static Diffie-Hellman key and an EUI-64 identity:
 
@@ -445,7 +445,7 @@ Example: CWT or CCS can be identified by a key identifier using the 'kid' parame
 
 * ID_CRED_x = { 4 : key_id_x }, where key_id_x : kid, for x = I or R.
 
-Note that 'kid' is extended to support int values to allow more one-byte identifiers (see {{kid-header-param}} and {{kid-key-common-param}}) which may be useful in many scenarios since constrained devices only have a few keys. As stated in Section 3.1 of {{I-D.ietf-cose-rfc8152bis-struct}}, applications MUST NOT assume that 'kid' values are unique and several keys associated with a 'kid' may need to be checked before the correct one is found. Applications might use additional information such as 'kid context' or lower layers to determine which key to try first. Applications should strive to make ID_CRED_x as unique as possible, since the recipient may otherwise have to try several keys. 
+Note that 'kid' is extended to support int values to allow more one-byte identifiers (see {{kid-header-param}} and {{kid-key-common-param}}) which may be useful in many scenarios since constrained devices only have a few keys. As stated in Section 3.1 of {{I-D.ietf-cose-rfc8152bis-struct}}, applications MUST NOT assume that 'kid' values are unique and several keys associated with a 'kid' may need to be checked before the correct one is found. Applications might use additional information such as 'kid context' or lower layers to determine which key to try first. Applications should strive to make ID_CRED_x as unique as possible, since the recipient may otherwise have to try several keys.
 
 See {{COSE}} for more examples.
 
