@@ -380,7 +380,7 @@ Policies for what connections to allow are typically set based on the identity o
 
 EDHOC assumes the existence of mechanisms (certification authority, trusted third party, pre-provisioning, etc.) for specifying and distributing authentication credentials.
 
-* When a Public Key Infrastructure (PKI) is used with certificates, the trust anchor is a Certification Authority (CA) certificate, and the identity is the subject whose unique name (e.g., a domain name, NAI, or EUI) is included in the endpoint's certificate. In order to EDHOC each party needs at least one CA public key certificate, or just the public key, and a specific identity or set of identities it is allowed to communicate with. Only validated public-key certificates with an allowed subject name, as specified by the application, are to be accepted. EDHOC provides proof that the other party possesses the private authentication key corresponding to the public authentication key in its certificate. The certification path provides proof that the subject of the certificate owns the public key in the certificate.
+* When a Public Key Infrastructure (PKI) is used with certificates, the trust anchor is a Certification Authority (CA) certificate, and the identity is the subject whose unique name (e.g., a domain name, NAI, or EUI) is included in the endpoint's certificate. In order to run EDHOC each party needs at least one CA public key certificate, or just the public key, and a specific identity or set of identities it is allowed to communicate with. Only validated public-key certificates with an allowed subject name, as specified by the application, are to be accepted. EDHOC provides proof that the other party possesses the private authentication key corresponding to the public authentication key in its certificate. The certification path provides proof that the subject of the certificate owns the public key in the certificate.
 
 * Similarly, when a PKI is used with CWTs, each party needs to have a trusted third party public key as trust anchor to verify the end-entity CWTs, and a specific identity or set of identities in the 'sub' (subject) claim of the CWT to determine if it is allowed to communicate with. The trusted third party public key can, e.g., be stored in a self-signed CWT or in a CCS.
 
@@ -840,7 +840,7 @@ The Responder SHALL compose message_2 as follows:
 
    * payload = MAC_2
 
-   Explanation: COSE constructs the input to the Signature Algorithm as:
+   COSE constructs the input to the Signature Algorithm as:
 
    * The key is the private authentication key of the Responder.
 
@@ -909,7 +909,7 @@ The Initiator SHALL compose message_3 as follows:
 
    * payload = MAC_3
 
-   Explanation: COSE constructs the input to the Signature Algorithm as:
+   COSE constructs the input to the Signature Algorithm as:
 
    * The key is the private authentication key of the Initiator.
 
@@ -925,7 +925,7 @@ The Initiator SHALL compose message_3 as follows:
 
       * Note that if ID_CRED_I contains a single 'kid' parameter, i.e., ID_CRED_I = { 4 : kid_I }, only the byte string or integer kid_I is conveyed in the plaintext encoded as a bstr or int.
 
-   Explanation: COSE constructs the input to the AEAD {{RFC5116}} as follows:
+   COSE constructs the input to the AEAD {{RFC5116}} as follows:
 
    * Key K = EDHOC-KDF( PRK_3e2m, TH_3, "K_3", h'', length )
    * Nonce N = EDHOC-KDF( PRK_3e2m, TH_3, "IV_3", h'', length )
@@ -994,7 +994,7 @@ The Responder SHALL compose message_4 as follows:
    * Key K_4 = EDHOC-Exporter( "EDHOC_K_4", h'', length )
    * IV IV_4 = EDHOC-Exporter( "EDHOC_IV_4", h'', length )
 
-   Explanation: COSE constructs the input to the AEAD {{RFC5116}} as follows:
+  COSE constructs the input to the AEAD {{RFC5116}} as follows:
 
    * Key K = K_4
    * Nonce N = IV_4
