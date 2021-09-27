@@ -917,7 +917,7 @@ The Initiator SHALL compose message_3 as follows:
 
      \[ "Signature1", << ID_CRED_I >>, << TH_3, CRED_I, ? EAD_3 >>, MAC_3 \]
 
-* Compute an outer COSE_Encrypt0 as defined in Section 5.3 of {{I-D.ietf-cose-rfc8152bis-struct}}, with the EDHOC AEAD algorithm in the selected cipher suite, K_3, IV_3, and the following parameters. The protected header SHALL be the empty CBOR byte string.
+* Compute a COSE_Encrypt0 object as defined in Section 5.3 of {{I-D.ietf-cose-rfc8152bis-struct}}, with the EDHOC AEAD algorithm in the selected cipher suite, K_3, IV_3, and the following parameters. The protected header SHALL be the empty CBOR byte string.
 
    * protected = h''
    * external_aad = TH_3
@@ -932,7 +932,7 @@ The Initiator SHALL compose message_3 as follows:
    * Plaintext P = ( ID_CRED_I / bstr / int, Signature_or_MAC_3, ? EAD_3 )
    * Associated data A = \[ "Encrypt0", h'', TH_3 \]
 
-   CIPHERTEXT_3 is the 'ciphertext' of the outer COSE_Encrypt0.
+   CIPHERTEXT_3 is the 'ciphertext' of COSE_Encrypt0.
 
 * Encode message_3 as a sequence of CBOR encoded data items as specified in {{asym-msg3-form}}.
 
@@ -948,7 +948,7 @@ The Responder SHALL process message_3 as follows:
 
 * Retrieve the protocol state using the message correlation provided by the transport (e.g., the CoAP Token and the 5-tuple as a client, or the prepended C_R as a server).
 
-* Decrypt and verify the outer COSE_Encrypt0 as defined in Section 5.3 of {{I-D.ietf-cose-rfc8152bis-struct}}, with the EDHOC AEAD algorithm in the selected cipher suite, K_3, and IV_3.
+* Decrypt and verify the COSE_Encrypt0 as defined in Section 5.3 of {{I-D.ietf-cose-rfc8152bis-struct}}, with the EDHOC AEAD algorithm in the selected cipher suite, K_3, and IV_3.
 
 * Pass EAD_3 to the security application.
 
@@ -1013,7 +1013,7 @@ The Initiator SHALL process message_4 as follows:
 
 * Retrieve the protocol state using the message correlation provided by the transport (e.g., the CoAP Token and the 5-tuple as a client, or the prepended C_I as a server).
 
-* Decrypt and verify the outer COSE_Encrypt0 as defined in Section 5.3 of {{I-D.ietf-cose-rfc8152bis-struct}}, with the EDHOC AEAD algorithm in the selected cipher suite,  and the parameters defined in {{asym-msg4-proc}}.
+* Decrypt and verify the COSE_Encrypt0 as defined in Section 5.3 of {{I-D.ietf-cose-rfc8152bis-struct}}, with the EDHOC AEAD algorithm in the selected cipher suite, and the parameters defined in {{asym-msg4-proc}}.
 
 * Pass EAD_4 to the security application.
 
