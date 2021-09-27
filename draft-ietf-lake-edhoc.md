@@ -911,7 +911,7 @@ The Initiator SHALL compose message_3 as follows:
 
    * payload = MAC_3
 
-* Compute a COSE_Encrypt0 object as defined in Section 5.3 of {{I-D.ietf-cose-rfc8152bis-struct}}, with the EDHOC AEAD algorithm of the selected cipher suite, using the key K = K_3, nonce N = IV_3, plaintext P, and the following parameters as input to the Enc_structure generating the associated data:
+* Compute a COSE_Encrypt0 object as defined in Section 5.3 of {{I-D.ietf-cose-rfc8152bis-struct}}, with the EDHOC AEAD algorithm of the selected cipher suite, using the key K = K_3, the nonce N = IV_3, the plaintext P, and the following parameters as input to the Enc_structure generating the associated data:
 
    * context = "Encrypt0"
    * protected = h''
@@ -921,10 +921,10 @@ The Initiator SHALL compose message_3 as follows:
 
    * K_3 = EDHOC-KDF( PRK_3e2m, TH_3, "K_3", h'', length )
    * IV_3 = EDHOC-KDF( PRK_3e2m, TH_3, "IV_3", h'', length )
-   * plaintext = ( ID_CRED_I / bstr / int, Signature_or_MAC_3, ? EAD_3 )
+   * P = ( ID_CRED_I / bstr / int, Signature_or_MAC_3, ? EAD_3 )
 
       * If ID_CRED_I contains a single 'kid' parameter, i.e., ID_CRED_I = { 4 : kid_I }, only the byte string or integer kid_I is conveyed in the plaintext encoded as a bstr or int.
-      * EAD_3 is protected external authorization data, see {{AD}}
+      * EAD_3 is protected external authorization data, see {{AD}}.
 
    CIPHERTEXT_3 is the 'ciphertext' of COSE_Encrypt0.
 
@@ -980,7 +980,7 @@ message_4 = (
 The Responder SHALL compose message_4 as follows:
 
 
-* Compute a COSE_Encrypt0 as defined in Section 5.3 of {{I-D.ietf-cose-rfc8152bis-struct}}, with the EDHOC AEAD algorithm of the selected cipher suite, using the key K = K_4, nonce N = IV_4, plaintext P, and the following parameters as input to the Enc_structure generating the associated data:
+* Compute a COSE_Encrypt0 as defined in Section 5.3 of {{I-D.ietf-cose-rfc8152bis-struct}}, with the EDHOC AEAD algorithm of the selected cipher suite, using the key K = K_4, the nonce N = IV_4, the plaintext P, and the following parameters as input to the Enc_structure generating the associated data:
 
    * context = "Encrypt0"
    * protected = h''
@@ -990,7 +990,7 @@ The Responder SHALL compose message_4 as follows:
 
    * K_4 = EDHOC-Exporter( "EDHOC_K_4", h'', length )
    * IV_4 = EDHOC-Exporter( "EDHOC_IV_4", h'', length )
-   * plaintext = ( ? EAD_4 ), where EAD_4 is protected external authorization data, see {{AD}}
+   * P = ( ? EAD_4 ), where EAD_4 is protected external authorization data, see {{AD}}.
 
 
   CIPHERTEXT_4 is the 'ciphertext' of COSE_Encrypt0.
