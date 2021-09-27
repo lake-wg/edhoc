@@ -850,6 +850,8 @@ The Responder SHALL compose message_2 as follows:
 
        * If ID_CRED_R contains a single 'kid' parameter, i.e., ID_CRED_R = { 4 : kid_R }, then only the byte string or integer kid_R is conveyed in the plaintext encoded as a bstr or int.
 
+   * Compute KEYSTREAM_2 = EDHOC-KDF( PRK_2e, TH_2, "KEYSTREAM_2", h'', plaintext_length ), where plaintext_length is the length of the plaintext.
+   
    * CIPHERTEXT_2 = plaintext XOR KEYSTREAM_2
 
 * Encode message_2 as a sequence of CBOR encoded data items as specified in {{asym-msg2-form}}.
