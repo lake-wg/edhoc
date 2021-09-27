@@ -832,12 +832,12 @@ The Responder SHALL compose message_2 as follows:
     * CRED_R - CBOR item containing the credential of the Responder, see {{id_cred}}
     * EAD_2 = unprotected external authorization data, see {{AD}}
 
-* If the Responder authenticates with a static Diffie-Hellman key (method equals 1 or 3), then Signature_or_MAC_2 is MAC_2. If the Responder authenticates with a signature key (method equals 0 or 2), then Signature_or_MAC_2 is the 'signature' field of a COSE_Sign1 object as defined in Section 4.4 of {{I-D.ietf-cose-rfc8152bis-struct}} using the signature algorithm in the selected cipher suite, the private authentication key of the Responder, and the following parameters as input:
+* If the Responder authenticates with a static Diffie-Hellman key (method equals 1 or 3), then Signature_or_MAC_2 is MAC_2. If the Responder authenticates with a signature key (method equals 0 or 2), then Signature_or_MAC_2 is the 'signature' field of a COSE_Sign1 object as defined in Section 4.4 of {{I-D.ietf-cose-rfc8152bis-struct}} using the signature algorithm of the selected cipher suite, the private authentication key of the Responder, and the following parameters as input to the Sig_structure:
 
    * context = "Signature1"
-   
+
    * body_protected =  << ID_CRED_R >>
-   
+
    * sign_protected is omitted
 
    * external_aad = << TH_2, CRED_R, ? EAD_2 >>
@@ -851,7 +851,7 @@ The Responder SHALL compose message_2 as follows:
        * If ID_CRED_R contains a single 'kid' parameter, i.e., ID_CRED_R = { 4 : kid_R }, then only the byte string or integer kid_R is conveyed in the plaintext encoded as a bstr or int.
 
    * Compute KEYSTREAM_2 = EDHOC-KDF( PRK_2e, TH_2, "KEYSTREAM_2", h'', plaintext_length ), where plaintext_length is the length of the plaintext.
-   
+
    * CIPHERTEXT_2 = plaintext XOR KEYSTREAM_2
 
 * Encode message_2 as a sequence of CBOR encoded data items as specified in {{asym-msg2-form}}.
@@ -899,32 +899,32 @@ The Initiator SHALL compose message_3 as follows:
     * CRED_I - CBOR item containing the credential of the Initiator, see {{id_cred}}
     * EAD_3 = protected external authorization data, see {{AD}}
 
-* If the Initiator authenticates with a static Diffie-Hellman key (method equals 2 or 3), then Signature_or_MAC_3 is MAC_3. If the Initiator authenticates with a signature key (method equals 0 or 1), then Signature_or_MAC_3 is the 'signature' field of a COSE_Sign1 object as defined in Section 4.4 of {{I-D.ietf-cose-rfc8152bis-struct}} using the signature algorithm in the selected cipher suite, the private authentication key of the Initiator, and the following parameters as input:
+* If the Initiator authenticates with a static Diffie-Hellman key (method equals 2 or 3), then Signature_or_MAC_3 is MAC_3. If the Initiator authenticates with a signature key (method equals 0 or 1), then Signature_or_MAC_3 is the 'signature' field of a COSE_Sign1 object as defined in Section 4.4 of {{I-D.ietf-cose-rfc8152bis-struct}} using the signature algorithm of the selected cipher suite, the private authentication key of the Initiator, and the following parameters as input to the Sig_structure:
 
    * context = "Signature1"
-   
+
    * body_protected =  << ID_CRED_I >>
-   
+
    * sign_protected is omitted
 
    * external_aad = << TH_3, CRED_I, ? EAD_3 >>
 
    * payload = MAC_3
 
-* Compute a COSE_Encrypt0 object as defined in Section 5.3 of {{I-D.ietf-cose-rfc8152bis-struct}}, with the EDHOC AEAD algorithm in the selected cipher suite, K_3, IV_3, and the following parameters. The protected header SHALL be the empty CBOR byte string.
+* Compute a COSE_Encrypt0 object as defined in Section 5.3 of {{I-D.ietf-cose-rfc8152bis-struct}}, with the EDHOC AEAD algorithm of the selected cipher suite, using the key K = K_3, nonce N = IV_3, plaintext P, and the following parameters as input to the Enc_structure generating the associated data:
 
+   * context = "Encrypt0"
    * protected = h''
    * external_aad = TH_3
+
+   where
+
+   * K_3 = EDHOC-KDF( PRK_3e2m, TH_3, "K_3", h'', length )
+   * IV_3 = EDHOC-KDF( PRK_3e2m, TH_3, "IV_3", h'', length )
    * plaintext = ( ID_CRED_I / bstr / int, Signature_or_MAC_3, ? EAD_3 )
 
       * If ID_CRED_I contains a single 'kid' parameter, i.e., ID_CRED_I = { 4 : kid_I }, only the byte string or integer kid_I is conveyed in the plaintext encoded as a bstr or int.
-
-   COSE constructs the input to the AEAD {{RFC5116}} as follows:
-
-   * Key K = EDHOC-KDF( PRK_3e2m, TH_3, "K_3", h'', length )
-   * Nonce N = EDHOC-KDF( PRK_3e2m, TH_3, "IV_3", h'', length )
-   * Plaintext P = ( ID_CRED_I / bstr / int, Signature_or_MAC_3, ? EAD_3 )
-   * Associated data A = \[ "Encrypt0", h'', TH_3 \]
+      * EAD_3 is protected external authorization data, see {{AD}}
 
    CIPHERTEXT_3 is the 'ciphertext' of COSE_Encrypt0.
 
@@ -980,22 +980,20 @@ message_4 = (
 The Responder SHALL compose message_4 as follows:
 
 
-* Compute a COSE_Encrypt0 as defined in Section 5.3 of {{I-D.ietf-cose-rfc8152bis-struct}}, with the EDHOC AEAD algorithm in the selected cipher suite, and the following parameters. The protected header SHALL be the empty CBOR byte string.
+* Compute a COSE_Encrypt0 as defined in Section 5.3 of {{I-D.ietf-cose-rfc8152bis-struct}}, with the EDHOC AEAD algorithm of the selected cipher suite, using the key K = K_4, nonce N = IV_4, plaintext P, and the following parameters as input to the Enc_structure generating the associated data:
 
+   * context = "Encrypt0"
    * protected = h''
    * external_aad = TH_4
+
+   where
+
+   * K_4 = EDHOC-Exporter( "EDHOC_K_4", h'', length )
+   * IV_4 = EDHOC-Exporter( "EDHOC_IV_4", h'', length )
    * plaintext = ( ? EAD_4 ), where EAD_4 is protected external authorization data, see {{AD}}
-   * Key K_4 = EDHOC-Exporter( "EDHOC_K_4", h'', length )
-   * IV IV_4 = EDHOC-Exporter( "EDHOC_IV_4", h'', length )
 
-  COSE constructs the input to the AEAD {{RFC5116}} as follows:
 
-   * Key K = K_4
-   * Nonce N = IV_4
-   * Plaintext P = ( ? EAD_4 )
-   * Associated data A = \[ "Encrypt0", h'', TH_4 \]
-
-  CIPHERTEXT_4 is the ciphertext of the COSE_Encrypt0.
+  CIPHERTEXT_4 is the 'ciphertext' of COSE_Encrypt0.
 
 * Encode message_4 as a sequence of CBOR encoded data items as specified in {{asym-msg4-form}}.
 
