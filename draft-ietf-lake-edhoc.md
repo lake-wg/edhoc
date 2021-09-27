@@ -832,21 +832,17 @@ The Responder SHALL compose message_2 as follows:
     * CRED_R - CBOR item containing the credential of the Responder, see {{id_cred}}
     * EAD_2 = unprotected external authorization data, see {{AD}}
 
-* If the Responder authenticates with a static Diffie-Hellman key (method equals 1 or 3), then Signature_or_MAC_2 is MAC_2. If the Responder authenticates with a signature key (method equals 0 or 2), then Signature_or_MAC_2 is the 'signature' of a COSE_Sign1 object as defined in Section 4.4 of {{I-D.ietf-cose-rfc8152bis-struct}} using the signature algorithm in the selected cipher suite, the private authentication key of the Responder, and the following parameters:
+* If the Responder authenticates with a static Diffie-Hellman key (method equals 1 or 3), then Signature_or_MAC_2 is MAC_2. If the Responder authenticates with a signature key (method equals 0 or 2), then Signature_or_MAC_2 is the 'signature' field of a COSE_Sign1 object as defined in Section 4.4 of {{I-D.ietf-cose-rfc8152bis-struct}} using the signature algorithm in the selected cipher suite, the private authentication key of the Responder, and the following parameters:
 
-   * protected =  << ID_CRED_R >>
+   * context = "Signature1"
+   
+   * body_protected =  << ID_CRED_R >>
+   
+   * sign_protected is omitted
 
    * external_aad = << TH_2, CRED_R, ? EAD_2 >>
 
    * payload = MAC_2
-
-   COSE constructs the input to the Signature Algorithm as:
-
-   * The key is the private authentication key of the Responder.
-
-   * The message M to be signed =
-
-     \[ "Signature1", << ID_CRED_R >>, << TH_2, CRED_R, ? EAD_2 >>, MAC_2 \]
 
 * CIPHERTEXT_2 is encrypted by using the Expand function as a binary additive stream cipher.
 
@@ -901,21 +897,17 @@ The Initiator SHALL compose message_3 as follows:
     * CRED_I - CBOR item containing the credential of the Initiator, see {{id_cred}}
     * EAD_3 = protected external authorization data, see {{AD}}
 
-* If the Initiator authenticates with a static Diffie-Hellman key (method equals 2 or 3), then Signature_or_MAC_3 is MAC_3. If the Initiator authenticates with a signature key (method equals 0 or 1), then Signature_or_MAC_3 is the 'signature' of a COSE_Sign1 object as defined in Section 4.4 of {{I-D.ietf-cose-rfc8152bis-struct}} using the signature algorithm in the selected cipher suite, the private authentication key of the Initiator, and the following parameters:
+* If the Initiator authenticates with a static Diffie-Hellman key (method equals 2 or 3), then Signature_or_MAC_3 is MAC_3. If the Initiator authenticates with a signature key (method equals 0 or 1), then Signature_or_MAC_3 is the 'signature' field of a COSE_Sign1 object as defined in Section 4.4 of {{I-D.ietf-cose-rfc8152bis-struct}} using the signature algorithm in the selected cipher suite, the private authentication key of the Initiator, and the following parameters:
 
-   * protected =  << ID_CRED_I >>
+   * context = "Signature1"
+   
+   * body_protected =  << ID_CRED_I >>
+   
+   * sign_protected is omitted
 
    * external_aad = << TH_3, CRED_I, ? EAD_3 >>
 
    * payload = MAC_3
-
-   COSE constructs the input to the Signature Algorithm as:
-
-   * The key is the private authentication key of the Initiator.
-
-   * The message M to be signed =
-
-     \[ "Signature1", << ID_CRED_I >>, << TH_3, CRED_I, ? EAD_3 >>, MAC_3 \]
 
 * Compute a COSE_Encrypt0 object as defined in Section 5.3 of {{I-D.ietf-cose-rfc8152bis-struct}}, with the EDHOC AEAD algorithm in the selected cipher suite, K_3, IV_3, and the following parameters. The protected header SHALL be the empty CBOR byte string.
 
