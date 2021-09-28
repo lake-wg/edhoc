@@ -721,7 +721,7 @@ The EDHOC-KeyUpdate takes a nonce as input to guarantee that there are no short 
 
 # Message Formatting and Processing {#asym}
 
-This section specifies formatting of the messages and processing steps. Error messages are specified in {{error}}.
+This section specifies formatting of the messages and processing steps. Error messages are specified in {{error}}. Annotated traces of EDHOC protocol runs are provided in {{I-D.selander-lake-traces}}.
 
 An EDHOC message is encoded as a sequence of CBOR data items (CBOR Sequence, {{RFC8742}}).
 Additional optimizations are made to reduce message overhead.
@@ -732,7 +732,7 @@ While EDHOC uses the COSE_Key, COSE_Sign1, and COSE_Encrypt0 structures, only a 
 
 This section outlines the message processing of EDHOC.
 
-For each session, the endpoints are assumed to keep an associated protocol state containing identifiers, keys, etc. used for subsequent processing of protocol related data. The protocol state is assumed to be associated to an applicability statement ({{applicability}}) which provides the context for how messages are transported, identified, and processed.
+For each new/ongoing session, the endpoints are assumed to keep an associated protocol state containing identifiers, keying material, etc. used for subsequent processing of protocol related data. The protocol state is assumed to be associated to an applicability statement ({{applicability}}) which provides the context for how messages are transported, identified, and processed.
 
 EDHOC messages SHALL be processed according to the current protocol state. The following steps are expected to be performed at reception of an EDHOC message:
 
@@ -767,7 +767,7 @@ suites = [ 2* int ] / int
 
 where:
 
-* METHOD = 0, 1, 2, or 3 (see {{fig-method-types}}).
+* METHOD - authentication method, see {{method}}.
 * SUITES_I - array of cipher suites which the Initiator supports in order of preference, starting with the most preferred and ending with the cipher suite selected for this session. If the most preferred cipher suite is selected then SUITES_I is encoded as that cipher suite, i.e., as an int. The processing steps are detailed below and in {{wrong-selected}}.
 * G_X - the ephemeral public key of the Initiator
 * C_I - variable length connection identifier
@@ -777,9 +777,11 @@ where:
 
 The Initiator SHALL compose message_1 as follows:
 
-* The supported cipher suites and the order of preference MUST NOT be changed based on previous error messages. SUITES_I contains the ordered list of supported cipher suites, truncated after the cipher suite selected for this session. The selected cipher suite MAY be changed between sessions, e.g., based on previous error messages (see next bullet), but all cipher suites which are more preferred than the selected cipher suite in the list MUST be included in SUITES_I.
-
-* The Initiator MUST select its most preferred cipher suite, conditioned on what it can assume to be supported by the Responder. If the Initiator previously received from the Responder an error message with error code 2 (see {{wrong-selected}}) indicating cipher suites supported by the Responder, then the Initiator SHOULD select the most preferred supported cipher suite among those (note that error messages are not authenticated and may be forged).
+* SUITES_I contains a list of supported cipher suites, in order of preference, truncated after the cipher suite selected for this session.
+   * The Initiator MUST select its most preferred cipher suite, conditioned on what it can assume to be supported by the Responder.
+   * The selected cipher suite MAY be changed between sessions, e.g., based on previous error messages (see next bullet), but all cipher suites which are more preferred than the selected cipher suite in the list MUST be included in SUITES_I.
+   * If the Initiator previously received from the Responder an error message with error code 2 (see {{wrong-selected}}) indicating cipher suites supported by the Responder, then the Initiator SHOULD select the most preferred supported cipher suite among those (note that error messages are not authenticated and may be forged).
+   * The supported cipher suites and the order of preference MUST NOT be changed based on previous error messages.
 
 * Generate an ephemeral ECDH key pair using the curve in the selected cipher suite and format it as a COSE_Key. Let G_X be the 'x' parameter of the COSE_Key.
 
@@ -797,7 +799,8 @@ The Responder SHALL process message_1 as follows:
 
 * Pass EAD_1 to the security application.
 
-If any processing step fails, the Responder SHOULD send an EDHOC error message back, formatted as defined in {{error}}, and the session MUST be discontinued. Sending error messages is essential for debugging but MAY e.g., be skipped due to denial-of-service reasons, see {{security}}.
+If any processing step fails, the Responder SHOULD send an EDHOC error message back, formatted as defined in {{error}}, and the session MUST be discontinued. Sending error messages is essential for debugging but MAY e.g., be skipped due to denial-of-service reasons, see {{dos}}. If an error message is sent, the session MUST be discontinued.
+
 
 ## EDHOC Message 2 {#m2}
 
@@ -829,7 +832,7 @@ The Responder SHALL compose message_2 as follows:
 
 * Compute MAC_2 = EDHOC-KDF( PRK_3e2m, TH_2, "MAC_2", << ID_CRED_R, CRED_R, ? EAD_2 >>, mac_length_2 ). If the Responder authenticates with a static Diffie-Hellman key (method equals 1 or 3), then mac_length_2 is the EDHOC MAC length given by the selected cipher suite. If the Responder authenticates with a signature key (method equals 0 or 2), then mac_length_2 is equal to the output size of the EDHOC hash algorithm given by the selected cipher suite.
     * ID_CRED_R - identifier to facilitate retrieval of CRED_R, see {{id_cred}}
-    * CRED_R - CBOR item containing the credential of the Responder, see {{id_cred}}
+    * CRED_R - CBOR item containing the credential of the Responder, see {{auth-cred}}
     * EAD_2 - unprotected external authorization data, see {{AD}}
 
 * If the Responder authenticates with a static Diffie-Hellman key (method equals 1 or 3), then Signature_or_MAC_2 is MAC_2. If the Responder authenticates with a signature key (method equals 0 or 2), then Signature_or_MAC_2 is the 'signature' field of a COSE_Sign1 object as defined in Section 4.4 of {{I-D.ietf-cose-rfc8152bis-struct}} using the signature algorithm of the selected cipher suite, the private authentication key of the Responder, and the following parameters as input to the Sig_structure:
@@ -862,17 +865,17 @@ The Initiator SHALL process message_2 as follows:
 
 * Decode message_2 (see {{CBOR}}).
 
-* Retrieve the protocol state using the message correlation provided by the transport (e.g., the CoAP Token and the 5-tuple as a client, or the prepended C_I as a server).
+* Retrieve the protocol state using the message correlation provided by the transport (e.g., the CoAP Token and the 5-tuple as a CoAP client, or the prepended C_I as a CoAP server, see {{ci-oscore}}).
 
 * Decrypt CIPHERTEXT_2, see {{asym-msg2-proc}}.
 
 * Pass EAD_2 to the security application.
 
-* Verify that the identity of the Responder is an allowed identity for this connection, see {{auth-key-id}}.
+* Verify that the identity of the Responder is an allowed identity for this connection, see {{identities}}.
 
 * Verify Signature_or_MAC_2 using the algorithm in the selected cipher suite. The verification process depends on the method, see {{asym-msg2-proc}}.
 
-If any processing step fails, the Initiator SHOULD send an EDHOC error message back, formatted as defined in {{error}}. Sending error messages is essential for debugging but MAY e.g., be skipped if a session cannot be found or due to denial-of-service reasons, see {{security}}. If an error message is sent, the session MUST be discontinued.
+If any processing step fails, the Initiator SHOULD send an EDHOC error message back, formatted as defined in {{error}}. Sending error messages is essential for debugging but MAY e.g., be skipped if a session cannot be found or due to denial-of-service reasons, see {{dos}}. If an error message is sent, the session MUST be discontinued.
 
 
 ## EDHOC Message 3 {#m3}
@@ -896,7 +899,7 @@ The Initiator SHALL compose message_3 as follows:
 
 * Compute MAC_3 = EDHOC-KDF( PRK_4x3m, TH_3, "MAC_3", << ID_CRED_I, CRED_I, ? EAD_3 >>, mac_length_3 ). If the Initiator authenticates with a static Diffie-Hellman key (method equals 2 or 3), then mac_length_3 is the EDHOC MAC length given by the selected cipher suite.  If the Initiator authenticates with a signature key (method equals 0 or 1), then mac_length_3 is equal to the output size of the EDHOC hash algorithm given by the selected cipher suite.
     * ID_CRED_I - identifier to facilitate retrieval of CRED_I, see {{id_cred}}
-    * CRED_I - CBOR item containing the credential of the Initiator, see {{id_cred}}
+    * CRED_I - CBOR item containing the credential of the Initiator, see {{auth-cred}}
     * EAD_3 - protected external authorization data, see {{AD}}
 
 * If the Initiator authenticates with a static Diffie-Hellman key (method equals 2 or 3), then Signature_or_MAC_3 is MAC_3. If the Initiator authenticates with a signature key (method equals 0 or 1), then Signature_or_MAC_3 is the 'signature' field of a COSE_Sign1 object as defined in Section 4.4 of {{I-D.ietf-cose-rfc8152bis-struct}} using the signature algorithm of the selected cipher suite, the private authentication key of the Initiator, and the following parameters as input to the Sig_structure:
@@ -927,7 +930,7 @@ The Initiator SHALL compose message_3 as follows:
 
    CIPHERTEXT_3 is the 'ciphertext' of COSE_Encrypt0.
 
-* Encode message_3 as a sequence of CBOR encoded data items as specified in {{asym-msg3-form}}.
+* Encode message_3 as a CBOR data item as specified in {{asym-msg3-form}}.
 
 Pass the connection identifiers (C_I, C_R) and the application algorithms in the selected cipher suite to the application. The application can now derive application keys using the EDHOC-Exporter interface, see {{exporter}}.
 
@@ -939,19 +942,19 @@ The Responder SHALL process message_3 as follows:
 
 * Decode message_3 (see {{CBOR}}).
 
-* Retrieve the protocol state using the message correlation provided by the transport (e.g., the CoAP Token and the 5-tuple as a client, or the prepended C_R as a server).
+* Retrieve the protocol state using the message correlation provided by the transport (e.g., the CoAP Token and the 5-tuple as a CoAP client, or the prepended C_R as a CoAP server, see {{ci-oscore}}).
 
-* Decrypt and verify the COSE_Encrypt0 as defined in Section 5.3 of {{I-D.ietf-cose-rfc8152bis-struct}}, with the EDHOC AEAD algorithm in the selected cipher suite, K_3, and IV_3.
+* Decrypt and verify the COSE_Encrypt0 as defined in Section 5.3 of {{I-D.ietf-cose-rfc8152bis-struct}}, with the EDHOC AEAD algorithm in the selected cipher suite, and the parameters defined in {{asym-msg3-proc}}.
 
 * Pass EAD_3 to the security application.
 
-* Verify that the identity of the Initiator is an allowed identity for this connection, see {{auth-key-id}}.
+* Verify that the identity of the Initiator is an allowed identity for this connection, see {{identities}}.
 
 * Verify Signature_or_MAC_3 using the algorithm in the selected cipher suite. The verification process depends on the method, see {{asym-msg3-proc}}.
 
 *  Pass the connection identifiers (C_I, C_R), and the application algorithms in the selected cipher suite to the security application. The application can now derive application keys using the EDHOC-Exporter interface.
 
-If any processing step fails, the Responder SHOULD send an EDHOC error message back, formatted as defined in {{error}}. Sending error messages is essential for debugging but MAY e.g., be skipped if a session cannot be found or due to denial-of-service reasons, see {{security}}. If an error message is sent, the session MUST be discontinued.
+If any processing step fails, the Responder SHOULD send an EDHOC error message back, formatted as defined in {{error}}. Sending error messages is essential for debugging but MAY e.g., be skipped if a session cannot be found or due to denial-of-service reasons, see {{dos}}. If an error message is sent, the session MUST be discontinued.
 
 After verifying message_3, the Responder is assured that the Initiator has calculated the key PRK_4x3m (explicit key confirmation) and that no other party than the Responder can compute the key. The Responder can securely send protected application data and store the keying material PRK_4x3m and TH_4.
 
@@ -962,7 +965,7 @@ This section specifies message_4 which is OPTIONAL to support. Key confirmation 
 1. When EDHOC is only used for authentication and no application data is sent.
 2. When application data is only sent from the Initiator to the Responder.
 
-Further considerations are provided in {{applicability}}.
+Further considerations about when to use message_4 are provided in {{applicability}} and {{sec-prop}}.
 
 ### Formatting of Message 4 {#asym-msg4-form}
 
@@ -995,7 +998,7 @@ The Responder SHALL compose message_4 as follows:
 
   CIPHERTEXT_4 is the 'ciphertext' of COSE_Encrypt0.
 
-* Encode message_4 as a sequence of CBOR encoded data items as specified in {{asym-msg4-form}}.
+* Encode message_4 as a CBOR data item as specified in {{asym-msg4-form}}.
 
 ### Initiator Processing of Message 4
 
@@ -1003,13 +1006,13 @@ The Initiator SHALL process message_4 as follows:
 
 * Decode message_4 (see {{CBOR}}).
 
-* Retrieve the protocol state using the message correlation provided by the transport (e.g., the CoAP Token and the 5-tuple as a client, or the prepended C_I as a server).
+* Retrieve the protocol state using the message correlation provided by the transport (e.g., the CoAP Token and the 5-tuple as a CoAP client, or the prepended C_I as a CoAP server, see {{ci-oscore}}).
 
 * Decrypt and verify the COSE_Encrypt0 as defined in Section 5.3 of {{I-D.ietf-cose-rfc8152bis-struct}}, with the EDHOC AEAD algorithm in the selected cipher suite, and the parameters defined in {{asym-msg4-proc}}.
 
 * Pass EAD_4 to the security application.
 
-If any processing step fails, the Responder SHOULD send an EDHOC error message back, formatted as defined in {{error}}. Sending error messages is essential for debugging but MAY e.g., be skipped if a session cannot be found or due to denial-of-service reasons, see {{security}}. If an error message is sent, the session MUST be discontinued.
+If any processing step fails, the Responder SHOULD send an EDHOC error message back, formatted as defined in {{error}}. Sending error messages is essential for debugging but MAY e.g., be skipped if a session cannot be found or due to denial-of-service reasons, see {{dos}}. If an error message is sent, the session MUST be discontinued.
 
 # Error Handling {#error}
 
