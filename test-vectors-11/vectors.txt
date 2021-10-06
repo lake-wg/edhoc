@@ -290,33 +290,6 @@ TH_4 (CBOR Data Item) (34 bytes)
 58 20 4b 9a dd 2a 9e eb 88 49 71 6c 79 68 78 4f 55 40 dd 64 a3 bb 07
 f8 d0 00 ad ce 88 b6 30 d8 84 eb
 
-info for OSCORE Master Secret (CBOR Sequence) (57 bytes)
-58 20 4b 9a dd 2a 9e eb 88 49 71 6c 79 68 78 4f 55 40 dd 64 a3 bb 07
-f8 d0 00 ad ce 88 b6 30 d8 84 eb 74 4f 53 43 4f 52 45 5f 4d 61 73 74
-65 72 5f 53 65 63 72 65 74 40 10
-
-OSCORE Master Secret (Raw Value) (16 bytes)
-c0 53 01 37 6c e9 5f 67 c4 14 d8 bb 5f 0f db 5e
-
-info for OSCORE Master Salt (CBOR Sequence) (55 bytes)
-58 20 4b 9a dd 2a 9e eb 88 49 71 6c 79 68 78 4f 55 40 dd 64 a3 bb 07
-f8 d0 00 ad ce 88 b6 30 d8 84 eb 72 4f 53 43 4f 52 45 5f 4d 61 73 74
-65 72 5f 53 61 6c 74 40 08
-
-OSCORE Master Salt (Raw Value) (8 bytes)
-74 01 b4 6f a8 2f 66 31
-
-Client's OSCORE Sender ID (Raw Value) (0 bytes)
-
-Server's OSCORE Sender ID (Raw Value) (1 bytes)
-0c
-
-OSCORE AEAD Algorithm (int)
-10
-
-OSCORE Hash Algorithm (int)
--16
-
 EAD_4 (CBOR Sequence) (0 bytes)
 
 P_4 (CBOR Sequence) (0 bytes)
@@ -348,6 +321,33 @@ CIPHERTEXT_4 (CBOR Data Item) (9 bytes)
 
 message_4 (CBOR Sequence) (9 bytes)
 48 e9 e6 c8 b6 37 6d b0 b1
+
+OSCORE AEAD Algorithm (int)
+10
+
+OSCORE Hash Algorithm (int)
+-16
+
+Client's OSCORE Sender ID (Raw Value) (0 bytes)
+
+Server's OSCORE Sender ID (Raw Value) (1 bytes)
+0c
+
+info for OSCORE Master Secret (CBOR Sequence) (57 bytes)
+58 20 4b 9a dd 2a 9e eb 88 49 71 6c 79 68 78 4f 55 40 dd 64 a3 bb 07
+f8 d0 00 ad ce 88 b6 30 d8 84 eb 74 4f 53 43 4f 52 45 5f 4d 61 73 74
+65 72 5f 53 65 63 72 65 74 40 10
+
+OSCORE Master Secret (Raw Value) (16 bytes)
+c0 53 01 37 6c e9 5f 67 c4 14 d8 bb 5f 0f db 5e
+
+info for OSCORE Master Salt (CBOR Sequence) (55 bytes)
+58 20 4b 9a dd 2a 9e eb 88 49 71 6c 79 68 78 4f 55 40 dd 64 a3 bb 07
+f8 d0 00 ad ce 88 b6 30 d8 84 eb 72 4f 53 43 4f 52 45 5f 4d 61 73 74
+65 72 5f 53 61 6c 74 40 08
+
+OSCORE Master Salt (Raw Value) (8 bytes)
+74 01 b4 6f a8 2f 66 31
 
 KeyUpdate Nonce (Raw Value) (16 bytes)
 d4 91 a2 04 ca a6 b8 02 54 c4 71 e0 de ee d1 60
@@ -663,34 +663,6 @@ TH_4 (CBOR Data Item) (34 bytes)
 58 20 fa d1 5d 60 eb 47 3f 8b 59 db 9c a0 c6 03 16 a4 65 70 54 65 c9
 a9 ce a6 bb 2c 4e 84 71 af 65 80
 
-info for OSCORE Master Secret (CBOR Sequence) (57 bytes)
-58 20 fa d1 5d 60 eb 47 3f 8b 59 db 9c a0 c6 03 16 a4 65 70 54 65 c9
-a9 ce a6 bb 2c 4e 84 71 af 65 80 74 4f 53 43 4f 52 45 5f 4d 61 73 74
-65 72 5f 53 65 63 72 65 74 40 10
-
-OSCORE Master Secret (Raw Value) (16 bytes)
-89 bd ab 3a fa 40 3d 10 a9 db 40 4d 71 1a a8 c6
-
-info for OSCORE Master Salt (CBOR Sequence) (55 bytes)
-58 20 fa d1 5d 60 eb 47 3f 8b 59 db 9c a0 c6 03 16 a4 65 70 54 65 c9
-a9 ce a6 bb 2c 4e 84 71 af 65 80 72 4f 53 43 4f 52 45 5f 4d 61 73 74
-65 72 5f 53 61 6c 74 40 08
-
-OSCORE Master Salt (Raw Value) (8 bytes)
-1c 1e 4b 9f 01 ff 58 43
-
-Client's OSCORE Sender ID (Raw Value) (1 bytes)
-06
-
-Server's OSCORE Sender ID (Raw Value) (1 bytes)
-28
-
-OSCORE AEAD Algorithm (int)
-10
-
-OSCORE Hash Algorithm (int)
--16
-
 EAD_4 (CBOR Sequence) (0 bytes)
 
 P_4 (CBOR Sequence) (0 bytes)
@@ -722,6 +694,34 @@ CIPHERTEXT_4 (CBOR Data Item) (9 bytes)
 
 message_4 (CBOR Sequence) (9 bytes)
 48 f5 28 11 ec a8 2c cb 2a
+
+OSCORE AEAD Algorithm (int)
+10
+
+OSCORE Hash Algorithm (int)
+-16
+
+Client's OSCORE Sender ID (Raw Value) (1 bytes)
+06
+
+Server's OSCORE Sender ID (Raw Value) (1 bytes)
+28
+
+info for OSCORE Master Secret (CBOR Sequence) (57 bytes)
+58 20 fa d1 5d 60 eb 47 3f 8b 59 db 9c a0 c6 03 16 a4 65 70 54 65 c9
+a9 ce a6 bb 2c 4e 84 71 af 65 80 74 4f 53 43 4f 52 45 5f 4d 61 73 74
+65 72 5f 53 65 63 72 65 74 40 10
+
+OSCORE Master Secret (Raw Value) (16 bytes)
+89 bd ab 3a fa 40 3d 10 a9 db 40 4d 71 1a a8 c6
+
+info for OSCORE Master Salt (CBOR Sequence) (55 bytes)
+58 20 fa d1 5d 60 eb 47 3f 8b 59 db 9c a0 c6 03 16 a4 65 70 54 65 c9
+a9 ce a6 bb 2c 4e 84 71 af 65 80 72 4f 53 43 4f 52 45 5f 4d 61 73 74
+65 72 5f 53 61 6c 74 40 08
+
+OSCORE Master Salt (Raw Value) (8 bytes)
+1c 1e 4b 9f 01 ff 58 43
 
 KeyUpdate Nonce (Raw Value) (16 bytes)
 20 b0 27 f9 d0 98 ca 46 8d b6 b3 04 27 aa d2 f3
@@ -1033,34 +1033,6 @@ TH_4 (CBOR Data Item) (34 bytes)
 58 20 8a 8f 5d be bc be 55 cd c3 0c 91 d1 59 23 4a 35 c9 a4 ec 05 55
 5f 82 4e 4c b6 c0 47 74 be e5 39
 
-info for OSCORE Master Secret (CBOR Sequence) (57 bytes)
-58 20 8a 8f 5d be bc be 55 cd c3 0c 91 d1 59 23 4a 35 c9 a4 ec 05 55
-5f 82 4e 4c b6 c0 47 74 be e5 39 74 4f 53 43 4f 52 45 5f 4d 61 73 74
-65 72 5f 53 65 63 72 65 74 40 10
-
-OSCORE Master Secret (Raw Value) (16 bytes)
-cb c2 5a 7e 3f ba 10 a2 18 a3 cb fe 90 fa 99 fe
-
-info for OSCORE Master Salt (CBOR Sequence) (55 bytes)
-58 20 8a 8f 5d be bc be 55 cd c3 0c 91 d1 59 23 4a 35 c9 a4 ec 05 55
-5f 82 4e 4c b6 c0 47 74 be e5 39 72 4f 53 43 4f 52 45 5f 4d 61 73 74
-65 72 5f 53 61 6c 74 40 08
-
-OSCORE Master Salt (Raw Value) (8 bytes)
-55 c5 1e 72 4f 54 60 3b
-
-Client's OSCORE Sender ID (Raw Value) (1 bytes)
-2d
-
-Server's OSCORE Sender ID (Raw Value) (1 bytes)
-2c
-
-OSCORE AEAD Algorithm (int)
-10
-
-OSCORE Hash Algorithm (int)
--16
-
 EAD_4 (CBOR Sequence) (0 bytes)
 
 P_4 (CBOR Sequence) (0 bytes)
@@ -1092,6 +1064,34 @@ CIPHERTEXT_4 (CBOR Data Item) (9 bytes)
 
 message_4 (CBOR Sequence) (9 bytes)
 48 f0 df ba 6b 80 06 63 61
+
+OSCORE AEAD Algorithm (int)
+10
+
+OSCORE Hash Algorithm (int)
+-16
+
+Client's OSCORE Sender ID (Raw Value) (1 bytes)
+2d
+
+Server's OSCORE Sender ID (Raw Value) (1 bytes)
+2c
+
+info for OSCORE Master Secret (CBOR Sequence) (57 bytes)
+58 20 8a 8f 5d be bc be 55 cd c3 0c 91 d1 59 23 4a 35 c9 a4 ec 05 55
+5f 82 4e 4c b6 c0 47 74 be e5 39 74 4f 53 43 4f 52 45 5f 4d 61 73 74
+65 72 5f 53 65 63 72 65 74 40 10
+
+OSCORE Master Secret (Raw Value) (16 bytes)
+cb c2 5a 7e 3f ba 10 a2 18 a3 cb fe 90 fa 99 fe
+
+info for OSCORE Master Salt (CBOR Sequence) (55 bytes)
+58 20 8a 8f 5d be bc be 55 cd c3 0c 91 d1 59 23 4a 35 c9 a4 ec 05 55
+5f 82 4e 4c b6 c0 47 74 be e5 39 72 4f 53 43 4f 52 45 5f 4d 61 73 74
+65 72 5f 53 61 6c 74 40 08
+
+OSCORE Master Salt (Raw Value) (8 bytes)
+55 c5 1e 72 4f 54 60 3b
 
 KeyUpdate Nonce (Raw Value) (16 bytes)
 56 d8 d2 1a 8e 79 51 b0 c9 0e fd a8 30 2f e1 6c
@@ -1441,34 +1441,6 @@ TH_4 (CBOR Data Item) (34 bytes)
 58 20 63 ff 46 ad b9 eb 2f 89 ac ed 66 f7 c9 23 e6 6c 36 02 e2 56 57
 b2 0a 8b 67 07 6d cc 92 aa d4 0b
 
-info for OSCORE Master Secret (CBOR Sequence) (57 bytes)
-58 20 63 ff 46 ad b9 eb 2f 89 ac ed 66 f7 c9 23 e6 6c 36 02 e2 56 57
-b2 0a 8b 67 07 6d cc 92 aa d4 0b 74 4f 53 43 4f 52 45 5f 4d 61 73 74
-65 72 5f 53 65 63 72 65 74 40 10
-
-OSCORE Master Secret (Raw Value) (16 bytes)
-01 4f df 73 06 7d fe fd 97 e6 b0 59 72 f9 0d 85
-
-info for OSCORE Master Salt (CBOR Sequence) (55 bytes)
-58 20 63 ff 46 ad b9 eb 2f 89 ac ed 66 f7 c9 23 e6 6c 36 02 e2 56 57
-b2 0a 8b 67 07 6d cc 92 aa d4 0b 72 4f 53 43 4f 52 45 5f 4d 61 73 74
-65 72 5f 53 61 6c 74 40 08
-
-OSCORE Master Salt (Raw Value) (8 bytes)
-cb 47 b6 ec d3 86 72 dd
-
-Client's OSCORE Sender ID (Raw Value) (1 bytes)
-32
-
-Server's OSCORE Sender ID (Raw Value) (1 bytes)
-0e
-
-OSCORE AEAD Algorithm (int)
-10
-
-OSCORE Hash Algorithm (int)
--16
-
 EAD_4 (CBOR Sequence) (0 bytes)
 
 P_4 (CBOR Sequence) (0 bytes)
@@ -1500,6 +1472,34 @@ CIPHERTEXT_4 (CBOR Data Item) (9 bytes)
 
 message_4 (CBOR Sequence) (9 bytes)
 48 fc 4f 5e 2f 54 c2 d4 08
+
+OSCORE AEAD Algorithm (int)
+10
+
+OSCORE Hash Algorithm (int)
+-16
+
+Client's OSCORE Sender ID (Raw Value) (1 bytes)
+32
+
+Server's OSCORE Sender ID (Raw Value) (1 bytes)
+0e
+
+info for OSCORE Master Secret (CBOR Sequence) (57 bytes)
+58 20 63 ff 46 ad b9 eb 2f 89 ac ed 66 f7 c9 23 e6 6c 36 02 e2 56 57
+b2 0a 8b 67 07 6d cc 92 aa d4 0b 74 4f 53 43 4f 52 45 5f 4d 61 73 74
+65 72 5f 53 65 63 72 65 74 40 10
+
+OSCORE Master Secret (Raw Value) (16 bytes)
+01 4f df 73 06 7d fe fd 97 e6 b0 59 72 f9 0d 85
+
+info for OSCORE Master Salt (CBOR Sequence) (55 bytes)
+58 20 63 ff 46 ad b9 eb 2f 89 ac ed 66 f7 c9 23 e6 6c 36 02 e2 56 57
+b2 0a 8b 67 07 6d cc 92 aa d4 0b 72 4f 53 43 4f 52 45 5f 4d 61 73 74
+65 72 5f 53 61 6c 74 40 08
+
+OSCORE Master Salt (Raw Value) (8 bytes)
+cb 47 b6 ec d3 86 72 dd
 
 KeyUpdate Nonce (Raw Value) (16 bytes)
 e6 f5 49 b8 58 1a a2 92 53 cf ce 68 07 53 a4 00
@@ -1806,34 +1806,6 @@ TH_4 (CBOR Data Item) (34 bytes)
 58 20 c7 ca c0 d7 3e cb b8 c8 3a ee 37 ff 98 6d 8b 0d e5 a3 62 9b 1f
 e4 c3 78 e4 29 98 1c 82 c5 1d 69
 
-info for OSCORE Master Secret (CBOR Sequence) (57 bytes)
-58 20 c7 ca c0 d7 3e cb b8 c8 3a ee 37 ff 98 6d 8b 0d e5 a3 62 9b 1f
-e4 c3 78 e4 29 98 1c 82 c5 1d 69 74 4f 53 43 4f 52 45 5f 4d 61 73 74
-65 72 5f 53 65 63 72 65 74 40 10
-
-OSCORE Master Secret (Raw Value) (16 bytes)
-d4 ef 3e 9e 52 89 31 dc 5d b1 ef 54 ac 10 ce 40
-
-info for OSCORE Master Salt (CBOR Sequence) (55 bytes)
-58 20 c7 ca c0 d7 3e cb b8 c8 3a ee 37 ff 98 6d 8b 0d e5 a3 62 9b 1f
-e4 c3 78 e4 29 98 1c 82 c5 1d 69 72 4f 53 43 4f 52 45 5f 4d 61 73 74
-65 72 5f 53 61 6c 74 40 08
-
-OSCORE Master Salt (Raw Value) (8 bytes)
-98 50 5e 3f 73 f8 13 f8
-
-Client's OSCORE Sender ID (Raw Value) (1 bytes)
-14
-
-Server's OSCORE Sender ID (Raw Value) (1 bytes)
-04
-
-OSCORE AEAD Algorithm (int)
-10
-
-OSCORE Hash Algorithm (int)
--16
-
 EAD_4 (CBOR Sequence) (0 bytes)
 
 P_4 (CBOR Sequence) (0 bytes)
@@ -1865,6 +1837,34 @@ CIPHERTEXT_4 (CBOR Data Item) (9 bytes)
 
 message_4 (CBOR Sequence) (9 bytes)
 48 8b 27 7d 16 c1 38 2c 46
+
+OSCORE AEAD Algorithm (int)
+10
+
+OSCORE Hash Algorithm (int)
+-16
+
+Client's OSCORE Sender ID (Raw Value) (1 bytes)
+14
+
+Server's OSCORE Sender ID (Raw Value) (1 bytes)
+04
+
+info for OSCORE Master Secret (CBOR Sequence) (57 bytes)
+58 20 c7 ca c0 d7 3e cb b8 c8 3a ee 37 ff 98 6d 8b 0d e5 a3 62 9b 1f
+e4 c3 78 e4 29 98 1c 82 c5 1d 69 74 4f 53 43 4f 52 45 5f 4d 61 73 74
+65 72 5f 53 65 63 72 65 74 40 10
+
+OSCORE Master Secret (Raw Value) (16 bytes)
+d4 ef 3e 9e 52 89 31 dc 5d b1 ef 54 ac 10 ce 40
+
+info for OSCORE Master Salt (CBOR Sequence) (55 bytes)
+58 20 c7 ca c0 d7 3e cb b8 c8 3a ee 37 ff 98 6d 8b 0d e5 a3 62 9b 1f
+e4 c3 78 e4 29 98 1c 82 c5 1d 69 72 4f 53 43 4f 52 45 5f 4d 61 73 74
+65 72 5f 53 61 6c 74 40 08
+
+OSCORE Master Salt (Raw Value) (8 bytes)
+98 50 5e 3f 73 f8 13 f8
 
 KeyUpdate Nonce (Raw Value) (16 bytes)
 7c 58 6e 1b 77 ac e6 99 87 17 0c 2f ee a8 46 fa
@@ -2266,34 +2266,6 @@ TH_4 (CBOR Data Item) (34 bytes)
 58 20 04 8d 73 0c 8d d0 1a 89 88 5d e8 78 aa d3 74 9d 23 60 69 cf 53
 93 b6 34 10 cf af 1a 2b f4 1b 30
 
-info for OSCORE Master Secret (CBOR Sequence) (57 bytes)
-58 20 04 8d 73 0c 8d d0 1a 89 88 5d e8 78 aa d3 74 9d 23 60 69 cf 53
-93 b6 34 10 cf af 1a 2b f4 1b 30 74 4f 53 43 4f 52 45 5f 4d 61 73 74
-65 72 5f 53 65 63 72 65 74 40 10
-
-OSCORE Master Secret (Raw Value) (16 bytes)
-e1 24 56 71 13 ba 03 0c 3f 32 ec 6f 35 ba 5f ef
-
-info for OSCORE Master Salt (CBOR Sequence) (55 bytes)
-58 20 04 8d 73 0c 8d d0 1a 89 88 5d e8 78 aa d3 74 9d 23 60 69 cf 53
-93 b6 34 10 cf af 1a 2b f4 1b 30 72 4f 53 43 4f 52 45 5f 4d 61 73 74
-65 72 5f 53 61 6c 74 40 08
-
-OSCORE Master Salt (Raw Value) (8 bytes)
-d3 ce dd cc 8a 22 d6 47
-
-Client's OSCORE Sender ID (Raw Value) (1 bytes)
-2c
-
-Server's OSCORE Sender ID (Raw Value) (1 bytes)
-12
-
-OSCORE AEAD Algorithm (int)
-10
-
-OSCORE Hash Algorithm (int)
--16
-
 EAD_4 (CBOR Sequence) (0 bytes)
 
 P_4 (CBOR Sequence) (0 bytes)
@@ -2325,6 +2297,34 @@ CIPHERTEXT_4 (CBOR Data Item) (9 bytes)
 
 message_4 (CBOR Sequence) (9 bytes)
 48 d6 4c 09 0f ed 16 00 38
+
+OSCORE AEAD Algorithm (int)
+10
+
+OSCORE Hash Algorithm (int)
+-16
+
+Client's OSCORE Sender ID (Raw Value) (1 bytes)
+2c
+
+Server's OSCORE Sender ID (Raw Value) (1 bytes)
+12
+
+info for OSCORE Master Secret (CBOR Sequence) (57 bytes)
+58 20 04 8d 73 0c 8d d0 1a 89 88 5d e8 78 aa d3 74 9d 23 60 69 cf 53
+93 b6 34 10 cf af 1a 2b f4 1b 30 74 4f 53 43 4f 52 45 5f 4d 61 73 74
+65 72 5f 53 65 63 72 65 74 40 10
+
+OSCORE Master Secret (Raw Value) (16 bytes)
+e1 24 56 71 13 ba 03 0c 3f 32 ec 6f 35 ba 5f ef
+
+info for OSCORE Master Salt (CBOR Sequence) (55 bytes)
+58 20 04 8d 73 0c 8d d0 1a 89 88 5d e8 78 aa d3 74 9d 23 60 69 cf 53
+93 b6 34 10 cf af 1a 2b f4 1b 30 72 4f 53 43 4f 52 45 5f 4d 61 73 74
+65 72 5f 53 61 6c 74 40 08
+
+OSCORE Master Salt (Raw Value) (8 bytes)
+d3 ce dd cc 8a 22 d6 47
 
 KeyUpdate Nonce (Raw Value) (16 bytes)
 cf 96 4f e9 00 7d 6f 4b cd 76 9c bb df 5b db 71
@@ -2673,34 +2673,6 @@ TH_4 (CBOR Data Item) (34 bytes)
 58 20 cd 81 6b 82 3d 95 3c 10 0c e1 0a 21 d0 79 ed 39 ed 91 ab 18 d7
 b6 f2 df 79 d9 62 06 da 36 a7 d8
 
-info for OSCORE Master Secret (CBOR Sequence) (57 bytes)
-58 20 cd 81 6b 82 3d 95 3c 10 0c e1 0a 21 d0 79 ed 39 ed 91 ab 18 d7
-b6 f2 df 79 d9 62 06 da 36 a7 d8 74 4f 53 43 4f 52 45 5f 4d 61 73 74
-65 72 5f 53 65 63 72 65 74 40 10
-
-OSCORE Master Secret (Raw Value) (16 bytes)
-d3 87 05 ae 55 a2 04 66 77 00 e7 ce 15 01 d9 0b
-
-info for OSCORE Master Salt (CBOR Sequence) (55 bytes)
-58 20 cd 81 6b 82 3d 95 3c 10 0c e1 0a 21 d0 79 ed 39 ed 91 ab 18 d7
-b6 f2 df 79 d9 62 06 da 36 a7 d8 72 4f 53 43 4f 52 45 5f 4d 61 73 74
-65 72 5f 53 61 6c 74 40 08
-
-OSCORE Master Salt (Raw Value) (8 bytes)
-a0 c8 45 de 81 f4 dd c0
-
-Client's OSCORE Sender ID (Raw Value) (1 bytes)
-01
-
-Server's OSCORE Sender ID (Raw Value) (1 bytes)
-0a
-
-OSCORE AEAD Algorithm (int)
-10
-
-OSCORE Hash Algorithm (int)
--16
-
 EAD_4 (CBOR Sequence) (0 bytes)
 
 P_4 (CBOR Sequence) (0 bytes)
@@ -2732,6 +2704,34 @@ CIPHERTEXT_4 (CBOR Data Item) (9 bytes)
 
 message_4 (CBOR Sequence) (9 bytes)
 48 24 bf 26 45 4c 0f 1b 66
+
+OSCORE AEAD Algorithm (int)
+10
+
+OSCORE Hash Algorithm (int)
+-16
+
+Client's OSCORE Sender ID (Raw Value) (1 bytes)
+01
+
+Server's OSCORE Sender ID (Raw Value) (1 bytes)
+0a
+
+info for OSCORE Master Secret (CBOR Sequence) (57 bytes)
+58 20 cd 81 6b 82 3d 95 3c 10 0c e1 0a 21 d0 79 ed 39 ed 91 ab 18 d7
+b6 f2 df 79 d9 62 06 da 36 a7 d8 74 4f 53 43 4f 52 45 5f 4d 61 73 74
+65 72 5f 53 65 63 72 65 74 40 10
+
+OSCORE Master Secret (Raw Value) (16 bytes)
+d3 87 05 ae 55 a2 04 66 77 00 e7 ce 15 01 d9 0b
+
+info for OSCORE Master Salt (CBOR Sequence) (55 bytes)
+58 20 cd 81 6b 82 3d 95 3c 10 0c e1 0a 21 d0 79 ed 39 ed 91 ab 18 d7
+b6 f2 df 79 d9 62 06 da 36 a7 d8 72 4f 53 43 4f 52 45 5f 4d 61 73 74
+65 72 5f 53 61 6c 74 40 08
+
+OSCORE Master Salt (Raw Value) (8 bytes)
+a0 c8 45 de 81 f4 dd c0
 
 KeyUpdate Nonce (Raw Value) (16 bytes)
 e6 a8 70 5f 73 82 a0 d4 3b eb 61 e3 60 d0 f9 83
@@ -3013,34 +3013,6 @@ TH_4 (CBOR Data Item) (34 bytes)
 58 20 03 85 8e c5 79 93 6f b0 13 6e c9 f7 6d 96 79 6e b5 89 5c 4f bd
 4b e5 b4 b3 44 f4 91 eb 03 65 c7
 
-info for OSCORE Master Secret (CBOR Sequence) (57 bytes)
-58 20 03 85 8e c5 79 93 6f b0 13 6e c9 f7 6d 96 79 6e b5 89 5c 4f bd
-4b e5 b4 b3 44 f4 91 eb 03 65 c7 74 4f 53 43 4f 52 45 5f 4d 61 73 74
-65 72 5f 53 65 63 72 65 74 40 10
-
-OSCORE Master Secret (Raw Value) (16 bytes)
-b9 b9 bc ac ef 39 98 10 bc 62 e2 87 d6 bc 5a 52
-
-info for OSCORE Master Salt (CBOR Sequence) (55 bytes)
-58 20 03 85 8e c5 79 93 6f b0 13 6e c9 f7 6d 96 79 6e b5 89 5c 4f bd
-4b e5 b4 b3 44 f4 91 eb 03 65 c7 72 4f 53 43 4f 52 45 5f 4d 61 73 74
-65 72 5f 53 61 6c 74 40 08
-
-OSCORE Master Salt (Raw Value) (8 bytes)
-cb 5b e3 6b fa cf 17 69
-
-Client's OSCORE Sender ID (Raw Value) (1 bytes)
-23
-
-Server's OSCORE Sender ID (Raw Value) (1 bytes)
-2a
-
-OSCORE AEAD Algorithm (int)
-10
-
-OSCORE Hash Algorithm (int)
--16
-
 EAD_4 (CBOR Sequence) (0 bytes)
 
 P_4 (CBOR Sequence) (0 bytes)
@@ -3072,6 +3044,34 @@ CIPHERTEXT_4 (CBOR Data Item) (17 bytes)
 
 message_4 (CBOR Sequence) (17 bytes)
 50 dd d9 8a 7a 8e 83 6c 29 35 0a 28 80 ec a9 72 55
+
+OSCORE AEAD Algorithm (int)
+10
+
+OSCORE Hash Algorithm (int)
+-16
+
+Client's OSCORE Sender ID (Raw Value) (1 bytes)
+23
+
+Server's OSCORE Sender ID (Raw Value) (1 bytes)
+2a
+
+info for OSCORE Master Secret (CBOR Sequence) (57 bytes)
+58 20 03 85 8e c5 79 93 6f b0 13 6e c9 f7 6d 96 79 6e b5 89 5c 4f bd
+4b e5 b4 b3 44 f4 91 eb 03 65 c7 74 4f 53 43 4f 52 45 5f 4d 61 73 74
+65 72 5f 53 65 63 72 65 74 40 10
+
+OSCORE Master Secret (Raw Value) (16 bytes)
+b9 b9 bc ac ef 39 98 10 bc 62 e2 87 d6 bc 5a 52
+
+info for OSCORE Master Salt (CBOR Sequence) (55 bytes)
+58 20 03 85 8e c5 79 93 6f b0 13 6e c9 f7 6d 96 79 6e b5 89 5c 4f bd
+4b e5 b4 b3 44 f4 91 eb 03 65 c7 72 4f 53 43 4f 52 45 5f 4d 61 73 74
+65 72 5f 53 61 6c 74 40 08
+
+OSCORE Master Salt (Raw Value) (8 bytes)
+cb 5b e3 6b fa cf 17 69
 
 KeyUpdate Nonce (Raw Value) (16 bytes)
 37 be 30 b7 ba 58 38 5e cd 4d 15 d7 75 59 20 64
@@ -3421,34 +3421,6 @@ TH_4 (CBOR Data Item) (34 bytes)
 58 20 0a 49 d4 74 be ae d8 81 cb 2c e0 31 ca 8a bb 4a c8 50 d8 bf 89
 86 7e a3 8b bf f3 49 b9 c8 21 b3
 
-info for OSCORE Master Secret (CBOR Sequence) (57 bytes)
-58 20 0a 49 d4 74 be ae d8 81 cb 2c e0 31 ca 8a bb 4a c8 50 d8 bf 89
-86 7e a3 8b bf f3 49 b9 c8 21 b3 74 4f 53 43 4f 52 45 5f 4d 61 73 74
-65 72 5f 53 65 63 72 65 74 40 10
-
-OSCORE Master Secret (Raw Value) (16 bytes)
-45 82 2e 25 fd c6 1c 73 c2 70 ca e0 1c 69 60 a9
-
-info for OSCORE Master Salt (CBOR Sequence) (55 bytes)
-58 20 0a 49 d4 74 be ae d8 81 cb 2c e0 31 ca 8a bb 4a c8 50 d8 bf 89
-86 7e a3 8b bf f3 49 b9 c8 21 b3 72 4f 53 43 4f 52 45 5f 4d 61 73 74
-65 72 5f 53 61 6c 74 40 08
-
-OSCORE Master Salt (Raw Value) (8 bytes)
-e6 cc cd 99 39 7c 6a fd
-
-Client's OSCORE Sender ID (Raw Value) (1 bytes)
-0f
-
-Server's OSCORE Sender ID (Raw Value) (1 bytes)
-28
-
-OSCORE AEAD Algorithm (int)
-10
-
-OSCORE Hash Algorithm (int)
--16
-
 EAD_4 (CBOR Sequence) (0 bytes)
 
 P_4 (CBOR Sequence) (0 bytes)
@@ -3480,6 +3452,34 @@ CIPHERTEXT_4 (CBOR Data Item) (17 bytes)
 
 message_4 (CBOR Sequence) (17 bytes)
 50 f4 81 da 5e 3d a6 eb e5 84 1b 46 cf 8d f5 71 2c
+
+OSCORE AEAD Algorithm (int)
+10
+
+OSCORE Hash Algorithm (int)
+-16
+
+Client's OSCORE Sender ID (Raw Value) (1 bytes)
+0f
+
+Server's OSCORE Sender ID (Raw Value) (1 bytes)
+28
+
+info for OSCORE Master Secret (CBOR Sequence) (57 bytes)
+58 20 0a 49 d4 74 be ae d8 81 cb 2c e0 31 ca 8a bb 4a c8 50 d8 bf 89
+86 7e a3 8b bf f3 49 b9 c8 21 b3 74 4f 53 43 4f 52 45 5f 4d 61 73 74
+65 72 5f 53 65 63 72 65 74 40 10
+
+OSCORE Master Secret (Raw Value) (16 bytes)
+45 82 2e 25 fd c6 1c 73 c2 70 ca e0 1c 69 60 a9
+
+info for OSCORE Master Salt (CBOR Sequence) (55 bytes)
+58 20 0a 49 d4 74 be ae d8 81 cb 2c e0 31 ca 8a bb 4a c8 50 d8 bf 89
+86 7e a3 8b bf f3 49 b9 c8 21 b3 72 4f 53 43 4f 52 45 5f 4d 61 73 74
+65 72 5f 53 61 6c 74 40 08
+
+OSCORE Master Salt (Raw Value) (8 bytes)
+e6 cc cd 99 39 7c 6a fd
 
 KeyUpdate Nonce (Raw Value) (16 bytes)
 73 a8 39 6b d8 76 1c 1c f7 c6 65 d3 56 58 e6 ec
@@ -3788,34 +3788,6 @@ TH_4 (CBOR Data Item) (34 bytes)
 58 20 2e a1 a1 39 83 d9 ad 61 38 27 f7 0a 28 b1 2b 7f a8 a1 fa 21 0c
 38 b4 2c 06 b8 e6 48 b2 15 bb 4b
 
-info for OSCORE Master Secret (CBOR Sequence) (57 bytes)
-58 20 2e a1 a1 39 83 d9 ad 61 38 27 f7 0a 28 b1 2b 7f a8 a1 fa 21 0c
-38 b4 2c 06 b8 e6 48 b2 15 bb 4b 74 4f 53 43 4f 52 45 5f 4d 61 73 74
-65 72 5f 53 65 63 72 65 74 40 10
-
-OSCORE Master Secret (Raw Value) (16 bytes)
-d1 fb c5 7b 53 2d 04 46 5a 40 f2 d9 aa e1 f6 fe
-
-info for OSCORE Master Salt (CBOR Sequence) (55 bytes)
-58 20 2e a1 a1 39 83 d9 ad 61 38 27 f7 0a 28 b1 2b 7f a8 a1 fa 21 0c
-38 b4 2c 06 b8 e6 48 b2 15 bb 4b 72 4f 53 43 4f 52 45 5f 4d 61 73 74
-65 72 5f 53 61 6c 74 40 08
-
-OSCORE Master Salt (Raw Value) (8 bytes)
-38 21 cf 9a 28 46 95 ec
-
-Client's OSCORE Sender ID (Raw Value) (2 bytes)
-97 7c
-
-Server's OSCORE Sender ID (Raw Value) (2 bytes)
-de ee
-
-OSCORE AEAD Algorithm (int)
-10
-
-OSCORE Hash Algorithm (int)
--16
-
 EAD_4 (CBOR Sequence) (48 bytes)
 18 4e 19 0a cd 18 5f 82 48 00 01 02 03 04 05 06 07 48 00 01 02 03 04
 05 06 07 18 57 82 49 00 01 02 03 04 05 06 07 08 48 00 01 02 03 04 05
@@ -3859,6 +3831,34 @@ message_4 (CBOR Sequence) (58 bytes)
 58 38 18 c9 87 4e 43 0c 53 8d 3f a0 4b bf ba 38 48 b5 e6 0f 0b f7 75
 96 17 d4 30 cb 11 17 b0 bf 3a d3 d4 15 c1 f9 ce 04 7f 35 0a 91 72 85
 13 a2 f4 e5 56 58 08 64 3d fa 57 f6
+
+OSCORE AEAD Algorithm (int)
+10
+
+OSCORE Hash Algorithm (int)
+-16
+
+Client's OSCORE Sender ID (Raw Value) (2 bytes)
+97 7c
+
+Server's OSCORE Sender ID (Raw Value) (2 bytes)
+de ee
+
+info for OSCORE Master Secret (CBOR Sequence) (57 bytes)
+58 20 2e a1 a1 39 83 d9 ad 61 38 27 f7 0a 28 b1 2b 7f a8 a1 fa 21 0c
+38 b4 2c 06 b8 e6 48 b2 15 bb 4b 74 4f 53 43 4f 52 45 5f 4d 61 73 74
+65 72 5f 53 65 63 72 65 74 40 10
+
+OSCORE Master Secret (Raw Value) (16 bytes)
+d1 fb c5 7b 53 2d 04 46 5a 40 f2 d9 aa e1 f6 fe
+
+info for OSCORE Master Salt (CBOR Sequence) (55 bytes)
+58 20 2e a1 a1 39 83 d9 ad 61 38 27 f7 0a 28 b1 2b 7f a8 a1 fa 21 0c
+38 b4 2c 06 b8 e6 48 b2 15 bb 4b 72 4f 53 43 4f 52 45 5f 4d 61 73 74
+65 72 5f 53 61 6c 74 40 08
+
+OSCORE Master Salt (Raw Value) (8 bytes)
+38 21 cf 9a 28 46 95 ec
 
 KeyUpdate Nonce (Raw Value) (16 bytes)
 08 d9 06 4e f9 9e 33 9c d4 02 67 1a 50 f0 ba 0f
@@ -4233,34 +4233,6 @@ TH_4 (CBOR Data Item) (34 bytes)
 58 20 b4 e9 08 38 1f 5b 0a ef 12 ff 38 7b b3 63 85 f0 36 4f c1 17 94
 ec f8 08 00 9d 27 30 0f be ec 2d
 
-info for OSCORE Master Secret (CBOR Sequence) (57 bytes)
-58 20 b4 e9 08 38 1f 5b 0a ef 12 ff 38 7b b3 63 85 f0 36 4f c1 17 94
-ec f8 08 00 9d 27 30 0f be ec 2d 74 4f 53 43 4f 52 45 5f 4d 61 73 74
-65 72 5f 53 65 63 72 65 74 40 10
-
-OSCORE Master Secret (Raw Value) (16 bytes)
-d7 8d 5b c9 49 e2 28 2e 8e 16 e2 6a 75 57 ba 27
-
-info for OSCORE Master Salt (CBOR Sequence) (55 bytes)
-58 20 b4 e9 08 38 1f 5b 0a ef 12 ff 38 7b b3 63 85 f0 36 4f c1 17 94
-ec f8 08 00 9d 27 30 0f be ec 2d 72 4f 53 43 4f 52 45 5f 4d 61 73 74
-65 72 5f 53 61 6c 74 40 08
-
-OSCORE Master Salt (Raw Value) (8 bytes)
-15 fc ab 6f c3 87 30 44
-
-Client's OSCORE Sender ID (Raw Value) (2 bytes)
-12 b7
-
-Server's OSCORE Sender ID (Raw Value) (3 bytes)
-19 74 9e
-
-OSCORE AEAD Algorithm (int)
-10
-
-OSCORE Hash Algorithm (int)
--16
-
 EAD_4 (CBOR Sequence) (22 bytes)
 18 29 4e 00 01 02 03 04 05 06 07 08 09 0a 0b 0c 0d 18 55 19 0e 85
 
@@ -4297,6 +4269,34 @@ a3 1a 70 ea ed c9 3d 3f 48
 message_4 (CBOR Sequence) (32 bytes)
 58 1e a3 65 1a 10 cb a8 17 47 95 92 ec 73 f0 aa 0b 02 0a 42 7e 3e e6
 a3 1a 70 ea ed c9 3d 3f 48
+
+OSCORE AEAD Algorithm (int)
+10
+
+OSCORE Hash Algorithm (int)
+-16
+
+Client's OSCORE Sender ID (Raw Value) (2 bytes)
+12 b7
+
+Server's OSCORE Sender ID (Raw Value) (3 bytes)
+19 74 9e
+
+info for OSCORE Master Secret (CBOR Sequence) (57 bytes)
+58 20 b4 e9 08 38 1f 5b 0a ef 12 ff 38 7b b3 63 85 f0 36 4f c1 17 94
+ec f8 08 00 9d 27 30 0f be ec 2d 74 4f 53 43 4f 52 45 5f 4d 61 73 74
+65 72 5f 53 65 63 72 65 74 40 10
+
+OSCORE Master Secret (Raw Value) (16 bytes)
+d7 8d 5b c9 49 e2 28 2e 8e 16 e2 6a 75 57 ba 27
+
+info for OSCORE Master Salt (CBOR Sequence) (55 bytes)
+58 20 b4 e9 08 38 1f 5b 0a ef 12 ff 38 7b b3 63 85 f0 36 4f c1 17 94
+ec f8 08 00 9d 27 30 0f be ec 2d 72 4f 53 43 4f 52 45 5f 4d 61 73 74
+65 72 5f 53 61 6c 74 40 08
+
+OSCORE Master Salt (Raw Value) (8 bytes)
+15 fc ab 6f c3 87 30 44
 
 KeyUpdate Nonce (Raw Value) (16 bytes)
 7c 51 c4 c4 2d 65 51 04 f4 bf 7a 1e 24 f2 dd 48
@@ -4587,34 +4587,6 @@ TH_4 (CBOR Data Item) (34 bytes)
 58 20 0f ea 2d e0 ef c3 57 74 45 02 3f b7 30 d0 0a 6b 3e 3e d4 27 da
 f5 91 35 75 33 67 1a e9 cc be 7d
 
-info for OSCORE Master Secret (CBOR Sequence) (57 bytes)
-58 20 0f ea 2d e0 ef c3 57 74 45 02 3f b7 30 d0 0a 6b 3e 3e d4 27 da
-f5 91 35 75 33 67 1a e9 cc be 7d 74 4f 53 43 4f 52 45 5f 4d 61 73 74
-65 72 5f 53 65 63 72 65 74 40 10
-
-OSCORE Master Secret (Raw Value) (16 bytes)
-04 a3 bf 1c 2e 55 e0 69 41 46 db 6e 82 fd d9 31
-
-info for OSCORE Master Salt (CBOR Sequence) (55 bytes)
-58 20 0f ea 2d e0 ef c3 57 74 45 02 3f b7 30 d0 0a 6b 3e 3e d4 27 da
-f5 91 35 75 33 67 1a e9 cc be 7d 72 4f 53 43 4f 52 45 5f 4d 61 73 74
-65 72 5f 53 61 6c 74 40 08
-
-OSCORE Master Salt (Raw Value) (8 bytes)
-b7 29 4f e8 50 72 85 02
-
-Client's OSCORE Sender ID (Raw Value) (1 bytes)
-32
-
-Server's OSCORE Sender ID (Raw Value) (1 bytes)
-29
-
-OSCORE AEAD Algorithm (int)
-10
-
-OSCORE Hash Algorithm (int)
--16
-
 EAD_4 (CBOR Sequence) (0 bytes)
 
 P_4 (CBOR Sequence) (0 bytes)
@@ -4646,6 +4618,34 @@ CIPHERTEXT_4 (CBOR Data Item) (9 bytes)
 
 message_4 (CBOR Sequence) (9 bytes)
 48 4c b8 96 75 05 5e f3 53
+
+OSCORE AEAD Algorithm (int)
+10
+
+OSCORE Hash Algorithm (int)
+-16
+
+Client's OSCORE Sender ID (Raw Value) (1 bytes)
+32
+
+Server's OSCORE Sender ID (Raw Value) (1 bytes)
+29
+
+info for OSCORE Master Secret (CBOR Sequence) (57 bytes)
+58 20 0f ea 2d e0 ef c3 57 74 45 02 3f b7 30 d0 0a 6b 3e 3e d4 27 da
+f5 91 35 75 33 67 1a e9 cc be 7d 74 4f 53 43 4f 52 45 5f 4d 61 73 74
+65 72 5f 53 65 63 72 65 74 40 10
+
+OSCORE Master Secret (Raw Value) (16 bytes)
+04 a3 bf 1c 2e 55 e0 69 41 46 db 6e 82 fd d9 31
+
+info for OSCORE Master Salt (CBOR Sequence) (55 bytes)
+58 20 0f ea 2d e0 ef c3 57 74 45 02 3f b7 30 d0 0a 6b 3e 3e d4 27 da
+f5 91 35 75 33 67 1a e9 cc be 7d 72 4f 53 43 4f 52 45 5f 4d 61 73 74
+65 72 5f 53 61 6c 74 40 08
+
+OSCORE Master Salt (Raw Value) (8 bytes)
+b7 29 4f e8 50 72 85 02
 
 KeyUpdate Nonce (Raw Value) (16 bytes)
 7d fa 26 6e 22 8e 1f a2 64 68 ee 5a 0e 38 56 db
@@ -4970,34 +4970,6 @@ TH_4 (CBOR Data Item) (34 bytes)
 58 20 57 ca dd db 9c 92 07 2a fd 2c bd 49 20 a4 09 e1 55 35 41 08 61
 e6 79 a6 4e 44 2b fd da 1f dc b1
 
-info for OSCORE Master Secret (CBOR Sequence) (57 bytes)
-58 20 57 ca dd db 9c 92 07 2a fd 2c bd 49 20 a4 09 e1 55 35 41 08 61
-e6 79 a6 4e 44 2b fd da 1f dc b1 74 4f 53 43 4f 52 45 5f 4d 61 73 74
-65 72 5f 53 65 63 72 65 74 40 10
-
-OSCORE Master Secret (Raw Value) (16 bytes)
-b7 0c 59 5d e7 9e ae 0c 4c 03 ad 32 e7 34 f2 25
-
-info for OSCORE Master Salt (CBOR Sequence) (55 bytes)
-58 20 57 ca dd db 9c 92 07 2a fd 2c bd 49 20 a4 09 e1 55 35 41 08 61
-e6 79 a6 4e 44 2b fd da 1f dc b1 72 4f 53 43 4f 52 45 5f 4d 61 73 74
-65 72 5f 53 61 6c 74 40 08
-
-OSCORE Master Salt (Raw Value) (8 bytes)
-7b cf 5e cf e3 a0 52 32
-
-Client's OSCORE Sender ID (Raw Value) (1 bytes)
-2e
-
-Server's OSCORE Sender ID (Raw Value) (1 bytes)
-33
-
-OSCORE AEAD Algorithm (int)
-10
-
-OSCORE Hash Algorithm (int)
--16
-
 EAD_4 (CBOR Sequence) (0 bytes)
 
 P_4 (CBOR Sequence) (0 bytes)
@@ -5029,6 +5001,34 @@ CIPHERTEXT_4 (CBOR Data Item) (9 bytes)
 
 message_4 (CBOR Sequence) (9 bytes)
 48 48 14 bd 9b 34 0d e8 aa
+
+OSCORE AEAD Algorithm (int)
+10
+
+OSCORE Hash Algorithm (int)
+-16
+
+Client's OSCORE Sender ID (Raw Value) (1 bytes)
+2e
+
+Server's OSCORE Sender ID (Raw Value) (1 bytes)
+33
+
+info for OSCORE Master Secret (CBOR Sequence) (57 bytes)
+58 20 57 ca dd db 9c 92 07 2a fd 2c bd 49 20 a4 09 e1 55 35 41 08 61
+e6 79 a6 4e 44 2b fd da 1f dc b1 74 4f 53 43 4f 52 45 5f 4d 61 73 74
+65 72 5f 53 65 63 72 65 74 40 10
+
+OSCORE Master Secret (Raw Value) (16 bytes)
+b7 0c 59 5d e7 9e ae 0c 4c 03 ad 32 e7 34 f2 25
+
+info for OSCORE Master Salt (CBOR Sequence) (55 bytes)
+58 20 57 ca dd db 9c 92 07 2a fd 2c bd 49 20 a4 09 e1 55 35 41 08 61
+e6 79 a6 4e 44 2b fd da 1f dc b1 72 4f 53 43 4f 52 45 5f 4d 61 73 74
+65 72 5f 53 61 6c 74 40 08
+
+OSCORE Master Salt (Raw Value) (8 bytes)
+7b cf 5e cf e3 a0 52 32
 
 KeyUpdate Nonce (Raw Value) (16 bytes)
 55 4d 0d c2 f6 d7 6b f8 a5 0d 38 80 7f 70 86 78

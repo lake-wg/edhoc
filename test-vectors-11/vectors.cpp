@@ -600,15 +600,6 @@ void test_vectors( EDHOCKeyType type_I, COSECred credtype_I, COSEHeader attr_I,
         print_json( "th_4_raw", TH_4 );
         print_json( "th_4", cbor( TH_4 ) );
 
-        print_json( "info_oscore_secret", info_OSCORE_secret );
-        print_json( "oscore_secret_raw", OSCORE_secret );
-        print_json( "info_oscore_salt", info_OSCORE_salt );   
-        print_json( "oscore_salt_raw", OSCORE_salt );
-        print_json( "client_sender_id_raw", OSCORE_id( C_R ) );
-        print_json( "server_sender_id_raw", OSCORE_id( C_I ) );
-        print_json( "oscore_aead_alg", oscore_aead_alg );
-        print_json( "oscore_hash_alg", oscore_hash_alg );
-
         print_json( "ead_4", EAD_4 );
         print_json( "p_4", P_4 );   
         print_json( "a_4", A_4 );   
@@ -619,6 +610,15 @@ void test_vectors( EDHOCKeyType type_I, COSECred credtype_I, COSEHeader attr_I,
         print_json( "ciphertext_4_raw", CIPHERTEXT_4 );   
         print_json( "ciphertext_4", cbor( CIPHERTEXT_4 ) );   
         print_json( "message_4", message_4 );
+
+        print_json( "oscore_aead_alg", oscore_aead_alg );
+        print_json( "oscore_hash_alg", oscore_hash_alg );
+        print_json( "client_sender_id_raw", OSCORE_id( C_R ) );
+        print_json( "server_sender_id_raw", OSCORE_id( C_I ) );
+        print_json( "info_oscore_secret", info_OSCORE_secret );
+        print_json( "oscore_secret_raw", OSCORE_secret );
+        print_json( "info_oscore_salt", info_OSCORE_salt );   
+        print_json( "oscore_salt_raw", OSCORE_salt );
 
         print_json( "key_update_nonce_raw", nonce );
         print_json( "prk_4x3m_key_update_raw", PRK_4x3m_new );   
@@ -729,15 +729,6 @@ void test_vectors( EDHOCKeyType type_I, COSECred credtype_I, COSEHeader attr_I,
         print( "TH_4 (Raw Value)", TH_4 );
         print( "TH_4 (CBOR Data Item)", cbor( TH_4 ) );
 
-        print( "info for OSCORE Master Secret (CBOR Sequence)", info_OSCORE_secret );
-        print( "OSCORE Master Secret (Raw Value)", OSCORE_secret );
-        print( "info for OSCORE Master Salt (CBOR Sequence)", info_OSCORE_salt );   
-        print( "OSCORE Master Salt (Raw Value)", OSCORE_salt );
-        print( "Client's OSCORE Sender ID (Raw Value)", OSCORE_id( C_R ) );
-        print( "Server's OSCORE Sender ID (Raw Value)", OSCORE_id( C_I ) );
-        print( "OSCORE AEAD Algorithm", oscore_aead_alg );
-        print( "OSCORE Hash Algorithm", oscore_hash_alg );
-
         print( "EAD_4 (CBOR Sequence)", EAD_4 );   
         print( "P_4 (CBOR Sequence)", P_4 );   
         print( "A_4 (CBOR Data Item)", A_4 );   
@@ -748,6 +739,15 @@ void test_vectors( EDHOCKeyType type_I, COSECred credtype_I, COSEHeader attr_I,
         print( "CIPHERTEXT_4", CIPHERTEXT_4 );   
         print( "CIPHERTEXT_4 (CBOR Data Item)", cbor( CIPHERTEXT_4 ) );   
         print( "message_4 (CBOR Sequence)", message_4 );
+
+        print( "OSCORE AEAD Algorithm", oscore_aead_alg );
+        print( "OSCORE Hash Algorithm", oscore_hash_alg );
+        print( "Client's OSCORE Sender ID (Raw Value)", OSCORE_id( C_R ) );
+        print( "Server's OSCORE Sender ID (Raw Value)", OSCORE_id( C_I ) );
+        print( "info for OSCORE Master Secret (CBOR Sequence)", info_OSCORE_secret );
+        print( "OSCORE Master Secret (Raw Value)", OSCORE_secret );
+        print( "info for OSCORE Master Salt (CBOR Sequence)", info_OSCORE_salt );   
+        print( "OSCORE Master Salt (Raw Value)", OSCORE_salt );
 
         print( "KeyUpdate Nonce (Raw Value)", nonce );
         print( "PRK_4x3m  after KeyUpdate (Raw Value)", PRK_4x3m_new );   
