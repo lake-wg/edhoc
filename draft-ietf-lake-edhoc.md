@@ -1135,9 +1135,9 @@ An implementation may support only a single credential type (CCS, CWT, X.509, C5
 
 Implementations MUST support the EDHOC-Exporter. Implementations SHOULD support EDHOC-KeyUpdate.
 
-Implementaions MAY support message_4. Error codes 1 and 2 MUST be supported.
+Implementations MAY support message_4. Error codes 1 and 2 MUST be supported.
 
-Implementaions MAY support EAD
+Implementations MAY support EAD.
 
 For many constrained IoT devices it is problematic to support more than one cipher suite. Existing devices can be expected to support either ECDSA or EdDSA. To enable as much interoperability as we can reasonably achieve, less constrained devices SHOULD implement both cipher suite 0 (AES-CCM-16-64-128, SHA-256, 8, X25519, EdDSA, AES-CCM-16-64-128, SHA-256) and cipher suite 2 (AES-CCM-16-64-128, SHA-256, 8, P-256, ES256, AES-CCM-16-64-128, SHA-256). Constrained endpoints SHOULD implement cipher suite 0 or cipher suite 2. Implementations only need to implement the algorithms needed for their supported methods.
 
