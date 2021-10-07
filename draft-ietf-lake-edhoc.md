@@ -1124,22 +1124,20 @@ Note that the Initiator's list of supported cipher suites and order of preferenc
 If the selected cipher suite is not the first cipher suite which the Responder supports in SUITES_I received in message_1, then Responder MUST discontinue the protocol, see {{resp-proc-msg1}}. If SUITES_I in message_1 is manipulated, then the integrity verification of message_2 containing the transcript hash TH_2 will fail and the Initiator will discontinue the protocol.
 
 # Mandatory-to-Implement Compliance Requirements {#mti}
-
+ 
 An implementation may support only Initiator or only Responder.
 
 An implementation may support only a single method. None of the methods are mandatory-to-implement.
 
+Implementations MUST support 'kid' parameters of type int. None of the other COSE header parameters are mandatory-to-implement.
+
+An implementation may support only a single credential type (CCS, CWT, X.509, C509). None of the credential types are mandatory-to-implement.
+
 Implementations MUST support the EDHOC-Exporter. Implementations SHOULD support EDHOC-KeyUpdate.
 
-Implementaions MAY support message_4. Error codes 1 and 2 MUST be supported.
+Implementations MAY support message_4. Error codes 1 and 2 MUST be supported.
 
-Implementations MUST support 'kid' parameters of type int.
-
-Editor's note: Is any COSE header parameters (kid, kcwt, kccs, x5t, c5c, etc. ) MTI?
-
-Editor's note: Is any credential type (CCS, CWT, X.509, C509) MTI?
-
-Editor's note: Is support of EAD MTI?
+Implementations MAY support EAD.
 
 For many constrained IoT devices it is problematic to support more than one cipher suite. Existing devices can be expected to support either ECDSA or EdDSA. To enable as much interoperability as we can reasonably achieve, less constrained devices SHOULD implement both cipher suite 0 (AES-CCM-16-64-128, SHA-256, 8, X25519, EdDSA, AES-CCM-16-64-128, SHA-256) and cipher suite 2 (AES-CCM-16-64-128, SHA-256, 8, P-256, ES256, AES-CCM-16-64-128, SHA-256). Constrained endpoints SHOULD implement cipher suite 0 or cipher suite 2. Implementations only need to implement the algorithms needed for their supported methods.
 
