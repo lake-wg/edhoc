@@ -1741,11 +1741,11 @@ CBOR Object Signing and Encryption (COSE) {{I-D.ietf-cose-rfc8152bis-struct}} de
 
 * ECDH ephemeral public keys of type EC2 or OKP in message_1 and message_2 consist of the COSE_Key parameter named 'x', see Section 7.1 and 7.2 of {{I-D.ietf-cose-rfc8152bis-algs}}
 
-* The ciphertexts in message_3 and message_4 consist of a subset of the single recipient encrypted data object COSE_Encrypt0, which is described in Sections 5.2-5.3 of {{I-D.ietf-cose-rfc8152bis-struct}}. The ciphertext is computed over the plaintext and associated data, using an encryption key and an initialization vector. The associated data is an Enc_structure consisting of protected headers and externally supplied data (external_aad). COSE constructs the input to the AEAD {{RFC5116}} for message_i (i = 3 or 4) as follows:
+* The ciphertexts in message_3 and message_4 consist of a subset of the single recipient encrypted data object COSE_Encrypt0, which is described in Sections 5.2-5.3 of {{I-D.ietf-cose-rfc8152bis-struct}}. The ciphertext is computed over the plaintext and associated data, using an encryption key and an initialization vector. The associated data is an Enc_structure consisting of protected headers and externally supplied data (external_aad). COSE constructs the input to the AEAD {{RFC5116}} for message_i (i = 3 or 4, see {{m3}} and {{m4}}, respectively) as follows:
 
    * Secret key K = K_i
    * Nonce N = IV_i
-   * Plaintext P for message_i (see {{m3}} and {{m4}}).
+   * Plaintext P for message_i
    * Associated Data A = \[ "Encrypt0", h'', TH_i \]
 
 * Signatures in message_2 of method 0 and 2, and in message_3 of method 0 and 1, consist of a subset of the single signer data object COSE_Sign1, which is described in Sections 4.2-4.4 of {{I-D.ietf-cose-rfc8152bis-struct}}. The signature is computed over a Sig_structure containing payload, protected headers and externally supplied data (external_aad) using a private signature key and verified using the corresponding public signature key. For COSE_Sign1, the message to be signed is:
