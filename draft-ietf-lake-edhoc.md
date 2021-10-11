@@ -455,7 +455,7 @@ See {{COSE}} for more examples.
 
 An EDHOC cipher suite consists of an ordered set of algorithms from the "COSE Algorithms" and "COSE Elliptic Curves" registries as well as the EDHOC MAC length. Algorithms need to be specified with enough parameters to make them completely determined. EDHOC is currently only specified for use with key exchange algorithms of type ECDH curves, but any Key Encapsulation Method (KEM), including Post-Quantum Cryptography (PQC) KEMs, can be used in method 0, see {{pqc}}. Use of other types of key exchange algorithms to replace static DH authentication (method 1,2,3) would likely require a specification updating EDHOC with new methods.
 
-EDHOC supports all signature algorithms defined by COSE, including PQC signature algorithms such as HSS-LMS. Just like in TLS and IKEv2, a signature in COSE is determined by the signature algorithm and the authentication key algorithm together, see {{auth-keys}}. The exact details of the authentication key algorithm depend on the type of authentication credential. COSE supports different formats for storing the public authentication keys including COSE_Key and X.509, which have different names and ways to represent the authentication key and the authentication key algorithm. The authentication key algorithm needs to be compatible with the EDHOC key exchange algorithm when static Diffie-Hellman authentication is used, and compatible with the EDHOC signature algorithm when signature authentication is used.
+EDHOC supports all signature algorithms defined by COSE, including PQC signature algorithms such as HSS-LMS. Just like in TLS 1.3 {{RFC8446}} and IKEv2 {{RFC7296}}, a signature in COSE is determined by the signature algorithm and the authentication key algorithm together, see {{auth-keys}}. The exact details of the authentication key algorithm depend on the type of authentication credential. COSE supports different formats for storing the public authentication keys including COSE_Key and X.509, which have different names and ways to represent the authentication key and the authentication key algorithm. The authentication key algorithm needs to be compatible with the EDHOC key exchange algorithm when static Diffie-Hellman authentication is used, and compatible with the EDHOC signature algorithm when signature authentication is used.
 
 * EDHOC AEAD algorithm
 * EDHOC hash algorithm
@@ -1126,7 +1126,7 @@ Note that the Initiator's list of supported cipher suites and order of preferenc
 If the selected cipher suite is not the first cipher suite which the Responder supports in SUITES_I received in message_1, then Responder MUST discontinue the protocol, see {{resp-proc-msg1}}. If SUITES_I in message_1 is manipulated, then the integrity verification of message_2 containing the transcript hash TH_2 will fail and the Initiator will discontinue the protocol.
 
 # Mandatory-to-Implement Compliance Requirements {#mti}
- 
+
 An implementation may support only Initiator or only Responder.
 
 An implementation may support only a single method. None of the methods are mandatory-to-implement.
