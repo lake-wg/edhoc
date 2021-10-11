@@ -861,7 +861,7 @@ The Initiator SHALL process message_2 as follows:
 
 * Decode message_2 (see {{CBOR}}).
 
-* Retrieve the protocol state using the message correlation provided by the transport (e.g., the CoAP Token, the 5-tuple, or the prepended C_I, see {{ci-oscore}}).
+* Retrieve the protocol state using the message correlation provided by the transport (e.g., the CoAP Token, the 5-tuple, or the prepended C_I, see {{coap}}).
 
 * Decrypt CIPHERTEXT_2, see {{asym-msg2-proc}}.
 
@@ -935,7 +935,7 @@ The Responder SHALL process message_3 as follows:
 
 * Decode message_3 (see {{CBOR}}).
 
-* Retrieve the protocol state using the message correlation provided by the transport (e.g., the CoAP Token, the 5-tuple, or the prepended C_I, see {{ci-oscore}}).
+* Retrieve the protocol state using the message correlation provided by the transport (e.g., the CoAP Token, the 5-tuple, or the prepended C_I, see {{coap}}).
 
 * Decrypt and verify the COSE_Encrypt0 as defined in Section 5.3 of {{I-D.ietf-cose-rfc8152bis-struct}}, with the EDHOC AEAD algorithm in the selected cipher suite, and the parameters defined in {{asym-msg3-proc}}.
 
@@ -999,7 +999,7 @@ The Initiator SHALL process message_4 as follows:
 
 * Decode message_4 (see {{CBOR}}).
 
-* Retrieve the protocol state using the message correlation provided by the transport (e.g., the CoAP Token, the 5-tuple, or the prepended C_I, see {{ci-oscore}}).
+* Retrieve the protocol state using the message correlation provided by the transport (e.g., the CoAP Token, the 5-tuple, or the prepended C_I, see {{coap}}).
 
 * Decrypt and verify the COSE_Encrypt0 as defined in Section 5.3 of {{I-D.ietf-cose-rfc8152bis-struct}}, with the EDHOC AEAD algorithm in the selected cipher suite, and the parameters defined in {{asym-msg4-proc}}.
 
