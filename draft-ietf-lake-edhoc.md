@@ -457,6 +457,8 @@ An EDHOC cipher suite consists of an ordered set of algorithms from the "COSE Al
 
 EDHOC supports all signature algorithms defined by COSE, including PQC signature algorithms such as HSS-LMS. Just like in TLS 1.3 {{RFC8446}} and IKEv2 {{RFC7296}}, a signature in COSE is determined by the signature algorithm and the authentication key algorithm together, see {{auth-keys}}. The exact details of the authentication key algorithm depend on the type of authentication credential. COSE supports different formats for storing the public authentication keys including COSE_Key and X.509, which have different names and ways to represent the authentication key and the authentication key algorithm. The authentication key algorithm needs to be compatible with the EDHOC key exchange algorithm when static Diffie-Hellman authentication is used, and compatible with the EDHOC signature algorithm when signature authentication is used.
 
+An EDHOC cipher suite consists of the following parameters:
+
 * EDHOC AEAD algorithm
 * EDHOC hash algorithm
 * EDHOC MAC length in bytes (Static DH)
