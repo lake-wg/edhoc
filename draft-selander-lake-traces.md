@@ -55,7 +55,7 @@ This document contains some example traces of Ephemeral Diffie-Hellman Over COSE
 
 EDHOC {{I-D.ietf-lake-edhoc}} is a lightweight authenticated key exchange protocol designed for highly constrained settings. This document contains annotated traces of EDHOC protocol runs, with input, output and intermediate processing results to simplify testing of implementations.
 
-The traces in this draft are based on draft-ietf-lake-edhoc-11. A more extensive test vector suite and related code that was used to generate them can be found at: https://github.com/lake-wg/edhoc/tree/master/test-vectors-11.
+The traces in this draft are valid for versions -11 and -12 of {{I-D.ietf-lake-edhoc}}. A more extensive test vector suite and related code that was used to generate them can be found at: https://github.com/lake-wg/edhoc/tree/master/test-vectors-11.
 
 
 # Setup
