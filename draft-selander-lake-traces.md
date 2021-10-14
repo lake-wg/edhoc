@@ -239,7 +239,7 @@ PRK_3e2m (Raw Value) (32 bytes)
 7f 94 1e 67 09 10 31 17 a1
 ~~~~~~~~
 
-R selects its connection identifier C_R to be the empty bstr h'':
+R selects its connection identifier C_R to be the empty bstr "":
 
 ~~~~~~~~
 C_R (raw value) (Connection identifier chosen by R) (0 bytes)
