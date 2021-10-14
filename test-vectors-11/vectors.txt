@@ -55,6 +55,9 @@ G_X (CBOR Data Item) (Initiator's ephemeral public key) (34 bytes)
 58 20 3a a9 eb 32 01 b3 36 7b 8c 8b e3 8d 91 e5 7a 2b 43 3e 67 88 8c
 86 d2 ac 00 6a 52 08 42 ed 50 37
 
+C_I (Raw Value) (Connection identifier chosen by Initiator) (int)
+12
+
 C_I (CBOR Data Item) (Connection identifier chosen by Initiator) (1 bytes)
 0c
 
@@ -105,6 +108,8 @@ c3 6a 2f a5 be 23 2d d4 78
 PRK_3e2m (Raw Value) (32 bytes)
 76 8e 13 75 27 2e 1e 68 b4 2c a3 24 84 80 d5 bb a8 8b cb 55 f6 60 ce
 7f 94 1e 67 09 10 31 17 a1
+
+C_R (Raw Value) (Connection identifier chosen by Responder) (0 bytes)
 
 C_R (CBOR Data Item) (Connection identifier chosen by Responder) (1 bytes)
 40
@@ -388,6 +393,9 @@ G_X (CBOR Data Item) (Initiator's ephemeral public key) (34 bytes)
 58 20 c1 99 b9 61 5a 92 96 a0 34 b0 60 da 80 d9 c0 7a 6f 10 f9 57 84
 ae dc 7d 7e c0 70 b4 1b 58 8e 18
 
+C_I (Raw Value) (Connection identifier chosen by Initiator) (int)
+-9
+
 C_I (CBOR Data Item) (Connection identifier chosen by Initiator) (1 bytes)
 28
 
@@ -434,6 +442,9 @@ PK_R (Raw Value) (Responders's public authentication key) (32 bytes)
 PRK_3e2m (Raw Value) (32 bytes)
 82 0c c3 ed c2 2b e8 96 17 78 7e a1 5d e3 8c a7 2f 2f 67 e3 f4 fa 0a
 f2 d0 aa ac 48 d1 64 c1 1e
+
+C_R (Raw Value) (Connection identifier chosen by Responder) (int)
+6
 
 C_R (CBOR Data Item) (Connection identifier chosen by Responder) (1 bytes)
 06
@@ -762,6 +773,9 @@ G_X (CBOR Data Item) (Initiator's ephemeral public key) (34 bytes)
 58 20 a1 07 36 74 6b 5f 56 24 80 61 ae 63 59 2a cb 8c 88 48 34 c6 76
 1c b0 a2 06 83 bf f4 03 9d 96 5e
 
+C_I (Raw Value) (Connection identifier chosen by Initiator) (int)
+-13
+
 C_I (CBOR Data Item) (Connection identifier chosen by Initiator) (1 bytes)
 2c
 
@@ -812,6 +826,9 @@ e2 f4 e5 cd 59 32 b5 46 ed d3 4b a4 99 60 19 8b 84 86 80 5f 2a 76 22
 PRK_3e2m (Raw Value) (32 bytes)
 e8 43 be a9 b8 d9 4d 12 07 fc 36 e7 55 b0 3c c6 45 e7 3d 9c 2f 71 87
 47 6d 01 f7 79 0f c2 f8 4f
+
+C_R (Raw Value) (Connection identifier chosen by Responder) (int)
+-14
 
 C_R (CBOR Data Item) (Connection identifier chosen by Responder) (1 bytes)
 2d
@@ -1132,6 +1149,9 @@ G_X (CBOR Data Item) (Initiator's ephemeral public key) (34 bytes)
 58 20 e3 1e c1 5e e8 03 94 27 df c4 72 7e f1 7e 2e 0e 69 c5 44 37 f3
 c5 82 80 19 ef 0a 63 88 c1 25 52
 
+C_I (Raw Value) (Connection identifier chosen by Initiator) (int)
+14
+
 C_I (CBOR Data Item) (Connection identifier chosen by Initiator) (1 bytes)
 0e
 
@@ -1178,6 +1198,9 @@ e4 9d a6 93 5e df 53 cd c5
 PRK_3e2m (Raw Value) (32 bytes)
 4e 57 dc e2 58 75 77 c4 34 69 7c 03 93 5c c6 a2 82 16 5a 88 76 05 11
 fc 70 a8 c0 02 20 a5 ba 1a
+
+C_R (Raw Value) (Connection identifier chosen by Responder) (int)
+-19
 
 C_R (CBOR Data Item) (Connection identifier chosen by Responder) (1 bytes)
 32
@@ -1540,6 +1563,9 @@ G_X (CBOR Data Item) (Initiator's ephemeral public key) (34 bytes)
 58 20 29 e4 43 37 53 dc 07 56 d2 2d b5 33 fc cb 84 3a 01 8e e8 41 bb
 9b 05 4d 86 39 c6 51 fe e1 c2 50
 
+C_I (Raw Value) (Connection identifier chosen by Initiator) (int)
+4
+
 C_I (CBOR Data Item) (Connection identifier chosen by Initiator) (1 bytes)
 04
 
@@ -1590,6 +1616,9 @@ ab 88 45 9d a0 15 15 80 3c
 PRK_3e2m (Raw Value) (32 bytes)
 55 66 92 0d 5e f1 54 c8 a9 72 2f 28 81 54 14 55 67 e0 b7 b9 5a 49 c2
 64 23 78 1b a6 5e e5 92 6d
+
+C_R (Raw Value) (Connection identifier chosen by Responder) (int)
+20
 
 C_R (CBOR Data Item) (Connection identifier chosen by Responder) (1 bytes)
 14
@@ -1905,6 +1934,9 @@ G_X (CBOR Data Item) (Initiator's ephemeral public key) (34 bytes)
 58 20 e2 06 c8 54 14 ba 73 46 76 80 20 af 25 87 9a c3 8d e3 c4 2e f3
 3b 19 fd 38 1e 42 27 b2 d6 6e 4a
 
+C_I (Raw Value) (Connection identifier chosen by Initiator) (int)
+18
+
 C_I (CBOR Data Item) (Connection identifier chosen by Initiator) (1 bytes)
 12
 
@@ -1951,6 +1983,9 @@ c4 e1 dc be f8 0d 63 69 78 f2 85 3d bd 64 0e c9 08 4e 49 2f 5b 48 c2
 PRK_3e2m (Raw Value) (32 bytes)
 57 94 7b f5 ae 05 2b 6d 26 c4 0d da 59 f6 d9 9e 68 9b 4f 1a 9b 65 35
 23 20 d8 e4 cc 71 d4 49 09
+
+C_R (Raw Value) (Connection identifier chosen by Responder) (int)
+-13
 
 C_R (CBOR Data Item) (Connection identifier chosen by Responder) (1 bytes)
 2c
@@ -2365,6 +2400,9 @@ G_X (CBOR Data Item) (Initiator's ephemeral public key) (34 bytes)
 58 20 a1 8b e3 80 39 2e d8 64 8a 9d 74 a1 1e 55 ca da 88 3d 94 50 a0
 7b 59 32 51 a9 f8 19 5a b2 be 0e
 
+C_I (Raw Value) (Connection identifier chosen by Initiator) (int)
+10
+
 C_I (CBOR Data Item) (Connection identifier chosen by Initiator) (1 bytes)
 0a
 
@@ -2411,6 +2449,9 @@ c1 e3 99 6a 7f 9a 11 e2 be
 PRK_3e2m (Raw Value) (32 bytes)
 07 d0 9f 74 24 0d 2d 79 b4 89 f9 55 2c 09 b8 f6 ac ce 23 09 39 d1 19
 4f dd e1 ca f2 73 ba 26 ba
+
+C_R (Raw Value) (Connection identifier chosen by Responder) (int)
+1
 
 C_R (CBOR Data Item) (Connection identifier chosen by Responder) (1 bytes)
 01
@@ -2772,6 +2813,9 @@ G_X (CBOR Data Item) (Initiator's ephemeral public key) (34 bytes)
 58 20 a8 4c 69 c8 27 b7 ae e7 a6 81 25 c1 1c 9f 39 91 d8 8d 44 69 0b
 bb ae ee 62 44 bb 34 67 2f db 0c
 
+C_I (Raw Value) (Connection identifier chosen by Initiator) (int)
+-11
+
 C_I (CBOR Data Item) (Connection identifier chosen by Initiator) (1 bytes)
 2a
 
@@ -2822,6 +2866,9 @@ ea 7d 10 43 d9 3e 95 12 07
 PRK_3e2m (Raw Value) (32 bytes)
 e1 a7 c3 75 f5 2f 16 6a 4d 3d b3 54 24 57 48 eb 22 df 57 a4 5d 5c 0f
 48 fc 06 1b 9f 1c 32 b0 35
+
+C_R (Raw Value) (Connection identifier chosen by Responder) (int)
+-4
 
 C_R (CBOR Data Item) (Connection identifier chosen by Responder) (1 bytes)
 23
@@ -3112,6 +3159,9 @@ G_X (CBOR Data Item) (Initiator's ephemeral public key) (34 bytes)
 58 20 fa 57 01 c2 62 71 41 ca 77 84 b5 22 a7 14 0c 1e 32 9e 94 d3 e4
 fc f7 43 0d db a3 89 1e d0 99 38
 
+C_I (Raw Value) (Connection identifier chosen by Initiator) (int)
+-9
+
 C_I (CBOR Data Item) (Connection identifier chosen by Initiator) (1 bytes)
 28
 
@@ -3158,6 +3208,9 @@ d4 3c b9 d1 62 32 68 90 c9 2f 9d 0b e4 55 37 3e cc 62 89 33 85 e6 6c
 PRK_3e2m (Raw Value) (32 bytes)
 99 70 d9 f1 37 82 25 75 89 c1 1d 9d 64 6d 82 9b 16 5f bd 2b cd 7d fd
 68 e9 66 7e 28 14 4e c5 96
+
+C_R (Raw Value) (Connection identifier chosen by Responder) (int)
+15
 
 C_R (CBOR Data Item) (Connection identifier chosen by Responder) (1 bytes)
 0f
@@ -3520,6 +3573,9 @@ G_X (CBOR Data Item) (Initiator's ephemeral public key) (34 bytes)
 58 20 48 1b 22 89 64 64 f3 df cf a6 79 45 25 19 0a 2e e1 ce e6 1b 06
 e3 ee 20 d4 fd d5 91 fd c1 d6 69
 
+C_I (Raw Value) (Connection identifier chosen by Initiator) (2 bytes)
+de ee
+
 C_I (CBOR Data Item) (Connection identifier chosen by Initiator) (3 bytes)
 42 de ee
 
@@ -3572,6 +3628,9 @@ G_RX (Raw Value) (ECDH shared secret) (32 bytes)
 PRK_3e2m (Raw Value) (32 bytes)
 24 a7 d0 64 fc 70 e5 d4 e2 ef 1d 23 d3 70 59 a1 14 1e 7c c5 6d f1 f7
 db 5d 00 20 31 21 cd 89 b2
+
+C_R (Raw Value) (Connection identifier chosen by Responder) (2 bytes)
+97 7c
 
 C_R (CBOR Data Item) (Connection identifier chosen by Responder) (3 bytes)
 42 97 7c
@@ -3899,6 +3958,9 @@ G_X (CBOR Data Item) (Initiator's ephemeral public key) (34 bytes)
 58 20 14 8e a8 b2 dd 40 9f 72 84 45 eb 9a f9 95 3c f4 af 52 26 d9 a5
 68 9c 7d fb a0 2c a8 35 1b f9 40
 
+C_I (Raw Value) (Connection identifier chosen by Initiator) (int)
+29854
+
 C_I (CBOR Data Item) (Connection identifier chosen by Initiator) (3 bytes)
 19 74 9e
 
@@ -3946,6 +4008,9 @@ a9 d1 e2 5a 10 de 24 87 c8
 PRK_3e2m (Raw Value) (32 bytes)
 f0 46 de d0 5d 81 bd f7 65 fc 6b a6 c8 7b 32 01 a8 94 5f 66 9d aa 23
 36 b3 93 42 16 63 9b d1 3f
+
+C_R (Raw Value) (Connection identifier chosen by Responder) (2 bytes)
+12 b7
 
 C_R (CBOR Data Item) (Connection identifier chosen by Responder) (3 bytes)
 42 12 b7
@@ -4337,6 +4402,9 @@ G_X (CBOR Data Item) (Initiator's ephemeral public key) (34 bytes)
 58 20 da 88 99 b1 32 6d d5 4e 70 9a 76 98 1d 5e d8 8a ff cf 4f c8 f1
 de 73 86 be d0 43 ec 3c a2 83 70
 
+C_I (Raw Value) (Connection identifier chosen by Initiator) (int)
+-10
+
 C_I (CBOR Data Item) (Connection identifier chosen by Initiator) (1 bytes)
 29
 
@@ -4387,6 +4455,9 @@ G_RX (Raw Value) (ECDH shared secret) (32 bytes)
 PRK_3e2m (Raw Value) (32 bytes)
 2a 00 11 b6 ab 5a a3 d6 55 dc d3 e9 45 2f 2c 4f 72 be 63 84 d4 0c 9e
 4c 57 e5 02 a9 1b 77 64 b0
+
+C_R (Raw Value) (Connection identifier chosen by Responder) (int)
+-19
 
 C_R (CBOR Data Item) (Connection identifier chosen by Responder) (1 bytes)
 32
@@ -4686,6 +4757,9 @@ G_X (CBOR Data Item) (Initiator's ephemeral public key) (34 bytes)
 58 20 9f 38 d3 ec 37 3c a0 d3 88 8b 4e 1b f3 20 1d 00 c6 d8 fa 9b 01
 cd 86 6d d0 66 23 51 ae af d7 12
 
+C_I (Raw Value) (Connection identifier chosen by Initiator) (int)
+-20
+
 C_I (CBOR Data Item) (Connection identifier chosen by Initiator) (1 bytes)
 33
 
@@ -4732,6 +4806,9 @@ cf 2e ed 74 d0 a2 88 07 b9
 PRK_3e2m (Raw Value) (32 bytes)
 e3 d3 78 8f a9 18 12 28 e5 a2 b9 43 ca 15 23 8b 6e b3 1d f0 8d c7 91
 12 3e d3 e2 f3 0a 8a b7 ad
+
+C_R (Raw Value) (Connection identifier chosen by Responder) (int)
+-15
 
 C_R (CBOR Data Item) (Connection identifier chosen by Responder) (1 bytes)
 2e

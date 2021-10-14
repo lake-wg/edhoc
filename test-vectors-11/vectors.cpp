@@ -10,11 +10,13 @@
 #include <iostream>
 #include <iomanip>
 #include <vector>
+#include <variant>
 #include <sodium.h>
 #include "aes.h"
 
 using namespace std;
 using vec = vector<uint8_t>;
+using intVec = std::variant<int, vec>;
 
 enum EDHOCKeyType { sig, sdh }; 
 enum COSECred { cred_uccs, cred_cwt, cred_x509, cred_c509 };
@@ -313,32 +315,39 @@ void test_vectors( EDHOCKeyType type_I, COSECred credtype_I, COSEHeader attr_I,
     auto identifier = [=] () {
         if ( complex == true )
             if ( rand() % 2 == 0 ) {
-                return cbor( random_vector( 2 + rand() % 2 ) );
+                vec v = random_vector( 2 + rand() % 2 );
+                return make_tuple( cbor( v ), (intVec)v );
             } else {
-                return cbor( rand() % 16777216 );
+                int j = rand() % 16777216;
+                return make_tuple( cbor( j ), (intVec)j );
             }           
         else {
             int i = rand() % 49;
             if ( i == 48 ) {
-                return cbor( vec{} );
+                vec v = vec{};
+                return make_tuple( cbor( v ), (intVec)v );
             } else {
-                return cbor( i - 24 );
+                int j = i - 24;
+                return make_tuple( cbor( j ), (intVec)j );
             }           
         }
     };
 
-    // Calculate C_I != C_R (required for OSCORE)
-    vec C_I, C_R;
-    do {
-        C_I = identifier();
-        C_R = identifier();
-        if ( seed == 34400 ) 
-            C_R = vec{ 0x40 };
-    } while ( C_I == C_R );
+    // Calculate C_I, C_R 
+    auto [ C_I, C_I_raw ] = identifier();
+    auto [ C_R, C_R_raw ] = identifier();
+    if ( seed == 34400 ) {
+        vec v = vec{};
+        C_R =  cbor( v );
+        C_R_raw = (intVec)v;
+    }
+    if ( C_I == C_R ) { // Not allowed for OSCORE
+        syntax_error( "C_I == C_R" );
+    }
 
     // Calculate ID_CRED_x and CRED_x
     auto gen_CRED = [=] ( EDHOCKeyType type, COSECred credtype, COSEHeader attr, vec PK_sig, vec PK_sdh, string name, string uri ) {
-        vec kid_id = identifier();
+        auto [ kid_id, kid_id_raw ] = identifier();
         vec uccs_map = cbor_map( 2 )
         + cbor( sub ) + cbor( name ) 
         + cbor( cnf ) + cbor_map( 1 )
@@ -517,6 +526,11 @@ void test_vectors( EDHOCKeyType type_I, COSECred credtype_I, COSEHeader attr_I,
         print_json( "x_raw", X );
         print_json( "g_x_raw", G_X );
         print_json( "g_x", cbor( G_X ) );
+        if ( C_I_raw.index() == 0 ) {
+            print_json( "c_i_raw", std::get<0>(C_I_raw) );
+        } else {
+            print_json( "c_i_raw", std::get<1>(C_I_raw) );
+        }
         print_json( "c_i", C_I );
         print_json( "ead_1", EAD_1 );   
         print_json( "message_1", message_1 );
@@ -538,6 +552,11 @@ void test_vectors( EDHOCKeyType type_I, COSECred credtype_I, COSEHeader attr_I,
             print_json( "g_rx_raw", G_RX );    
         }
         print_json( "prk_3e2m_raw", PRK_3e2m );   
+        if ( C_R_raw.index() == 0 ) {
+            print_json( "c_r_raw", std::get<0>(C_R_raw) );
+        } else {
+            print_json( "c_r_raw", std::get<1>(C_R_raw) );
+        }
         print_json( "c_r", C_R );
         print_json( "h_message_1_raw", hash_message_1 );
         print_json( "h_message_1", cbor( hash_message_1 ) );
@@ -640,6 +659,11 @@ void test_vectors( EDHOCKeyType type_I, COSECred credtype_I, COSEHeader attr_I,
         print( "X (Raw Value) (Initiator's ephemeral private key)", X );
         print( "G_X (Raw Value) (Initiator's ephemeral public key)", G_X );
         print( "G_X (CBOR Data Item) (Initiator's ephemeral public key)", cbor( G_X ) );
+        if ( C_I_raw.index() == 0 ) {
+            print( "C_I (Raw Value) (Connection identifier chosen by Initiator)", std::get<0>(C_I_raw) );
+        } else {
+            print( "C_I (Raw Value) (Connection identifier chosen by Initiator)", std::get<1>(C_I_raw) );
+        }
         print( "C_I (CBOR Data Item) (Connection identifier chosen by Initiator)", C_I );
         print( "EAD_1 (CBOR Sequence)", EAD_1 );   
         print( "message_1 (CBOR Sequence)", message_1 );
@@ -663,6 +687,11 @@ void test_vectors( EDHOCKeyType type_I, COSECred credtype_I, COSEHeader attr_I,
             print( "G_RX (Raw Value) (ECDH shared secret)", G_RX );    
         }
         print( "PRK_3e2m (Raw Value)", PRK_3e2m );   
+        if ( C_R_raw.index() == 0 ) {
+            print( "C_R (Raw Value) (Connection identifier chosen by Responder)", std::get<0>(C_R_raw) );
+        } else {
+            print( "C_R (Raw Value) (Connection identifier chosen by Responder)", std::get<1>(C_R_raw) );
+        }
         print( "C_R (CBOR Data Item) (Connection identifier chosen by Responder)", C_R );
         print( "H(message_1) (Raw Value)", hash_message_1 );
         print( "H(message_1) (CBOR Data Item)", cbor( hash_message_1 ) );
