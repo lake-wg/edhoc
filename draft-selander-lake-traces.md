@@ -126,6 +126,10 @@ G_X (CBOR Data Item) (Initiator's ephemeral public key) (34 bytes)
 I selects its connection identifier C_I to be the int 12:
 
 ~~~~~~~~
+C_I (Raw Value) (Connection identifier chosen by I) (int)
+12
+~~~~~~~~
+~~~~~~~~
 C_I (CBOR Data Item) (Connection identifier chosen by I) (1 bytes)
 0c
 ~~~~~~~~
@@ -237,6 +241,10 @@ PRK_3e2m (Raw Value) (32 bytes)
 
 R selects its connection identifier C_R to be the empty bstr h'':
 
+~~~~~~~~
+C_R (raw value) (Connection identifier chosen by R) (0 bytes)
+
+~~~~~~~~
 ~~~~~~~~
 C_R (CBOR Data Item) (Connection identifier chosen by R) (1 bytes)
 40
@@ -1021,6 +1029,10 @@ c5 82 80 19 ef 0a 63 88 c1 25 52
 I selects its connection identifier C_I to be the int 14:
 
 ~~~~~~~~
+C_I (Raw Value) (Connection identifier chosen by I) (int)
+14
+~~~~~~~~
+~~~~~~~~
 C_I (CBOR Data Item) (Connection identifier chosen by I) (1 bytes)
 0e
 ~~~~~~~~
@@ -1116,6 +1128,10 @@ fc 70 a8 c0 02 20 a5 ba 1a
 
 R selects its connection identifier C_R to be the int -19
 
+~~~~~~~~
+C_R (Raw Value) (Connection identifier chosen by R) (int)
+-19
+~~~~~~~~
 ~~~~~~~~
 C_R (CBOR Data Item) (Connection identifier chosen by R) (1 bytes)
 32
