@@ -149,7 +149,7 @@ Method 3 is not directly SIGMA but can be seen as SIGMA where the signature auth
 - Due to the inclusion of the 3 Diffie-Hellman secrets, Method 3 theoretically offers better protection against key leakage, but in practice it might be hard to see a situation where the private ephemeral keys leak but not the shared secrets G_IY, G_RX.
 - Method 3 with 8-byte MAC length has the weakest authentication of all the combinations, using a 64-bit tag without any signature. This is an intentional choice as it seems like the only possibility to reach the optimal size goal for message_2 with asymmetric authentication. The 64-bit matches the minimum data authentication given by OSCORE and TLS 1.3.
 
-Identity Protection, Forward Secrecy, Denial-of-Services, and Post-Quantum Cryptography
+Identity Protection, Forward Secrecy, Denial-of-Service, and Post-Quantum Cryptography
 ------------------------------------------------------------------------------------------
 
 - When it comes to identity protection, EDHOC makes the same design choice as SIGMA, TLS 1.3, and IKEv2. The Responder’s identity is protected against passive attackers and the Initiator’s identity is protected against active attackers.
