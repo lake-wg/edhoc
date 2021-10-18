@@ -253,7 +253,7 @@ In order to create a "full-fledged" protocol some additional protocol elements a
 
 * An optional fourth message giving explicit key confirmation to I in deployments where no protected application data is sent from R to I.
 
-* A key material exporter and a key update function enabling forward secrecy.
+* A key material exporter and a key update function with forward secrecy.
 
 * Verification of a common preferred cipher suite.
 
@@ -570,7 +570,7 @@ PRK_2e is used to derive a keystream to encrypt message_2. PRK_2e is derived wit
 
 * The salt SHALL be a zero-length byte string. Note that {{RFC5869}} specifies that if the salt is not provided, it is set to a string of zeros (see Section 2.2 of {{RFC5869}}). For implementation purposes, not providing the salt is the same as setting the salt to the zero-length byte string (0x).
 
-* The IKM SHALL be the ECDH shared secret G_XY (calculated from G_X and Y or G_Y and X) as defined in Section 6.3.1 of {{I-D.ietf-cose-rfc8152bis-algs}}.
+* The IKM SHALL be the ephemeral-ephemeral ECDH shared secret G_XY (calculated from G_X and Y or G_Y and X) as defined in Section 6.3.1 of {{I-D.ietf-cose-rfc8152bis-algs}}. The use of G_XY gives forward secrecy, in the sense that compromise of the private authentication keys does not compromise past session keys.
 
 Example: Assuming the use of curve25519, the ECDH shared secret G_XY is the output of the X25519 function {{RFC7748}}:
 
