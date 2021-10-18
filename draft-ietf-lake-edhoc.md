@@ -471,12 +471,12 @@ Each cipher suite is identified with a pre-defined int label.
 
 EDHOC can be used with all algorithms and curves defined for COSE. Implementation can either use any combination of COSE algorithms and parameters to define their own private cipher suite, or use one of the pre-defined cipher suites. Private cipher suites can be identified with any of the four values -24, -23, -22, -21. The pre-defined cipher suites are listed in the IANA registry ({{suites-registry}}) with initial content outlined here:
 
-*   Cipher suites 0-3, based on AES CCM, are intended for constrained IoT where message overhead is a very important factor. Note that AES-CCM-16-64-128 and AES-CCM-16-64-128 are compatible with the IEEE CCM\* mode.
+*   Cipher suites 0-3, based on AES-CCM, are intended for constrained IoT where message overhead is a very important factor. Note that AES-CCM-16-64-128 and AES-CCM-16-64-128 are compatible with the IEEE CCM\* mode.
       * Cipher suites 1 and 3 use a larger tag length (128-bit) in EDHOC than in the Application AEAD algorithm (64-bit).
 
 *   Cipher suites 4 and 5, based on ChaCha20, are intended for less constrained applications and only use 128-bit tag lengths.
 
-*   Cipher suite 6, based on AES GCM, is for general non-constrained applications. It uses high performance algorithms that are widely supported.
+*   Cipher suite 6, based on AES-GCM, is for general non-constrained applications. It uses high performance algorithms that are widely supported.
 
 *   Cipher suites 24 and 25 are intended for high security applications such as government use and financial applications. These cipher suites do not share any algorithms. Cipher suite 24 is compatible with the CNSA suite {{CNSA}}.
 
