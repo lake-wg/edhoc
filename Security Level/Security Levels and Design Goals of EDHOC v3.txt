@@ -152,7 +152,7 @@ Method 3 is not directly SIGMA but can be seen as SIGMA where the signature auth
 Identity Protection, Forward Secrecy, Denial-of-Service, and Post-Quantum Cryptography
 ------------------------------------------------------------------------------------------
 
-- When it comes to identity protection, EDHOC makes the same design choice as SIGMA, TLS 1.3, and IKEv2. The Responder’s identity is protected against passive attackers and the Initiator’s identity is protected against active attackers.
+- When it comes to identity protection, EDHOC makes the same design choice/tradeoff as SIGMA, TLS 1.3, and IKEv2. The Responder’s identity is protected against passive attackers and the Initiator’s identity is protected against active attackers. 
 - All EDHOC methods do an ephemeral-ephemeral ECDH key exchange. Compromise of the long-term authentication keys do not compromise previous session keys (forward secrecy).
 - EDHOC relies on the transport protocol for Denial-of-Service protection. The main target for EDHOC is transport over CoAP and CoAP has built in Denial-of-Service protection in the form of the Echo Option (draft-ietf-core-echo-request-tag).
-- EDHOC method 0 already supports PQC signatures and key exchange in method 0 can trivially be exchanged with a PQC KEM. The Ephemeral-Static ECDH implicit authentication cannot be trivially replaced with a PQC KEM. EDHOC with KEMs for authentication would likely require a new method.
+- EDHOC method 0 already supports PQC signatures and the key exchange in method 0 can trivially be exchanged with a PQC KEM. The Ephemeral-Static ECDH implicit authentication cannot trivially be replaced with a PQC KEM. EDHOC with KEMs for authentication would likely require a new method.
