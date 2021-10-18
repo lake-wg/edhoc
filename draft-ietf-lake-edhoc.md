@@ -431,7 +431,7 @@ An example of a CRED_x is shown below:
 
 ### Identification of Credentials {#id_cred}
 
-ID_CRED_R and ID_CRED_I are transported in message_2 and message_3, respectively (see {{asym-msg2-proc}} and {{asym-msg3-proc}}). They are used to identify and optionally transport the authentication keys of the Initiator and the Responder, respectively. ID_CRED_I and ID_CRED_R do not have any cryptographic purpose in EDHOC since EDHOC integrity protects the authentication credential. EDHOC relies on COSE for identification of authentication credentials and can support all COSE header parameters used to identify authentication credentials including X.509, C509, CWT and CCS. 
+ID_CRED_R and ID_CRED_I are transported in message_2 and message_3, respectively (see {{asym-msg2-proc}} and {{asym-msg3-proc}}). They are used to identify and optionally transport the authentication keys of the Initiator and the Responder, respectively. ID_CRED_I and ID_CRED_R do not have any cryptographic purpose in EDHOC since EDHOC integrity protects the authentication credential. EDHOC relies on COSE for identification of authentication credentials and supports all types of COSE header parameters used to identify authentication credentials including X.509, C509, CWT and CCS. 
 
 * ID_CRED_R is intended to facilitate for the Initiator to retrieve the Responder's authentication key.
 
@@ -439,8 +439,8 @@ ID_CRED_R and ID_CRED_I are transported in message_2 and message_3, respectively
 
 ID_CRED_I and ID_CRED_R are COSE header maps and contains one or more COSE header parameter. ID_CRED_I and ID_CRED_R MAY contain different header parameters. The header parameters typically provide some information about the format of authentication credential. 
 
-It is NOT RECOMMENDED to use the "-sender" header parameters, e.g. x5t-sender, defined in Section 3 of {{I-D.ietf-cose-x509}} for identification of certificates. Instead static DH certificates SHOULD be identified using the corresponding parameter without "-sender", e.g. x5t. (EDHOC is not using the COSE_recipient structure and it is clear from the message field if it is identification of the certificate of I or of R.)
- 
+Header parameters in EDHOC are always used to identify the sender's public key credential, i.e., parameters in ID_CRED_R are used to identify the Responder's public key and parameters in ID_CRED_I are used to identify the Initiator's public key. There is therefore no reason to use the "-sender" header parameters such as x5t-sender, defined in Section 3 of {{I-D.ietf-cose-x509}}. Instead, the corresponding parameter without "-sender" such as x5t SHOULD always be used.
+
 Example: X.509 certificates can be identified by a hash value using the 'x5t' parameter:
 
 * ID_CRED_x = { 34 : COSE_CertHash }, for x = I or R,
