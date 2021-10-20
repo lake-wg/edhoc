@@ -1801,6 +1801,16 @@ may need ... no, they don't need anything special: after an error, the next thin
 
 RFC Editor: Please remove this appendix.
 
+* From -11 to -12:
+  * Clarified applicability to KEMs
+  * Clarified use of COSE header parameters
+  * Updates on MTI
+  * Updated security considerations
+  * New section on PQC
+  * Removed duplicate definition of cipher suites
+  * Explanations of use of COSE moved to Appendix C.3
+  * Updated internal references
+
 * From -10 to -11:
   * Restructured section on authentication parameters
   * Changed UCCS to CCS
