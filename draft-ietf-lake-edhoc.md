@@ -1929,7 +1929,7 @@ RFC Editor: Please remove this appendix.
    * Updated security considerations
    * Updated text on cipher suite negotiation and key confirmation
    * Test vector for static DH
-o
+
 * From -00 to -01:
    * Removed PSK method
    * Removed references to certificate by value
