@@ -439,7 +439,7 @@ ID_CRED_R and ID_CRED_I are transported in message_2 and message_3, respectively
 
 ID_CRED_I and ID_CRED_R are COSE header maps and contains one or more COSE header parameter. ID_CRED_I and ID_CRED_R MAY contain different header parameters. The header parameters typically provide some information about the format of authentication credential.
 
-COSE header parameters in EDHOC are used to identify the sender's public key credential, i.e., parameters in ID_CRED_R are used to identify the Responder's public key and parameters in ID_CRED_I are used to identify the Initiator's public key. There is therefore no reason to use the "-sender" header parameters, such as x5t-sender, defined in Section 3 of {{I-D.ietf-cose-x509}}. Instead, the corresponding parameter without "-sender", such as x5t, SHOULD be used.
+Note that COSE header parameters in ID_CRED_x are used to identify the sender's authentication credential. There is therefore no reason to use the "-sender" header parameters, such as x5t-sender, defined in Section 3 of {{I-D.ietf-cose-x509}}. Instead, the corresponding parameter without "-sender", such as x5t, SHOULD be used.
 
 Example: X.509 certificates can be identified by a hash value using the 'x5t' parameter:
 
