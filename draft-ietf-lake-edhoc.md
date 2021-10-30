@@ -808,11 +808,9 @@ The Responder SHALL compose message_2 as follows:
 
 * CIPHERTEXT_2 is calculated by using the Expand function as a binary additive stream cipher.
 
-   * plaintext = ( ? PAD, ID_CRED_R / bstr / int, Signature_or_MAC_2, ? EAD_2 )
+   * plaintext = ( ID_CRED_R / bstr / int, Signature_or_MAC_2, ? EAD_2 )
 
        * If ID_CRED_R contains a single 'kid' parameter, i.e., ID_CRED_R = { 4 : kid_R }, then only the byte string or integer kid_R is conveyed in the plaintext encoded accordingly as bstr or int.
-
-       * PAD = 1*true is padding that may be used to hide the true length of the ciphertext
 
    * Compute KEYSTREAM_2 = EDHOC-KDF( PRK_2e, TH_2, "KEYSTREAM_2", h'', plaintext_length ), where plaintext_length is the length of the plaintext.
 
@@ -828,7 +826,7 @@ The Initiator SHALL process message_2 as follows:
 
 * Retrieve the protocol state using the message correlation provided by the transport (e.g., the CoAP Token, the 5-tuple, or the prepended C_I, see {{coap}}).
 
-* Decrypt CIPHERTEXT_2, see {{asym-msg2-proc}} and discard the padding.
+* Decrypt CIPHERTEXT_2, see {{asym-msg2-proc}}.
 
 * Pass EAD_2 to the security application.
 
@@ -882,11 +880,9 @@ The Initiator SHALL compose message_3 as follows:
       * key_length - length of the encryption key of the EDHOC AEAD algorithm
    * IV_3 = EDHOC-KDF( PRK_3e2m, TH_3, "IV_3", h'', iv_length )
       * iv_length - length of the intialization vector of the EDHOC AEAD algorithm
-   * P = ( ? PAD, ID_CRED_I / bstr / int, Signature_or_MAC_3, ? EAD_3 )
+   * P = ( ID_CRED_I / bstr / int, Signature_or_MAC_3, ? EAD_3 )
 
       * If ID_CRED_I contains a single 'kid' parameter, i.e., ID_CRED_I = { 4 : kid_I }, only the byte string or integer kid_I is conveyed in the plaintext encoded accordingly as bstr or int.
-
-       * PAD = 1*true is padding that may be used to hide the true length of the ciphertext
 
    CIPHERTEXT_3 is the 'ciphertext' of COSE_Encrypt0.
 
@@ -904,7 +900,7 @@ The Responder SHALL process message_3 as follows:
 
 * Retrieve the protocol state using the message correlation provided by the transport (e.g., the CoAP Token, the 5-tuple, or the prepended C_I, see {{coap}}).
 
-* Decrypt and verify the COSE_Encrypt0 as defined in Section 5.3 of {{I-D.ietf-cose-rfc8152bis-struct}}, with the EDHOC AEAD algorithm in the selected cipher suite, and the parameters defined in {{asym-msg3-proc}}. Discard the padding.
+* Decrypt and verify the COSE_Encrypt0 as defined in Section 5.3 of {{I-D.ietf-cose-rfc8152bis-struct}}, with the EDHOC AEAD algorithm in the selected cipher suite, and the parameters defined in {{asym-msg3-proc}}.
 
 * Pass EAD_3 to the security application.
 
@@ -953,8 +949,8 @@ The Responder SHALL compose message_4 as follows:
        * key_length - length of the encryption key of the EDHOC AEAD algorithm
     * IV_4 = EDHOC-Exporter( "EDHOC_IV_4", h'', iv_length )
        * iv_length - length of the intialization vector of the EDHOC AEAD algorithm
-    * P = ( ? PAD, ? EAD_4 )
-      * EAD_4 - protected external authorization data, see {{AD}}. PAD = 1*true is padding that may be used to hide the true length of the ciphertext.
+    * P = ( ? EAD_4 )
+      * EAD_4 - protected external authorization data, see {{AD}}.
 
   CIPHERTEXT_4 is the 'ciphertext' of COSE_Encrypt0.
 
@@ -968,7 +964,7 @@ The Initiator SHALL process message_4 as follows:
 
 * Retrieve the protocol state using the message correlation provided by the transport (e.g., the CoAP Token, the 5-tuple, or the prepended C_I, see {{coap}}).
 
-* Decrypt and verify the COSE_Encrypt0 as defined in Section 5.3 of {{I-D.ietf-cose-rfc8152bis-struct}}, with the EDHOC AEAD algorithm in the selected cipher suite, and the parameters defined in {{asym-msg4-proc}}. Discard the padding.
+* Decrypt and verify the COSE_Encrypt0 as defined in Section 5.3 of {{I-D.ietf-cose-rfc8152bis-struct}}, with the EDHOC AEAD algorithm in the selected cipher suite, and the parameters defined in {{asym-msg4-proc}}.
 
 * Pass EAD_4 to the security application.
 
@@ -1096,7 +1092,7 @@ Implementations MAY support EAD.
 
 For many constrained IoT devices it is problematic to support more than one cipher suite. Existing devices can be expected to support either ECDSA or EdDSA. To enable as much interoperability as we can reasonably achieve, less constrained devices SHOULD implement both cipher suite 0 (AES-CCM-16-64-128, SHA-256, 8, X25519, EdDSA, AES-CCM-16-64-128, SHA-256) and cipher suite 2 (AES-CCM-16-64-128, SHA-256, 8, P-256, ES256, AES-CCM-16-64-128, SHA-256). Constrained endpoints SHOULD implement cipher suite 0 or cipher suite 2. Implementations only need to implement the algorithms needed for their supported methods.
 
-# Security Considerations {#security
+# Security Considerations {#security}
 
 ## Security Properties {#sec-prop}
 
@@ -1148,13 +1144,11 @@ As of the publication of this specification, it is unclear when or even if a qua
 
 Symmetric algorithms used in EDHOC such as SHA-256 and AES-CCM-16-64-128 are practically secure against even large quantum computers. EDHOC supports all signature algorithms defined by COSE, including PQC signature algorithms such as HSS-LMS. EDHOC is currently only specified for use with key exchange algorithms of type ECDH curves, but any Key Encapsulation Method (KEM), including PQC KEMs, can be used in method 0. While the key exchange in method 0 is specified with terms of the Diffie-Hellman protocol, the key exchange adheres to a KEM interface: G_X is then the public key of the Initiator, G_Y is the encapsulation, and G_XY is the shared secret. Use of PQC KEMs to replace static DH authentication would likely require a specification updating EDHOC with new methods.
 
-## Unprotected Data and Privacy {#unprot-data}
+## Unprotected Data {#unprot-data}
 
 The Initiator and the Responder must make sure that unprotected data and metadata do not reveal any sensitive information. This also applies for encrypted data sent to an unauthenticated party. In particular, it applies to EAD_1, ID_CRED_R, EAD_2, and error messages. Using the same EAD_1 in several EDHOC sessions allows passive eavesdroppers to correlate the different sessions. Another consideration is that the list of supported cipher suites may potentially be used to identify the application.
 
 The Initiator and the Responder must also make sure that unauthenticated data does not trigger any harmful actions. In particular, this applies to EAD_1 and error messages.
-
-Information regarding the lengths of ID_CRED_I, ID_CRED_R, EAD_2, EAD_3, and EAD_4 are leaked to an passive attacker. Many COSE header parameters have variable length. To mitigate an attacker from differentiating endpoints with identifiers of different length, and implementation may e.g., only use fix length identifiers like 'kid' of length 1 for the Responders. Alternatively padding may be used to hide the length of e.g., certificates by value in 'x5chain' or 'c5c'.
 
 ## Denial-of-Service {#dos}
 
