@@ -478,7 +478,7 @@ EDHOC can be used with all algorithms and curves defined for COSE. Implementatio
 
 *   Cipher suites 4 and 5, based on ChaCha20, are intended for less constrained applications and only use 128-bit tag lengths.
 
-*   Cipher suite 6, based on AES-GCM, is for general non-constrained applications. It uses high performance algorithms that are widely supported.
+*   Cipher suite 6, based on AES-GCM, is for general non-constrained applications. It uses high performance algorithms that are widely used in non-constrained applications.
 
 *   Cipher suites 24 and 25 are intended for high security applications such as government use and financial applications. These cipher suites do not share any algorithms. Cipher suite 24 is compatible with the CNSA suite {{CNSA}}.
 
@@ -1118,7 +1118,7 @@ After sending message_3, the Initiator is assured that no other party than the R
 
 Key compromise impersonation (KCI): In EDHOC authenticated with signature keys, EDHOC provides KCI protection against an attacker having access to the long-term key or the ephemeral secret key. With static Diffie-Hellman key authentication, KCI protection would be provided against an attacker having access to the long-term Diffie-Hellman key, but not to an attacker having access to the ephemeral secret key. Note that the term KCI has typically been used for compromise of long-term keys, and that an attacker with access to the ephemeral secret key can only attack that specific session.
 
-Repudiation: In EDHOC authenticated with signature keys, the Initiator could theoretically prove that the Responder performed a run of the protocol by presenting the private ephemeral key, and vice versa. Note that storing the private ephemeral keys violates the protocol requirements. With static Diffie-Hellman key authentication, both parties can always deny having participated in the protocol.
+Repudiation: In EDHOC authenticated with signature keys, either endpoint can prove that the other endpoint performed a run of the protocol by presenting the input to the signature function as well as the signature itself. With static Diffie-Hellman key authentication, both parties can always deny having participated in the protocol.
 
 Two earlier versions of EDHOC have been formally analyzed {{Norrman20}} {{Bruni18}} and the specification has been updated based on the analysis.
 
