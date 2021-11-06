@@ -478,7 +478,7 @@ EDHOC can be used with all algorithms and curves defined for COSE. Implementatio
 
 *   Cipher suites 4 and 5, based on ChaCha20, are intended for less constrained applications and only use 128-bit tag lengths.
 
-*   Cipher suite 6, based on AES-GCM, is for general non-constrained applications. It uses high performance algorithms that are widely used in non-constrained applications.
+*   Cipher suite 6, based on AES-GCM, is for general non-constrained applications. It consists of high performance algorithms that are widely used in non-constrained applications.
 
 *   Cipher suites 24 and 25 are intended for high security applications such as government use and financial applications. These cipher suites do not share any algorithms. Cipher suite 24 is compatible with the CNSA suite {{CNSA}}.
 
