@@ -502,11 +502,11 @@ External authorization data is a CBOR sequence (see {{CBOR}}) consisting of one 
 ~~~~~~~~~~~ CDDL
 ead = 1* (
   ead_label : int,
-  ead_value : any,
+  ead_value : bstr,
 )
 ~~~~~~~~~~~
 
-Applications using external authorization data need to specify format, processing, and security considerations and register the (ead_label, ead_value) pair, see {{iana-ead}}. The CDDL type of ead_value is determined by the int ead_label and MUST be specified.
+Applications using external authorization data need to specify ead_value format, processing, and security considerations and register the ead_label, see {{iana-ead}}. 
 
 The EAD fields of EDHOC are not intended for generic application data. Since data carried in EAD_1 and EAD_2 fields may not be protected, special considerations need to be made such that it does not violate security and privacy requirements of the service which uses this data. Moreover, the content in an EAD field may impact the security properties provided by EDHOC. Security applications making use of the EAD fields must perform the necessary security analysis.
 
@@ -1323,7 +1323,7 @@ IANA has created a new registry entitled "EDHOC Error Codes" under the new group
 
 ## EDHOC External Authorization Data Registry {#iana-ead}
 
-IANA has created a new registry entitled "EDHOC External Authorization Data" under the new group name "Ephemeral Diffie-Hellman Over COSE (EDHOC)". The registration procedure is "Expert Review". The columns of the registry are Label, Description, Value Type, and Reference, where Label is an integer and the other columns are text strings.
+IANA has created a new registry entitled "EDHOC External Authorization Data" under the new group name "Ephemeral Diffie-Hellman Over COSE (EDHOC)". The registration procedure is "Expert Review". The columns of the registry are Label, Description, and Reference, where Label is an integer and the other columns are text strings.
 
 ## COSE Header Parameters Registry {#cwt-header-param}
 
@@ -1668,7 +1668,7 @@ suites = [ 2* int ] / int
 
 ead = 1* (
   ead_label : int,
-  ead_value : any,
+  ead_value : bstr,
 )
 
 message_1 = (
