@@ -40,6 +40,7 @@ author:
 normative:
 
   RFC2119:
+  RFC3552:
   RFC5116:
   RFC5280:
   RFC5869:
@@ -79,6 +80,7 @@ informative:
   I-D.mattsson-cfrg-det-sigs-with-noise:
   I-D.selander-ace-ake-authz:
   I-D.selander-lake-traces:
+  I-D.arkko-arch-internet-threat-model-guidance:
 
   SP-800-56A:
     target: https://doi.org/10.6028/NIST.SP.800-56Ar3
@@ -1150,12 +1152,15 @@ The Initiator and the Responder must make sure that unprotected data and metadat
 
 The Initiator and the Responder must also make sure that unauthenticated data does not trigger any harmful actions. In particular, this applies to EAD_1 and error messages.
 
+## Updated Internet Threat Model Considerations {#internet-threat}
+
+Since the publication of {{RFC3552}} there has been an increased awareness of the need to protect against endpoints that are compromised, malicious, or whose interests simply do not align with the interests of users {{I-D.arkko-arch-internet-threat-model-guidance}}. {{RFC7624}} describes an updated threat model for Internet confidentiality, see {{sec-prop}}. {{I-D.arkko-arch-internet-threat-model-guidance}} further expands the threat model. Implementations and users SHOULD consider these threat models. In particular, even data sent protected to the other endpoint such as ID_CRED and EAD can be used for tracking, see Section 2.7 of {{I-D.arkko-arch-internet-threat-model-guidance}}.
+
 ## Denial-of-Service {#dos}
 
 As CoAP provides Denial-of-Service protection in the form of the Echo option {{I-D.ietf-core-echo-request-tag}}, EDHOC itself does not provide countermeasures against Denial-of-Service attacks. By sending a number of new or replayed message_1 an attacker may cause the Responder to allocate state, perform cryptographic operations, and amplify messages. To mitigate such attacks, an implementation SHOULD rely on lower layer mechanisms such as the Echo option in CoAP that forces the initiator to demonstrate reachability at its apparent network address.
 
 An attacker can also send faked message_2, message_3, message_4, or error in an attempt to trick the receiving party to send an error message and discontinue the session. EDHOC implementations MAY evaluate if a received message is likely to have been forged by an attacker and ignore it without sending an error message or discontinuing the session.
-
 
 ## Implementation Considerations
 
