@@ -293,7 +293,7 @@ Initiator                                                   Responder
 |<- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - +
 |                             message_4                             |
 ~~~~~~~~~~~
-{: #fig-flow title="EDHOC message flow including the optional fourth message. The Signature_or_MAC fields represent signature or MAC depending on authentication method."}
+{: #fig-flow title="EDHOC message flow including the optional fourth message. The Signature_or_MAC fields represent signature or MAC depending on authentication method. The SIGMA construction allows message_2 to include a plain encryption Enc(), whereas message_3 includes an authenticated encryption with additional data AEAD() that MUST NOT be replaced by a plain encryption. More details in Section 8.2."}
 {: artwork-align="center"}
 
 
@@ -1120,7 +1120,7 @@ Repudiation: If an endpoint authenticates with a signature, the other endpoint c
 
 Two earlier versions of EDHOC have been formally analyzed {{Norrman20}} {{Bruni18}} and the specification has been updated based on the analysis.
 
-## Cryptographic Considerations
+## Cryptographic Considerations {#crypto}
 The SIGMA protocol requires that the encryption of message_3 provides confidentiality against active attackers and EDHOC message_4 relies on the use of
 authenticated encryption. Hence the message authenticating functionality of the authenticated encryption in EDHOC is critical: authenticated encryption MUST NOT be replaced by plain encryption only, even if authentication is provided at another level or through a different mechanism.
 
