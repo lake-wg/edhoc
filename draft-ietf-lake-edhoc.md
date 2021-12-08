@@ -181,7 +181,7 @@ A typical setting is when one of the endpoints is constrained or in a constraine
 
 ## Message Size Examples
 
-Compared to the DTLS 1.3 handshake {{I-D.ietf-tls-dtls13}} with ECDHE and connection ID, the number of bytes in EDHOC + CoAP can be less than 1/6 when RPK authentication is used, see {{I-D.ietf-lwig-security-protocol-comparison}}. {{fig-sizes}} shows examples of message sizes for EDHOC with different kinds of authentication keys and different COSE header parameters for identification: static Diffie-Hellman keys or signature keys, either in CBOR Web Token (CWT) / CWT Claims Set (CCS) {{RFC8392}} identified by a key identifier using 'kid' {{I-D.ietf-cose-rfc8152bis-struct}}, or in X.509 certificates identified by a hash value using 'x5t' {{I-D.ietf-cose-x509}}.
+Compared to the DTLS 1.3 handshake {{I-D.ietf-tls-dtls13}} with ECDHE and connection ID, the number of bytes in EDHOC + CoAP can be less than 1/6 when RPK authentication is used, see {{I-D.ietf-lwig-security-protocol-comparison}}. {{fig-sizes}} shows examples of EDHOC message sizes based on the assumptions in Section 2 of {{I-D.ietf-lwig-security-protocol-comparison}}, comparing different kinds of authentication keys and COSE header parameters for identification: static Diffie-Hellman keys or signature keys, either in CBOR Web Token (CWT) / CWT Claims Set (CCS) {{RFC8392}} identified by a key identifier using 'kid' {{I-D.ietf-cose-rfc8152bis-struct}}, or in X.509 certificates identified by a hash value using 'x5t' {{I-D.ietf-cose-x509}}.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 ========================================================
@@ -196,7 +196,7 @@ message_3            19         33         77         90
 Total               101        128        216        242
 ========================================================
 ~~~~~~~~~~~~~~~~~~~~~~~
-{: #fig-sizes title="Example of message sizes in bytes." artwork-align="center"}
+{: #fig-sizes title="Examples of EDHOC message sizes in bytes." artwork-align="center"}
 
 ## Document Structure
 
@@ -228,7 +228,7 @@ Initiator                                                   Responder
 +------------------------------------------------------------------>|
 |                                                                   |
 ~~~~~~~~~~~
-{: #fig-sigma title="MAC-then-Sign variant of the SIGMA-I protocol."}
+{: #fig-sigma title="MAC-then-Sign variant of the SIGMA-I protocol used by EDHOC."}
 {: artwork-align="center"}
 
 The parties exchanging messages are called Initiator (I) and Responder (R). They exchange ephemeral public keys, compute a shared secret, and derive symmetric application keys used to protect application data.
@@ -269,7 +269,7 @@ To simplify for implementors, the use of CBOR and COSE in EDHOC is summarized in
 
 ## General
 
-The EDHOC protocol consists of three mandatory messages (message_1, message_2, message_3) between Initiator and Responder, an optional fourth message (message_4), and an error message. All EDHOC messages are CBOR Sequences {{RFC8742}}. {{fig-flow}} illustrates an EDHOC message flow with the optional fourth message as well as the content of each message. The protocol elements in the figure are introduced in {{overview}} and {{asym}}. Message formatting and processing is specified in {{asym}} and {{error}}.
+The EDHOC protocol consists of three mandatory messages (message_1, message_2, message_3) between Initiator and Responder, an optional fourth message (message_4), and an error message. All EDHOC messages are CBOR Sequences {{RFC8742}}. {{fig-flow}} illustrates an EDHOC message flow with the optional fourth message as well as the content of each message. The protocol elements in the figure are introduced in {{overview}} and {{asym}}. Message formatting and processing are specified in {{asym}} and {{error}}.
 
 Application data may be protected using the agreed application algorithms (AEAD, hash) in the selected cipher suite (see {{cs}}) and the application can make use of the established connection identifiers C_I and C_R (see {{ci}}). EDHOC may be used with the media type application/edhoc defined in {{iana}}.
 
@@ -293,7 +293,7 @@ Initiator                                                   Responder
 |<- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - +
 |                             message_4                             |
 ~~~~~~~~~~~
-{: #fig-flow title="EDHOC Message Flow with the Optional Fourth Message"}
+{: #fig-flow title="EDHOC message flow including the optional fourth message. The Signature_or_MAC fields represent signature or MAC depending on authentication method."}
 {: artwork-align="center"}
 
 
@@ -424,7 +424,7 @@ An example of a CRED_x is shown below:
   }
 }
 ~~~~~~~~~~~
-{: title="A CCS Containing an X25519 Static Diffie-Hellman Key and an EUI-64 Identity."}
+{: title="CWT Claims Set (CCS) containing an X25519 static Diffie-Hellman key and an EUI-64 identity."}
 
 
 ### Identification of Credentials {#id_cred}
@@ -970,7 +970,7 @@ If any processing step fails, the Responder SHOULD send an EDHOC error message b
 
 # Error Handling {#error}
 
-This section defines the format for error messages.
+This section defines the format for error messages, and the processing associated to the currently defined error codes.
 
 An EDHOC error message can be sent by either endpoint as a reply to any non-error EDHOC message. How errors at the EDHOC layer are transported depends on lower layers, which need to enable error messages to be sent and processed as intended.
 
@@ -984,7 +984,7 @@ error = (
   ERR_INFO : any,
 )
 ~~~~~~~~~~~
-{: #fig-error-message title="EDHOC Error Message"}
+{: #fig-error-message title="EDHOC error message."}
 
 where:
 
@@ -1004,7 +1004,7 @@ The remainder of this section specifies the currently defined error codes, see {
 |        2 | suites        | Wrong selected cipher suite            |
 +----------+---------------+----------------------------------------+
 ~~~~~~~~~~~
-{: #fig-error-codes title="Error Codes and Error Information"}
+{: #fig-error-codes title="Error codes and error information included in the EDHOC error message."}
 
 
 
@@ -1046,7 +1046,7 @@ Initiator                                                   Responder
 +------------------------------------------------------------------>|
 |                             message_1                             |
 ~~~~~~~~~~~
-{: #fig-error1 title="Example of Responder supporting suite 6 but not suite 5."}
+{: #fig-error1 title="Example of an Initiator supporting suites 5, 6, 7, 8, and 9 in decreasing order of preference, and a Responder supporting suite 6 but not suite 5. The Responder rejects the first message_1 with an error indicating support for suite 6. The Initiator also supports suite 6, and therefore selects suite 6 in the second message_1. The initiator prepends in SUITES_I the selected suite 6 with the more preferred suites, in this case suite 5, to mitigate a potential attack on the cipher suite negotiation."}
 {: artwork-align="center"}
 
 In the second example ({{fig-error2}}), the Responder supports cipher suites 8 and 9 but not the more preferred (by the Initiator) cipher suites 5, 6 or 7. To illustrate the negotiation mechanics we let the Initiator first make a guess that the Responder supports suite 6 but not suite 5. Since the Responder supports neither 5 nor 6, it responds with SUITES_R containing the supported suites, after which the Initiator selects its most preferred supported suite. The order of cipher suites in SUITES_R does not matter. (If the Responder had supported suite 5, it would have included it in SUITES_R of the response, and it would in that case have become the selected suite in the second message_1.)
@@ -1065,7 +1065,7 @@ Initiator                                                   Responder
 +------------------------------------------------------------------>|
 |                             message_1                             |
 ~~~~~~~~~~~
-{: #fig-error2 title="Example of Responder supporting suites 8 and 9 but not 5, 6 or 7."}
+{: #fig-error2 title="Example of an Initiator supporting suites 5, 6, 7, 8, and 9 in decreasing order of preference, and a Responder supporting suites 8 and 9 but not 5, 6 or 7. The Responder rejects the first message_1 with an error indicating support for suites 8 and 9 (in any order). The Initiator also supports suites 8 and 9, and prefers suite 8, so therefore selects suite 8 in the second message_1. The initiator prepends in SUITES_I the selected suite 8 with the more preferred suites in order of preference, in this case suites 5, 6 and 7, to mitigate a potential attack on the cipher suite negotiation."}
 {: artwork-align="center"}
 
 Note that the Initiator's list of supported cipher suites and order of preference is fixed (see {{asym-msg1-form}} and {{init-proc-msg1}}). Furthermore, the Responder shall only accept message_1 if the selected cipher suite is the first cipher suite in SUITES_I that the Responder supports (see {{resp-proc-msg1}}). Following this procedure ensures that the selected cipher suite is the most preferred (by the Initiator) cipher suite supported by both parties.
@@ -1570,7 +1570,7 @@ Client    Server
   |   2.04   |
   |          |
 ~~~~~~~~~~~~~~~~~~~~~~~
-{: #fig-coap1 title="Transferring EDHOC in CoAP when the Initiator is CoAP Client"}
+{: #fig-coap1 title="Transferring EDHOC in CoAP when the Initiator is CoAP client."}
 {: artwork-align="center"}
 
 The exchange in {{fig-coap1}} protects the client identity against active attackers and the server identity against passive attackers.
@@ -1596,7 +1596,7 @@ Client    Server
   |          | Payload: EDHOC message_3
   |          |
 ~~~~~~~~~~~~~~~~~~~~~~~
-{: #fig-coap2 title="Transferring EDHOC in CoAP when the Initiator is CoAP Server"}
+{: #fig-coap2 title="Transferring EDHOC in CoAP when the Initiator is CoAP server."}
 {: artwork-align="center"}
 
 To protect against denial-of-service attacks, the CoAP server MAY respond to the first POST request with a 4.01 (Unauthorized) containing an Echo option {{I-D.ietf-core-echo-request-tag}}. This forces the initiator to demonstrate its reachability at its apparent network address. If message fragmentation is needed, the EDHOC messages may be fragmented using the CoAP Block-Wise Transfer mechanism {{RFC7959}}.
