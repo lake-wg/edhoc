@@ -200,7 +200,7 @@ Total               101        128        216        242
 
 ## Document Structure
 
-The remainder of the document is organized as follows: {{background}} outlines EDHOC authenticated with digital signatures, {{overview}} describes the protocol elements of EDHOC, including formatting of the ephemeral public keys, {{key-der}} specifies the key derivation, {{asym}} specifies message processing for EDHOC authenticated with signature keys or static Diffie-Hellman keys, {{error}} describes the error messages, and {{transfer}} shows how to transfer EDHOC with CoAP and establish an OSCORE security context.
+The remainder of the document is organized as follows: {{background}} outlines EDHOC authenticated with signature keys, {{overview}} describes the protocol elements of EDHOC, including formatting of the ephemeral public keys, {{key-der}} specifies the key derivation, {{asym}} specifies message processing for EDHOC authenticated with signature keys or static Diffie-Hellman keys, {{error}} describes the error messages, and {{transfer}} shows how to transfer EDHOC with CoAP and establish an OSCORE security context.
 
 
 ## Terminology and Requirements Language {#term}
@@ -212,9 +212,9 @@ Readers are expected to be familiar with the terms and concepts described in CBO
 
 # EDHOC Outline {#background}
 
-EDHOC specifies different authentication methods of the Diffie-Hellman key exchange: digital signatures and static Diffie-Hellman keys. This section outlines the digital signature-based method. Further details of protocol elements and other authentication methods are provided in the remainder of this document.
+EDHOC specifies different authentication methods of the ephemeral Diffie-Hellman key exchange: signature keys and static Diffie-Hellman keys. This section outlines the signature key based method. Further details of protocol elements and other authentication methods are provided in the remainder of this document.
 
-SIGMA (SIGn-and-MAc) is a family of theoretical protocols with a large number of variants {{SIGMA}}. Like IKEv2 {{RFC7296}} and (D)TLS 1.3 {{RFC8446}}, EDHOC authenticated with digital signatures is built on a variant of the SIGMA protocol which provides identity protection of the initiator (SIGMA-I) against active attackers, and like IKEv2 {{RFC7296}}, EDHOC implements the MAC-then-Sign variant of the SIGMA-I protocol shown in {{fig-sigma}}.
+SIGMA (SIGn-and-MAc) is a family of theoretical protocols with a large number of variants {{SIGMA}}. Like IKEv2 {{RFC7296}} and (D)TLS 1.3 {{RFC8446}}, EDHOC authenticated with signature keys is built on a variant of the SIGMA protocol which provides identity protection of the initiator (SIGMA-I) against active attackers, and like IKEv2 {{RFC7296}}, EDHOC implements the MAC-then-Sign variant of the SIGMA-I protocol shown in {{fig-sigma}}.
 
 ~~~~~~~~~~~
 Initiator                                                   Responder
