@@ -455,7 +455,7 @@ See {{COSE}} for more examples.
 
 An EDHOC cipher suite consists of an ordered set of algorithms from the "COSE Algorithms" and "COSE Elliptic Curves" registries as well as the EDHOC MAC length. Algorithms need to be specified with enough parameters to make them completely determined. The MAC length MUST be at least 8 bytes. EDHOC is currently only specified for use with key exchange algorithms of type ECDH curves, but any Key Encapsulation Method (KEM), including Post-Quantum Cryptography (PQC) KEMs, can be used in method 0, see {{pqc}}. Use of other types of key exchange algorithms to replace static DH authentication (method 1,2,3) would likely require a specification updating EDHOC with new methods.
 
-EDHOC supports all signature algorithms defined by COSE, including PQC signature algorithms such as HSS-LMS. Just like in TLS 1.3 {{RFC8446}} and IKEv2 {{RFC7296}}, a signature in COSE is determined by the signature algorithm and the authentication key algorithm together, see {{auth-keys}}. The exact details of the authentication key algorithm depend on the type of authentication credential. COSE supports different formats for storing the public authentication keys including COSE_Key and X.509, which have different names and ways to represent the authentication key and the authentication key algorithm.
+EDHOC supports all signature algorithms defined by COSE. Just like in TLS 1.3 {{RFC8446}} and IKEv2 {{RFC7296}}, a signature in COSE is determined by the signature algorithm and the authentication key algorithm together, see {{auth-keys}}. The exact details of the authentication key algorithm depend on the type of authentication credential. COSE supports different formats for storing the public authentication keys including COSE_Key and X.509, which have different names and ways to represent the authentication key and the authentication key algorithm.
 
 An EDHOC cipher suite consists of the following parameters:
 
@@ -566,7 +566,7 @@ The definition of Extract depends on the EDHOC hash algorithm of the selected ci
 
 ### PRK_2e
 
-PRK_2e is used to derive a keystream to encrypt message_2. PRK_2e is derived with the following input:
+The pseudo-random key PRK_2e is used to derive a keystream to encrypt message_2. PRK_2e is derived with the following input:
 
 * The salt SHALL be a zero-length byte string. Note that {{RFC5869}} specifies that if the salt is not provided, it is set to a string of zeros (see Section 2.2 of {{RFC5869}}). For implementation purposes, not providing the salt is the same as setting the salt to the zero-length byte string (0x).
 
@@ -588,13 +588,13 @@ where salt = 0x (zero-length byte string).
 
 ### PRK_3e2m
 
-PRK_3e2m is used to produce a MAC in message_2 and to encrypt message_3. PRK_3e2m is derived as follows:
+The pseudo-random key PRK_3e2m is used to produce a MAC in message_2 and to encrypt message_3. PRK_3e2m is derived as follows:
 
 If the Responder authenticates with a static Diffie-Hellman key, then PRK_3e2m = Extract( PRK_2e, G_RX ), where G_RX is the ECDH shared secret calculated from G_R and X, or G_X and R (the Responder's private authentication key, see {{auth-keys}}), else PRK_3e2m = PRK_2e.
 
 ### PRK_4x3m
 
-PRK_4x3m is used to produce a MAC in message_3, to encrypt message_4, and to derive application specific data. PRK_4x3m is derived as follows:
+The pseudo-random key PRK_4x3m is used to produce a MAC in message_3, to encrypt message_4, and to derive application specific data. PRK_4x3m is derived as follows:
 
 If the Initiator authenticates with a static Diffie-Hellman key, then PRK_4x3m = Extract( PRK_3e2m, G_IY ), where G_IY is the ECDH shared secret calculated from G_I and Y, or G_Y and I (the Initiator's private authentication key, see {{auth-keys}}), else PRK_4x3m = PRK_3e2m.
 
@@ -797,7 +797,7 @@ The Responder SHALL compose message_2 as follows:
     * CRED_R - CBOR item containing the credential of the Responder, see {{auth-cred}}
     * EAD_2 - unprotected external authorization data, see {{AD}}
 
-* If the Responder authenticates with a static Diffie-Hellman key (method equals 1 or 3), then Signature_or_MAC_2 is MAC_2. If the Responder authenticates with a signature key (method equals 0 or 2), then Signature_or_MAC_2 is the 'signature' field of a COSE_Sign1 object as defined in Section 4.4 of {{I-D.ietf-cose-rfc8152bis-struct}} using the signature algorithm of the selected cipher suite, the private authentication key of the Responder, and the following parameters as input (see {{COSE}}):
+* If the Responder authenticates with a static Diffie-Hellman key (method equals 1 or 3), then Signature_or_MAC_2 is MAC_2. If the Responder authenticates with a signature key (method equals 0 or 2), then Signature_or_MAC_2 is the 'signature' field of a COSE_Sign1 object as defined in Section 4.4 of {{I-D.ietf-cose-rfc8152bis-struct}} using the signature algorithm of the selected cipher suite, the private authentication key of the Responder, and the following parameters as input (see {{COSE}} for an overview of COSE and {{CBOR}} for notation):
 
    * protected =  << ID_CRED_R >>
 
