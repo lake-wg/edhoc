@@ -106,7 +106,7 @@ informative:
     date: May 2009
 
   SIGMA:
-    target: http://webee.technion.ac.il/~hugo/sigma-pdf.pdf
+    target: https://webee.technion.ac.il/~hugo/sigma-pdf.pdf
     title: SIGMA - The 'SIGn-and-MAc' Approach to Authenticated Diffie-Hellman and Its Use in the IKE-Protocols (Long version)
     author:
       -
@@ -1490,7 +1490,7 @@ This appendix describes how to select EDHOC connection identifiers and derive an
 
 This section specifies a rule for converting from EDHOC connection identifier to OSCORE Sender/Recipient ID. (An identifier is Sender ID or Recipient ID depending on from which endpoint is the point of view, see Section 3.1 of {{RFC8613}}.)
 
-* If the EDHOC connection identifier is numeric, i.e., encoded as a CBOR integer on the wire, it is converted to a (naturally byte-string shaped) OSCORE Sender/Recipient ID equal to its CBOR encoded form.
+* If the EDHOC connection identifier is numeric, i.e., encoded as a CBOR integer on the wire, it is converted to an OSCORE Sender/Recipient ID equal to the CBOR encoding.
 
 For example, a numeric C_R equal to 10 (0x0A in CBOR encoding) is converted to a (typically client) Sender ID equal to 0x0A, while a numeric C_I equal to -12 (0x2B in CBOR encoding) is converted to a (typically client) Sender ID equal to 0x2B.
 
@@ -1763,7 +1763,7 @@ For use of EDHOC in the XX protocol, the following assumptions are made:
    * The CBOR map has parameters 1 (kty), -1 (crv), and -2 (x-coordinate).
    * ID_CRED_R is {TBD2 : CCS}.   Editor's note: TBD2 is the COSE header parameter value of 'kccs', see {{cwt-header-param}}
 5. External authorization data is defined and processed as specified in {{I-D.selander-ace-ake-authz}}.
-6. EUI-64 used as identity of endpoint.
+6. EUI-64 used as identity of endpoint (see example in {{auth-cred}}).
 7. No use of message_4: the application sends protected messages from R to I.
 
 
