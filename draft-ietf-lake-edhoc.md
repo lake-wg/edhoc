@@ -918,7 +918,7 @@ After verifying message_3, the Responder is assured that the Initiator has calcu
 
 ## EDHOC Message 4 {#m4}
 
-This section specifies message_4 which is OPTIONAL to support. Key confirmation is normally provided by sending an application message from the Responder to the Initiator protected with a key derived with the EDHOC-Exporter, e.g., using OSCORE (see {{transfer}}). In deployments where no protected application message is sent from the Responder to the Initiator, message_4 MUST be supported and the Responder MUST send message_4. Two examples of such deployments:
+This section specifies message_4 which is OPTIONAL to support. Key confirmation is normally provided by sending an application message from the Responder to the Initiator protected with a key derived with the EDHOC-Exporter, e.g., using OSCORE (see {{transfer}}). In deployments where no protected application message is sent from the Responder to the Initiator, message_4 MUST be supported and MUST be used. Two examples of such deployments:
 
 1. When EDHOC is only used for authentication and no application data is sent.
 2. When application data is only sent from the Initiator to the Responder.
@@ -1170,7 +1170,7 @@ All private keys, symmetric keys, and IVs MUST be secret. Implementations should
 
 The Initiator and the Responder are responsible for verifying the integrity of certificates. The selection of trusted CAs should be done very carefully and certificate revocation should be supported. The private authentication keys MUST be kept secret, only the Responder SHALL have access to the Responder's private authentication key and only the Initiator SHALL have access to the Initiator's private authentication key.
 
-The Initiator and the Responder are allowed to select the connection identifiers C_I and C_R, respectively, for the other party to use in the ongoing EDHOC protocol as well as in a subsequent application protocol (e.g., OSCORE {{RFC8613}}). The choice of connection identifier is not security critical in EDHOC but intended to enable the use short identifiers in combination with  simplifying the retrieval of the right security context in the application protocol. If the wrong connection identifier of the other party is used in a protocol message it will result in the receiving party not being able to retrieve a security context (which will terminate the protocol) or retrieve the wrong security context (which also terminates the protocol as the message cannot be verified).
+The Initiator and the Responder are allowed to select the connection identifiers C_I and C_R, respectively, for the other party to use in the ongoing EDHOC protocol as well as in a subsequent application protocol (e.g., OSCORE {{RFC8613}}). The choice of connection identifier is not security critical in EDHOC but intended to simplify the retrieval of the right security context in combination with using short identifiers. If the wrong connection identifier of the other party is used in a protocol message it will result in the receiving party not being able to retrieve a security context (which will terminate the protocol) or retrieve the wrong security context (which also terminates the protocol as the message cannot be verified).
 
 If two nodes unintentionally initiate two simultaneous EDHOC message exchanges with each other even if they only want to complete a single EDHOC message exchange, they MAY terminate the exchange with the lexicographically smallest G_X. If the two G_X values are equal, the received message_1 MUST be discarded to mitigate reflection attacks. Note that in the case of two simultaneous EDHOC exchanges where the nodes only complete one and where the nodes have different preferred cipher suites, an attacker can affect which of the two nodes’ preferred cipher suites will be used by blocking the other exchange.
 
@@ -1548,7 +1548,7 @@ with response code 2.04 (Changed), in the latter
    with response code as specified in {{edhoc-oscore-over-coap}}.
    EDHOC message_3 or the EDHOC error message is sent from
    the client to the server's resource in the payload of a POST request.
-   If EDHOC message_4 is used, or in case of an error message, it is sent from the server to the client in the payload of the response, with response codes analogously to message_2.
+   If EDHOC message_4 is used, or in case of an error message, it is sent from the server to the client in the payload of the response, with response codes analogously to message_2. In case of an error message in response to message_4, it is sent analogously to errors in response to message_2.
 
 In order to correlate a message received from a client to a message previously sent by the server, messages sent by the client are prepended with the CBOR serialization of the connection identifier which the server has chosen. This applies independently of if the CoAP server is Responder or Initiator. For the default case when the server is Responder, the prepended connection identifier is C_R, and C_I if the server is Initiator. If message_1 is sent to the server, the CBOR simple value "true" (0xf5) is sent in its place (given that the server has not selected C_R yet).
 
