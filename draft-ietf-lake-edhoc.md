@@ -354,9 +354,9 @@ The Initiator and the Responder need to have agreed on a transport to be used fo
 
 ### Use of Connection Identifiers for EDHOC Message Correlation {#ci-edhoc}
 
-The transport needs to support the correlation between EDHOC messages and facilitate the retrieval of protocol state during EDHOC protocol execution, including an indication of a message being message_1. The correlation may reuse existing mechanisms in the transport protocol. For example, the CoAP Token may be used to correlate EDHOC messages in a CoAP response and an associated CoAP request.
+The transport needs to support the correlation between EDHOC messages and facilitate the retrieval of protocol state and security context during EDHOC protocol execution, including an indication of a message being message_1. The correlation may reuse existing mechanisms in the transport protocol. For example, the CoAP Token may be used to correlate EDHOC messages in a CoAP response and an associated CoAP request.
 
-Connection identifiers may be used to correlate EDHOC messages and facilitate the retrieval of protocol state during EDHOC protocol execution.  Transports that do not inherently provide correlation across all EDHOC messages of an exchange can send connection identifiers along with EDHOC messages to gain that required capability, e.g., by prepending the appropriate connection identifier (when available from the EDHOC protocol) to the EDHOC message. Transport of EDHOC in CoAP payloads is described in {{coap}}, which also shows how to use connection identifiers and message_1 indication with CoAP.
+Connection identifiers may be used to correlate EDHOC messages and facilitate the retrieval of protocol state/security context during EDHOC protocol execution.  Transports that do not inherently provide correlation across all EDHOC messages of an exchange can send connection identifiers along with EDHOC messages to gain that required capability, e.g., by prepending the appropriate connection identifier (when available from the EDHOC protocol) to the EDHOC message. Transport of EDHOC in CoAP payloads is described in {{coap}}, which also shows how to use connection identifiers and message_1 indication with CoAP.
 
 ## Authentication Parameters {#auth-key-id}
 
