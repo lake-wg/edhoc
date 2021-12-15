@@ -511,7 +511,7 @@ ead = 1* (
 )
 ~~~~~~~~~~~
 
-Applications using external authorization data need to specify ead_value format, processing, and security considerations and register the ead_label, see {{iana-ead}}. 
+Applications using external authorization data need to specify ead_value format, processing, and security considerations and register the ead_label, see {{iana-ead}}.
 
 The EAD fields of EDHOC are not intended for generic application data. Since data carried in EAD_1 and EAD_2 fields may not be protected, special considerations need to be made such that it does not violate security and privacy requirements of the service which uses this data. Moreover, the content in an EAD field may impact the security properties provided by EDHOC. Security applications making use of the EAD fields must perform the necessary security analysis.
 
