@@ -1094,7 +1094,7 @@ Implementations MAY support message_4. Error codes 1 and 2 MUST be supported.
 
 Implementations MAY support EAD.
 
-Padding is OPTIONAL to support.
+Implementations MAY support padding when sending messages. Removal of padding is MANDATORY to support when receiving messages.
 
 For many constrained IoT devices it is problematic to support more than one cipher suite. Existing devices can be expected to support either ECDSA or EdDSA. To enable as much interoperability as we can reasonably achieve, less constrained devices SHOULD implement both cipher suite 0 (AES-CCM-16-64-128, SHA-256, 8, X25519, EdDSA, AES-CCM-16-64-128, SHA-256) and cipher suite 2 (AES-CCM-16-64-128, SHA-256, 8, P-256, ES256, AES-CCM-16-64-128, SHA-256). Constrained endpoints SHOULD implement cipher suite 0 or cipher suite 2. Implementations only need to implement the algorithms needed for their supported methods.
 
