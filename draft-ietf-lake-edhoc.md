@@ -347,14 +347,13 @@ For OSCORE, the choice of a connection identifier results in the endpoint select
 
 ## Transport {#transport}
 
-Cryptographically, EDHOC does not put requirements on the lower layers. EDHOC is not bound to a particular transport layer and can even be used in environments without IP. The transport is responsible, where necessary, to handle:
+Cryptographically, EDHOC does not put requirements on the lower layers. EDHOC is not bound to a particular transport layer and can even be used in environments without IP. In addition to transport of messages including errors, the transport is responsible, where necessary, to handle:
 
 * message loss,
 * message reordering,
 * message duplication,
 * fragmentation,
 * demultiplex EDHOC messages from other types of messages,
-* transport of error messages,
 * denial-of-service protection,
 * message correlation.
 
@@ -490,7 +489,7 @@ EDHOC can be used with all algorithms and curves defined for COSE. Implementatio
 
 *   Cipher suite 6, based on AES-GCM, is for general non-constrained applications. It consists of high performance algorithms that are widely used in non-constrained applications.
 
-*   Cipher suites 24 and 25 are intended for high security applications such as government use and financial applications. These cipher suites do not share any algorithms. The algorithms of cipher suite 24 are included in the CNSA suite {{CNSA}}.
+*   Cipher suites 24 and 25 are intended for high security applications such as government use and financial applications. These cipher suites do not share any algorithms. Cipher suite 24 consists of algorithms from the CNSA suite {{CNSA}}.
 
 The different methods ({{method}}) use the same cipher suites, but some algorithms are not used in some methods. The EDHOC signature algorithm is not used in methods without signature authentication.
 
