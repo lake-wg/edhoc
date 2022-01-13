@@ -810,9 +810,9 @@ The Responder SHALL compose message_2 as follows:
 
    * plaintext = ( ? PAD, ID_CRED_R / bstr / int, Signature_or_MAC_2, ? EAD_2 )
 
-       * If ID_CRED_R contains a single 'kid' parameter, i.e., ID_CRED_R = { 4 : kid_R }, then only the byte string or integer kid_R is conveyed in the plaintext encoded accordingly as bstr or int.
+      * If ID_CRED_R contains a single 'kid' parameter, i.e., ID_CRED_R = { 4 : kid_R }, then only the byte string or integer kid_R is conveyed in the plaintext encoded accordingly as bstr or int.
 
-       * PAD = 1*true is padding that may be used to hide the true length of the ciphertext
+      * PAD = 1*true is padding that may be used to hide the length of the unpadded plaintext
 
    * Compute KEYSTREAM_2 = EDHOC-KDF( PRK_2e, TH_2, "KEYSTREAM_2", h'', plaintext_length ), where plaintext_length is the length of the plaintext.
 
@@ -828,7 +828,7 @@ The Initiator SHALL process message_2 as follows:
 
 * Retrieve the protocol state using the message correlation provided by the transport (e.g., the CoAP Token, the 5-tuple, or the prepended C_I, see {{coap}}).
 
-* Decrypt CIPHERTEXT_2, see {{asym-msg2-proc}} and discard the padding.
+* Decrypt CIPHERTEXT_2, see {{asym-msg2-proc}}, and discard padding, if present.
 
 * Pass EAD_2 to the security application.
 
@@ -886,7 +886,7 @@ The Initiator SHALL compose message_3 as follows:
 
       * If ID_CRED_I contains a single 'kid' parameter, i.e., ID_CRED_I = { 4 : kid_I }, only the byte string or integer kid_I is conveyed in the plaintext encoded accordingly as bstr or int.
 
-       * PAD = 1*true is padding that may be used to hide the true length of the ciphertext
+       * PAD = 1*true is padding that may be used to hide the length of the unpadded plaintext
 
    CIPHERTEXT_3 is the 'ciphertext' of COSE_Encrypt0.
 
@@ -904,7 +904,7 @@ The Responder SHALL process message_3 as follows:
 
 * Retrieve the protocol state using the message correlation provided by the transport (e.g., the CoAP Token, the 5-tuple, or the prepended C_I, see {{coap}}).
 
-* Decrypt and verify the COSE_Encrypt0 as defined in Section 5.3 of {{I-D.ietf-cose-rfc8152bis-struct}}, with the EDHOC AEAD algorithm in the selected cipher suite, and the parameters defined in {{asym-msg3-proc}}. Discard the padding.
+* Decrypt and verify the COSE_Encrypt0 as defined in Section 5.3 of {{I-D.ietf-cose-rfc8152bis-struct}}, with the EDHOC AEAD algorithm in the selected cipher suite, and the parameters defined in {{asym-msg3-proc}}. Discard padding, if present.
 
 * Pass EAD_3 to the security application.
 
@@ -954,7 +954,7 @@ The Responder SHALL compose message_4 as follows:
     * IV_4 = EDHOC-Exporter( "EDHOC_IV_4", h'', iv_length )
        * iv_length - length of the intialization vector of the EDHOC AEAD algorithm
     * P = ( ? PAD, ? EAD_4 )
-      * EAD_4 - protected external authorization data, see {{AD}}. PAD = 1*true is padding that may be used to hide the true length of the ciphertext.
+      * EAD_4 - protected external authorization data, see {{AD}}. PAD = 1*true is padding that may be used to hide the length of the unpadded plaintext.
 
   CIPHERTEXT_4 is the 'ciphertext' of COSE_Encrypt0.
 
@@ -968,7 +968,7 @@ The Initiator SHALL process message_4 as follows:
 
 * Retrieve the protocol state using the message correlation provided by the transport (e.g., the CoAP Token, the 5-tuple, or the prepended C_I, see {{coap}}).
 
-* Decrypt and verify the COSE_Encrypt0 as defined in Section 5.3 of {{I-D.ietf-cose-rfc8152bis-struct}}, with the EDHOC AEAD algorithm in the selected cipher suite, and the parameters defined in {{asym-msg4-proc}}. Discard the padding.
+* Decrypt and verify the COSE_Encrypt0 as defined in Section 5.3 of {{I-D.ietf-cose-rfc8152bis-struct}}, with the EDHOC AEAD algorithm in the selected cipher suite, and the parameters defined in {{asym-msg4-proc}}. Discard padding, if present.
 
 * Pass EAD_4 to the security application.
 
@@ -1094,7 +1094,7 @@ Implementations MAY support message_4. Error codes 1 and 2 MUST be supported.
 
 Implementations MAY support EAD.
 
-Implementations MAY support padding when sending messages. Removal of padding is MANDATORY to support when receiving messages.
+Implementations MAY support padding of plaintext when sending messages. Implementations MUST support padding of plaintext when receiving messages, i.e. MUST be able to parse padded messages.
 
 For many constrained IoT devices it is problematic to support more than one cipher suite. Existing devices can be expected to support either ECDSA or EdDSA. To enable as much interoperability as we can reasonably achieve, less constrained devices SHOULD implement both cipher suite 0 (AES-CCM-16-64-128, SHA-256, 8, X25519, EdDSA, AES-CCM-16-64-128, SHA-256) and cipher suite 2 (AES-CCM-16-64-128, SHA-256, 8, P-256, ES256, AES-CCM-16-64-128, SHA-256). Constrained endpoints SHOULD implement cipher suite 0 or cipher suite 2. Implementations only need to implement the algorithms needed for their supported methods.
 
