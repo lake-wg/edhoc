@@ -323,6 +323,8 @@ The Initiator and the Responder need to have agreed on a single method to be use
 {: #fig-method-types title="Authentication Keys for Method Types"}
 {: artwork-align="center"}
 
+EDHOC does not have a dedicated message field to indicate protocol version. Breaking changes to EDHOC can be introduced by specifying and registering new methods.
+
 ## Connection Identifiers {#ci}
 
 EDHOC includes the selection of connection identifiers (C_I, C_R) identifying a connection for which keys are agreed.
@@ -1021,7 +1023,7 @@ Error code 0 MAY be used internally in an application to indicate success, i.e.,
 
 ## Unspecified
 
-Error code 1 is used for errors that do not have a specific error code defined. ERR_INFO MUST be a text string containing a human-readable diagnostic message written in English. The diagnostic text message is mainly intended for software engineers that during debugging need to interpret it in the context of the EDHOC specification. The diagnostic message SHOULD be provided to the calling application where it SHOULD be logged.
+Error code 1 is used for errors that do not have a specific error code defined. ERR_INFO MUST be a text string containing a human-readable diagnostic message written in English, for example "Method not supported". The diagnostic text message is mainly intended for software engineers that during debugging need to interpret it in the context of the EDHOC specification. The diagnostic message SHOULD be provided to the calling application where it SHOULD be logged.
 
 ## Wrong Selected Cipher Suite {#wrong-selected}
 
