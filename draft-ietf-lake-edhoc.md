@@ -679,6 +679,8 @@ where H() is the EDHOC hash algorithm in the selected cipher suite. Examples of 
 
 * K_4 and IV_4 are derived with the EDHOC-Exporter using the empty CBOR byte string h'' as context, and labels "EDHOC_K_4" and "EDHOC_IV_4", respectively. IVs are only used if the EDHOC AEAD algorithm uses IVs.
 
+With SHA-256, no context, and OKM length smaller than 24, any label longer than 20 characters requires an additional iteration of the hash function to compute. The labels in this specification have all been chosen to fit within this limit.
+
 ## EDHOC-KeyUpdate {#keyupdate}
 
 To provide forward secrecy in an even more efficient way than re-running EDHOC, EDHOC provides the function EDHOC-KeyUpdate. When EDHOC-KeyUpdate is called the old PRK_4x3m is deleted and the new PRK_4x3m is calculated as a "hash" of the old key using the Extract function as illustrated by the following pseudocode:
@@ -1206,13 +1208,13 @@ Reference: [[this document]]
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 ~~~~~~~~~~~~~~~~~~~~~~~
-Label: OSCORE_Master_Secret
+Label: OSCORE_Secret
 Description: Derived OSCORE Master Secret
 Reference: [[this document]]
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 ~~~~~~~~~~~~~~~~~~~~~~~
-Label: OSCORE_Master_Salt
+Label: OSCORE_Salt
 Description: Derived OSCORE Master Salt
 Reference: [[this document]]
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -1521,15 +1523,15 @@ After successful processing of EDHOC message_3, Client and Server derive Securit
 
 * The Master Secret and Master Salt are derived by using the EDHOC-Exporter interface, see {{exporter}}.
 
-The EDHOC Exporter Labels for deriving the OSCORE Master Secret and the OSCORE Master Salt, are "OSCORE_Master_Secret" and "OSCORE_Master_Salt", respectively.
+The EDHOC Exporter Labels for deriving the OSCORE Master Secret and the OSCORE Master Salt, are "OSCORE_Secret" and "OSCORE_Salt", respectively.
 
 The context parameter is h'' (0x40), the empty CBOR byte string.
 
 By default, key_length is the key length (in bytes) of the application AEAD Algorithm of the selected cipher suite for the EDHOC session. Also by default, salt_length has value 8. The Initiator and Responder MAY agree out-of-band on a longer key_length than the default and on a different salt_length.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
-Master Secret = EDHOC-Exporter("OSCORE_Master_Secret", h'', key_length)
-Master Salt   = EDHOC-Exporter("OSCORE_Master_Salt", h'', salt_length)
+Master Secret = EDHOC-Exporter("OSCORE_Secret", h'', key_length)
+Master Salt   = EDHOC-Exporter("OSCORE_Salt", h'', salt_length)
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 * The AEAD Algorithm is the application AEAD algorithm of the selected cipher suite for the EDHOC session.
