@@ -1,5 +1,5 @@
 {
-   test_vector_1: {
+   "test_vector_1": {
       "method": "00",
       "SUITES_I": "02",
       "x_raw": "f71c8f5f384d2591183b66229241028f371cc99e400fdc5dbd556d6d837a4f97",
@@ -90,7 +90,7 @@
       "oscore_secret_key_update_raw": "b76420788790650ca50caa9e5c479444",
       "oscore_salt_key_update_raw": "7fcd7f320da029af"
    },
-   test_vector_2: {
+   "test_vector_2": {
       "method": "00",
       "SUITES_I": "02",
       "x_raw": "cb3f89cd9b9223233be8649d23cef5691fd06fbe6093ba96f4944085b8ad939d",
@@ -180,5 +180,5 @@
       "prk_4x3m_key_update_raw": "be457c11d78151965ca1114dcf196dde6c16344e4471e40af83fdf8e7d59c5b1",
       "oscore_secret_key_update_raw": "bee6556290542b660c34eb6366e5a4e0",
       "oscore_salt_key_update_raw": "7ed3e0a731fa0baf"
-   },
+   }
 }
