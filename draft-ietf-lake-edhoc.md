@@ -108,7 +108,7 @@ informative:
     date: May 2009
 
   SIGMA:
-    target: http://webee.technion.ac.il/~hugo/sigma-pdf.pdf
+    target: https://webee.technion.ac.il/~hugo/sigma-pdf.pdf
     title: SIGMA - The 'SIGn-and-MAc' Approach to Authenticated Diffie-Hellman and Its Use in the IKE-Protocols (Long version)
     author:
       -
@@ -175,19 +175,15 @@ Some security solutions for such settings exist already. CBOR Object Signing and
 
 This document specifies Ephemeral Diffie-Hellman Over COSE (EDHOC), a lightweight authenticated key exchange protocol providing good security properties including forward secrecy, identity protection, and cipher suite negotiation. Authentication can be based on raw public keys (RPK) or public key certificates and requires the application to provide input on how to verify that endpoints are trusted. This specification emphasizes the possibility to reference rather than to transport credentials in order to reduce message overhead, but the latter is also supported. EDHOC does not currently support pre-shared key (PSK) authentication as authentication with static Diffie-Hellman public keys by reference produces equally small message sizes but with much simpler key distribution and identity protection.
 
-EDHOC makes use of known protocol constructions, such as SIGMA {{SIGMA}} and Extract-and-Expand {{RFC5869}}. EDHOC uses COSE for cryptography and identification of credentials (including COSE_Key, CWT, CCS, X.509, C509, see {{auth-cred}}). COSE provides crypto agility and enables the use of future algorithms and credential types targeting IoT.
+EDHOC makes use of known protocol constructions, such as SIGMA {{SIGMA}} and Extract-and-Expand {{RFC5869}}. EDHOC uses COSE for cryptography and identification of credentials (including COSE_Key, CBOR Web Token (CWT), CWT Claims Set (CCS), X.509 and CBOR encoded X.509 (C509) certificates, see {{auth-cred}}). COSE provides crypto agility and enables the use of future algorithms and credential types targeting IoT.
 
-## Use of EDHOC
+EDHOC is designed for highly constrained settings making it especially suitable for low-power wide area networks {{RFC8376}} such as Cellular IoT, 6TiSCH, and LoRaWAN. A main objective for EDHOC is to be a lightweight authenticated key exchange for OSCORE, i.e., to provide authentication and session key establishment for IoT use cases such as those built on CoAP {{RFC7252}} involving 'things' with embedded microcontrollers, sensors, and actuators. By reusing the same lightweight primitives as OSCORE (CBOR, COSE, CoAP) the additional code size can be kept very low. Note that while CBOR and COSE primitives are built into the protocol messages, EDHOC is not bound to a particular transport.
 
-EDHOC is designed for highly constrained settings making it especially suitable for low-power wide area networks {{RFC8376}} such as Cellular IoT, 6TiSCH, and LoRaWAN. A main objective for EDHOC is to be a lightweight authenticated key exchange for OSCORE, i.e., to provide authentication and session key establishment for IoT use cases such as those built on CoAP {{RFC7252}}. CoAP is a specialized web transfer protocol for use with constrained nodes and networks, providing a request/response interaction model between application endpoints. As such, EDHOC is targeting a large variety of use cases involving 'things' with embedded microcontrollers, sensors, and actuators.
-
-A typical setting is when one of the endpoints is constrained or in a constrained network, and the other endpoint is a node on the Internet (such as a mobile phone) or at the edge of the constrained network (such as a gateway). Thing-to-thing interactions over constrained networks are also relevant since both endpoints would then benefit from the lightweight properties of the protocol. EDHOC could e.g., be run when a device connects for the first time, or to establish fresh keys which are not revealed by a later compromise of the long-term keys. Further security properties are described in {{sec-prop}}.
-
-EDHOC enables the reuse of the same lightweight primitives as OSCORE: CBOR for encoding, COSE for cryptography, and CoAP for transport. In using libraries already in the code base, the additional code size can be kept very low. Note that, while CBOR and COSE primitives are built into the protocol messages, EDHOC is not bound to a particular transport. Transfer of EDHOC messages in CoAP payloads is detailed in {{coap}}.
+A typical setting is when one of the endpoints is constrained or in a constrained network, and the other endpoint is a node on the Internet (such as a mobile phone). Thing-to-thing interactions over constrained networks are also relevant since both endpoints would then benefit from the lightweight properties of the protocol. EDHOC could, e.g., be run when a device connects for the first time, or to establish fresh keys which are not revealed by a later compromise of the long-term keys.
 
 ## Message Size Examples
 
-Compared to the DTLS 1.3 handshake {{I-D.ietf-tls-dtls13}} with ECDHE and connection ID, the EDHOC message size when transferred in CoAP can be less than 1/6 when RPK authentication is used, see {{I-D.ietf-lwig-security-protocol-comparison}}. {{fig-sizes}} shows examples of message sizes for EDHOC with different kinds of authentication keys and different COSE header parameters for identification: static Diffie-Hellman keys or signature keys, either in CBOR Web Token (CWT) / CWT Claims Set (CCS) {{RFC8392}} identified by a key identifier using 'kid' {{I-D.ietf-cose-rfc8152bis-struct}}, or in X.509 certificates identified by a hash value using 'x5t' {{I-D.ietf-cose-x509}}.
+Compared to the DTLS 1.3 handshake {{I-D.ietf-tls-dtls13}} with ECDHE and connection ID, the EDHOC message size when transferred in CoAP can be less than 1/6 when RPK authentication is used, see {{I-D.ietf-lwig-security-protocol-comparison}}. {{fig-sizes}} shows examples of EDHOC message sizes based on the assumptions in Section 2 of {{I-D.ietf-lwig-security-protocol-comparison}}, comparing different kinds of authentication keys and COSE header parameters for identification: static Diffie-Hellman keys or signature keys, either in CBOR Web Token (CWT) / CWT Claims Set (CCS) {{RFC8392}} identified by a key identifier using 'kid' {{I-D.ietf-cose-rfc8152bis-struct}}, or in X.509 certificates identified by a hash value using 'x5t' {{I-D.ietf-cose-x509}}.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 ========================================================
@@ -202,11 +198,11 @@ message_3            19         33         77         90
 Total               101        128        216        242
 ========================================================
 ~~~~~~~~~~~~~~~~~~~~~~~
-{: #fig-sizes title="Example of message sizes in bytes." artwork-align="center"}
+{: #fig-sizes title="Examples of EDHOC message sizes in bytes." artwork-align="center"}
 
 ## Document Structure
 
-The remainder of the document is organized as follows: {{background}} outlines EDHOC authenticated with digital signatures, {{overview}} describes the protocol elements of EDHOC, including formatting of the ephemeral public keys, {{key-der}} specifies the key derivation, {{asym}} specifies message processing for EDHOC authenticated with signature keys or static Diffie-Hellman keys, {{error}} describes the error messages, and {{transfer}} shows how to transfer EDHOC with CoAP and establish an OSCORE security context.
+The remainder of the document is organized as follows: {{background}} outlines EDHOC authenticated with signature keys, {{overview}} describes the protocol elements of EDHOC, including formatting of the ephemeral public keys, {{key-der}} specifies the key derivation, {{asym}} specifies message processing for EDHOC authenticated with signature keys or static Diffie-Hellman keys, {{error}} describes the error messages, and {{transfer}} shows how to transfer EDHOC with CoAP and establish an OSCORE security context.
 
 
 ## Terminology and Requirements Language {#term}
@@ -218,9 +214,9 @@ Readers are expected to be familiar with the terms and concepts described in CBO
 
 # EDHOC Outline {#background}
 
-EDHOC specifies different authentication methods of the Diffie-Hellman key exchange: digital signatures and static Diffie-Hellman keys. This section outlines the digital signature-based method. Further details of protocol elements and other authentication methods are provided in the remainder of this document.
+EDHOC specifies different authentication methods of the ephemeral Diffie-Hellman key exchange: signature keys and static Diffie-Hellman keys. This section outlines the signature key based method. Further details of protocol elements and other authentication methods are provided in the remainder of this document.
 
-SIGMA (SIGn-and-MAc) is a family of theoretical protocols with a large number of variants {{SIGMA}}. Like IKEv2 {{RFC7296}} and (D)TLS 1.3 {{RFC8446}}, EDHOC authenticated with digital signatures is built on a variant of the SIGMA protocol which provides identity protection of the initiator (SIGMA-I) against active attackers, and like IKEv2 {{RFC7296}}, EDHOC implements the MAC-then-Sign variant of the SIGMA-I protocol shown in {{fig-sigma}}.
+SIGMA (SIGn-and-MAc) is a family of theoretical protocols with a large number of variants {{SIGMA}}. Like IKEv2 {{RFC7296}} and (D)TLS 1.3 {{RFC8446}}, EDHOC authenticated with signature keys is built on a variant of the SIGMA protocol which provides identity protection of the initiator (SIGMA-I) against active attackers, and like IKEv2 {{RFC7296}}, EDHOC implements the MAC-then-Sign variant of the SIGMA-I protocol shown in {{fig-sigma}}.
 
 ~~~~~~~~~~~
 Initiator                                                   Responder
@@ -234,7 +230,7 @@ Initiator                                                   Responder
 +------------------------------------------------------------------>|
 |                                                                   |
 ~~~~~~~~~~~
-{: #fig-sigma title="MAC-then-Sign variant of the SIGMA-I protocol."}
+{: #fig-sigma title="MAC-then-Sign variant of the SIGMA-I protocol used by EDHOC."}
 {: artwork-align="center"}
 
 The parties exchanging messages are called Initiator (I) and Responder (R). They exchange ephemeral public keys, compute a shared secret, and derive symmetric application keys used to protect application data.
@@ -275,9 +271,9 @@ To simplify for implementors, the use of CBOR and COSE in EDHOC is summarized in
 
 ## General
 
-The EDHOC protocol consists of three mandatory messages (message_1, message_2, message_3) between Initiator and Responder, an optional fourth message (message_4), and an error message. All EDHOC messages are CBOR Sequences {{RFC8742}}. {{fig-flow}} illustrates an EDHOC message flow with the optional fourth message as well as the content of each message. The protocol elements in the figure are introduced in {{overview}} and {{asym}}. Message formatting and processing is specified in {{asym}} and {{error}}.
+The EDHOC protocol consists of three mandatory messages (message_1, message_2, message_3) between Initiator and Responder, an optional fourth message (message_4), and an error message. All EDHOC messages are CBOR Sequences {{RFC8742}}. {{fig-flow}} illustrates an EDHOC message flow with the optional fourth message as well as the content of each message. The protocol elements in the figure are introduced in {{overview}} and {{asym}}. Message formatting and processing are specified in {{asym}} and {{error}}.
 
-Application data may be protected using the agreed application algorithms (AEAD, hash) in the selected cipher suite (see {{cs}}) and the application can make use of the established connection identifiers C_I and C_R (see {{ci}}). EDHOC may be used with the media type application/edhoc defined in {{iana}}.
+Application data may be protected using the agreed application algorithms (AEAD, hash) in the selected cipher suite (see {{cs}}) and the application can make use of the established connection identifiers C_I and C_R (see {{ci}}). EDHOC may be used with the media type application/edhoc defined in {{media-type}}.
 
 The Initiator can derive symmetric application keys after creating EDHOC message_3, see {{exporter}}. Protected application data can therefore be sent in parallel or together with EDHOC message_3. EDHOC message_4 is typically not sent.
 
@@ -299,7 +295,7 @@ Initiator                                                   Responder
 |<- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - +
 |                             message_4                             |
 ~~~~~~~~~~~
-{: #fig-flow title="EDHOC Message Flow with the Optional Fourth Message"}
+{: #fig-flow title="EDHOC message flow including the optional fourth message. The Signature_or_MAC fields represent signature or MAC depending on authentication method. The SIGMA construction allows message_2 to include a plain encryption Enc(), whereas message_3 is required to be authenticated encryption AEAD()."}
 {: artwork-align="center"}
 
 
@@ -434,7 +430,7 @@ An example of a CRED_x is shown below:
   }
 }
 ~~~~~~~~~~~
-{: title="A CCS Containing an X25519 Static Diffie-Hellman Key and an EUI-64 Identity."}
+{: title="CWT Claims Set (CCS) containing an X25519 static Diffie-Hellman key and an EUI-64 identity."}
 
 
 ### Identification of Credentials {#id_cred}
@@ -465,7 +461,7 @@ See {{COSE}} for more examples.
 
 An EDHOC cipher suite consists of an ordered set of algorithms from the "COSE Algorithms" and "COSE Elliptic Curves" registries as well as the EDHOC MAC length. All algorithm names and definitions follows from COSE {{I-D.ietf-cose-rfc8152bis-algs}}. Note that COSE sometimes uses peculiar names such as ES256 for ECDSA with SHA-256, A128 for AES-128, and Ed25519 for the curve edwards25519. Algorithms need to be specified with enough parameters to make them completely determined. The MAC length MUST be at least 8 bytes. EDHOC is currently only specified for use with key exchange algorithms of type ECDH curves, but any Key Encapsulation Method (KEM), including Post-Quantum Cryptography (PQC) KEMs, can be used in method 0, see {{pqc}}. Use of other types of key exchange algorithms to replace static DH authentication (method 1,2,3) would likely require a specification updating EDHOC with new methods.
 
-EDHOC supports all signature algorithms defined by COSE, including PQC signature algorithms such as HSS-LMS. Just like in TLS 1.3 {{RFC8446}} and IKEv2 {{RFC7296}}, a signature in COSE is determined by the signature algorithm and the authentication key algorithm together, see {{auth-keys}}. The exact details of the authentication key algorithm depend on the type of authentication credential. COSE supports different formats for storing the public authentication keys including COSE_Key and X.509, which have different names and ways to represent the authentication key and the authentication key algorithm.
+EDHOC supports all signature algorithms defined by COSE. Just like in TLS 1.3 {{RFC8446}} and IKEv2 {{RFC7296}}, a signature in COSE is determined by the signature algorithm and the authentication key algorithm together, see {{auth-keys}}. The exact details of the authentication key algorithm depend on the type of authentication credential. COSE supports different formats for storing the public authentication keys including COSE_Key and X.509, which have different names and ways to represent the authentication key and the authentication key algorithm.
 
 An EDHOC cipher suite consists of the following parameters:
 
@@ -576,7 +572,7 @@ The definition of Extract depends on the EDHOC hash algorithm of the selected ci
 
 ### PRK_2e
 
-PRK_2e is used to derive a keystream to encrypt message_2. PRK_2e is derived with the following input:
+The pseudo-random key PRK_2e is used to derive a keystream to encrypt message_2. PRK_2e is derived with the following input:
 
 * The salt SHALL be a zero-length byte string. Note that {{RFC5869}} specifies that if the salt is not provided, it is set to a string of zeros (see Section 2.2 of {{RFC5869}}). For implementation purposes, not providing the salt is the same as setting the salt to the zero-length byte string (0x).
 
@@ -598,15 +594,15 @@ where salt = 0x (zero-length byte string).
 
 ### PRK_3e2m
 
-PRK_3e2m is used to produce a MAC in message_2 and to encrypt message_3. PRK_3e2m is derived as follows:
+The pseudo-random key PRK_3e2m is used to produce a MAC in message_2 and to encrypt message_3. PRK_3e2m is derived as follows:
 
-If the Responder authenticates with a static Diffie-Hellman key, then PRK_3e2m = Extract( PRK_2e, G_RX ), where G_RX is the ECDH shared secret calculated from G_R and X, or G_X and R, else PRK_3e2m = PRK_2e.
+If the Responder authenticates with a static Diffie-Hellman key, then PRK_3e2m = Extract( PRK_2e, G_RX ), where G_RX is the ECDH shared secret calculated from G_R and X, or G_X and R (the Responder's private authentication key, see {{auth-keys}}), else PRK_3e2m = PRK_2e.
 
 ### PRK_4x3m
 
-PRK_4x3m is used to produce a MAC in message_3, to encrypt message_4, and to derive application specific data. PRK_4x3m is derived as follows:
+The pseudo-random key PRK_4x3m is used to produce a MAC in message_3, to encrypt message_4, and to derive application specific data. PRK_4x3m is derived as follows:
 
-If the Initiator authenticates with a static Diffie-Hellman key, then PRK_4x3m = Extract( PRK_3e2m, G_IY ), where G_IY is the ECDH shared secret calculated from G_I and Y, or G_Y and I, else PRK_4x3m = PRK_3e2m.
+If the Initiator authenticates with a static Diffie-Hellman key, then PRK_4x3m = Extract( PRK_3e2m, G_IY ), where G_IY is the ECDH shared secret calculated from G_I and Y, or G_Y and I (the Initiator's private authentication key, see {{auth-keys}}), else PRK_4x3m = PRK_3e2m.
 
 
 
@@ -741,7 +737,7 @@ suites = [ 2* int ] / int
 where:
 
 * METHOD - authentication method, see {{method}}.
-* SUITES_I - array of cipher suites which the Initiator supports in order of preference, starting with the most preferred and ending with the cipher suite selected for this session. If the most preferred cipher suite is selected then SUITES_I contains only that cipher suite and is encoded as an int. The processing steps are detailed below and in {{wrong-selected}}.
+* SUITES_I - array of cipher suites which the Initiator supports in order of preference, the first cipher suite in network byte order is the most preferred by I, the last is the one selected by I for this session. If the most preferred cipher suite is selected then SUITES_I contains only that cipher suite and is encoded as an int. The processing steps are detailed below and in {{wrong-selected}}.
 * G_X - the ephemeral public key of the Initiator
 * C_I - variable length connection identifier
 * EAD_1 - unprotected external authorization data, see {{AD}}.
@@ -750,11 +746,11 @@ where:
 
 The Initiator SHALL compose message_1 as follows:
 
-* SUITES_I contains a list of supported cipher suites, in order of preference, truncated after the cipher suite selected for this session.
+* Construct SUITES_I complying with the definition in {{asym-msg1-form}}}, and furthermore:
    * The Initiator MUST select its most preferred cipher suite, conditioned on what it can assume to be supported by the Responder.
-   * The selected cipher suite MAY be changed between sessions, e.g., based on previous error messages (see next bullet), but all cipher suites which are more preferred than the selected cipher suite in the list MUST be included in SUITES_I.
-   * If the Initiator previously received from the Responder an error message with error code 2 (see {{wrong-selected}}) indicating cipher suites supported by the Responder, then the Initiator SHOULD select the most preferred supported cipher suite among those (note that error messages are not authenticated and may be forged).
-   * The supported cipher suites and the order of preference MUST NOT be changed based on previous error messages.
+   * The selected cipher suite (i.e. the last cipher suite in SUITES_I) MAY be different between sessions, e.g., based on previous error messages (see next bullet), but all cipher suites which are more preferred by I than the selected cipher suite MUST be included in SUITES_I.
+   * If the Initiator previously received from the Responder an error message with error code 2 (see {{wrong-selected}}) which indicate cipher suites supported by the Responder, then the Initiator SHOULD select its most preferred supported cipher suite among those (bearing in mind that error messages are not authenticated and may be forged).
+   * The supported cipher suites and the order of preference in SUITES_I MUST NOT be changed based on previous error messages.
 
 * Generate an ephemeral ECDH key pair using the curve in the selected cipher suite and format it as a COSE_Key. Let G_X be the 'x' parameter of the COSE_Key.
 
@@ -808,7 +804,7 @@ The Responder SHALL compose message_2 as follows:
     * CRED_R - CBOR item containing the credential of the Responder, see {{auth-cred}}
     * EAD_2 - unprotected external authorization data, see {{AD}}
 
-* If the Responder authenticates with a static Diffie-Hellman key (method equals 1 or 3), then Signature_or_MAC_2 is MAC_2. If the Responder authenticates with a signature key (method equals 0 or 2), then Signature_or_MAC_2 is the 'signature' field of a COSE_Sign1 object, computed as specified in Section 4.4 of {{I-D.ietf-cose-rfc8152bis-struct}} using the signature algorithm of the selected cipher suite, the private authentication key of the Responder, and the following parameters as input (see {{COSE}}):
+* If the Responder authenticates with a static Diffie-Hellman key (method equals 1 or 3), then Signature_or_MAC_2 is MAC_2. If the Responder authenticates with a signature key (method equals 0 or 2), then Signature_or_MAC_2 is the 'signature' field of a COSE_Sign1 object, computed as specified in Section 4.4 of {{I-D.ietf-cose-rfc8152bis-struct}} using the signature algorithm of the selected cipher suite, the private authentication key of the Responder, and the following parameters as input (see {{COSE}} for an overview of COSE and {{CBOR}} for notation):
 
    * protected =  << ID_CRED_R >>
 
@@ -982,7 +978,7 @@ If any processing step fails, the Responder SHOULD send an EDHOC error message b
 
 # Error Handling {#error}
 
-This section defines the format for error messages.
+This section defines the format for error messages, and the processing associated to the currently defined error codes. Additional error codes may be registered, see {{error-code-reg}}.
 
 An EDHOC error message can be sent by either endpoint as a reply to any non-error EDHOC message. How errors at the EDHOC layer are transported depends on lower layers, which need to enable error messages to be sent and processed as intended.
 
@@ -996,7 +992,7 @@ error = (
   ERR_INFO : any,
 )
 ~~~~~~~~~~~
-{: #fig-error-message title="EDHOC Error Message"}
+{: #fig-error-message title="EDHOC error message."}
 
 where:
 
@@ -1016,7 +1012,7 @@ The remainder of this section specifies the currently defined error codes, see {
 |        2 | suites        | Wrong selected cipher suite            |
 +----------+---------------+----------------------------------------+
 ~~~~~~~~~~~
-{: #fig-error-codes title="Error Codes and Error Information"}
+{: #fig-error-codes title="Error codes and error information included in the EDHOC error message."}
 
 
 
@@ -1062,10 +1058,10 @@ Initiator                                                   Responder
 +------------------------------------------------------------------>|
 |                             message_1                             |
 ~~~~~~~~~~~
-{: #fig-error1 title="Example of Responder supporting suite 6 but not suite 5."}
+{: #fig-error1 title="Example of an Initiator supporting suites 5, 6, 7, 8, and 9 in decreasing order of preference, and a Responder supporting suite 6 but not suite 5. The Responder rejects the first message_1 with an error indicating support for suite 6. The Initiator also supports suite 6, and therefore selects suite 6 in the second message_1. The initiator prepends in SUITES_I the selected suite 6 with the more preferred suites, in this case suite 5, to mitigate a potential attack on the cipher suite negotiation."}
 {: artwork-align="center"}
 
-In the second example ({{fig-error2}}), the Responder supports cipher suites 8 and 9 but not the more preferred (by the Initiator) cipher suites 5, 6 or 7. To illustrate the negotiation mechanics we let the Initiator first make a guess that the Responder supports suite 6 but not suite 5. Since the Responder supports neither 5 nor 6, it responds with SUITES_R containing the supported suites, after which the Initiator selects its most preferred supported suite. The order of cipher suites in SUITES_R does not matter. (If the Responder had supported suite 5, it would have included it in SUITES_R of the response, and it would in that case have become the selected suite in the second message_1.)
+In the second example ({{fig-error2}}), the Responder supports cipher suites 8 and 9 but not the more preferred (by the Initiator) cipher suites 5, 6 or 7. To illustrate the negotiation mechanics we let the Initiator first make a guess that the Responder supports suite 6 but not suite 5. Since the Responder supports neither 5 nor 6, it responds with SUITES_R containing the supported suites, after which the Initiator selects its most preferred supported suite.  (If the Responder had supported suite 5, it would have included it in SUITES_R of the response, and it would in that case have become the selected suite in the second message_1.)
 
 ~~~~~~~~~~~
 Initiator                                                   Responder
@@ -1081,7 +1077,7 @@ Initiator                                                   Responder
 +------------------------------------------------------------------>|
 |                             message_1                             |
 ~~~~~~~~~~~
-{: #fig-error2 title="Example of Responder supporting suites 8 and 9 but not 5, 6 or 7."}
+{: #fig-error2 title="Example of an Initiator supporting suites 5, 6, 7, 8, and 9 in decreasing order of preference, and a Responder supporting suites 8 and 9 but not 5, 6 or 7. The Responder rejects the first message_1 with an error indicating support for suites 8 and 9 (in any order). The Initiator also supports suites 8 and 9, and prefers suite 8, so therefore selects suite 8 in the second message_1. The initiator prepends in SUITES_I the selected suite 8 with the more preferred suites in order of preference, in this case suites 5, 6 and 7, to mitigate a potential attack on the cipher suite negotiation."}
 {: artwork-align="center"}
 
 # Mandatory-to-Implement Compliance Requirements {#mti}
@@ -1122,7 +1118,7 @@ To limit the effect of breaches, it is important to limit the use of symmetrical
 
 Compromise of the long-term keys (private signature or static DH keys) does not compromise the security of completed EDHOC exchanges. Compromising the private authentication keys of one party lets an active attacker impersonate that compromised party in EDHOC exchanges with other parties but does not let the attacker impersonate other parties in EDHOC exchanges with the compromised party. Compromise of the long-term keys does not enable a passive attacker to compromise future session keys. Compromise of the HDKF input parameters (ECDH shared secret) leads to compromise of all session keys derived from that compromised shared secret. Compromise of one session key does not compromise other session keys. Compromise of PRK_4x3m leads to compromise of all keying material derived with the EDHOC-Exporter since the last invocation (if any) of the EDHOC-KeyUpdate function.
 
-EDHOC provides a minimum of 64-bit security against online brute force attacks and a minimum of 128-bit security against offline brute force attacks. This is in line with IPsec, TLS, and COSE. To break 64-bit security against online brute force an attacker would on average have to send 4.3 billion messages per second for 68 years, which is infeasible in constrained IoT radio technologies.
+EDHOC provides a minimum of 64-bit security against online brute force attacks and a minimum of 128-bit security against offline brute force attacks. To break 64-bit security against online brute force an attacker would on average have to send 4.3 billion messages per second for 68 years, which is infeasible in constrained IoT radio technologies.
 
 After sending message_3, the Initiator is assured that no other party than the Responder can compute the key PRK_4x3m (implicit key authentication). The Initiator does however not know that the Responder has actually computed the key PRK_4x3m. While the Initiator can securely send protected application data, the Initiator SHOULD NOT permanently store the keying material PRK_4x3m and TH_4 until the Initiator is assured that the Responder has actually computed the key PRK_4x3m (explicit key confirmation). Explicit key confirmation is e.g., assured when the Initiator has verified an OSCORE message or message_4 from the Responder. After verifying message_3, the Responder is assured that the Initiator has calculated the key PRK_4x3m (explicit key confirmation) and that no other party than the Initiator can compute the key. The Responder can securely send protected application data and store the keying material PRK_4x3m and TH_4.
 
@@ -1132,7 +1128,7 @@ Repudiation: If an endpoint authenticates with a signature, the other endpoint c
 
 Two earlier versions of EDHOC have been formally analyzed {{Norrman20}} {{Bruni18}} and the specification has been updated based on the analysis.
 
-## Cryptographic Considerations
+## Cryptographic Considerations {#crypto}
 The SIGMA protocol requires that the encryption of message_3 provides confidentiality against active attackers and EDHOC message_4 relies on the use of
 authenticated encryption. Hence the message authenticating functionality of the authenticated encryption in EDHOC is critical: authenticated encryption MUST NOT be replaced by plain encryption only, even if authentication is provided at another level or through a different mechanism.
 
@@ -1172,7 +1168,7 @@ An attacker can also send faked message_2, message_3, message_4, or error in an 
 
 ## Implementation Considerations
 
-The availability of a secure random number generator is essential for the security of EDHOC. If no true random number generator is available, a truly random seed MUST be provided from an external source and used with a cryptographically secure pseudorandom number generator. As each pseudorandom number must only be used once, an implementation needs to generate unique input to the pseudorandom number generator after reboot, by using a new truly random seed, or by continuously storing unique state in nonvolatile memory, such as strictly increasing sequence numbers. Appendix B.1.1 in [RFC8613] describes issues and solution approaches for writing sequence numbers to nonvolatile memory. Intentionally or unintentionally weak or predictable pseudorandom number generators can be abused or exploited for malicious purposes. {{RFC8937}} describes a way for security protocol implementations to augment their (pseudo)random number generators using a long-term private key and a deterministic signature function. This improves randomness from broken or otherwise subverted random number generators. The same idea can be used with other secrets and functions such as a Diffie-Hellman function or a symmetric secret and a PRF like HMAC or KMAC. It is RECOMMENDED to not trust a single source of randomness and to not put unaugmented random numbers on the wire.
+The availability of a secure random number generator is essential for the security of EDHOC. If no true random number generator is available, a random seed must be provided from an external source and used with a cryptographically secure pseudorandom number generator. As each pseudorandom number must only be used once, an implementation needs to get a unique input to the pseudorandom number generator after reboot, or continuously store state in nonvolatile memory. Appendix B.1.1 in {{RFC8613}} describes issues and solution approaches for writing to nonvolatile memory. Intentionally or unintentionally weak or predictable pseudorandom number generators can be abused or exploited for malicious purposes. {{RFC8937}} describes a way for security protocol implementations to augment their (pseudo)random number generators using a long-term private key and a deterministic signature function. This improves randomness from broken or otherwise subverted random number generators. The same idea can be used with other secrets and functions such as a Diffie-Hellman function or a symmetric secret and a PRF like HMAC or KMAC. It is RECOMMENDED to not trust a single source of randomness and to not put unaugmented random numbers on the wire.
 
 If ECDSA is supported, "deterministic ECDSA" as specified in {{RFC6979}} MAY be used. Pure deterministic elliptic-curve signatures such as deterministic ECDSA and EdDSA have gained popularity over randomized ECDSA as their security do not depend on a source of high-quality randomness. Recent research has however found that implementations of these signature algorithms may be vulnerable to certain side-channel and
 fault injection attacks due to their determinism. See e.g., Section 1 of {{I-D.mattsson-cfrg-det-sigs-with-noise}} for a list of attack papers. As suggested in Section 6.1.2 of {{I-D.ietf-cose-rfc8152bis-algs}} this can be addressed by combining randomness and determinism.
@@ -1185,7 +1181,7 @@ The Initiator and the Responder are allowed to select the connection identifiers
 
 If two nodes unintentionally initiate two simultaneous EDHOC message exchanges with each other even if they only want to complete a single EDHOC message exchange, they MAY terminate the exchange with the lexicographically smallest G_X. If the two G_X values are equal, the received message_1 MUST be discarded to mitigate reflection attacks. Note that in the case of two simultaneous EDHOC exchanges where the nodes only complete one and where the nodes have different preferred cipher suites, an attacker can affect which of the two nodes’ preferred cipher suites will be used by blocking the other exchange.
 
-If supported by the device, it is RECOMMENDED that at least the long-term private keys are stored in a Trusted Execution Environment (TEE) and that sensitive operations using these keys are performed inside the TEE.  To achieve even higher security it is RECOMMENDED that additional operations such as ephemeral key generation, all computations of shared secrets, and storage of the PRK keys can be done inside the TEE. The use of a TEE enforces that code within that environment cannot be tampered with, and that any data used by such code cannot be read or tampered with by code outside that environment.
+If supported by the device, it is RECOMMENDED that at least the long-term private keys are stored in a Trusted Execution Environment (TEE) and that sensitive operations using these keys are performed inside the TEE.  To achieve even higher security it is RECOMMENDED that additional operations such as ephemeral key generation, all computations of shared secrets, and storage of the PRK keys can be done inside the TEE. The use of a TEE aims at preventing code within that environment to be tampered with, and preventing data used by such code to be read or tampered with by code outside that environment.
 
 The sequence of transcript hashes in EHDOC (TH_2, TH_3, TH_4) do not make use of a so called running hash, this is a design choice as running hashes are often not supported on constrained platforms.
 
@@ -1330,7 +1326,7 @@ Reference: [[this document]]
 
 IANA has created a new registry entitled "EDHOC Method Type" under the new group name "Ephemeral Diffie-Hellman Over COSE (EDHOC)". The registration procedure is "Expert Review". The columns of the registry are Value, Description, and Reference, where Value is an integer and the other columns are text strings. The initial contents of the registry are shown in {{fig-method-types}}.
 
-## EDHOC Error Codes Registry
+## EDHOC Error Codes Registry {#error-code-reg}
 
 IANA has created a new registry entitled "EDHOC Error Codes" under the new group name "Ephemeral Diffie-Hellman Over COSE (EDHOC)". The registration procedure is "Expert Review". The columns of the registry are ERR_CODE, ERR_INFO Type and Description, where ERR_CODE is an integer, ERR_INFO is a CDDL defined type, and Description is a text string. The initial contents of the registry are shown in {{fig-error-codes}}.
 
@@ -1403,7 +1399,7 @@ IANA has extended the Value Type of 'kid' in the "CWT Confirmation Methods" regi
 
 - Specification Document(s): Section 3.4 of RFC 8747 [[This document]]
 
-## The Well-Known URI Registry
+## The Well-Known URI Registry {#well-known}
 
 IANA has added the well-known URI "edhoc" to the "Well-Known URIs" registry under the group name "Well-Known URIs".
 
@@ -1415,7 +1411,7 @@ IANA has added the well-known URI "edhoc" to the "Well-Known URIs" registry unde
 
 - Related information: None
 
-## Media Types Registry
+## Media Types Registry {#media-type}
 
 IANA has added the media type "application/edhoc" to the "Media Types" registry.
 
@@ -1457,7 +1453,7 @@ IANA has added the media type "application/edhoc" to the "Media Types" registry.
 
 - Change Controller: IESG
 
-## CoAP Content-Formats Registry
+## CoAP Content-Formats Registry {#content-format}
 
 IANA has added the media type "application/edhoc" to the "CoAP Content-Formats" registry under the group name "Constrained RESTful Environments (CoRE) Parameters".
 
@@ -1469,7 +1465,7 @@ IANA has added the media type "application/edhoc" to the "CoAP Content-Formats" 
 
 -  Reference: \[\[this document\]\]
 
-## Resource Type (rt=) Link Target Attribute Values Registry
+## Resource Type (rt=) Link Target Attribute Values Registry {#rt}
 
 IANA has added the resource type "core.edhoc" to the "Resource Type (rt=) Link Target Attribute Values" registry under the group name "Constrained RESTful Environments (CoRE) Parameters".
 
@@ -1478,8 +1474,6 @@ IANA has added the resource type "core.edhoc" to the "Resource Type (rt=) Link T
 -  Description: EDHOC resource.
 
 -  Reference: \[\[this document\]\]
-
-Client applications can use this resource type to discover a server's resource for EDHOC, where to send a request for executing the EDHOC protocol.
 
 
 ## Expert Review Instructions
@@ -1503,7 +1497,7 @@ This appendix describes how to select EDHOC connection identifiers and derive an
 
 This section specifies a rule for converting from EDHOC connection identifier to OSCORE Sender/Recipient ID. (An identifier is Sender ID or Recipient ID depending on from which endpoint is the point of view, see Section 3.1 of {{RFC8613}}.)
 
-* If the EDHOC connection identifier is numeric, i.e., encoded as a CBOR integer on the wire, it is converted to a (naturally byte-string shaped) OSCORE Sender/Recipient ID equal to its CBOR encoded form.
+* If the EDHOC connection identifier is numeric, i.e., encoded as a CBOR integer on the wire, it is converted to an OSCORE Sender/Recipient ID equal to the CBOR encoding.
 
 For example, a numeric C_R equal to 10 (0x0A in CBOR encoding) is converted to a (typically client) Sender ID equal to 0x0A, while a numeric C_I equal to -12 (0x2B in CBOR encoding) is converted to a (typically client) Sender ID equal to 0x2B.
 
@@ -1548,8 +1542,7 @@ From then on, Client and Server retrieve the OSCORE protocol state using the Rec
 
 This section specifies one instance for how EDHOC can be transferred as an exchange of CoAP {{RFC7252}} messages. CoAP provides a reliable transport that can preserve packet ordering and handle message duplication. CoAP can also perform fragmentation and protect against denial-of-service attacks. The underlying CoAP transport should be used in reliable mode, in particular when fragmentation is used, to avoid, e.g.,  situations with hanging endpoints waiting for each other.
 
-By default, the CoAP client is the Initiator and the CoAP server is the Responder, but the roles SHOULD be chosen to protect the most sensitive identity, see {{security}}. According to this specification, EDHOC is transferred in POST requests and 2.04 (Changed) responses to the Uri-Path: "/.well-known/edhoc". An application may define its own path that can be discovered, e.g., using a resource directory {{I-D.ietf-core-resource-directory}}.
-
+By default, the CoAP client is the Initiator and the CoAP server is the Responder, but the roles SHOULD be chosen to protect the most sensitive identity, see {{security}}. Client applications can use the resource type "core.edhoc" to discover a server's EDHOC resource, i.e., where to send a request for executing the EDHOC protocol, see {{rt}}. According to this specification, EDHOC is transferred in POST requests and 2.04 (Changed) responses to the Uri-Path: "/.well-known/edhoc", see {{well-known}}. An application may define its own path that can be discovered, e.g., using a resource directory {{I-D.ietf-core-resource-directory}}.
 
 By default, the message flow is as follows:
 EDHOC message_1 is sent in the payload of a POST request from the client to the
@@ -1591,7 +1584,7 @@ Client    Server
   |   2.04   |
   |          |
 ~~~~~~~~~~~~~~~~~~~~~~~
-{: #fig-coap1 title="Transferring EDHOC in CoAP when the Initiator is CoAP Client"}
+{: #fig-coap1 title="Transferring EDHOC in CoAP when the Initiator is CoAP client."}
 {: artwork-align="center"}
 
 The exchange in {{fig-coap1}} protects the client identity against active attackers and the server identity against passive attackers.
@@ -1617,7 +1610,7 @@ Client    Server
   |          | Payload: EDHOC message_3
   |          |
 ~~~~~~~~~~~~~~~~~~~~~~~
-{: #fig-coap2 title="Transferring EDHOC in CoAP when the Initiator is CoAP Server"}
+{: #fig-coap2 title="Transferring EDHOC in CoAP when the Initiator is CoAP server."}
 {: artwork-align="center"}
 
 To protect against denial-of-service attacks, the CoAP server MAY respond to the first POST request with a 4.01 (Unauthorized) containing an Echo option {{I-D.ietf-core-echo-request-tag}}. This forces the Initiator to demonstrate its reachability at its apparent network address. If message fragmentation is needed, the EDHOC messages may be fragmented using the CoAP Block-Wise Transfer mechanism {{RFC7959}}.
@@ -1626,7 +1619,7 @@ EDHOC does not restrict how error messages are transported with CoAP, as long as
 
 ### Transferring EDHOC and OSCORE over CoAP {#edhoc-oscore-over-coap}
 
-When using EDHOC over CoAP for establishing an OSCORE Security Context, EDHOC error messages sent as CoAP responses MUST be sent in the payload of error responses, i.e., they MUST specify a CoAP error response code. In particular, it is RECOMMENDED that such error responses have response code either 4.00 (Bad Request) in case of client error (e.g., due to a malformed EDHOC message), or 5.00 (Internal Server Error) in case of server error (e.g., due to failure in deriving EDHOC keying material). The Content-Format of the error response MUST be set to application/edhoc.
+When using EDHOC over CoAP for establishing an OSCORE Security Context, EDHOC error messages sent as CoAP responses MUST be sent in the payload of error responses, i.e., they MUST specify a CoAP error response code. In particular, it is RECOMMENDED that such error responses have response code either 4.00 (Bad Request) in case of client error (e.g., due to a malformed EDHOC message), or 5.00 (Internal Server Error) in case of server error (e.g., due to failure in deriving EDHOC keying material). The Content-Format of the error response MUST be set to application/edhoc, see {{content-format}}.
 
 A method for combining EDHOC and OSCORE protocols in two round-trips is specified in {{I-D.ietf-core-oscore-edhoc}}. That specification also contains conversion from OSCORE Sender/Recipient IDs to EDHOC connection identifiers, web-linking and target attributes for discovering of EDHOC resources.
 
@@ -1785,7 +1778,7 @@ For use of EDHOC in the XX protocol, the following assumptions are made:
    * The CBOR map has parameters 1 (kty), -1 (crv), and -2 (x-coordinate).
    * ID_CRED_R is {TBD2 : CCS}.   Editor's note: TBD2 is the COSE header parameter value of 'kccs', see {{cwt-header-param}}
 5. External authorization data is defined and processed as specified in {{I-D.selander-ace-ake-authz}}.
-6. EUI-64 used as the identity of the endpoint.
+6. EUI-64 is used as the identity of the endpoint (see example in {{auth-cred}}).
 7. No use of message_4: the application sends protected messages from R to I.
 
 
