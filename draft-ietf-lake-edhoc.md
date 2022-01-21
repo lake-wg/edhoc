@@ -1096,7 +1096,7 @@ Initiator                                                   Responder
 {: #fig-error2 title="Example of an Initiator supporting suites 5, 6, 7, 8, and 9 in decreasing order of preference, and a Responder supporting suites 8 and 9 but not 5, 6 or 7. The Responder rejects the first message_1 with an error indicating support for suites 8 and 9 (in any order). The Initiator also supports suites 8 and 9, and prefers suite 8, so therefore selects suite 8 in the second message_1. The initiator prepends in SUITES_I the selected suite 8 with the more preferred suites in order of preference, in this case suites 5, 6 and 7, to mitigate a potential attack on the cipher suite negotiation."}
 {: artwork-align="center"}
 
-# Mandatory-to-Implement Compliance Requirements {#mti}
+# Compliance Requirements {#mti}
 
 An implementation may support only Initiator or only Responder.
 
