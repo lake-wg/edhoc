@@ -40,8 +40,8 @@ author:
 normative:
 
   RFC2119:
-  RFC3552:
   RFC3279:
+  RFC3552:
   RFC5116:
   RFC5280:
   RFC5869:
@@ -62,11 +62,10 @@ normative:
   RFC8742:
   RFC8747:
   RFC8949:
-  I-D.ietf-cose-rfc8152bis-struct:
-  I-D.ietf-cose-rfc8152bis-algs:
   I-D.ietf-cose-x509:
+  I-D.ietf-cose-rfc8152bis-algs:
   I-D.ietf-core-echo-request-tag:
-  I-D.ietf-lwig-curve-representations:
+  I-D.ietf-cose-rfc8152bis-struct:
 
 informative:
 
@@ -77,17 +76,18 @@ informative:
   RFC8446:
   RFC8937:
   RFC9000:
-  I-D.ietf-core-resource-directory:
+  I-D.ietf-lake-reqs:
+  I-D.ietf-tls-dtls13:
+  I-D.ietf-lake-traces:
   I-D.ietf-core-oscore-edhoc:
   I-D.ietf-cose-cbor-encoded-cert:
-  I-D.ietf-lake-reqs:
-  I-D.ietf-lwig-security-protocol-comparison:
-  I-D.ietf-tls-dtls13:
-  I-D.mattsson-cfrg-det-sigs-with-noise:
-  I-D.selander-ace-ake-authz:
-  I-D.selander-lake-traces:
-  I-D.arkko-arch-internet-threat-model-guidance:
   I-D.ietf-core-oscore-key-update:
+  I-D.ietf-core-resource-directory:
+  I-D.ietf-lwig-curve-representations:
+  I-D.ietf-lwig-security-protocol-comparison:
+  I-D.selander-ace-ake-authz:
+  I-D.mattsson-cfrg-det-sigs-with-noise:
+  I-D.arkko-arch-internet-threat-model-guidance:
 
   SP-800-56A:
     target: https://doi.org/10.6028/NIST.SP.800-56Ar3
@@ -270,7 +270,7 @@ In order to create a "full-fledged" protocol some additional protocol elements a
 
 EDHOC is designed to encrypt and integrity protect as much information as possible, and all symmetric keys are derived using as much previous information as possible. EDHOC is furthermore designed to be as compact and lightweight as possible, in terms of message sizes, processing, and the ability to reuse already existing CBOR, COSE, and CoAP libraries.
 
-To simplify for implementors, the use of CBOR and COSE in EDHOC is summarized in {{CBORandCOSE}}. Test vectors including CBOR diagnostic notation are provided in {{I-D.selander-lake-traces}}.
+To simplify for implementors, the use of CBOR and COSE in EDHOC is summarized in {{CBORandCOSE}}. Test vectors including CBOR diagnostic notation are provided in {{I-D.ietf-lake-traces}}.
 
 # Protocol Elements {#overview}
 
@@ -697,7 +697,7 @@ While the KeyUpdate method provides forward secrecy it does not give as strong s
 
 # Message Formatting and Processing {#asym}
 
-This section specifies formatting of the messages and processing steps. Error messages are specified in {{error}}. Annotated traces of EDHOC protocol runs are provided in {{I-D.selander-lake-traces}}.
+This section specifies formatting of the messages and processing steps. Error messages are specified in {{error}}. Annotated traces of EDHOC protocol runs are provided in {{I-D.ietf-lake-traces}}.
 
 An EDHOC message is encoded as a sequence of CBOR data items (CBOR Sequence, {{RFC8742}}).
 Additional optimizations are made to reduce message overhead.
