@@ -4,7 +4,7 @@ docname: draft-ietf-lake-traces-latest
 abbrev:
 
 ipr: trust200902
-cat: std
+cat: info
 
 coding: utf-8
 pi: # can use array (if all yes) or hash here
