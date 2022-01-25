@@ -154,6 +154,20 @@ informative:
         ins: C. Schürmann
     date: November 2018
 
+  Vucinic22:
+    target: https://hal.inria.fr/hal-03434293v3/document
+    title: Lightweight Authenticated Key Exchange with EDHOC
+    author:
+      -
+        ins: M. Vučinić
+      -
+        ins: G. Selander
+      -
+        ins: J. Preuß Mattsson
+      -
+        ins: T. Watteyne
+    date: January 2022
+
   CborMe:
     target: http://cbor.me/
     title: CBOR Playground
@@ -556,8 +570,7 @@ Other conditions may be part of the applicability template, such as target appli
 
 EDHOC uses Extract-and-Expand {{RFC5869}} with the EDHOC hash algorithm in the selected cipher suite to derive keys used in EDHOC and in the application. Extract is used to derive fixed-length uniformly pseudorandom keys (PRK) from ECDH shared secrets. Expand is used to derive additional output keying material (OKM) from the PRKs.
 
-This section defines Extract, Expand and other key derivation functions based on these: Expand is used to define EDHOC-KDF and in turn EDHOC-Exporter, whereas Extract is used to define EDHOC-KeyUpdate.
-
+This section defines Extract, Expand and other key derivation functions based on these: Expand is used to define EDHOC-KDF and in turn EDHOC-Exporter, whereas Extract is used to define EDHOC-KeyUpdate. In EDHOC a specific message always use the same key, but how the key is derived depends on the method. A diagram of the EDHOC key schedule can be found in Figure 2 of {{Vucinic22}}.
 
 ## Extract {#extract}
 
