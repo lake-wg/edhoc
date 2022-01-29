@@ -1111,13 +1111,15 @@ Initiator                                                   Responder
 
 # Compliance Requirements {#mti}
 
-An implementation may support only Initiator or only Responder.
+In the absence of an application profile standard specifying otherwise:
 
-An implementation may support only a single method. None of the methods are mandatory-to-implement.
+An implementation MAY support only Initiator or only Responder.
+
+An implementation MAY support only a single method. None of the methods are mandatory-to-implement.
 
 Implementations MUST support 'kid' parameters of type int. None of the other COSE header parameters are mandatory-to-implement.
 
-An implementation may support only a single credential type (CCS, CWT, X.509, C509). None of the credential types are mandatory-to-implement.
+An implementation MAY support only a single credential type (CCS, CWT, X.509, C509). None of the credential types are mandatory-to-implement.
 
 Implementations MUST support the EDHOC-Exporter. Implementations SHOULD support EDHOC-KeyUpdate.
 
