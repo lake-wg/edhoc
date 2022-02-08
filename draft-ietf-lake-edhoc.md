@@ -69,10 +69,12 @@ normative:
 
 informative:
 
+  RFC2986:
   RFC6194:
   RFC7228:
   RFC7258:
   RFC7296:
+  RFC8366:
   RFC8446:
   RFC8937:
   RFC9000:
@@ -88,6 +90,7 @@ informative:
   I-D.selander-ace-ake-authz:
   I-D.mattsson-cfrg-det-sigs-with-noise:
   I-D.arkko-arch-internet-threat-model-guidance:
+  I-D.ietf-rats-eat:
 
   SP-800-56A:
     target: https://doi.org/10.6028/NIST.SP.800-56Ar3
@@ -508,9 +511,25 @@ The ephemeral public keys in EDHOC (G_X and G_Y) use compact representation of e
 
 ## External Authorization Data (EAD) {#AD}
 
-In order to reduce round trips and number of messages or to simplify processing, external security applications may be integrated into EDHOC by transporting authorization related data in the messages. One example is third-party identity and authorization information whose protection is out of scope of EDHOC {{I-D.selander-ace-ake-authz}}. Another example is a certificate enrollment request or the resulting issued certificate.
+In order to reduce round trips and number of messages or to simplify processing, external security applications may be integrated into EDHOC by transporting authorization related data in the messages.
 
-EDHOC allows opaque external authorization data (EAD) to be sent in the EDHOC messages. External authorization data sent in message_1 (EAD_1) or message_2 (EAD_2) should be considered unprotected by EDHOC, see {{unprot-data}}. External authorization data sent in message_3 (EAD_3) or message_4 (EAD_4) is protected between Initiator and Responder.
+EDHOC allows opaque external authorization data (EAD) to be sent in each of the four EDHOC messages (EAD_1, EAD_2, EAD_3, EAD_4).
+
+* One example is third-party authorization information requested in EAD_1 and an authorization artifact (“voucher”, cf. {{RFC8366}}) returned in EAD_2, see {{I-D.selander-ace-ake-authz}}.
+
+* Another example is remote attestation requested in EAD_2, and an Entity Attestation Token (EAT, {{I-D.ietf-rats-eat}}) returned i EAD_3.
+
+* A third example is certificate enrolment where a Certificate Signing Request (CSR, {{RFC2986}}) is included EAD_3, and the issued public key certificate (X.509 {{RFC5280}}, C509 {{I-D.ietf-cose-cbor-encoded-cert}}) or a reference thereof is returned i EAD_4.
+
+External authorization data should be considered unprotected by EDHOC, and the protection of EAD is the responsibility of the security application (third party authorization, remote attestation, certificate enrolment, etc.). The security properties of the EAD fields are discussed in {{sec-prop}}.
+
+To support use cases where the EAD field is used in the EDHOC processing of the message in which they are contained, the EAD fields are made available to the application before the message is verified, see details of message processing in {{asym}}. For example, by making the voucher in EAD_2 available to the application, the Initiator can verify the identity or public key of the Responder before verifying the signature.
+
+The security application may need to wait for EDHOC message verification to complete. For example, the validation of a CSR carried in EAD_3 is not started before EDHOC has successfully verified message_3.
+
+The security application may reuse EDHOC protocol fields which therefore needs to be available to the application. For example, the security application may use the same crypto algorithms as in the EDHOC session and therefore needs access to the selected cipher suite (or the whole SUITES_I). The application may use the ephemeral public keys G_X and G_Y, as ephemeral keys or as nonces.
+
+The EAD fields of EDHOC must not be used for generic application data. Since data carried in EAD may not be protected, or be processed by the application before the EDHOC message is verified, special considerations need to be made such that it does not violate security and privacy requirements of the service which uses this data, see {{unprot-data}}. The content in an EAD field may impact the security properties provided by EDHOC. Security applications making use of the EAD fields must perform the necessary security analysis.
 
 External authorization data is a CBOR sequence (see {{CBOR}}) consisting of one or more (ead_label, ead_value) pairs as defined below:
 
@@ -523,7 +542,7 @@ ead = 1* (
 
 Applications using external authorization data need to specify ead_value format, processing, and security considerations and register the ead_label, see {{iana-ead}}.
 
-The EAD fields of EDHOC are not intended for generic application data. Since data carried in EAD_1 and EAD_2 fields may not be protected, special considerations need to be made such that it does not violate security and privacy requirements of the service which uses this data. Moreover, the content in an EAD field may impact the security properties provided by EDHOC. Security applications making use of the EAD fields must perform the necessary security analysis.
+Editor's note: Should the IANA register be “specification required”?
 
 
 ## Applicability Template {#applicability}
@@ -769,7 +788,7 @@ The Initiator SHALL compose message_1 as follows:
 
 * Choose a connection identifier C_I and store it for the length of the protocol.
 
-* Obtain EAD_1 from the application. Additional protocol data, such as G_X or SUITES_I, may be needed to compute EAD_1, see {{EAD-appendix}}.
+* Obtain EAD_1 from the application. Additional protocol data, such as G_X or SUITES_I, may be needed to compute EAD_1, see {{AD}}.
 
 * Encode message_1 as a sequence of CBOR encoded data items as specified in {{asym-msg1-form}}
 
@@ -814,7 +833,7 @@ The Responder SHALL compose message_2 as follows:
 
 * Choose a connection identifier C_R and store it for the length of the protocol.
 
-* Obtain EAD_2 from the application. Additional protocol data, such as G_X or G_Y, may be needed to compute EAD_2, see {{EAD-appendix}}.
+* Obtain EAD_2 from the application. Additional protocol data, such as G_X or G_Y, may be needed to compute EAD_2, see {{AD}}.
     * EAD_2 - unprotected external authorization data, see {{AD}}.
 
 * Compute the transcript hash TH_2 = H( H(message_1), G_Y, C_R ) where H() is the EDHOC hash algorithm of the selected cipher suite. The transcript hash TH_2 is a CBOR encoded bstr and the input to the hash function is a CBOR Sequence. Note that H(message_1) can be computed and cached already in the processing of message_1.
@@ -855,7 +874,7 @@ The Initiator SHALL process message_2 as follows:
 
 * Decrypt CIPHERTEXT_2, see {{asym-msg2-proc}}, and discard padding, if present.
 
-* Make ID_CRED_R and EAD_2 (if present) available to the application for authentication- and EAD processing. Additional protocol data, such as G_X or G_Y, may be needed for EAD processing, see {{EAD-appendix}}.
+* Make ID_CRED_R and EAD_2 (if present) available to the application for authentication- and EAD processing. Additional protocol data, such as G_X or G_Y, may be needed for EAD processing, see {{AD}}.
 
 * Obtain the authentication credential (CRED_R) and the authentication key of R from the application (or by other means).
 
@@ -881,7 +900,7 @@ message_3 = (
 
 The Initiator SHALL compose message_3 as follows:
 
-* Obtain EAD_3 from the application. Additional protocol data, such as G_Y, may be needed to compute EAD_3, see {{EAD-appendix}}.
+* Obtain EAD_3 from the application. Additional protocol data, such as G_Y, may be needed to compute EAD_3, see {{AD}}.
     * EAD_3 - protected external authorization data, see {{AD}}.
 
 * Compute the transcript hash TH_3 = H(TH_2, CIPHERTEXT_2) where H() is the EDHOC hash algorithm of the selected cipher suite. The transcript hash TH_3 is a CBOR encoded bstr and the input to the hash function is a CBOR Sequence.  Note that H(TH_2, CIPHERTEXT_2) can be computed and cached already in the processing of message_2.
@@ -933,7 +952,7 @@ The Responder SHALL process message_3 as follows:
 
 * Decrypt and verify the COSE_Encrypt0 as defined in Sections 5.2 and 5.3 of {{I-D.ietf-cose-rfc8152bis-struct}}, with the EDHOC AEAD algorithm in the selected cipher suite, and the parameters defined in {{asym-msg3-proc}}. Discard padding, if present.
 
-* Make ID_CRED_I and EAD_3 (if present) available to application for authentication- and EAD processing. Additional protocol data, such as G_Y, may be needed for EAD processing, see {{EAD-appendix}}.
+* Make ID_CRED_I and EAD_3 (if present) available to application for authentication- and EAD processing. Additional protocol data, such as G_Y, may be needed for EAD processing, see {{AD}}.
 
 * Obtain the authentication credential (CRED_I) and the authentication key of I from the application (or by other means).
 
@@ -968,7 +987,7 @@ message_4 = (
 
 The Responder SHALL compose message_4 as follows:
 
-* Obtain EAD_4 from the application. Additional protocol data may be needed to compute EAD_4, see {{EAD-appendix}}.
+* Obtain EAD_4 from the application. Additional protocol data may be needed to compute EAD_4, see {{AD}}.
     * EAD_4 - protected external authorization data, see {{AD}}.
 
 * Compute a COSE_Encrypt0 as defined in Sections 5.2 and 5.3 of {{I-D.ietf-cose-rfc8152bis-struct}}, with the EDHOC AEAD algorithm of the selected cipher suite, using the encryption key K_4, the initialization vector IV_4, the plaintext P, and the following parameters as input (see {{COSE}}):
@@ -999,7 +1018,7 @@ The Initiator SHALL process message_4 as follows:
 
 * Decrypt and verify the COSE_Encrypt0 as defined in Sections 5.2 and 5.3 of {{I-D.ietf-cose-rfc8152bis-struct}}, with the EDHOC AEAD algorithm in the selected cipher suite, and the parameters defined in {{asym-msg4-proc}}. Discard padding, if present.
 
-* Make EAD_4 (if present) available to application for EAD processing. Additional protocol data may be needed for EAD processing, see {{EAD-appendix}}.
+* Make EAD_4 (if present) available to application for EAD processing. Additional protocol data may be needed for EAD processing, see {{AD}}.
 
 If any processing step fails, the Responder SHOULD send an EDHOC error message back, formatted as defined in {{error}}. Sending error messages is essential for debugging but MAY be skipped if, for example, a session cannot be found or due to denial-of-service reasons, see {{dos}}. If an error message is sent, the session MUST be discontinued.
 
@@ -1152,6 +1171,8 @@ Compromise of the long-term keys (private signature or static DH keys) does not 
 Based on the cryptographic algorithms requirements {{sec_algs}}, EDHOC provides a minimum of 64-bit security against online brute force attacks and a minimum of 128-bit security against offline brute force attacks. To break 64-bit security against online brute force an attacker would on average have to send 4.3 billion messages per second for 68 years, which is infeasible in constrained IoT radio technologies. A forgery against a 64-bit MAC in EDHOC breaks the security of all future application data, while a forgery against a 64-bit MAC in the subsequent application protocol (e.g., OSCORE {{RFC8613}}) typically only breaks the security of the data in the forged packet.
 
 After sending message_3, the Initiator is assured that no other party than the Responder can compute the key PRK_4x3m (implicit key authentication). The Initiator does however not know that the Responder has actually computed the key PRK_4x3m. While the Initiator can securely send protected application data, the Initiator SHOULD NOT permanently store the keying material PRK_4x3m and TH_4 until the Initiator is assured that the Responder has actually computed the key PRK_4x3m (explicit key confirmation). Explicit key confirmation is e.g., assured when the Initiator has verified an OSCORE message or message_4 from the Responder. After verifying message_3, the Responder is assured that the Initiator has calculated the key PRK_4x3m (explicit key confirmation) and that no other party than the Initiator can compute the key. The Responder can securely send protected application data and store the keying material PRK_4x3m and TH_4.
+
+External authorization data sent in message_1 (EAD_1) or message_2 (EAD_2) should be considered unprotected by EDHOC, see {{unprot-data}}. EAD_2 is encrypted but the Responder has not yet authenticated the Initiator.  External authorization data sent in message_3 (EAD_3) or message_4 (EAD_4) is protected between Initiator and Responder by the protocol, but note that EAD fields may be used by the application before the message verification is completed, see {{AD}}.
 
 Key compromise impersonation (KCI): In EDHOC authenticated with signature keys, EDHOC provides KCI protection against an attacker having access to the long-term key or the ephemeral secret key. With static Diffie-Hellman key authentication, KCI protection would be provided against an attacker having access to the long-term Diffie-Hellman key, but not to an attacker having access to the ephemeral secret key. Note that the term KCI has typically been used for compromise of long-term keys, and that an attacker with access to the ephemeral secret key can only attack that specific session.
 
@@ -1869,7 +1890,7 @@ TBD
 
 ## Revocation {#revocation}
 
-It may be necessary to verify that the credentials are not revoked. Revocation may be replaced by only issuing short valid certificates. Revocation information may be transported as External Authentication Data (EAD), see {{AD}}.
+It may be necessary to verify that the credentials are not revoked. Revocation may be replaced by only issuing short valid certificates. Revocation information may be transported as External Authentication Data (EAD), see {{use-of-EAD}}.
 
 
 ## Authentication related information in EAD {#use-of-EAD}
@@ -1877,10 +1898,6 @@ It may be necessary to verify that the credentials are not revoked. Revocation m
 Authentication related information may be transported in EAD fields of EDHOC and thus passed to the EAD processing of the application when available to EDHOC. Examples of such data include authorisation tokens and revocation information which may provide input about trust anchors or validity of credentials relevant to the authentication processing.
 
 An application allowing EAD fields containing authentication information needs to handle the authentication related verifications associated with EAD processing. For example, the EAD processing may provide input to the authentication related processing, which enables the latter to perform its verification.
-
-# External Authorization Data processing {#EAD-appendix}
-
-TBD
 
 # Applicability Template Example {#appl-temp}
 
@@ -2076,7 +2093,7 @@ RFC Editor: Please remove this appendix.
 # Acknowledgments
 {: numbered="no"}
 
-The authors want to thank Christian Amsüss, Alessandro Bruni, Karthikeyan Bhargavan, Timothy Claeys, Martin Disch, Loïc Ferreira, Theis Grønbech Petersen, Dan Harkins, Klaus Hartke, Russ Housley, Stefan Hristozov, Alexandros Krontiris, Ilari Liusvaara, Karl Norrman, Salvador Pérez, Eric Rescorla, Michael Richardson, Thorvald Sahl Jørgensen, Jim Schaad, Carsten Schürmann, Ludwig Seitz, Stanislav Smyshlyaev, Valery Smyslov, Peter van der Stok, Rene Struik, Vaishnavi Sundararajan, Erik Thormarker, Marco Tiloca, Michel Veillette, and Malisa Vucinic for reviewing and commenting on intermediate versions of the draft. We are especially indebted to Jim Schaad for his continuous reviewing and implementation of different versions of the draft.
+The authors want to thank Christian Amsüss, Alessandro Bruni, Karthikeyan Bhargavan, Timothy Claeys, Martin Disch, Loïc Ferreira, Theis Grønbech Petersen, Dan Harkins, Klaus Hartke, Russ Housley, Stefan Hristozov, Alexandros Krontiris, Ilari Liusvaara, Karl Norrman, Salvador Pérez, Eric Rescorla, Michael Richardson, Thorvald Sahl Jørgensen, Jim Schaad, Carsten Schürmann, Ludwig Seitz, Stanislav Smyshlyaev, Valery Smyslov, Peter van der Stok, Rene Struik, Per Ståhl, Vaishnavi Sundararajan, Erik Thormarker, Marco Tiloca, Michel Veillette, and Malisa Vucinic for reviewing and commenting on intermediate versions of the draft. We are especially indebted to Jim Schaad for his continuous reviewing and implementation of different versions of the draft.
 
 Work on this document has in part been supported by the H2020 project SIFIS-Home (grant agreement 952652).
 
