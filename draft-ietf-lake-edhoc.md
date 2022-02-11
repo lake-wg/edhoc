@@ -259,9 +259,9 @@ The parties exchanging messages are called Initiator (I) and Responder (R). They
 
 * G_X and G_Y are the ECDH ephemeral public keys of I and R, respectively.
 
-* CRED_I and CRED_R are the credentials containing the public authentication keys of I and R, respectively.
+* CRED_I and CRED_R are the authentication credentials containing the public authentication keys of I and R, respectively.
 
-* ID_CRED_I and ID_CRED_R are used to identify and optionally transport the authentication keys of the Initiator and the Responder, respectively.
+* ID_CRED_I and ID_CRED_R are used to identify and optionally transport the credentials of the Initiator and the Responder, respectively.
 
 * Sig(I; . ) and Sig(R; . ) denote signatures made with the private authentication key of I and R, respectively.
 
@@ -388,12 +388,12 @@ EDHOC supports various settings for how the other endpoint's authentication (pub
 
 EDHOC performs the following authentication related operations:
 
-* EDHOC transports information about authentication credentials in ID_CRED_I and ID_CRED_R (described in {{id_cred}}). Based on this information, the authentication credentials CRED_I and CRED_R (described in {{auth-cred}}) can be obtained. EDHOC may also transport certain authentication related information as External Authorization Data (see {{AD}}).
+* EDHOC transports information about credentials in ID_CRED_I and ID_CRED_R (described in {{id_cred}}). Based on this information, the authentication credentials CRED_I and CRED_R (described in {{auth-cred}}) can be obtained. EDHOC may also transport certain authentication related information as External Authorization Data (see {{AD}}).
 * EDHOC uses the authentication credentials in two ways (see {{asym-msg2-proc}} and {{asym-msg3-proc}}):
     * The authentication credential is input to the integrity verification using the MAC fields.
     * The authentication key of the authentication credential is used with the Signature_or_MAC field to verify proof-of-possession of the private key.
 
-Other authentication related verifications are out of scope for EDHOC, and is the responsibility of the application. In particular, the authentication credential needs to be validated in the context of the connection for which EDHOC is used, see {{auth-validation}}. EDHOC MUST allow the application to read the authentication credential. EDHOC MUST have access to the authentication key of the authentication credential.
+Other authentication related verifications are out of scope for EDHOC, and is the responsibility of the application. In particular, the authentication credential needs to be validated in the context of the connection for which EDHOC is used, see {{auth-validation}}. EDHOC MUST allow the application to read received information about credential (ID_CRED_R, ID_CRED_I). EDHOC MUST have access to the authentication key and the authentication credential.
 
 Note that the type of authentication key, authentication credential, and the identification of the credential have a large impact on the message size. For example, the signature_or_MAC field is much smaller with a static DH key than with a signature key. A CCS is much smaller than a self-signed certificate/CWT, but if it is possible to reference the credential with a COSE header like 'kid', then that is in turn much smaller than a CCS.
 
@@ -412,14 +412,14 @@ For X.509 certificates the authentication key is represented with a SubjectPubli
 
 The authentication credentials, CRED_I and CRED_R, contain the public authentication key of the Initiator and the Responder, respectively.
 
-EDHOC relies on COSE for identification of authentication credentials (see {{id_cred}}), for example X.509 {{RFC5280}}, C509 {{I-D.ietf-cose-cbor-encoded-cert}}, CWT {{RFC8392}} and CWT Claims Set (CCS) {{RFC8392}}. When the identified object is a chain or a bag, CRED_x is just the end-entity X.509 or C509 certificate / CWT.
+EDHOC relies on COSE for identification of credentials (see {{id_cred}}), for example X.509 certificates {{RFC5280}}, C509 certificates {{I-D.ietf-cose-cbor-encoded-cert}}, CWTs {{RFC8392}} and CWT Claims Sets (CCS) {{RFC8392}}. When the identified credential is a chain or a bag, the authentication credential CRED_x is just the end-entity X.509 or C509 certificate / CWT.
 
 Since CRED_x is used in the integrity verification, see {{asym-msg2-proc}} and {{asym-msg3-proc}}, it needs to be specified such that it is identical when used by Initiator or Responder. The Initiator and Responder are expected to agree on a specific encoding of the credential, see {{applicability}}.
 
 It is RECOMMENDED that the COSE 'kid' parameter, when used to identify the authentication credential, refers to a specific encoding. The Initiator and Responder SHOULD use an available authentication credential (transported in EDHOC or otherwise provisioned) without re-encoding. If for some reason re-encoding of the authentication credential may occur, then a potential common encoding for CBOR based credentials is bytewise lexicographic order of their deterministic encodings as specified in Section 4.2.1 of {{RFC8949}}.
 
-* When the authentication credential is an X.509 certificate, CRED_x SHALL be the end-entity DER encoded certificate, encoded as a bstr {{I-D.ietf-cose-x509}}.
-* When the authentication credential is a C509 certificate, CRED_x SHALL be the end-entity C509Certificate {{I-D.ietf-cose-cbor-encoded-cert}}
+* When the authentication credential is an (end-entity) X.509 certificate, CRED_x SHALL be the DER encoded certificate, encoded as a bstr {{I-D.ietf-cose-x509}}.
+* When the authentication credential is a (end-entity) C509 certificate, CRED_x SHALL be the C509Certificate {{I-D.ietf-cose-cbor-encoded-cert}}.
 * When the authentication credential is a COSE_Key in a CWT, CRED_x SHALL be the untagged CWT.
 * When the authentication credential is a COSE_Key but not in a CWT, CRED_x SHALL be an untagged CCS.
    * Naked COSE_Keys are thus dressed as CCS when used in EDHOC, which is done by prefixing the COSE_Key with 0xA108A101.
@@ -445,19 +445,19 @@ An example of a CRED_x is shown below:
 
 ### Identification of Credentials {#id_cred}
 
-ID_CRED_R and ID_CRED_I are transported in message_2 and message_3, respectively see {{asym-msg2-proc}} and {{asym-msg3-proc}}. They are used to identify and optionally transport the authentication credential:
+ID_CRED_R and ID_CRED_I are transported in message_2 and message_3, respectively, see {{asym-msg2-proc}} and {{asym-msg3-proc}}. They are used to identify and optionally transport credentials:
 
-* ID_CRED_R is intended to facilitate for the Initiator to retrieve CRED_R.
+* ID_CRED_R is intended to facilitate for the Initiator to retrieve the authentication credential CRED_R and the authentication key of R.
 
-* ID_CRED_I is intended to facilitate for the Responder to retrieve CRED_I.
+* ID_CRED_I is intended to facilitate for the Responder to retrieve the authentication credential CRED_I and the authentication key of I.
 
-ID_CRED_x may contain CRED_x, but for many settings it is not necessary to transport the authentication credential within EDHOC, for example, it may be pre-provisioned or acquired out-of-band over less constrained links. ID_CRED_I and ID_CRED_R do not have any cryptographic purpose in EDHOC since the authentication credentials are integrity protected.
+ID_CRED_x may contain the authentication credential CRED_x, but for many settings it is not necessary to transport the authentication credential within EDHOC, for example, it may be pre-provisioned or acquired out-of-band over less constrained links. ID_CRED_I and ID_CRED_R do not have any cryptographic purpose in EDHOC since the authentication credentials are integrity protected.
 
-EDHOC relies on COSE for identification of authentication credentials and supports all credential types for which COSE header parameters are defined including X.509 ({{I-D.ietf-cose-x509}}), C509 ({{I-D.ietf-cose-cbor-encoded-cert}}), CWT ({{cwt-header-param}}) and CWT Claims Set (CCS) ({{cwt-header-param}}).
+EDHOC relies on COSE for identification of credentials and supports all credential types for which COSE header parameters are defined including X.509 certificates ({{I-D.ietf-cose-x509}}), C509 certificates ({{I-D.ietf-cose-cbor-encoded-cert}}), CWT ({{cwt-header-param}}) and CWT Claims Set (CCS) ({{cwt-header-param}}).
 
-ID_CRED_I and ID_CRED_R are COSE header maps and contains one or more COSE header parameters. ID_CRED_I and ID_CRED_R MAY contain different header parameters. The header parameters typically provide some information about the format of authentication credential.
+ID_CRED_I and ID_CRED_R are COSE header maps and contains one or more COSE header parameters. ID_CRED_I and ID_CRED_R MAY contain different header parameters. The header parameters typically provide some information about the format of the credential.
 
-Note that COSE header parameters in ID_CRED_x are used to identify the sender's authentication credential. There is therefore no reason to use the "-sender" header parameters, such as x5t-sender, defined in Section 3 of {{I-D.ietf-cose-x509}}. Instead, the corresponding parameter without "-sender", such as x5t, SHOULD be used.
+Note that COSE header parameters in ID_CRED_x are used to identify the sender's credential. There is therefore no reason to use the "-sender" header parameters, such as x5t-sender, defined in Section 3 of {{I-D.ietf-cose-x509}}. Instead, the corresponding parameter without "-sender", such as x5t, SHOULD be used.
 
 Example: X.509 certificates can be identified by a hash value using the 'x5t' parameter:
 
@@ -555,7 +555,7 @@ The purpose of the applicability template is to describe the intended use of EDH
    * The method of transporting EDHOC messages may also describe data carried along with the messages that are needed for the transport to satisfy the requirements of {{transport}}, e.g., connection identifiers used with certain messages, see {{coap}}.
 1. Authentication method (METHOD; see {{method}}).
 3. Profile for authentication credentials (CRED_I, CRED_R; see {{auth-cred}}), e.g., profile for certificate or CCS, including supported authentication key algorithms (subject public key algorithm in X.509 or C509 certificate).
-4. Type used to identify authentication credentials (ID_CRED_I, ID_CRED_R; see {{id_cred}}).
+4. Type used to identify credentials (ID_CRED_I, ID_CRED_R; see {{id_cred}}).
 5. Use and type of external authorization data (EAD_1, EAD_2, EAD_3, EAD_4; see {{AD}}).
 6. Identifier used as the identity of the endpoint; see {{identities}}.
 7. If message_4 shall be sent/expected, and if not, how to ensure a protected application message is sent from the Responder to the Initiator; see {{m4}}.
@@ -566,7 +566,7 @@ An example of an applicability template is shown in {{appl-temp}}.
 
 For some parameters, like METHOD, ID_CRED_x, type of EAD, the receiver is able to verify compliance with applicability template, and if it needs to fail because of incompliance, to infer the reason why the protocol failed.
 
-For other parameters, like CRED_x in the case that it is not transported, it may not be possible to verify that incompliance with applicability template was the reason for failure: Integrity verification in message_2 or message_3 may fail not only because of wrong authentication credential. For example, in case the Initiator uses public key certificate by reference (i.e., not transported within the protocol) then both endpoints need to use an identical data structure as CRED_I or else the integrity verification will fail.
+For other parameters, like CRED_x in the case that it is not transported, it may not be possible to verify that incompliance with applicability template was the reason for failure: Integrity verification in message_2 or message_3 may fail not only because of wrong credential. For example, in case the Initiator uses public key certificate by reference (i.e., not transported within the protocol) then both endpoints need to use an identical data structure as CRED_I or else the integrity verification will fail.
 
 Note that it is not necessary for the endpoints to specify a single transport for the EDHOC messages. For example, a mix of CoAP and HTTP may be used along the path, and this may still allow correlation between messages.
 
@@ -840,7 +840,7 @@ The Responder SHALL compose message_2 as follows:
 
 * Compute MAC_2 = EDHOC-KDF( PRK_3e2m, TH_2, "MAC_2", << ID_CRED_R, CRED_R, ? EAD_2 >>, mac_length_2 ). If the Responder authenticates with a static Diffie-Hellman key (method equals 1 or 3), then mac_length_2 is the EDHOC MAC length given by the selected cipher suite. If the Responder authenticates with a signature key (method equals 0 or 2), then mac_length_2 is equal to the output size of the EDHOC hash algorithm given by the selected cipher suite.
     * ID_CRED_R - identifier to facilitate the retrieval of CRED_R, see {{id_cred}}
-    * CRED_R - CBOR item containing the credential of the Responder, see {{auth-cred}}
+    * CRED_R - CBOR item containing the authentication credential of the Responder, see {{auth-cred}}
 
 * If the Responder authenticates with a static Diffie-Hellman key (method equals 1 or 3), then Signature_or_MAC_2 is MAC_2. If the Responder authenticates with a signature key (method equals 0 or 2), then Signature_or_MAC_2 is the 'signature' field of a COSE_Sign1 object, computed as specified in Section 4.4 of {{I-D.ietf-cose-rfc8152bis-struct}} using the signature algorithm of the selected cipher suite, the private authentication key of the Responder, and the following parameters as input (see {{COSE}} for an overview of COSE and {{CBOR}} for notation):
 
@@ -907,7 +907,7 @@ The Initiator SHALL compose message_3 as follows:
 
 * Compute MAC_3 = EDHOC-KDF( PRK_4x3m, TH_3, "MAC_3", << ID_CRED_I, CRED_I, ? EAD_3 >>, mac_length_3 ). If the Initiator authenticates with a static Diffie-Hellman key (method equals 2 or 3), then mac_length_3 is the EDHOC MAC length given by the selected cipher suite.  If the Initiator authenticates with a signature key (method equals 0 or 1), then mac_length_3 is equal to the output size of the EDHOC hash algorithm given by the selected cipher suite.
     * ID_CRED_I - identifier to facilitate the retrieval of CRED_I, see {{id_cred}}
-    * CRED_I - CBOR item containing the credential of the Initiator, see {{auth-cred}}
+    * CRED_I - CBOR item containing the authentication credential of the Initiator, see {{auth-cred}}
 
 * If the Initiator authenticates with a static Diffie-Hellman key (method equals 2 or 3), then Signature_or_MAC_3 is MAC_3. If the Initiator authenticates with a signature key (method equals 0 or 1), then Signature_or_MAC_3 is the 'signature' field of a COSE_Sign1 object, computed as specified in Section 4.4 of {{I-D.ietf-cose-rfc8152bis-struct}} using the signature algorithm of the selected cipher suite, the private authentication key of the Initiator, and the following parameters as input (see {{COSE}}):
 
@@ -1815,7 +1815,7 @@ When ID_CRED_x does not contain the actual credential, it may be very short, e.g
 
 Note that a COSE header map can contain several header parameters, for example { x5u, x5t } or { kid, kid_context }.
 
-ID_CRED_x MAY also identify the authentication credential by value. For example, a certificate chain can be transported in ID_CRED_x with COSE header parameter c5c or x5chain, defined in {{I-D.ietf-cose-cbor-encoded-cert}} and {{I-D.ietf-cose-x509}} and credentials of type CWT and CCS can be transported with the COSE header parameters registered in {{cwt-header-param}}.
+ID_CRED_x MAY also identify the credential by value. For example, a certificate chain can be transported in ID_CRED_x with COSE header parameter c5c or x5chain, defined in {{I-D.ietf-cose-cbor-encoded-cert}} and {{I-D.ietf-cose-x509}} and credentials of type CWT and CCS can be transported with the COSE header parameters registered in {{cwt-header-param}}.
 
 
 # Authentication Related Verifications {#auth-validation}
