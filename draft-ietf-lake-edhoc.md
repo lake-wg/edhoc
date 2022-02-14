@@ -511,25 +511,9 @@ The ephemeral public keys in EDHOC (G_X and G_Y) use compact representation of e
 
 ## External Authorization Data (EAD) {#AD}
 
-In order to reduce round trips and number of messages or to simplify processing, external security applications may be integrated into EDHOC by transporting authorization related data in the messages.
+In order to reduce round trips and the number of messages or to simplify processing, external security applications may be integrated into EDHOC by transporting authorization related data in the messages.
 
 EDHOC allows opaque external authorization data (EAD) to be sent in each of the four EDHOC messages (EAD_1, EAD_2, EAD_3, EAD_4).
-
-* One example is third-party authorization information requested in EAD_1 and an authorization artifact (“voucher”, cf. {{RFC8366}}) returned in EAD_2, see {{I-D.selander-ace-ake-authz}}.
-
-* Another example is remote attestation requested in EAD_2, and an Entity Attestation Token (EAT, {{I-D.ietf-rats-eat}}) returned in EAD_3.
-
-* A third example is certificate enrolment where a Certificate Signing Request (CSR, {{RFC2986}}) is included EAD_3, and the issued public key certificate (X.509 {{RFC5280}}, C509 {{I-D.ietf-cose-cbor-encoded-cert}}) or a reference thereof is returned i EAD_4.
-
-External authorization data should be considered unprotected by EDHOC, and the protection of EAD is the responsibility of the security application (third party authorization, remote attestation, certificate enrolment, etc.). The security properties of the EAD fields (after EDHOC processing) are discussed in {{sec-prop}}.
-
-To support use cases where the EAD field is used in the EDHOC processing of the message in which they are contained, the EAD fields are made available to the application before the message is verified, see details of message processing in {{asym}}. For example, by making the voucher in EAD_2 available to the application, the Initiator can verify the identity or public key of the Responder before verifying the signature.
-
-The security application may need to wait for EDHOC message verification to complete. For example, the validation of a CSR carried in EAD_3 is not started before EDHOC has successfully verified message_3.
-
-The security application may reuse EDHOC protocol fields which therefore need to be available to the application. For example, the security application may use the same crypto algorithms as in the EDHOC session and therefore needs access to the selected cipher suite (or the whole SUITES_I). The application may use the ephemeral public keys G_X and G_Y, as ephemeral keys or as nonces. How the security application gets access to these message fields is out of scope for this specification.
-
-The EAD fields of EDHOC must not be used for generic application data. Since data carried in EAD may not be protected, or be processed by the application before the EDHOC message is verified, special considerations need to be made such that it does not violate security and privacy requirements of the service which uses this data, see {{unprot-data}}. The content in an EAD field may impact the security properties provided by EDHOC. Security applications making use of the EAD fields must perform the necessary security analysis.
 
 External authorization data is a CBOR sequence (see {{CBOR}}) consisting of one or more (ead_label, ead_value) pairs as defined below:
 
@@ -540,9 +524,10 @@ ead = 1* (
 )
 ~~~~~~~~~~~
 
-Applications using external authorization data need to specify ead_value format, processing, and security considerations and register the ead_label, see {{iana-ead}}.
+A security application using external authorization data need to register an ead_label, specify the ead_value format for each message (see {{iana-ead}}), and describe processing and security considerations.
 
-Editor's note: Should the IANA register be “specification required”?
+The EAD fields of EDHOC must not be used for generic application data. Examples of the use of EAD is provided in {{ead-appendix}}.
+
 
 
 ## Applicability Template {#applicability}
@@ -1382,7 +1367,7 @@ IANA has created a new registry entitled "EDHOC Error Codes" under the new group
 
 ## EDHOC External Authorization Data Registry {#iana-ead}
 
-IANA has created a new registry entitled "EDHOC External Authorization Data" under the new group name "Ephemeral Diffie-Hellman Over COSE (EDHOC)". The registration procedure is "Expert Review". The columns of the registry are Label, Description, and Reference, where Label is an integer and the other columns are text strings.
+IANA has created a new registry entitled "EDHOC External Authorization Data" under the new group name "Ephemeral Diffie-Hellman Over COSE (EDHOC)". The registration procedure is "Specification Required". The columns of the registry are Label, Message, Description, and Reference, where Label is an integer, Message is 1,2,3 or 4, and the other columns are text strings.
 
 ## COSE Header Parameters Registry {#cwt-header-param}
 
@@ -1886,11 +1871,30 @@ TBD
 It may be necessary to verify that the credentials are not revoked. Revocation may be replaced by only issuing short valid certificates. Revocation information may be transported as External Authentication Data (EAD), see {{use-of-EAD}}.
 
 
-## Authentication related information in EAD {#use-of-EAD}
+# Use of External Authorization Data {#ead-appendix}
 
-Authentication related information may be transported in EAD fields of EDHOC and thus passed to the EAD processing of the application when available to EDHOC. Examples of such data include authorisation tokens and revocation information which may provide input about trust anchors or validity of credentials relevant to the authentication processing.
+In order to reduce the number of messages and round trips, or to simplify processing, external security applications may be integrated into EDHOC by transporting external authorization related data (EAD) in the messages.
 
-An application allowing EAD fields containing authentication information needs to handle the authentication related verifications associated with EAD processing. For example, the EAD processing may provide input to the authentication related processing, which enables the latter to perform its verification.
+The EAD format is specified in {{AD}}, this section contains examples and further details of how EAD is used.
+
+* One example is third-party authorization information requested in EAD_1 and an authorization artifact (“voucher”, cf. {{RFC8366}}) returned in EAD_2, see {{I-D.selander-ace-ake-authz}}.
+
+* Another example is remote attestation requested in EAD_2, and an Entity Attestation Token (EAT, {{I-D.ietf-rats-eat}}) returned in EAD_3.
+
+* A third example is certificate enrolment where a Certificate Signing Request (CSR, {{RFC2986}}) is included EAD_3, and the issued public key certificate (X.509 {{RFC5280}}, C509 {{I-D.ietf-cose-cbor-encoded-cert}}) or a reference thereof is returned i EAD_4.
+
+External authorization data should be considered unprotected by EDHOC, and the protection of EAD is the responsibility of the security application (third party authorization, remote attestation, certificate enrolment, etc.). The security properties of the EAD fields (after EDHOC processing) are discussed in {{sec-prop}}.
+
+The content of the EAD field may be used in the EDHOC processing of the message in which they are contained. For example, authentication related information like assertions and revocation information, transported in EAD fields may provide input about trust anchors or validity of credentials relevant to the authentication processing. The EAD fields (like ID_CRED fields) are therefore made available to the application before the message is verified, see details of message processing in {{asym}}. In the first example above, a voucher in EAD_2 made available to the application can enable the Initiator to verify the identity or public key of the Responder before verifying the signature. An application allowing EAD fields containing authentication information thus may need to handle authentication related verifications associated with EAD processing.
+
+Conversely, the security application may need to wait for EDHOC message verification to complete. In the third example above, the validation of a CSR carried in EAD_3 is not started by the Responder before EDHOC has successfully verified message_3 and proven the possession of the private key of the Initiator.
+
+An application may support multiple security applications and thus multiple EAD elements in one field.
+
+The security application may reuse EDHOC protocol fields which therefore need to be available to the application. For example, the security application may use the same crypto algorithms as in the EDHOC session and therefore needs access to the selected cipher suite (or the whole SUITES_I). The application may use the ephemeral public keys G_X and G_Y, as ephemeral keys or as nonces. How the security application gets access to these message fields is out of scope for this specification.
+
+Since data carried in EAD may not be protected, or be processed by the application before the EDHOC message is verified, special considerations need to be made such that it does not violate security and privacy requirements of the service which uses this data, see {{unprot-data}}. The content in an EAD field may impact the security properties provided by EDHOC. Security applications making use of the EAD fields must perform the necessary security analysis.
+
 
 # Applicability Template Example {#appl-temp}
 
