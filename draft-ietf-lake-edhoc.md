@@ -1868,7 +1868,7 @@ TBD
 
 ## Revocation {#revocation}
 
-It may be necessary to verify that the credentials are not revoked. Revocation may be replaced by only issuing short valid certificates. Revocation information may be transported as External Authentication Data (EAD), see {{use-of-EAD}}.
+It may be necessary to verify that the credentials are not revoked. Revocation may be replaced by only issuing short valid certificates. Revocation information may be transported as External Authentication Data (EAD), see {{ead-appendix}}.
 
 
 # Use of External Authorization Data {#ead-appendix}
