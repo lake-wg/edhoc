@@ -1200,7 +1200,7 @@ EDHOC itself does not provide countermeasures against Denial-of-Service attacks.
 
 An attacker can also send faked message_2, message_3, message_4, or error in an attempt to trick the receiving party to send an error message and discontinue the session. EDHOC implementations MAY evaluate if a received message is likely to have been forged by an attacker and ignore it without sending an error message or discontinuing the session.
 
-## Implementation Considerations
+## Implementation Considerations {#impl-cons}
 
 The availability of a secure random number generator is essential for the security of EDHOC. If no true random number generator is available, a random seed must be provided from an external source and used with a cryptographically secure pseudorandom number generator. As each pseudorandom number must only be used once, an implementation needs to get a unique input to the pseudorandom number generator after reboot, or continuously store state in nonvolatile memory. Appendix B.1.1 in {{RFC8613}} describes issues and solution approaches for writing to nonvolatile memory. Intentionally or unintentionally weak or predictable pseudorandom number generators can be abused or exploited for malicious purposes. {{RFC8937}} describes a way for security protocol implementations to augment their (pseudo)random number generators using a long-term private key and a deterministic signature function. This improves randomness from broken or otherwise subverted random number generators. The same idea can be used with other secrets and functions such as a Diffie-Hellman function or a symmetric secret and a PRF like HMAC or KMAC. It is RECOMMENDED to not trust a single source of randomness and to not put unaugmented random numbers on the wire.
 
@@ -1807,44 +1807,25 @@ In this section we provide some examples of such verifications. These verificati
 
 ## Validating the Authentication Credential {#validating-auth-credential}
 
-The authentication credential may contain, in addition to the authentication key, other parameters that needs to be verified as is examplified in this section.
+The authentication credential may contain, in addition to the authentication key, other parameters that needs to be verified. For example:
 
-### Algorithm
+* In X.509 and C509 certificates, signature keys typically have key usage "digitalSignature" and Diffie-Hellman public keys typically have key usage "keyAgreement" {{RFC3279}}{{RFC8410}}.
 
-The algorithm to use with the public key as specified in the authentication credential needs to match the algorithm of the cipher suite. The authentication key needs to be a valid key for use with this algorithm.
-
-
-### Key Usage
-
-The usage of the authentication key as specified in the authentication credential needs to match the method. In X.509 and C509 certificates, signature keys typically have key usage "digitalSignature" and Diffie-Hellman public keys typically have key usage "keyAgreement" {{RFC3279}}{{RFC8410}}.
-
-### Time Validation
-
-The authentication credential needs to be valid for the period of time when the authentication is relevant. The validation needs to be made using clocks synchronized with the issuer of the credential. In X.509 and C509 certificates validity is expressed using Not After and Not Before. In CWT and CCS, the “exp” and “nbf” claims have similar meanings.
-
-### Issuer
-
-The issuer of the authentication credential needs to be trusted with issuing the credential. X.509 and C509 certificates includes the “Issuer” field. In CWT and CCS, the “iss” claim has a similar meaning.
+* In X.509 and C509 certificates validity is expressed using Not After and Not Before. In CWT and CCS, the “exp” and “nbf” claims have similar meanings.
 
 
-### Signature
 
-The signature of the authentication credential needs to be verified with the public key of the issuer. The public key is either a trust anchor or the public key in another valid and trusted credential in a certification path from trust anchor to authentication credential.
-
-
-### Subject {#identities}
+## Identities {#identities}
 
 Policies for what connections to allow are typically set based on the identity of the other endpoint, and endpoints typically only allow connections from a specific identity or a small restricted set of identities. For example, in the case of a device connecting to a network, the network may only allow connections from devices which authenticate with certificates having a particular range of serial numbers and signed by a particular CA. Conversely, a device may only be allowed to connect to a network which authenticates with a particular public key.
 
-The application must decide on allowing a connection or not depending on the intended endpoint, and in particular whether it is a specific identity or a set of identities. By allowing the application access to the authentication credential, EDHOC passes information about identity to the application for decision, and EDHOC need to receive information back about the result of the decision.
+The application must decide on allowing a connection or not depending on the intended endpoint, and in particular whether it is a specific identity or a set of identities.
 
-* When a Public Key Infrastructure (PKI) is used with certificates, the identity is the subject whose unique name, e.g., a domain name, a Network Access Identifier (NAI), or an Extended Unique Identifier (EUI), is included in the endpoint's certificate. In order to run EDHOC each endpoint needs a specific identity or set of identities it is allowed to communicate with, as specified by the application. Only validated public-key certificates with an allowed subject name as identity, are to be accepted.
+* When a Public Key Infrastructure (PKI) is used with certificates, the identity is the subject whose unique name, e.g., a domain name, a Network Access Identifier (NAI), or an Extended Unique Identifier (EUI), is included in the endpoint's certificate.
 
 * Similarly, when a PKI is used with CWTs, each endpoint needs a specific identity or set of identities it is allowed to communicate with to match against the relevant claim, such as 'sub' (subject).
 
-* When PKI is not used (CCS, self-signed certificate/CWT) the identity is typically directly associated to the authentication key of the other party. For example, the name of the subject may be a canonical representation of the public key. Alternatively, if identities can be expressed in the form of unique subject names assigned to public keys, then a binding to identity is achieved by including both public key and associated subject name in the authentication credential: CRED_I or CRED_R may be a self-signed certificate/CWT or CCS containing the authentication key and the subject name, see {{auth-cred}}. In order to run EDHOC, each endpoint needs a specific authentication key/unique associated subject name, or a set of public authentication keys/unique associated subject names, which it is allowed to communicate with.
-
-In either case, EDHOC verifies that the other party possesses the private authentication key corresponding to the public authentication key.
+* When PKI is not used (CCS, self-signed certificate/CWT) the identity is typically directly associated to the authentication key of the other party. For example, the name of the subject may be a canonical representation of the public key. Alternatively, if identities can be expressed in the form of unique subject names assigned to public keys, then a binding to identity is achieved by including both public key and associated subject name in the authentication credential: CRED_I or CRED_R may be a self-signed certificate/CWT or CCS containing the authentication key and the subject name, see {{auth-cred}}. Each endpoint thus needs to know the specific authentication key/unique associated subject name, or set of public authentication keys/unique associated subject names, which it is allowed to communicate with.
 
 To prevent misbinding attacks in systems where an attacker can register public keys without proving knowledge of the private key, SIGMA {{SIGMA}} enforces a MAC to be calculated over the "identity". EDHOC follows SIGMA by calculating a MAC over the whole authentication credential, which in case of an X.509 or C509 certificate includes the "subject" and "subjectAltName" fields, and in the case of CWT or CCS includes the "sub" claim.
 
@@ -1852,23 +1833,28 @@ To prevent misbinding attacks in systems where an attacker can register public k
 
 ## Certification Path and Trust Anchors {#cert-path}
 
-Similar verifications as made with the authentication credential (see {{validating-auth-credential}}) is also needed for the other credentials in the certification path.
-
-When a Public Key Infrastructure (PKI) is used with certificates, the trust anchor is a Certification Authority (CA) certificate. In order to run EDHOC each party needs at least one CA public key certificate, or just the CA public key. The certification path contains proof that the subject of the certificate owns the public key in the certificate. Only validated public-key certificates are to be accepted.
+When a Public Key Infrastructure (PKI) is used with certificates, the trust anchor is a Certification Authority (CA) certificate. Each party needs at least one CA public key certificate, or just the CA public key. The certification path contains proof that the subject of the certificate owns the public key in the certificate. Only validated public-key certificates are to be accepted.
 
 Similarly, when a PKI is used with CWTs, each party needs to have at least one trusted third party public key as trust anchor to verify the end-entity CWTs. The trusted third party public key can, e.g., be stored in a self-signed CWT or in a CCS.
 
+The issuer of the authentication credential needs to be trusted with issuing the credential. X.509 and C509 certificates includes the “Issuer” field. In CWT and CCS, the “iss” claim has a similar meaning.
+
+The signature of the authentication credential needs to be verified with the public key of the issuer. The public key is either a trust anchor or the public key in another valid and trusted credential in a certification path from trust anchor to authentication credential.
+
+Similar verifications as made with the authentication credential (see {{validating-auth-credential}}) are also needed for the other credentials in the certification path.
+
 When PKI is not used (CCS, self-signed certificate/CWT), the trust anchor is the authentication key of the other party, in which case there is no  certification path.
+
+
+## Revocation Status {#revocation}
+
+The application may need to verify that the credentials are not revoked, see {{impl-cons}}. Some use cases may be served by short-lived credentials, for example, where the validity of the credential is on par with with the interval between revocation checks. But, in general, credential life time and revokation checking are complementary measures to control credential status. Revocation information may be transported as External Authentication Data (EAD), see {{ead-appendix}}.
 
 
 ## Trust-on-first-use {#tofu}
 
 TBD
 
-
-## Revocation {#revocation}
-
-It may be necessary to verify that the credentials are not revoked. Revocation may be replaced by only issuing short valid certificates. Revocation information may be transported as External Authentication Data (EAD), see {{ead-appendix}}.
 
 
 # Use of External Authorization Data {#ead-appendix}
