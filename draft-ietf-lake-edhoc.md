@@ -1889,7 +1889,7 @@ The content of the EAD field may be used in the EDHOC processing of the message 
 
 Conversely, the security application may need to wait for EDHOC message verification to complete. In the third example above, the validation of a CSR carried in EAD_3 is not started by the Responder before EDHOC has successfully verified message_3 and proven the possession of the private key of the Initiator.
 
-An application may support multiple security applications and thus multiple EAD elements in one field.
+An application may support multiple security applications making use of EAD, which may result in multiple (ead_label, ead_value) pairs in one EAD field, see {{AD}}.
 
 The security application may reuse EDHOC protocol fields which therefore need to be available to the application. For example, the security application may use the same crypto algorithms as in the EDHOC session and therefore needs access to the selected cipher suite (or the whole SUITES_I). The application may use the ephemeral public keys G_X and G_Y, as ephemeral keys or as nonces. How the security application gets access to these message fields is out of scope for this specification.
 
