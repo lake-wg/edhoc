@@ -1111,7 +1111,7 @@ Initiator                                                   Responder
 
 # Compliance Requirements {#mti}
 
-In the absence of an application profile standard specifying otherwise:
+In the absence of an application profile specifying otherwise:
 
 An implementation MAY support only Initiator or only Responder.
 
