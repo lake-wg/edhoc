@@ -517,17 +517,17 @@ EDHOC allows opaque external authorization data (EAD) to be sent in each of the 
 
 * One example is third-party authorization information requested in EAD_1 and an authorization artifact (“voucher”, cf. {{RFC8366}}) returned in EAD_2, see {{I-D.selander-ace-ake-authz}}.
 
-* Another example is remote attestation requested in EAD_2, and an Entity Attestation Token (EAT, {{I-D.ietf-rats-eat}}) returned i EAD_3.
+* Another example is remote attestation requested in EAD_2, and an Entity Attestation Token (EAT, {{I-D.ietf-rats-eat}}) returned in EAD_3.
 
 * A third example is certificate enrolment where a Certificate Signing Request (CSR, {{RFC2986}}) is included EAD_3, and the issued public key certificate (X.509 {{RFC5280}}, C509 {{I-D.ietf-cose-cbor-encoded-cert}}) or a reference thereof is returned i EAD_4.
 
-External authorization data should be considered unprotected by EDHOC, and the protection of EAD is the responsibility of the security application (third party authorization, remote attestation, certificate enrolment, etc.). The security properties of the EAD fields are discussed in {{sec-prop}}.
+External authorization data should be considered unprotected by EDHOC, and the protection of EAD is the responsibility of the security application (third party authorization, remote attestation, certificate enrolment, etc.). The security properties of the EAD fields (after EDHOC processing) are discussed in {{sec-prop}}.
 
 To support use cases where the EAD field is used in the EDHOC processing of the message in which they are contained, the EAD fields are made available to the application before the message is verified, see details of message processing in {{asym}}. For example, by making the voucher in EAD_2 available to the application, the Initiator can verify the identity or public key of the Responder before verifying the signature.
 
 The security application may need to wait for EDHOC message verification to complete. For example, the validation of a CSR carried in EAD_3 is not started before EDHOC has successfully verified message_3.
 
-The security application may reuse EDHOC protocol fields which therefore needs to be available to the application. For example, the security application may use the same crypto algorithms as in the EDHOC session and therefore needs access to the selected cipher suite (or the whole SUITES_I). The application may use the ephemeral public keys G_X and G_Y, as ephemeral keys or as nonces.
+The security application may reuse EDHOC protocol fields which therefore need to be available to the application. For example, the security application may use the same crypto algorithms as in the EDHOC session and therefore needs access to the selected cipher suite (or the whole SUITES_I). The application may use the ephemeral public keys G_X and G_Y, as ephemeral keys or as nonces. How the security application gets access to these message fields is out of scope for this specification.
 
 The EAD fields of EDHOC must not be used for generic application data. Since data carried in EAD may not be protected, or be processed by the application before the EDHOC message is verified, special considerations need to be made such that it does not violate security and privacy requirements of the service which uses this data, see {{unprot-data}}. The content in an EAD field may impact the security properties provided by EDHOC. Security applications making use of the EAD fields must perform the necessary security analysis.
 
@@ -788,8 +788,6 @@ The Initiator SHALL compose message_1 as follows:
 
 * Choose a connection identifier C_I and store it for the length of the protocol.
 
-* Obtain EAD_1 from the application. Additional protocol data, such as G_X or SUITES_I, may be needed to compute EAD_1, see {{AD}}.
-
 * Encode message_1 as a sequence of CBOR encoded data items as specified in {{asym-msg1-form}}
 
 ### Responder Processing of Message 1 {#resp-proc-msg1}
@@ -833,14 +831,12 @@ The Responder SHALL compose message_2 as follows:
 
 * Choose a connection identifier C_R and store it for the length of the protocol.
 
-* Obtain EAD_2 from the application. Additional protocol data, such as G_X or G_Y, may be needed to compute EAD_2, see {{AD}}.
-    * EAD_2 - unprotected external authorization data, see {{AD}}.
-
 * Compute the transcript hash TH_2 = H( H(message_1), G_Y, C_R ) where H() is the EDHOC hash algorithm of the selected cipher suite. The transcript hash TH_2 is a CBOR encoded bstr and the input to the hash function is a CBOR Sequence. Note that H(message_1) can be computed and cached already in the processing of message_1.
 
 * Compute MAC_2 = EDHOC-KDF( PRK_3e2m, TH_2, "MAC_2", << ID_CRED_R, CRED_R, ? EAD_2 >>, mac_length_2 ). If the Responder authenticates with a static Diffie-Hellman key (method equals 1 or 3), then mac_length_2 is the EDHOC MAC length given by the selected cipher suite. If the Responder authenticates with a signature key (method equals 0 or 2), then mac_length_2 is equal to the output size of the EDHOC hash algorithm given by the selected cipher suite.
     * ID_CRED_R - identifier to facilitate the retrieval of CRED_R, see {{id_cred}}
     * CRED_R - CBOR item containing the authentication credential of the Responder, see {{auth-cred}}
+    * EAD_2 - unprotected external authorization data, see {{AD}}
 
 * If the Responder authenticates with a static Diffie-Hellman key (method equals 1 or 3), then Signature_or_MAC_2 is MAC_2. If the Responder authenticates with a signature key (method equals 0 or 2), then Signature_or_MAC_2 is the 'signature' field of a COSE_Sign1 object, computed as specified in Section 4.4 of {{I-D.ietf-cose-rfc8152bis-struct}} using the signature algorithm of the selected cipher suite, the private authentication key of the Responder, and the following parameters as input (see {{COSE}} for an overview of COSE and {{CBOR}} for notation):
 
@@ -874,7 +870,7 @@ The Initiator SHALL process message_2 as follows:
 
 * Decrypt CIPHERTEXT_2, see {{asym-msg2-proc}}, and discard padding, if present.
 
-* Make ID_CRED_R and EAD_2 (if present) available to the application for authentication- and EAD processing. Additional protocol data, such as G_X or G_Y, may be needed for EAD processing, see {{AD}}.
+* Make ID_CRED_R and EAD_2 (if present) available to the application for authentication- and EAD processing.
 
 * Obtain the authentication credential (CRED_R) and the authentication key of R from the application (or by other means).
 
@@ -900,14 +896,13 @@ message_3 = (
 
 The Initiator SHALL compose message_3 as follows:
 
-* Obtain EAD_3 from the application. Additional protocol data, such as G_Y, may be needed to compute EAD_3, see {{AD}}.
-    * EAD_3 - protected external authorization data, see {{AD}}.
-
 * Compute the transcript hash TH_3 = H(TH_2, CIPHERTEXT_2) where H() is the EDHOC hash algorithm of the selected cipher suite. The transcript hash TH_3 is a CBOR encoded bstr and the input to the hash function is a CBOR Sequence.  Note that H(TH_2, CIPHERTEXT_2) can be computed and cached already in the processing of message_2.
 
 * Compute MAC_3 = EDHOC-KDF( PRK_4x3m, TH_3, "MAC_3", << ID_CRED_I, CRED_I, ? EAD_3 >>, mac_length_3 ). If the Initiator authenticates with a static Diffie-Hellman key (method equals 2 or 3), then mac_length_3 is the EDHOC MAC length given by the selected cipher suite.  If the Initiator authenticates with a signature key (method equals 0 or 1), then mac_length_3 is equal to the output size of the EDHOC hash algorithm given by the selected cipher suite.
     * ID_CRED_I - identifier to facilitate the retrieval of CRED_I, see {{id_cred}}
     * CRED_I - CBOR item containing the authentication credential of the Initiator, see {{auth-cred}}
+    * EAD_3 - protected external authorization data, see {{AD}}
+
 
 * If the Initiator authenticates with a static Diffie-Hellman key (method equals 2 or 3), then Signature_or_MAC_3 is MAC_3. If the Initiator authenticates with a signature key (method equals 0 or 1), then Signature_or_MAC_3 is the 'signature' field of a COSE_Sign1 object, computed as specified in Section 4.4 of {{I-D.ietf-cose-rfc8152bis-struct}} using the signature algorithm of the selected cipher suite, the private authentication key of the Initiator, and the following parameters as input (see {{COSE}}):
 
@@ -952,7 +947,7 @@ The Responder SHALL process message_3 as follows:
 
 * Decrypt and verify the COSE_Encrypt0 as defined in Sections 5.2 and 5.3 of {{I-D.ietf-cose-rfc8152bis-struct}}, with the EDHOC AEAD algorithm in the selected cipher suite, and the parameters defined in {{asym-msg3-proc}}. Discard padding, if present.
 
-* Make ID_CRED_I and EAD_3 (if present) available to application for authentication- and EAD processing. Additional protocol data, such as G_Y, may be needed for EAD processing, see {{AD}}.
+* Make ID_CRED_I and EAD_3 (if present) available to the application for authentication- and EAD processing.
 
 * Obtain the authentication credential (CRED_I) and the authentication key of I from the application (or by other means).
 
@@ -987,9 +982,6 @@ message_4 = (
 
 The Responder SHALL compose message_4 as follows:
 
-* Obtain EAD_4 from the application. Additional protocol data may be needed to compute EAD_4, see {{AD}}.
-    * EAD_4 - protected external authorization data, see {{AD}}.
-
 * Compute a COSE_Encrypt0 as defined in Sections 5.2 and 5.3 of {{I-D.ietf-cose-rfc8152bis-struct}}, with the EDHOC AEAD algorithm of the selected cipher suite, using the encryption key K_4, the initialization vector IV_4, the plaintext P, and the following parameters as input (see {{COSE}}):
 
    * protected = h''
@@ -1003,6 +995,7 @@ The Responder SHALL compose message_4 as follows:
        * iv_length - length of the initialization vector of the EDHOC AEAD algorithm
     * P = ( ? PAD, ? EAD_4 )
       * PAD = 1*true is padding that may be used to hide the length of the unpadded plaintext.
+      * EAD_4 - protected external authorization data, see {{AD}}.
 
   CIPHERTEXT_4 is the 'ciphertext' of COSE_Encrypt0.
 
@@ -1018,7 +1011,7 @@ The Initiator SHALL process message_4 as follows:
 
 * Decrypt and verify the COSE_Encrypt0 as defined in Sections 5.2 and 5.3 of {{I-D.ietf-cose-rfc8152bis-struct}}, with the EDHOC AEAD algorithm in the selected cipher suite, and the parameters defined in {{asym-msg4-proc}}. Discard padding, if present.
 
-* Make EAD_4 (if present) available to application for EAD processing. Additional protocol data may be needed for EAD processing, see {{AD}}.
+* Make EAD_4 (if present) available to the application for EAD processing.
 
 If any processing step fails, the Responder SHOULD send an EDHOC error message back, formatted as defined in {{error}}. Sending error messages is essential for debugging but MAY be skipped if, for example, a session cannot be found or due to denial-of-service reasons, see {{dos}}. If an error message is sent, the session MUST be discontinued.
 
