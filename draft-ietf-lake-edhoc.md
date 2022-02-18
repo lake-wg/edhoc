@@ -1167,7 +1167,7 @@ As discussed in {{SIGMA}}, the encryption of message_2 does only need to protect
 
 Requirements for how to securely generate, validate, and process the ephemeral public keys depend on the elliptic curve. For X25519 and X448, the requirements are defined in {{RFC7748}}. For secp256r1, secp384r1, and secp521r1, the requirements are defined in Section 5 of {{SP-800-56A}}. For secp256r1, secp384r1, and secp521r1, at least partial public-key validation MUST be done.
 
-To mititgate reflection attacks, the Initiator MUST verify that the the Responder's identity is not equal to Initiator's, e.g., by checking that ID_CRED_R was not previosly created by the Intiator. Any future EHDOC methods using e.g., pre-shared keys might need to mitigate this in other ways. 
+So-called selfie attacks are mitigated as long as the Initiator does not have its own identity in the set of Responder identities it is allowed to communicate with. In trust on first use (TOFU) use cases the Initiator should verify that the the Responder's identity is not equal to its own. Any future EHDOC methods using e.g., pre-shared keys might need to mitigate this in other ways.
 
 ## Cipher Suites and Cryptographic Algorithms {#sec_algs}
 
