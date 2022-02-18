@@ -122,7 +122,7 @@ informative:
 
   HKDFpaper:
     target: https://eprint.iacr.org/2010/264.pdf
-    title: Cryptographic Extraction and Key Derivation: The HKDF Scheme
+    title: "Cryptographic Extraction and Key Derivation: The HKDF Scheme"
     author:
       -
         ins: H. Krawczyk
