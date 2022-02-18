@@ -1875,9 +1875,9 @@ The content of the EAD field may be used in the EDHOC processing of the message 
 
 Conversely, the security application may need to wait for EDHOC message verification to complete. In the third example above, the validation of a CSR carried in EAD_3 is not started by the Responder before EDHOC has successfully verified message_3 and proven the possession of the private key of the Initiator.
 
-An application may support multiple security applications making use of EAD, which may result in multiple (ead_label, ead_value) pairs in one EAD field, see {{AD}}.
-
 The security application may reuse EDHOC protocol fields which therefore need to be available to the application. For example, the security application may use the same crypto algorithms as in the EDHOC session and therefore needs access to the selected cipher suite (or the whole SUITES_I). The application may use the ephemeral public keys G_X and G_Y, as ephemeral keys or as nonces. How the security application gets access to these message fields is out of scope for this specification.
+
+The processing of the EAD fields by the security application, including  actions in case of error needs to be described in the specification where the ead_value is registered, see {{iana-ead}}. An application may support multiple security applications that make use of EAD, which may result in multiple (ead_label, ead_value) pairs in one EAD field, see {{AD}}. Any dependencies on security applications with previously registered EAD fields needs to be documented, and the processing need to consider their simultaneous use.
 
 Since data carried in EAD may not be protected, or be processed by the application before the EDHOC message is verified, special considerations need to be made such that it does not violate security and privacy requirements of the service which uses this data, see {{unprot-data}}. The content in an EAD field may impact the security properties provided by EDHOC. Security applications making use of the EAD fields must perform the necessary security analysis.
 
