@@ -336,16 +336,16 @@ The data item METHOD in message_1 (see {{asym-msg1-form}}), is an integer specif
 The Initiator and the Responder need to have agreed on a single method to be used for EDHOC, see {{applicability}}.
 
 ~~~~~~~~~~~
-+--------+------------------+------------------+-------------------+
-| Method | Initiator        | Responder        | Reference         |
-|   Type | Authentication   | Authentication   |                   |
-|  Value | Key              | Key              |                   |
-+--------+------------------+------------------+-------------------+
-|      0 | Signature Key    | Signature Key    | [[this document]] |
-|      1 | Signature Key    | Static DH Key    | [[this document]] |
-|      2 | Static DH Key    | Signature Key    | [[this document]] |
-|      3 | Static DH Key    | Static DH Key    | [[this document]] |
-+--------+------------------+------------------+-------------------+
++--------+------------------+------------------+
+| Method | Initiator        | Responder        |
+|   Type | Authentication   | Authentication   |
+|  Value | Key              | Key              |
++--------+------------------+------------------+
+|      0 | Signature Key    | Signature Key    |
+|      1 | Signature Key    | Static DH Key    |
+|      2 | Static DH Key    | Signature Key    |
+|      3 | Static DH Key    | Static DH Key    |
++--------+------------------+------------------+
 ~~~~~~~~~~~
 {: #fig-method-types title="Authentication Keys for Method Types"}
 {: artwork-align="center"}
@@ -1403,11 +1403,11 @@ IANA has registered the following entries in the "COSE Header Parameters" regist
 IANA has extended the Value Type of 'kid' in the "COSE Header Parameters" registry under the group name "CBOR Object Signing and Encryption (COSE)" to also allow the Value Type int. The resulting Value Type is bstr / int. The Value Registry for this item is empty and omitted from the table below.
 
 ~~~~~~~~~~~
-+------+-------+------------+----------------+-------------------+
-| Name | Label | Value Type | Description    | Reference         |
-+------+-------+------------+----------------+-------------------+
-| kid  |   4   | bstr / int | Key identifier | [[This document]] |
-+------+-------+------------+----------------+-------------------+
++------+-------+------------+----------------+
+| Name | Label | Value Type | Description    |
++------+-------+------------+----------------+
+| kid  |   4   | bstr / int | Key identifier |
++------+-------+------------+----------------+
 ~~~~~~~~~~~
 
 ## COSE Key Common Parameters Registry {#kid-key-common-param}
@@ -1415,14 +1415,14 @@ IANA has extended the Value Type of 'kid' in the "COSE Header Parameters" regist
 IANA has extended the Value Type of 'kid' in the "COSE Key Common Parameters" registry under the group name "CBOR Object Signing and Encryption (COSE)" to also allow the Value Type int. The resulting Value Type is bstr / int. The Value Registry for this item is empty and omitted from the table below.
 
 ~~~~~~~~~~~
-+------+-------+------------+----------------+-------------------+
-| Name | Label | Value Type | Description    | Reference         |
-+------+-------+------------+----------------+-------------------+
-| kid  |   2   | bstr / int | Key identifi-  | [[This document]] |
-|      |       |            | cation value - |                   |
-|      |       |            | match to kid   |                   |
-|      |       |            | in message     |                   |
-+------+-------+------------+----------------+-------------------+
++------+-------+------------+----------------+
+| Name | Label | Value Type | Description    |
++------+-------+------------+----------------+
+| kid  |   2   | bstr / int | Key identifi-  |
+|      |       |            | cation value - |
+|      |       |            | match to kid   |
+|      |       |            | in message     |
++------+-------+------------+----------------+
 ~~~~~~~~~~~
 
 
