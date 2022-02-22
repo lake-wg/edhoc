@@ -793,8 +793,6 @@ The Responder SHALL process message_1 as follows:
 
 * Decode message_1 (see {{CBOR}}).
 
-* Verify that G_X is not equal to G_X in a simultanous EDHOC message exchange initiated by the Responder.
-
 * Verify that the selected cipher suite is supported and that no prior cipher suite in SUITES_I is supported.
 
 * Pass EAD_1 to the security application.
@@ -1180,6 +1178,8 @@ As discussed in {{SIGMA}}, the encryption of message_2 does only need to protect
 
 Requirements for how to securely generate, validate, and process the ephemeral public keys depend on the elliptic curve. For X25519 and X448, the requirements are defined in {{RFC7748}}. For secp256r1, secp384r1, and secp521r1, the requirements are defined in Section 5 of {{SP-800-56A}}. For secp256r1, secp384r1, and secp521r1, at least partial public-key validation MUST be done.
 
+So-called selfie attacks are mitigated as long as the Initiator does not have its own identity in the set of Responder identities it is allowed to communicate with. In trust on first use (TOFU) use cases the Initiator should verify that the the Responder's identity is not equal to its own. Any future EHDOC methods using e.g., pre-shared keys might need to mitigate this in other ways.
+
 ## Cipher Suites and Cryptographic Algorithms {#sec_algs}
 
 When using private cipher suite or registering new cipher suites, the choice of key length used in the different algorithms needs to be harmonized, so that a sufficient security level is maintained for certificates, EDHOC, and the protection of application data. The Initiator and the Responder should enforce a minimum security level.
@@ -1226,7 +1226,7 @@ The Initiator and the Responder are responsible for verifying the integrity and 
 
 The Initiator and the Responder are allowed to select the connection identifiers C_I and C_R, respectively, for the other party to use in the ongoing EDHOC protocol as well as in a subsequent application protocol (e.g., OSCORE {{RFC8613}}). The choice of connection identifier is not security critical in EDHOC but intended to simplify the retrieval of the right security context in combination with using short identifiers. If the wrong connection identifier of the other party is used in a protocol message it will result in the receiving party not being able to retrieve a security context (which will terminate the protocol) or retrieve the wrong security context (which also terminates the protocol as the message cannot be verified).
 
-If two nodes unintentionally initiate two simultaneous EDHOC message exchanges with each other even if they only want to complete a single EDHOC message exchange, they MAY terminate the exchange with the lexicographically smallest G_X. If the two G_X values are equal, the received message_1 MUST be discarded to mitigate reflection attacks. Reflection attacks are not possible when the other endpoint's identity is verified, but could be a problem with trust on first use (TOFU) and future EHDOC methods using e.g., pre-shared keys. Note that in cases where several EDHOC exchanges with different parameter sets (method, COSE headers, etc.) are used, an attacker can affect which of the parameter sets that will be used by blocking some of the parameter sets.
+If two nodes unintentionally initiate two simultaneous EDHOC message exchanges with each other even if they only want to complete a single EDHOC message exchange, they MAY terminate the exchange with the lexicographically smallest G_X. Note that in cases where several EDHOC exchanges with different parameter sets (method, COSE headers, etc.) are used, an attacker can affect which of the parameter sets that will be used by blocking some of the parameter sets.
 
 If supported by the device, it is RECOMMENDED that at least the long-term private keys are stored in a Trusted Execution Environment (TEE) and that sensitive operations using these keys are performed inside the TEE.  To achieve even higher security it is RECOMMENDED that additional operations such as ephemeral key generation, all computations of shared secrets, and storage of the PRK keys can be done inside the TEE. The use of a TEE aims at preventing code within that environment to be tampered with, and preventing data used by such code to be read or tampered with by code outside that environment.
 
