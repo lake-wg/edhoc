@@ -1120,13 +1120,15 @@ Initiator                                                   Responder
 
 # Compliance Requirements {#mti}
 
-An implementation may support only Initiator or only Responder.
+In the absence of an application profile specifying otherwise:
 
-An implementation may support only a single method. None of the methods are mandatory-to-implement.
+An implementation MAY support only Initiator or only Responder.
+
+An implementation MAY support only a single method. None of the methods are mandatory-to-implement.
 
 Implementations MUST support 'kid' parameters of type int. None of the other COSE header parameters are mandatory-to-implement.
 
-An implementation may support only a single credential type (CCS, CWT, X.509, C509). None of the credential types are mandatory-to-implement.
+An implementation MAY support only a single credential type (CCS, CWT, X.509, C509). None of the credential types are mandatory-to-implement.
 
 Implementations MUST support the EDHOC-Exporter. Implementations SHOULD support EDHOC-KeyUpdate.
 
@@ -1136,7 +1138,7 @@ Implementations MAY support EAD.
 
 Implementations MAY support padding of plaintext when sending messages. Implementations MUST support padding of plaintext when receiving messages, i.e. MUST be able to parse padded messages.
 
-For many constrained IoT devices it is problematic to support several crypto primitives. Existing devices can be expected to support either ECDSA or EdDSA. Cipher suites 0 (AES-CCM-16-64-128, SHA-256, 8, X25519, EdDSA, AES-CCM-16-64-128, SHA-256) and 1 (AES-CCM-16-128-128, SHA-256, 16, X25519, EdDSA, AES-CCM-16-64-128, SHA-256) only differ in size of the MAC length, so supporting one or both of these is no essential difference. Similarly for cipher suites 2 (AES-CCM-16-64-128, SHA-256, 8, P-256, ES256, AES-CCM-16-64-128, SHA-256) and 3 (AES-CCM-16-128-128, SHA-256, 16, P-256, ES256, AES-CCM-16-64-128, SHA-256). To enable as much interoperability as possible, less constrained devices SHOULD implement all four cipher suites 0-3. Constrained endpoints SHOULD implement cipher suites 0 and 1, or cipher suites 2 and 3. Implementations only need to implement the algorithms needed for their supported methods.
+Implementations MUST support cipher suite 2 and 3. Cipher suites 2 (AES-CCM-16-64-128, SHA-256, 8, P-256, ES256, AES-CCM-16-64-128, SHA-256) and 3 (AES-CCM-16-128-128, SHA-256, 16, P-256, ES256, AES-CCM-16-64-128, SHA-256) only differ in size of the MAC length, so supporting one or both of these is no essential difference. Implementations only need to implement the algorithms needed for their supported methods.
 
 # Security Considerations {#security}
 
