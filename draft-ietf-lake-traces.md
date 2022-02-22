@@ -16,7 +16,7 @@ pi: # can use array (if all yes) or hash here
 author:
 - name: Göran Selander
   surname: Selander
-  org: Ericsson AB
+  org: Ericsson
   abbrev: Ericsson
   street: SE-164 80 Stockholm
   country: Sweden
@@ -24,11 +24,19 @@ author:
 - name: John Preuß Mattsson
   initials: J
   surname: Preuß Mattsson
-  org: Ericsson AB
+  org: Ericsson
   abbrev: Ericsson
   street: SE-164 80 Stockholm
   country: Sweden
   email: john.mattsson@ericsson.com
+- name: Marek Serafin
+  initials: M
+  surname: Serafin
+  org: ASSA ABLOY
+  abbrev: ASSA ABLOY
+  street:
+  country: Poland
+  email: marek.serafin@assaabloy.com
 
 normative:
 
@@ -57,22 +65,11 @@ EDHOC {{I-D.ietf-lake-edhoc}} is a lightweight authenticated key exchange protoc
 
 The traces in this draft are valid for versions -11 and -12 of {{I-D.ietf-lake-edhoc}}. A more extensive test vector suite and related code that was used to generate them can be found at: https://github.com/lake-wg/edhoc/tree/master/test-vectors-11.
 
+TODO: Fix version and referenced library.
 
 # Setup
 
 EDHOC is run between an Initiator (I) and a Responder (R). The private/public key pairs and credentials of I and R required to produce the protocol messages are shown in the traces when needed for the calculations.
-
-Both I and R are assumed to support cipher suite 0, which determines the algorithms:
-
-* EDHOC AEAD algorithm = AES-CCM-16-64-128
-* EDHOC hash algorithm = SHA-256
-* EDHOC MAC length in bytes (Static DH) = 8
-* EDHOC key exchange algorithm (ECDH curve) = X25519
-* EDHOC signature algorithm = EdDSA
-* Application AEAD algorithm = AES-CCM-16-64-128
-* Application hash algorithm = SHA-256
-
-External authorization data (EAD) is not used in these examples.
 
 EDHOC messages and intermediate results are encoded in CBOR {{RFC8949}} and can therefore be displayed in CBOR diagnostic notation using, e.g., the CBOR playground {{CborMe}}, which makes them easy to parse for humans.
 
@@ -85,7 +82,17 @@ NOTE 3. When the protocol transporting EDHOC messages does not inherently provid
 
 # Authentication with static DH, CCS identified by 'kid'
 
-In this example I and R are authenticated with ephemeral-static Diffie-Hellman (METHOD = 3). The public keys are represented as raw public keys (RPK), encoded in an CWT Claims Set (CCS) and identified by the COSE header parameter 'kid'.
+In this example I and R are authenticated with ephemeral-static Diffie-Hellman (METHOD = 3). Both I and R support cipher suite 0, which determines the algorithms:
+
+* EDHOC AEAD algorithm = AES-CCM-16-64-128
+* EDHOC hash algorithm = SHA-256
+* EDHOC MAC length in bytes (Static DH) = 8
+* EDHOC key exchange algorithm (ECDH curve) = X25519
+* EDHOC signature algorithm = EdDSA
+* Application AEAD algorithm = AES-CCM-16-64-128
+* Application hash algorithm = SHA-256
+
+The public keys are represented as raw public keys (RPK), encoded in an CWT Claims Set (CCS) and identified by the COSE header parameter 'kid'.
 
 
 ## message_1
@@ -986,12 +993,22 @@ OSCORE Master Salt after KeyUpdate (Raw Value) (8 bytes)
 
 
 
-# Authentication with signatures, X.509 identified by 'x5t'
+# Authentication with signatures, X.509 certificates identified by 'x5t'
 
-In this example the Initiator (I) and Responder (R) are authenticated with digital signatures (METHOD = 0). The public keys are represented with dummy X.509 certificates identified by the COSE header parameter 'x5t'.
+In this example the Initiator (I) and Responder (R) are authenticated with digital signatures (METHOD = 0). I supports cipher suites 6 and 2 (in order of preference) and R only supports cipher suite 2. After an initial negotiation smessage exchange cipher suite 2 is used, which determines the algorithms:
+
+* EDHOC AEAD algorithm = AES-CCM-16-64-128
+* EDHOC hash algorithm = SHA-256
+* EDHOC MAC length in bytes (Static DH) = 8
+* EDHOC key exchange algorithm (ECDH curve) = P-256
+* EDHOC signature algorithm = ES256
+* Application AEAD algorithm = AES-CCM-16-64-128
+* Application hash algorithm = SHA-256
+
+The public keys are represented with X.509 certificates identified by the COSE header parameter 'x5t'.
 
 
-## message_1
+## message_1 (first time) {#m1_1}
 
 Both endpoints are authenticated with signatures, i.e. METHOD = 0:
 
@@ -1000,11 +1017,94 @@ METHOD (CBOR Data Item) (1 bytes)
 00
 ~~~~~~~~
 
-I selects cipher suite 0. A single cipher suite is encoded as an int:
+I selects its preferred cipher suite 6. A single cipher suite is encoded as an int:
 
 ~~~~~~~~
 SUITES_I (CBOR Data Item) (1 bytes)
+06
+~~~~~~~~
+
+I creates an ephemeral key pair for use with the EDHOC key exchange algorithm:
+
+~~~~~~~~
+X (Raw Value) (Initiator's ephemeral private key) (32 bytes)
+b0 26 b1 68 42 9b 21 3d 6b 42 1d f6 ab d0 64 1c d6 6d ca 2e e7 fd 59
+77 10 4b b2 38 18 2e 5e a6
+~~~~~~~~
+~~~~~~~~
+G_X (Raw Value) (Initiator's ephemeral public key) (32 bytes)
+e3 1e c1 5e e8 03 94 27 df c4 72 7e f1 7e 2e 0e 69 c5 44 37 f3 c5 82
+80 19 ef 0a 63 88 c1 25 52
+~~~~~~~~
+~~~~~~~~
+G_X (CBOR Data Item) (Initiator's ephemeral public key) (34 bytes)
+58 20 e3 1e c1 5e e8 03 94 27 df c4 72 7e f1 7e 2e 0e 69 c5 44 37 f3
+c5 82 80 19 ef 0a 63 88 c1 25 52
+~~~~~~~~
+
+I selects its connection identifier C_I to be the int 14:
+
+~~~~~~~~
+C_I (Raw Value) (Connection identifier chosen by I) (int)
+14
+~~~~~~~~
+~~~~~~~~
+C_I (CBOR Data Item) (Connection identifier chosen by I) (1 bytes)
+0e
+~~~~~~~~
+
+No external authorization data:
+
+EAD_1 (CBOR Sequence) (0 bytes)
+
+I constructs message_1:
+
+    message_1 =
+    (
+     0,
+     6,
+     h'E31EC15EE8039427DFC4727EF17E2E0E69C54437F3C5828019EF0A6388C12552',
+     14
+    )
+
+~~~~~~~~
+message_1 (CBOR Sequence) (37 bytes)
+00 06 58 20 e3 1e c1 5e e8 03 94 27 df c4 72 7e f1 7e 2e 0e 69 c5 44
+37 f3 c5 82 80 19 ef 0a 63 88 c1 25 52 0e
+~~~~~~~~
+
+
+## error
+
+R does not support cipher suite 6 and sends an error with ERR_CODE 2 containing SUITES_R as ERR_INFO. R proposes cipher suite 2, a single cipher suite thus encoded as an int.
+
+~~~~~~~~
+SUITES_R
+02
+~~~~~~~~
+
+~~~~~~~~
+error (CBOR Sequence) (2 bytes)
+02 02
+~~~~~~~~
+
+
+## message_1 (second time)
+
+Same steps are performed as message_1 first time, {{m1_1}}, but with updated SUITES_I.
+
+Both endpoints are authenticated with signatures, i.e. METHOD = 0:
+
+~~~~~~~~
+METHOD (CBOR Data Item) (1 bytes)
 00
+~~~~~~~~
+
+I selects cipher suite 2 and indicates the more preferred cipher suite(s), in this case 6, all encoded as the array [6, 2]:
+
+~~~~~~~~
+SUITES_I (CBOR Data Item) (3 bytes)
+82 06 02
 ~~~~~~~~
 
 
@@ -1046,18 +1146,20 @@ I constructs message_1:
     message_1 =
     (
      0,
-     0,
+     [6,2],
      h'E31EC15EE8039427DFC4727EF17E2E0E69C54437F3C5828019EF0A6388C12552',
      14
     )
 
 ~~~~~~~~
-message_1 (CBOR Sequence) (37 bytes)
-00 00 58 20 e3 1e c1 5e e8 03 94 27 df c4 72 7e f1 7e 2e 0e 69 c5 44
-37 f3 c5 82 80 19 ef 0a 63 88 c1 25 52 0e
+message_1 (CBOR Sequence) (39 bytes)
+00 82 06 02 58 20 e3 1e c1 5e e8 03 94 27 df c4 72 7e f1 7e 2e 0e 69
+c5 44 37 f3 c5 82 80 19 ef 0a 63 88 c1 25 52 0e
 ~~~~~~~~
 
 ## message_2
+
+R supports the selected cipher suite 2 and not the by I more preferred cipher suite(s) 6, so SUITES_I is acceptable.
 
 R creates an ephemeral key pair for use with the EDHOC key exchange algorithm:
 
@@ -1194,15 +1296,32 @@ and the COSE algorithm -15 indicates the hash algorithm SHA-256 truncated to 64 
 ID_CRED_R (CBOR Data Item) (14 bytes)
 a1 18 22 82 2e 48 60 78 0e 94 51 bd c4 3c
 
-CRED_R is a byte string acting as a dummy X.509 certificate:
+CRED_R is a CBOR byte string of the DER encoding of the X.509 certificate in {{resp-cer}}:
 
 ~~~~~~~~
-CRED_R (CBOR Data Item) (113 bytes)
-58 6f 00 01 02 03 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f 10 11 12 13 14
-15 16 17 18 19 1a 1b 1c 1d 1e 1f 20 21 22 23 24 25 26 27 28 29 2a 2b
-2c 2d 2e 2f 30 31 32 33 34 35 36 37 38 39 3a 3b 3c 3d 3e 3f 40 41 42
-43 44 45 46 47 48 49 4a 4b 4c 4d 4e 4f 50 51 52 53 54 55 56 57 58 59
-5a 5b 5c 5d 5e 5f 60 61 62 63 64 65 66 67 68 69 6a 6b 6c 6d 6e
+CRED_R (Raw Value) (290 bytes)
+3082011E3081C5A003020102020461E9981E300A06082A8648CE3D040302301531133
+01106035504030C0A4544484F4320526F6F74301E170D323230313230313731333032
+5A170D3239313233313233303030305A301A3118301606035504030C0F4544484F432
+0526573706F6E6465723059301306072A8648CE3D020106082A8648CE3D0301070342
+0004BBC34960526EA4D32E940CAD2A234148DDC21791A12AFBCBAC93622046DD44F04
+519E257236B2A0CE2023F0931F1F386CA7AFDA64FCDE0108C224C51EABF6072300A06
+082A8648CE3D0403020348003045022030194EF5FC65C8B795CDCD0BB431BF83EE674
+1C1370C22C8EB8EE9EDD2A70519022100B5830E9C89A62AC73CE1EBCE0061707DB8A8
+8E23709B4ACC58A1313B133D0558
+~~~~~~~~
+
+~~~~~~~~
+CRED_R (CBOR Data Item) (293 bytes)
+5901223082011E3081C5A003020102020461E9981E300A06082A8648CE3D040302301
+53113301106035504030C0A4544484F4320526F6F74301E170D323230313230313731
+3330325A170D3239313233313233303030305A301A3118301606035504030C0F45444
+84F4320526573706F6E6465723059301306072A8648CE3D020106082A8648CE3D0301
+0703420004BBC34960526EA4D32E940CAD2A234148DDC21791A12AFBCBAC93622046D
+D44F04519E257236B2A0CE2023F0931F1F386CA7AFDA64FCDE0108C224C51EABF6072
+300A06082A8648CE3D0403020348003045022030194EF5FC65C8B795CDCD0BB431BF8
+3EE6741C1370C22C8EB8EE9EDD2A70519022100B5830E9C89A62AC73CE1EBCE006170
+7DB8A88E23709B4ACC58A1313B133D0558
 ~~~~~~~~
 
 No external authorization data:
@@ -1460,17 +1579,32 @@ ID_CRED_I (CBOR Data Item) (14 bytes)
 a1 18 22 82 2e 48 81 d4 5b e0 63 29 d6 3a
 ~~~~~~~~
 
-CRED_I is a byte string acting as a dummy X.509 certificate:
+CRED_I is a CBOR byte string of the DER encoding of the X.509 certificate in {{init-cer}}:
 
 ~~~~~~~~
-CRED_I (CBOR Data Item) (139 bytes)
-58 89 00 01 02 03 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f 10 11 12 13 14
-15 16 17 18 19 1a 1b 1c 1d 1e 1f 20 21 22 23 24 25 26 27 28 29 2a 2b
-2c 2d 2e 2f 30 31 32 33 34 35 36 37 38 39 3a 3b 3c 3d 3e 3f 40 41 42
-43 44 45 46 47 48 49 4a 4b 4c 4d 4e 4f 50 51 52 53 54 55 56 57 58 59
-5a 5b 5c 5d 5e 5f 60 61 62 63 64 65 66 67 68 69 6a 6b 6c 6d 6e 6f 70
-71 72 73 74 75 76 77 78 79 7a 7b 7c 7d 7e 7f 80 81 82 83 84 85 86 87
-88
+CRED_I (Raw Value) (290 bytes)
+3082011E3081C5A003020102020461E9981E300A06082A8648CE3D040302301531133
+01106035504030C0A4544484F4320526F6F74301E170D323230313230313731333032
+5A170D3239313233313233303030305A301A3118301606035504030C0F4544484F432
+0526573706F6E6465723059301306072A8648CE3D020106082A8648CE3D0301070342
+0004BBC34960526EA4D32E940CAD2A234148DDC21791A12AFBCBAC93622046DD44F04
+519E257236B2A0CE2023F0931F1F386CA7AFDA64FCDE0108C224C51EABF6072300A06
+082A8648CE3D0403020348003045022030194EF5FC65C8B795CDCD0BB431BF83EE674
+1C1370C22C8EB8EE9EDD2A70519022100B5830E9C89A62AC73CE1EBCE0061707DB8A8
+8E23709B4ACC58A1313B133D0558
+~~~~~~~~
+
+~~~~~~~~
+CRED_I (CBOR Data Item) (293 bytes)
+5901223082011E3081C5A003020102020461E9981E300A06082A8648CE3D040302301
+53113301106035504030C0A4544484F4320526F6F74301E170D323230313230313731
+3330325A170D3239313233313233303030305A301A3118301606035504030C0F45444
+84F4320526573706F6E6465723059301306072A8648CE3D020106082A8648CE3D0301
+0703420004BBC34960526EA4D32E940CAD2A234148DDC21791A12AFBCBAC93622046D
+D44F04519E257236B2A0CE2023F0931F1F386CA7AFDA64FCDE0108C224C51EABF6072
+300A06082A8648CE3D0403020348003045022030194EF5FC65C8B795CDCD0BB431BF8
+3EE6741C1370C22C8EB8EE9EDD2A70519022100B5830E9C89A62AC73CE1EBCE006170
+7DB8A88E23709B4ACC58A1313B133D0558
 ~~~~~~~~
 
 No external authorization data:
@@ -1967,6 +2101,99 @@ where info and salt_length are unchanged.
 OSCORE Master Salt after KeyUpdate (Raw Value) (8 bytes)
 87 eb 7d b2 fd cf a8 9c
 ~~~~~~~~
+
+## Certificates
+
+
+
+### Responder Certificate {#resp-cer}
+
+~~~~~~~~
+        Version: 3 (0x2)
+        Serial Number: 1642698782 (0x61e9981e)
+    Signature Algorithm: ecdsa-with-SHA256
+        Issuer: CN=EDHOC Root
+        Validity
+            Not Before: Jan 20 17:13:02 2022 GMT
+            Not After : Dec 31 23:00:00 2029 GMT
+        Subject: CN=EDHOC Responder
+        Subject Public Key Info:
+            Public Key Algorithm: id-ecPublicKey
+                Public-Key: (256 bit)
+                pub:
+                    04:bb:c3:49:60:52:6e:a4:d3:2e:94:0c:ad:2a:23:
+                    41:48:dd:c2:17:91:a1:2a:fb:cb:ac:93:62:20:46:
+                    dd:44:f0:45:19:e2:57:23:6b:2a:0c:e2:02:3f:09:
+                    31:f1:f3:86:ca:7a:fd:a6:4f:cd:e0:10:8c:22:4c:
+                    51:ea:bf:60:72
+                ASN1 OID: prime256v1
+                NIST CURVE: P-256
+    Signature Algorithm: ecdsa-with-SHA256
+         30:45:02:20:30:19:4e:f5:fc:65:c8:b7:95:cd:cd:0b:b4:31:
+         bf:83:ee:67:41:c1:37:0c:22:c8:eb:8e:e9:ed:d2:a7:05:19:
+         02:21:00:b5:83:0e:9c:89:a6:2a:c7:3c:e1:eb:ce:00:61:70:
+         7d:b8:a8:8e:23:70:9b:4a:cc:58:a1:31:3b:13:3d:05:58
+~~~~~~~~
+
+### Initiator Certificate {#init-cer}
+
+~~~~~~~~
+        Version: 3 (0x2)
+        Serial Number: 1642698740 (0x61e997f4)
+    Signature Algorithm: ecdsa-with-SHA256
+        Issuer: CN=EDHOC Root
+        Validity
+            Not Before: Jan 20 17:12:20 2022 GMT
+            Not After : Dec 31 23:00:00 2029 GMT
+        Subject: CN=EDHOC Initiator
+        Subject Public Key Info:
+            Public Key Algorithm: id-ecPublicKey
+                Public-Key: (256 bit)
+                pub:
+                    04:8a:93:ca:7e:1b:c8:46:47:d7:e7:eb:4c:61:07:
+                    c4:dc:4e:53:df:81:df:d1:98:1c:7f:82:4a:7c:1b:
+                    61:a6:fc:91:36:28:13:c2:5d:b6:af:93:be:22:c3:
+                    50:ce:b2:51:89:5b:9f:3a:8d:85:a3:58:23:a2:22:
+                    2b:9d:e2:c8:c8
+                ASN1 OID: prime256v1
+                NIST CURVE: P-256
+    Signature Algorithm: ecdsa-with-SHA256
+         30:45:02:20:32:fc:fc:a3:e8:04:88:51:5e:c1:1e:f5:70:c6:
+         b8:33:b4:30:dc:bd:d3:27:d9:65:f2:2d:4a:d2:d3:4e:07:09:
+         02:21:00:8b:bf:ec:d2:63:f6:99:e5:e2:3c:be:c5:84:78:6f:
+         f5:ea:18:e2:32:36:e5:11:d9:56:93:5f:ff:28:17:20:ae
+~~~~~~~~
+
+
+### Common Root Certificate {#root-cer}
+
+~~~~~~~~
+        Version: 3 (0x2)
+        Serial Number: 1642698693 (0x61e997c5)
+    Signature Algorithm: ecdsa-with-SHA256
+        Issuer: CN=EDHOC Root
+        Validity
+            Not Before: Jan 20 17:11:33 2022 GMT
+            Not After : Dec 31 23:00:00 2029 GMT
+        Subject: CN=EDHOC Root
+        Subject Public Key Info:
+            Public Key Algorithm: id-ecPublicKey
+                Public-Key: (256 bit)
+                pub:
+                    04:27:ec:f4:b4:66:d3:cd:61:14:4c:94:40:21:83:
+                    8d:57:bf:67:01:97:33:78:a1:5b:3f:5d:27:57:5d:
+                    34:c4:a9:7b:79:e0:f2:4b:44:6b:ca:67:e1:3d:75:
+                    d0:95:73:12:4b:49:b8:38:b1:09:73:f0:fb:67:e1:
+                    26:05:1c:95:95
+                ASN1 OID: prime256v1
+                NIST CURVE: P-256
+    Signature Algorithm: ecdsa-with-SHA256
+         30:44:02:20:13:73:43:26:f2:ca:35:d1:ae:db:6d:5e:1c:8e:
+         b7:b9:65:da:67:ea:d3:31:4e:50:29:09:b9:d7:57:cb:a1:68:
+         02:20:49:ba:0b:a4:f0:6e:fe:8c:0d:9c:3d:31:15:eb:9c:96:
+         ca:46:d1:28:49:9b:68:95:7d:0a:85:af:13:6b:f3:06
+~~~~~~~~
+
 
 
 # Security Considerations {#security}
