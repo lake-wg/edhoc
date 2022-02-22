@@ -1947,6 +1947,16 @@ may need ... no, they don't need anything special: after an error, the next thin
 
 RFC Editor: Please remove this appendix.
 
+* From -12:
+  * Shortened labels to derive OSCORE key and salt
+  * ead_value changed to bstr
+  * Removed general G_X checking against selfie-attacks
+  * Updated and more clear requirements on MAC length
+  * Clarifications from Kathleen, Stephen, Marco, Sean, Stefan,
+  * Authentication Related Verifications moved to appendix
+  * Updated MTI section and cipher suite
+  * Updated security considerations
+
 * From -11 to -12:
   * Clarified applicability to KEMs
   * Clarified use of COSE header parameters
