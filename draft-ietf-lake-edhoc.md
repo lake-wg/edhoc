@@ -1626,10 +1626,11 @@ Client    Server
   |          | Payload: C_R, EDHOC message_3
   |          |
   |<---------+ Header: 2.04 Changed
-  |   2.04   |
+  |   2.04   | Content-Format: application/edhoc
+  |          | Payload: EDHOC message_4
   |          |
 ~~~~~~~~~~~~~~~~~~~~~~~
-{: #fig-coap1 title="Transferring EDHOC in CoAP when the Initiator is CoAP client."}
+{: #fig-coap1 title="Example of transferring EDHOC in CoAP when the Initiator is CoAP client. The optional message_4 is included."}
 {: artwork-align="center"}
 
 The exchange in {{fig-coap1}} protects the client identity against active attackers and the server identity against passive attackers.
@@ -1655,7 +1656,7 @@ Client    Server
   |          | Payload: EDHOC message_3
   |          |
 ~~~~~~~~~~~~~~~~~~~~~~~
-{: #fig-coap2 title="Transferring EDHOC in CoAP when the Initiator is CoAP server."}
+{: #fig-coap2 title="Example of transferring EDHOC in CoAP when the Initiator is CoAP server."}
 {: artwork-align="center"}
 
 To protect against denial-of-service attacks, the CoAP server MAY respond to the first POST request with a 4.01 (Unauthorized) containing an Echo option {{I-D.ietf-core-echo-request-tag}}. This forces the Initiator to demonstrate its reachability at its apparent network address. If message fragmentation is needed, the EDHOC messages may be fragmented using the CoAP Block-Wise Transfer mechanism {{RFC7959}}.
