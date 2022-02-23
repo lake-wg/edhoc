@@ -538,11 +538,11 @@ The EAD fields of EDHOC must not be used for generic application data. Examples 
 
 
 
-## Applicability Template {#applicability}
+## Application Profile {#applicability}
 
-EDHOC requires certain parameters to be agreed upon between Initiator and Responder. Some parameters can be agreed through the protocol execution (specifically cipher suite negotiation, see {{cs}}) but other parameters may need to be known out-of-band (e.g., which authentication method is used, see {{method}}).
+EDHOC requires certain parameters to be agreed upon between Initiator and Responder. Some parameters can be negotiated through the protocol execution (specifically, cipher suite, see {{cs}}) but other parameters are only communicated and may not be negotiated (e.g., which authentication method is used, see {{method}}). Yet other parameters need to be known out-of-band.
 
-The purpose of the applicability template is to describe the intended use of EDHOC to allow for the relevant processing and verifications to be made, including things like:
+The purpose of an application profile is to describe the intended use of EDHOC to allow for the relevant processing and verifications to be made, including things like:
 
 1. How the endpoint detects that an EDHOC message is received. This includes how EDHOC messages are transported, for example in the payload of a CoAP message with a certain Uri-Path or Content-Format; see {{coap}}.
    * The method of transporting EDHOC messages may also describe data carried along with the messages that are needed for the transport to satisfy the requirements of {{transport}}, e.g., connection identifiers used with certain messages, see {{coap}}.
@@ -553,19 +553,19 @@ The purpose of the applicability template is to describe the intended use of EDH
 6. Identifier used as the identity of the endpoint; see {{identities}}.
 7. If message_4 shall be sent/expected, and if not, how to ensure a protected application message is sent from the Responder to the Initiator; see {{m4}}.
 
-The applicability template may also contain information about supported cipher suites. The procedure for selecting and verifying a cipher suite is still performed as described in {{asym-msg1-form}} and {{wrong-selected}}, but it may become simplified by this knowledge.
+The application profile may also contain information about supported cipher suites. The procedure for selecting and verifying a cipher suite is still performed as described in {{asym-msg1-form}} and {{wrong-selected}}, but it may become simplified by this knowledge.
 
-An example of an applicability template is shown in {{appl-temp}}.
+An example of an application profile is shown in {{appl-temp}}.
 
-For some parameters, like METHOD, ID_CRED_x, type of EAD, the receiver is able to verify compliance with applicability template, and if it needs to fail because of incompliance, to infer the reason why the protocol failed.
+For some parameters, like METHOD, ID_CRED_x, type of EAD, the receiver is able to verify compliance with the application profile, and if it needs to fail because of incompliance, to infer the reason why the protocol failed.
 
-For other parameters, like CRED_x in the case that it is not transported, it may not be possible to verify that incompliance with applicability template was the reason for failure: Integrity verification in message_2 or message_3 may fail not only because of wrong credential. For example, in case the Initiator uses public key certificate by reference (i.e., not transported within the protocol) then both endpoints need to use an identical data structure as CRED_I or else the integrity verification will fail.
+For other parameters, like the profile of CRED_x in the case that it is not transported, it may not be possible to verify that incompliance with the application profile was the reason for failure: Integrity verification in message_2 or message_3 may fail not only because of wrong credential. For example, in case the Initiator uses public key certificate by reference (i.e., not transported within the protocol) then both endpoints need to use an identical data structure as CRED_I or else the integrity verification will fail.
 
 Note that it is not necessary for the endpoints to specify a single transport for the EDHOC messages. For example, a mix of CoAP and HTTP may be used along the path, and this may still allow correlation between messages.
 
-The applicability template may be dependent on the identity of the other endpoint, or other information carried in an EDHOC message, but it then applies only to the later phases of the protocol when such information is known. (The Initiator does not know the identity of the Responder before having verified message_2, and the Responder does not know the identity of the Initiator before having verified message_3.)
+The application profile may be dependent on the identity of the other endpoint, or other information carried in an EDHOC message, but it then applies only to the later phases of the protocol when such information is known. (The Initiator does not know the identity of the Responder before having verified message_2, and the Responder does not know the identity of the Initiator before having verified message_3.)
 
-Other conditions may be part of the applicability template, such as target application or use (if there is more than one application/use) to the extent that EDHOC can distinguish between them. In case multiple applicability templates are used, the receiver needs to be able to determine which is applicable for a given session, for example based on URI or external authorization data type.
+Other conditions may be part of the application profile, such as target application or use (if there is more than one application/use) to the extent that EDHOC can distinguish between them. In case multiple application profiles are used, the receiver needs to be able to determine which is applicable for a given session, for example based on URI or external authorization data type.
 
 
 
@@ -725,7 +725,7 @@ While EDHOC uses the COSE_Key, COSE_Sign1, and COSE_Encrypt0 structures, only a 
 
 This section outlines the message processing of EDHOC.
 
-For each new/ongoing session, the endpoints are assumed to keep an associated protocol state containing identifiers, keying material, etc. used for subsequent processing of protocol related data. The protocol state is assumed to be associated to an applicability template ({{applicability}}) which provides the context for how messages are transported, identified, and processed.
+For each new/ongoing session, the endpoints are assumed to keep an associated protocol state containing identifiers, keying material, etc. used for subsequent processing of protocol related data. The protocol state is assumed to be associated to an application profile ({{applicability}}) which provides the context for how messages are transported, identified, and processed.
 
 EDHOC messages SHALL be processed according to the current protocol state. The following steps are expected to be performed at reception of an EDHOC message:
 
@@ -1891,11 +1891,11 @@ The processing of (ead_label, ead_value) by the security application needs to be
 Since data carried in EAD may not be protected, or be processed by the application before the EDHOC message is verified, special considerations need to be made such that it does not violate security and privacy requirements of the service which uses this data, see {{unprot-data}}. The content in an EAD field may impact the security properties provided by EDHOC. Security applications making use of the EAD fields must perform the necessary security analysis.
 
 
-# Applicability Template Example {#appl-temp}
+# Application Profile Example {#appl-temp}
 
-This appendix contains a rudimentary example of an applicability template, see {{applicability}}.
+This appendix contains a rudimentary example of an application profile, see {{applicability}}.
 
-For use of EDHOC in the XX protocol, the following assumptions are made:
+For use of EDHOC with application X the following assumptions are made:
 
 1. Transfer in CoAP as specified in {{coap}} with requests expected by the CoAP server (= Responder) at /app1-edh, no Content-Format needed.
 2. METHOD = 1 (I uses signature key, R uses static DH key.)
