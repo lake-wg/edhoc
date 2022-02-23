@@ -1630,7 +1630,7 @@ Client    Server
   |          | Payload: EDHOC message_4
   |          |
 ~~~~~~~~~~~~~~~~~~~~~~~
-{: #fig-coap1 title="Example of transferring EDHOC in CoAP when the Initiator is CoAP client. The optional message_4 is included."}
+{: #fig-coap1 title="Example of transferring EDHOC in CoAP when the Initiator is CoAP client. The optional message_4 is included in this example, without which that message needs no payload."}
 {: artwork-align="center"}
 
 The exchange in {{fig-coap1}} protects the client identity against active attackers and the server identity against passive attackers.
