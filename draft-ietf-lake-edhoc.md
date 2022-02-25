@@ -358,17 +358,17 @@ EDHOC includes the selection of connection identifiers (C_I, C_R) identifying a 
 
 Connection identifiers may be used to correlate EDHOC messages and facilitate the retrieval of protocol state during EDHOC execution (see {{transport}}) or in subsequent applications of  EDHOC, e.g., in OSCORE (see {{ci-oscore}}). The connection identifiers do not have any cryptographic purpose in EDHOC.
 
-Connection identifiers in EDHOC are byte strings or integers, encoded in CBOR. One byte connection identifiers (the integers -24 to 23 and the empty CBOR byte string h'') are realistic in many scenarios as most constrained devices only have a few connections.
+Connection identifiers in EDHOC are byte strings or integers, encoded in CBOR. One byte connection identifiers (the integers -24 to 23 and the empty CBOR byte string h'') are realistic in many scenarios as most constrained devices only have a few connections. An endpoint may choose to select only integer or only byte string connection identifiers.
 
 ### Selection of Connection Identifiers
 
-C_I and C_R are chosen by I and R, respectively. The Initiator selects C_I and sends it in message_1 for the Responder to use as a reference to the connection in communications with the Initiator. The Responder selects C_R and sends it in message_2 for the Initiator to use as a reference to the connection in communications with the Responder. An endpoint may choose to select only integer or only byte string connection identifiers.
+C_I and C_R are chosen by I and R, respectively. The Initiator selects C_I and sends it in message_1 for the Responder to use as a reference to the connection in communications with the Initiator. The Responder selects C_R and sends it in message_2 for the Initiator to use as a reference to the connection in communications with the Responder.
 
 If connection identifiers are used by an application protocol for which EDHOC establishes keys then the selected connection identifiers SHALL adhere to the requirements for that protocol, see {{ci-oscore}} for an example.
 
 ### Use of Connection Identifiers with OSCORE {#ci-oscore}
 
-For OSCORE, the choice of a connection identifier results in the endpoint selecting its Recipient ID, see Section 3.1 of {{RFC8613}}, for which certain uniqueness requirements apply, see Section 3.3 of {{RFC8613}}. Therefore, the Initiator and the Responder MUST NOT select connection identifiers such that it results in same OSCORE Recipient ID. Since the Recipient ID is a byte string and an EDHOC connection identifier is either a CBOR byte string or a CBOR integer, care must be taken when selecting the connection identifiers and converting them to Recipient IDs. One simplification is to restrict to only use integer or only byte string connection identifiers. A mapping from EDHOC connection identifier to OSCORE Recipient ID is specified in {{edhoc-to-oscore}}.
+For OSCORE, the choice of connection identifier results in the endpoint selecting its Recipient ID, see Section 3.1 of {{RFC8613}}, for which certain uniqueness requirements apply, see Section 3.3 of {{RFC8613}}. Therefore, the Initiator and the Responder MUST NOT select connection identifiers such that it results in same OSCORE Recipient ID. Since the Recipient ID is a byte string and an EDHOC connection identifier is either a CBOR byte string or a CBOR integer, care must be taken when selecting the connection identifiers and converting them to Recipient IDs. A mapping from EDHOC connection identifier to OSCORE Recipient ID is specified in {{edhoc-to-oscore}}.
 
 
 ## Transport {#transport}
@@ -1541,7 +1541,7 @@ This appendix describes how to select EDHOC connection identifiers and derive an
 
 ## Selecting EDHOC Connection Identifier {#edhoc-to-oscore}
 
-This section specifies a rule for converting from EDHOC connection identifier to OSCORE Sender/Recipient ID. (An identifier is Sender ID or Recipient ID depending on from which endpoint is the point of view, see Section 3.1 of {{RFC8613}}.)
+This section specifies a rule for converting from EDHOC connection identifier to OSCORE Sender/Recipient ID. (An identifier is Sender ID or Recipient ID depending on from which endpoint is the point of view, see Section 3.1 of {{RFC8613}}.) Typically the Initiator is OSCORE client, in which case C_R becomes the client Sender ID.
 
 * If the EDHOC connection identifier is numeric, i.e., encoded as a CBOR integer on the wire, it is converted to an OSCORE Sender/Recipient ID equal to the CBOR encoding.
 
@@ -1551,25 +1551,25 @@ For example, a numeric C_R equal to 10 (0x0A in CBOR encoding) is converted to a
 
 For example, a byte-string valued C_R equal to 0xFF (0x41FF in CBOR encoding) is converted to a (typically client) Sender ID equal to 0xFF.
 
-Two EDHOC connection identifiers are called "equivalent" if and only if, by applying the conversion above, they both result in the same OSCORE Sender/Recipient ID. For example, the two EDHOC connection identifiers with CBOR encoding 0x0A (numeric) and 0x410A (byte-valued) are equivalent since they both result in the same OSCORE Sender/Recipient ID 0x0A.
+Two EDHOC connection identifiers are called "equivalent" if and only if, when converted, they both result in the same OSCORE Sender/Recipient ID. For example, the two EDHOC connection identifiers with CBOR encoding 0x0A (numeric) and 0x410A (byte-valued) are equivalent since they both result in the same OSCORE Sender/Recipient ID 0x0A.
 
 When EDHOC is used to establish an OSCORE security context, the connection identifiers C_I and C_R MUST NOT be equivalent. Furthermore, in case of multiple OSCORE security contexts with potentially different endpoints, to facilitate the retrieval of the correct OSCORE security context, an endpoint SHOULD select an EDHOC connection identifier that when converted to OSCORE Recipient ID does not coincide with its other Recipient IDs.
 
-An endpoint MAY choose to select, for example, only numeric connection identifiers which then are equivalent if and only if the integer value is the same, thus simplifying the comparison. The number of unique OSCORE Sender/Recipient ID of a given byte length on the wire is reduced by this choice, see {{fig-number-connection-id}}.
+An endpoint MAY choose to select only a specific range of connection identifiers, e.g., connection identifiers which are only int or only bstr. The number of unique OSCORE Sender/Recipient ID of a given byte length on the wire is reduced by this choice, an example is given in {{fig-number-connection-id}}.
 
 
 ~~~~~~~~~~~
-+---------------------+----------------------+----------------------+
-|     Size of SID/RID | Number of CI as bstr |  Number of CI as int |
-+==========+===============+========================================+
-|                   0 |                    1 |                    0 |
-+---------------------+----------------------+----------------------+
-|                   1 |                  208 |                   48 |
-+---------------------+----------------------+----------------------+
-|                   2 |                65072 |                  464 |
-+---------------------+----------------------+----------------------+
++---------------------+----------------------+
+|     Size of SID/RID |  Number of CI as int |
++=====================+======================+
+|                   0 |                    0 |
++---------------------+----------------------+
+|                   1 |                   48 |
++---------------------+----------------------+
+|                   2 |                  464 |
++---------------------+----------------------+
 ~~~~~~~~~~~
-{: #fig-number-connection-id title="Number of EDHOC Connection Identifiers resulting in OSCORE Sender/Recipient Identifier of a given size in bytes."}
+{: #fig-number-connection-id title="Number of integer EDHOC Connection Identifiers corresponding to OSCORE Sender/Recipient Identifiers of a given size in bytes."}
 
 
 
