@@ -1196,10 +1196,8 @@ Then, PRK_2e is calculated using Extract() determined by the EDHOC hash algorith
 
 where salt is the zero-length byte string:
 
-salt (Raw Value) (32 bytes)
 ~~~~~~~~
-00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-00 00 00 00 00 00 00 00 00
+salt (Raw Value) (0 bytes)
 ~~~~~~~~
 
 ~~~~~~~~
@@ -2061,8 +2059,8 @@ The OSCORE Master Secret is computed through Expand() using the
 Application hash algorithm, see Section 4.2 of {{I-D.ietf-lake-edhoc}}:
 
     OSCORE Master Secret =
-    = EDHOC-Exporter("OSCORE_Master_Secret", h'', key_length)
-    = EDHOC-KDF(PRK_4x3m, TH_4, "OSCORE_Master_Secret", h'', key_length)
+    = EDHOC-Exporter("OSCORE_Secret", h'', key_length)
+    = EDHOC-KDF(PRK_4x3m, TH_4, "OSCORE_Secret", h'', key_length)
     = HKDF-Expand(PRK_4x3m, info, key_length)
 
 where key_length is by default the key length of the Application AEAD
@@ -2093,8 +2091,8 @@ fa e3 e2 8d d1 bc d5 e7 94 66 ec 9d 9d 79 90 dc
 The OSCORE Master Salt is computed through Expand() using the Application hash algorithm, see Section 4.2 of {{I-D.ietf-lake-edhoc}}:
 
     OSCORE Master Salt =
-    = EDHOC-Exporter("OSCORE_Master_Salt", h'', salt_length)
-    = EDHOC-KDF(PRK_4x3m, TH_4, "OSCORE_Master_Salt", h'', salt_length)
+    = EDHOC-Exporter("OSCORE_Salt", h'', salt_length)
+    = EDHOC-KDF(PRK_4x3m, TH_4, "OSCORE_Salt", h'', salt_length)
     = HKDF-Expand(PRK_4x3m, info, salt_length)
 
 where salt_length is the length of the OSCORE Master Salt, and info for the OSCORE Master Salt is:
