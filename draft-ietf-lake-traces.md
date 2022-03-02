@@ -1028,18 +1028,18 @@ I creates an ephemeral key pair for use with the EDHOC key exchange algorithm:
 
 ~~~~~~~~
 X (Raw Value) (Initiator's ephemeral private key) (32 bytes)
-b0 26 b1 68 42 9b 21 3d 6b 42 1d f6 ab d0 64 1c d6 6d ca 2e e7 fd 59
-77 10 4b b2 38 18 2e 5e a6
+5c 41 72 ac a8 b8 2b 5a 62 e6 6f 72 22 16 f5 a1 0f 72 aa 69 f4 2c 1d
+1c d3 cc d7 bf d2 9c a4 e9
 ~~~~~~~~
 ~~~~~~~~
-G_X (Raw Value) (Initiator's ephemeral public key) (32 bytes)
-e3 1e c1 5e e8 03 94 27 df c4 72 7e f1 7e 2e 0e 69 c5 44 37 f3 c5 82
-80 19 ef 0a 63 88 c1 25 52
+G_X (Raw Value) (Initiator's ephemeral public key) (33 bytes)
+02 74 1a 13 d7 ba 04 8f bb 61 5e 94 38 6a a3 b6 1b ea 5b 3d 8f 65 f3
+26 20 b7 49 be e8 d2 78 ef a9
 ~~~~~~~~
 ~~~~~~~~
-G_X (CBOR Data Item) (Initiator's ephemeral public key) (34 bytes)
-58 20 e3 1e c1 5e e8 03 94 27 df c4 72 7e f1 7e 2e 0e 69 c5 44 37 f3
-c5 82 80 19 ef 0a 63 88 c1 25 52
+G_X (CBOR Data Item) (Initiator's ephemeral public key) (35 bytes)
+58 21 02 74 1a 13 d7 ba 04 8f bb 61 5e 94 38 6a a3 b6 1b ea 5b 3d 8f
+65 f3 26 20 b7 49 be e8 d2 78 ef a9
 ~~~~~~~~
 
 I selects its connection identifier C_I to be the int 14:
@@ -1063,14 +1063,14 @@ I constructs message_1:
     (
      0,
      6,
-     h'E31EC15EE8039427DFC4727EF17E2E0E69C54437F3C5828019EF0A6388C12552',
+     h'02741A13D7BA048FBB615E94386AA3B61BEA5B3D8F65F32620B749BEE8D278EFA9',
      14
     )
 
 ~~~~~~~~
-message_1 (CBOR Sequence) (37 bytes)
-00 06 58 20 e3 1e c1 5e e8 03 94 27 df c4 72 7e f1 7e 2e 0e 69 c5 44
-37 f3 c5 82 80 19 ef 0a 63 88 c1 25 52 0e
+message_1 (CBOR Sequence) (38 bytes)
+00 06 58 21 02 74 1a 13 d7 ba 04 8f bb 61 5e 94 38 6a a3 b6 1b ea 5b
+3d 8f 65 f3 26 20 b7 49 be e8 d2 78 ef a9 0e
 ~~~~~~~~
 
 
