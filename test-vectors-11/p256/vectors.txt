@@ -47,14 +47,13 @@ X (Raw Value) (Initiator's ephemeral private key) (32 bytes)
 36 8e c1 f6 9a eb 65 9b a3 7d 5a 8d 45 b2 1b dc 02 99 dc ea a8 ef 23
 5f 3c a4 2c e3 53 0f 95 25
 
-G_X (Raw Value) (Initiator's ephemeral public key) (32 bytes)
+G_X (Raw Value) (Initiator's ephemeral public key, 'x'-coordinate) (32 bytes)
 8a f6 f4 30 eb e1 8d 34 18 40 17 a9 a1 1b f5 11 c8 df f8 f8 34 73 0b
 96 c1 b7 c8 db ca 2f c3 b6
 
-G_X (Uncompressed Raw Value) (Initiator's ephemeral public key) (65 bytes)
-04 8a f6 f4 30 eb e1 8d 34 18 40 17 a9 a1 1b f5 11 c8 df f8 f8 34 73
-0b 96 c1 b7 c8 db ca 2f c3 b6 51 e8 af 6c 6e db 78 16 01 ad 1d 9c 5f
-a8 bf 7a a1 57 16 c7 c0 6a 5d 03 85 03 c6 14 ff 80 c9 b3
+Initiator's ephemeral public key ('y'-coordinate) (32 bytes)
+51 e8 af 6c 6e db 78 16 01 ad 1d 9c 5f a8 bf 7a a1 57 16 c7 c0 6a 5d
+03 85 03 c6 14 ff 80 c9 b3
 
 G_X (CBOR Data Item) (Initiator's ephemeral public key) (34 bytes)
 58 20 8a f6 f4 30 eb e1 8d 34 18 40 17 a9 a1 1b f5 11 c8 df f8 f8 34
@@ -80,14 +79,13 @@ Y (Raw Value) (Responder's ephemeral private key) (32 bytes)
 e2 f4 12 67 77 20 5e 85 3b 43 7d 6e ac a1 e1 f7 53 cd cc 3e 2c 69 fa
 88 4b 0a 1a 64 09 77 e4 18
 
-G_Y (Raw Value) (Responder's ephemeral public key) (32 bytes)
+G_Y (Raw Value) (Responder's ephemeral public key, 'x'-coordinate) (32 bytes)
 41 97 01 d7 f0 0a 26 c2 dc 58 7a 36 dd 75 25 49 f3 37 63 c8 93 42 2c
 8e a0 f9 55 a1 3a 4f f5 d5
 
-G_Y (Uncompressed Raw Value) (Responder's ephemeral public key) (65 bytes)
-04 41 97 01 d7 f0 0a 26 c2 dc 58 7a 36 dd 75 25 49 f3 37 63 c8 93 42
-2c 8e a0 f9 55 a1 3a 4f f5 d5 5e 4f 0d d8 a3 da 0b aa 16 b9 d3 ad 56
-a0 c1 86 0a 94 0a f8 59 14 91 5e 25 01 9b 40 24 17 e9 9d
+Responder's ephemeral public key ('y'-coordinate) (32 bytes)
+5e 4f 0d d8 a3 da 0b aa 16 b9 d3 ad 56 a0 c1 86 0a 94 0a f8 59 14 91
+5e 25 01 9b 40 24 17 e9 9d
 
 G_Y (CBOR Data Item) (Responder's ephemeral public key) (34 bytes)
 58 20 41 97 01 d7 f0 0a 26 c2 dc 58 7a 36 dd 75 25 49 f3 37 63 c8 93
@@ -517,14 +515,13 @@ X (Raw Value) (Initiator's ephemeral private key) (32 bytes)
 36 8e c1 f6 9a eb 65 9b a3 7d 5a 8d 45 b2 1b dc 02 99 dc ea a8 ef 23
 5f 3c a4 2c e3 53 0f 95 25
 
-G_X (Raw Value) (Initiator's ephemeral public key) (32 bytes)
+G_X (Raw Value) (Initiator's ephemeral public key, 'x'-coordinate) (32 bytes)
 8a f6 f4 30 eb e1 8d 34 18 40 17 a9 a1 1b f5 11 c8 df f8 f8 34 73 0b
 96 c1 b7 c8 db ca 2f c3 b6
 
-G_X (Uncompressed Raw Value) (Initiator's ephemeral public key) (65 bytes)
-04 8a f6 f4 30 eb e1 8d 34 18 40 17 a9 a1 1b f5 11 c8 df f8 f8 34 73
-0b 96 c1 b7 c8 db ca 2f c3 b6 51 e8 af 6c 6e db 78 16 01 ad 1d 9c 5f
-a8 bf 7a a1 57 16 c7 c0 6a 5d 03 85 03 c6 14 ff 80 c9 b3
+Initiator's ephemeral public key ('y'-coordinate) (32 bytes)
+51 e8 af 6c 6e db 78 16 01 ad 1d 9c 5f a8 bf 7a a1 57 16 c7 c0 6a 5d
+03 85 03 c6 14 ff 80 c9 b3
 
 G_X (CBOR Data Item) (Initiator's ephemeral public key) (34 bytes)
 58 20 8a f6 f4 30 eb e1 8d 34 18 40 17 a9 a1 1b f5 11 c8 df f8 f8 34
@@ -550,14 +547,13 @@ Y (Raw Value) (Responder's ephemeral private key) (32 bytes)
 e2 f4 12 67 77 20 5e 85 3b 43 7d 6e ac a1 e1 f7 53 cd cc 3e 2c 69 fa
 88 4b 0a 1a 64 09 77 e4 18
 
-G_Y (Raw Value) (Responder's ephemeral public key) (32 bytes)
+G_Y (Raw Value) (Responder's ephemeral public key, 'x'-coordinate) (32 bytes)
 41 97 01 d7 f0 0a 26 c2 dc 58 7a 36 dd 75 25 49 f3 37 63 c8 93 42 2c
 8e a0 f9 55 a1 3a 4f f5 d5
 
-G_Y (Uncompressed Raw Value) (Responder's ephemeral public key) (65 bytes)
-04 41 97 01 d7 f0 0a 26 c2 dc 58 7a 36 dd 75 25 49 f3 37 63 c8 93 42
-2c 8e a0 f9 55 a1 3a 4f f5 d5 5e 4f 0d d8 a3 da 0b aa 16 b9 d3 ad 56
-a0 c1 86 0a 94 0a f8 59 14 91 5e 25 01 9b 40 24 17 e9 9d
+Responder's ephemeral public key ('y'-coordinate) (32 bytes)
+5e 4f 0d d8 a3 da 0b aa 16 b9 d3 ad 56 a0 c1 86 0a 94 0a f8 59 14 91
+5e 25 01 9b 40 24 17 e9 9d
 
 G_Y (CBOR Data Item) (Responder's ephemeral public key) (34 bytes)
 58 20 41 97 01 d7 f0 0a 26 c2 dc 58 7a 36 dd 75 25 49 f3 37 63 c8 93
