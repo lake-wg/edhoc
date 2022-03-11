@@ -621,13 +621,25 @@ The pseudo-random key PRK_3e2m is used to produce a MAC in message_2 and to encr
 
 If the Responder authenticates with a static Diffie-Hellman key, then PRK_3e2m = Extract( PRK_2e, G_RX ), where G_RX is the ECDH shared secret calculated from G_R and X, or G_X and R (the Responder's private authentication key, see {{auth-keys}}), else PRK_3e2m = PRK_2e.
 
-### PRK_4x3m
+### PRK_3m
 
-The pseudo-random key PRK_4x3m is used to produce a MAC in message_3, to encrypt message_4, and to derive application specific data. PRK_4x3m is derived as follows:
+The pseudo-random key PRK_3m is used to produce a MAC in message_3. PRK_3m is derived as follows:
 
-If the Initiator authenticates with a static Diffie-Hellman key, then PRK_4x3m = Extract( PRK_3e2m, G_IY ), where G_IY is the ECDH shared secret calculated from G_I and Y, or G_Y and I (the Initiator's private authentication key, see {{auth-keys}}), else PRK_4x3m = PRK_3e2m.
+If the Initiator authenticates with a static Diffie-Hellman key, then PRK_3m = Extract( PRK_3e2m, G_IY ), where G_IY is the ECDH shared secret calculated from G_I and Y, or G_Y and I (the Initiator's private authentication key, see {{auth-keys}}), else PRK_3m = PRK_3e2m.
 
+### PRK_out
 
+The pseudo-random key PRK_out is used to encrypt message_4 and to derive application specific data. PRK_out is derivd as follows:
+
+PRK_out = Extract(PRK_3m, TH_4)
+
+The transcript hash TH_4 is a CBOR encoded bstr and the input to the hash function is a CBOR Sequence.
+
+~~~~~~~~~~~
+   TH_4 = H( TH_3, CIPHERTEXT_3 )
+~~~~~~~~~~~
+
+where H() is the EDHOC hash algorithm in the selected cipher suite.
 
 ## Expand {#expand}
 
@@ -673,7 +685,7 @@ The keys, IVs and MACs are derived as follows:
 * KEYSTREAM_2 is derived using the transcript hash TH_2 and the pseudorandom key PRK_2e.
 * MAC_2 is derived using the transcript hash TH_2 and the pseudorandom key PRK_3e2m.
 * K_3 and IV_3 are derived using the transcript hash TH_3 and the pseudorandom key PRK_3e2m. IVs are only used if the EDHOC AEAD algorithm uses IVs.
-* MAC_3 is derived using the transcript hash TH_3 and the pseudorandom key PRK_4x3m.
+* MAC_3 is derived using the transcript hash TH_3 and the pseudorandom key PRK_3m.
 
 KEYSTREAM_2, K_3, and IV_3 use an empty CBOR byte string h'' as context. MAC_2 and MAC_3 use context as defined in {{asym-msg2-proc}} and {{asym-msg3-proc}}, respectively.
 
@@ -683,18 +695,12 @@ Application keys and other application specific data can be derived using the ED
 
 ~~~~~~~~~~~
    EDHOC-Exporter(label, context, length)
-     = EDHOC-KDF(PRK_4x3m, TH_4, label, context, length)
+     = EDHOC-KDF(PRK_out, '', label, context, length)
 ~~~~~~~~~~~
 
 where label is a registered tstr from the EDHOC Exporter Label registry ({{exporter-label}}), context is a bstr defined by the application, and length is a uint defined by the application. The (label, context) pair must be unique, i.e., a (label, context) MUST NOT be used for two different purposes. However an application can re-derive the same key several times as long as it is done in a secure way. For example, in most encryption algorithms the same key can be reused with different nonces. The context can for example be the empty CBOR byte string.
 
-The transcript hash TH_4 is a CBOR encoded bstr and the input to the hash function is a CBOR Sequence.
-
-~~~~~~~~~~~
-   TH_4 = H( TH_3, CIPHERTEXT_3 )
-~~~~~~~~~~~
-
-where H() is the EDHOC hash algorithm in the selected cipher suite. Examples of use of the EDHOC-Exporter are given in {{asym-msg4-proc}} and {{transfer}}.
+ Examples of use of the EDHOC-Exporter are given in {{asym-msg4-proc}} and {{transfer}}.
 
 * K_4 and IV_4 are derived with the EDHOC-Exporter using the empty CBOR byte string h'' as context, and labels "EDHOC_K_4" and "EDHOC_IV_4", respectively. IVs are only used if the EDHOC AEAD algorithm uses IVs.
 
@@ -702,14 +708,14 @@ With SHA-256, no context, and OKM length smaller than 24, any label longer than 
 
 ## EDHOC-KeyUpdate {#keyupdate}
 
-To provide forward secrecy in an even more efficient way than re-running EDHOC, EDHOC provides the function EDHOC-KeyUpdate. When EDHOC-KeyUpdate is called the old PRK_4x3m is deleted and the new PRK_4x3m is calculated as a "hash" of the old key using the Extract function as illustrated by the following pseudocode:
+To provide forward secrecy in an even more efficient way than re-running EDHOC, EDHOC provides the function EDHOC-KeyUpdate. When EDHOC-KeyUpdate is called the old PRK_out is deleted and the new PRK_out is calculated as a "hash" of the old key using the Extract function as illustrated by the following pseudocode:
 
 ~~~~~~~~~~~
    EDHOC-KeyUpdate( nonce ):
-      PRK_4x3m = Extract( nonce, PRK_4x3m )
+      PRK_out = Extract( nonce, PRK_out )
 ~~~~~~~~~~~
 
-The EDHOC-KeyUpdate takes a nonce as input to guarantee that there are no short cycles and to enable binding of the updated PRK_4x3m to some event that triggered the keyUpdate. The Initiator and the Responder need to agree on the nonce, which can, e.g., be a counter or a pseudo-random number such as a hash. The Initiator and the Responder also need to cache the old PRK_4x3m until it has verfied that other endpoint has the correct new PRK_4x3m. {{I-D.ietf-core-oscore-key-update}} describes key update for OSCORE using EDHOC-KeyUpdate.
+The EDHOC-KeyUpdate takes a nonce as input to guarantee that there are no short cycles and to enable binding of the updated PRK_out to some event that triggered the keyUpdate. The Initiator and the Responder need to agree on the nonce, which can, e.g., be a counter or a pseudo-random number such as a hash. The Initiator and the Responder also need to cache the old PRK_out until it has verfied that other endpoint has the correct new PRK_out. {{I-D.ietf-core-oscore-key-update}} describes key update for OSCORE using EDHOC-KeyUpdate.
 
 While the KeyUpdate method provides forward secrecy it does not give as strong security properties as re-running EDHOC, see {{security}}.
 
@@ -889,7 +895,7 @@ The Initiator SHALL compose message_3 as follows:
 
 * Compute the transcript hash TH_3 = H(TH_2, CIPHERTEXT_2) where H() is the EDHOC hash algorithm of the selected cipher suite. The transcript hash TH_3 is a CBOR encoded bstr and the input to the hash function is a CBOR Sequence.  Note that H(TH_2, CIPHERTEXT_2) can be computed and cached already in the processing of message_2.
 
-* Compute MAC_3 = EDHOC-KDF( PRK_4x3m, TH_3, "MAC_3", << ID_CRED_I, CRED_I, ? EAD_3 >>, mac_length_3 ). If the Initiator authenticates with a static Diffie-Hellman key (method equals 2 or 3), then mac_length_3 is the EDHOC MAC length given by the selected cipher suite.  If the Initiator authenticates with a signature key (method equals 0 or 1), then mac_length_3 is equal to the output size of the EDHOC hash algorithm given by the selected cipher suite.
+* Compute MAC_3 = EDHOC-KDF( PRK_3m, TH_3, "MAC_3", << ID_CRED_I, CRED_I, ? EAD_3 >>, mac_length_3 ). If the Initiator authenticates with a static Diffie-Hellman key (method equals 2 or 3), then mac_length_3 is the EDHOC MAC length given by the selected cipher suite.  If the Initiator authenticates with a signature key (method equals 0 or 1), then mac_length_3 is equal to the output size of the EDHOC hash algorithm given by the selected cipher suite.
     * ID_CRED_I - identifier to facilitate the retrieval of CRED_I, see {{id_cred}}
     * CRED_I - CBOR item containing the authentication credential of the Initiator, see {{auth-cred}}
     * EAD_3 - external authorization data, see {{AD}}
@@ -926,7 +932,7 @@ The Initiator SHALL compose message_3 as follows:
 
 *  Make the connection identifiers (C_I, C_R) and the application algorithms in the selected cipher suite available to the application. The application can now derive application keys using the EDHOC-Exporter interface, see {{exporter}}.
 
-After sending message_3, the Initiator is assured that no other party than the Responder can compute the key PRK_4x3m (implicit key authentication). The Initiator can securely derive application keys and send protected application data. However, the Initiator does not know that the Responder has actually computed the key PRK_4x3m and therefore the Initiator SHOULD NOT permanently store the keying material PRK_4x3m and TH_4, or derive application keys, until the Initiator is assured that the Responder has actually computed the key PRK_4x3m (explicit key confirmation). This is similar to waiting for acknowledgement (ACK) in a transport protocol. Explicit key confirmation is e.g., assured when the Initiator has verified an OSCORE message or message_4 from the Responder.
+After sending message_3, the Initiator is assured that no other party than the Responder can compute the key PRK_out (implicit key authentication). The Initiator can securely derive application keys and send protected application data. However, the Initiator does not know that the Responder has actually computed the key PRK_out and therefore the Initiator SHOULD NOT permanently store the keying material PRK_out, or derive application keys, until the Initiator is assured that the Responder has actually computed the key PRK_out (explicit key confirmation). This is similar to waiting for acknowledgement (ACK) in a transport protocol. Explicit key confirmation is e.g., assured when the Initiator has verified an OSCORE message or message_4 from the Responder.
 
 ### Responder Processing of Message 3
 
@@ -948,7 +954,7 @@ The Responder SHALL process message_3 as follows:
 
 If any processing step fails, the Responder MUST send an EDHOC error message back, formatted as defined in {{error}}, and the session MUST be discontinued.
 
-After verifying message_3, the Responder is assured that the Initiator has calculated the key PRK_4x3m (explicit key confirmation) and that no other party than the Initiator can compute the key. The Responder can securely send protected application data and store the keying material PRK_4x3m and TH_4.
+After verifying message_3, the Responder is assured that the Initiator has calculated the key PRK_3m (explicit key confirmation) and that no other party than the Initiator can compute the key. The Responder can securely derive and store the keying material PRK_out and send protected application data.
 
 ## EDHOC Message 4 {#m4}
 
@@ -1154,11 +1160,11 @@ While the KeyUpdate method can be used to meet cryptographic limits and provide 
 
 To limit the effect of breaches, it is important to limit the use of symmetrical group keys for bootstrapping. EDHOC therefore strives to make the additional cost of using raw public keys and self-signed certificates as small as possible. Raw public keys and self-signed certificates are not a replacement for a public key infrastructure but SHOULD be used instead of symmetrical group keys for bootstrapping.
 
-Compromise of the long-term keys (private signature or static DH keys) does not compromise the security of completed EDHOC exchanges. Compromising the private authentication keys of one party lets an active attacker impersonate that compromised party in EDHOC exchanges with other parties but does not let the attacker impersonate other parties in EDHOC exchanges with the compromised party. Compromise of the long-term keys does not enable a passive attacker to compromise future session keys. Compromise of the HDKF input parameters (ECDH shared secret) leads to compromise of all session keys derived from that compromised shared secret. Compromise of one session key does not compromise other session keys. Compromise of PRK_4x3m leads to compromise of all keying material derived with the EDHOC-Exporter since the last invocation (if any) of the EDHOC-KeyUpdate function.
+Compromise of the long-term keys (private signature or static DH keys) does not compromise the security of completed EDHOC exchanges. Compromising the private authentication keys of one party lets an active attacker impersonate that compromised party in EDHOC exchanges with other parties but does not let the attacker impersonate other parties in EDHOC exchanges with the compromised party. Compromise of the long-term keys does not enable a passive attacker to compromise future session keys. Compromise of the HDKF input parameters (ECDH shared secret) leads to compromise of all session keys derived from that compromised shared secret. Compromise of one session key does not compromise other session keys. Compromise of PRK_out leads to compromise of all keying material derived with the EDHOC-Exporter since the last invocation (if any) of the EDHOC-KeyUpdate function.
 
 Based on the cryptographic algorithms requirements {{sec_algs}}, EDHOC provides a minimum of 64-bit security against online brute force attacks and a minimum of 128-bit security against offline brute force attacks. To break 64-bit security against online brute force an attacker would on average have to send 4.3 billion messages per second for 68 years, which is infeasible in constrained IoT radio technologies. A forgery against a 64-bit MAC in EDHOC breaks the security of all future application data, while a forgery against a 64-bit MAC in the subsequent application protocol (e.g., OSCORE {{RFC8613}}) typically only breaks the security of the data in the forged packet.
 
-After sending message_3, the Initiator is assured that no other party than the Responder can compute the key PRK_4x3m (implicit key authentication). The Initiator does however not know that the Responder has actually computed the key PRK_4x3m. While the Initiator can securely send protected application data, the Initiator SHOULD NOT permanently store the keying material PRK_4x3m and TH_4 until the Initiator is assured that the Responder has actually computed the key PRK_4x3m (explicit key confirmation). Explicit key confirmation is e.g., assured when the Initiator has verified an OSCORE message or message_4 from the Responder. After verifying message_3, the Responder is assured that the Initiator has calculated the key PRK_4x3m (explicit key confirmation) and that no other party than the Initiator can compute the key. The Responder can securely send protected application data and store the keying material PRK_4x3m and TH_4.
+After sending message_3, the Initiator is assured that no other party than the Responder can compute the key PRK_3m (implicit key authentication). The Initiator does however not know that the Responder has actually computed the key PRK_3m. While the Initiator can securely send protected application data, the Initiator SHOULD NOT permanently store the keying material PRK_out until the Initiator is assured that the Responder has actually computed the key PRK_out (explicit key confirmation). Explicit key confirmation is e.g., assured when the Initiator has verified an OSCORE message or message_4 from the Responder. After verifying message_3, the Responder is assured that the Initiator has calculated the key PRK_3m (explicit key confirmation) and that no other party than the Initiator can compute the key. The Responder can securely derive and store the keying material PRK_out and send protected application data.
 
 External authorization data sent in message_1 (EAD_1) or message_2 (EAD_2) should be considered unprotected by EDHOC, see {{unprot-data}}. EAD_2 is encrypted but the Responder has not yet authenticated the Initiator.  External authorization data sent in message_3 (EAD_3) or message_4 (EAD_4) is protected between Initiator and Responder by the protocol, but note that EAD fields may be used by the application before the message verification is completed, see {{AD}}.
 
