@@ -1362,7 +1362,7 @@ IANA has created a new registry entitled "EDHOC Error Codes" under the new group
 
 ## EDHOC External Authorization Data Registry {#iana-ead}
 
-IANA has created a new registry entitled "EDHOC External Authorization Data" under the new group name "Ephemeral Diffie-Hellman Over COSE (EDHOC)". The registration procedure is "Specification Required". The columns of the registry are Label, Message, and Description, where Label is an integer and the other columns are text strings.
+IANA has created a new registry entitled "EDHOC External Authorization Data" under the new group name "Ephemeral Diffie-Hellman Over COSE (EDHOC)". The registration procedure is "Specification Required". The columns of the registry are Label, Message, Description, and Reference, where Label is an integer and the other columns are text strings.
 
 ## COSE Header Parameters Registry {#cwt-header-param}
 
