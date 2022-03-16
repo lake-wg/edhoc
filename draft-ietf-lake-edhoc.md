@@ -1618,13 +1618,15 @@ with response code 2.04 (Changed), in the latter
    the client to the server's resource in the payload of a POST request.
    If EDHOC message_4 is used, or in case of an error message, it is sent from the server to the client in the payload of the response, with response codes analogously to message_2. In case of an error message in response to message_4, it is sent analogously to errors in response to message_2.
 
-In order to correlate a message received from a client to a message previously sent by the server, messages sent by the client are prepended with the CBOR serialization of the connection identifier which the server has chosen. This applies independently of if the CoAP server is Responder or Initiator. For the default case when the server is Responder, the prepended connection identifier is C_R, and C_I if the server is Initiator. If message_1 is sent to the server, the CBOR simple value "true" (0xf5) is sent in its place (given that the server has not selected C_R yet).
+In order for the server to correlate a message received from a client to a message previously sent in the same EDHOC session over CoAP, messages sent by the client are prepended with the CBOR serialization of the connection identifier which the server has chosen. This applies independently of if the CoAP server is Responder or Initiator.
 
-These identifiers are encoded in CBOR and thus self-delimiting.
-They are sent in front of the actual EDHOC message,
-and only the part of the body following the identifier is used for EDHOC processing.
+* For the default case when the server is Responder, message_3 is sent from the client prepended with the identifier C_R. In this case message_1 is also sent by the client, and to indicate that this is a new EDHOC session it is prepended with a dummy identifier, the CBOR simple value "true" (0xf5), since the server has not selected C_R yet. See {{fig-coap1}}.
 
-Consequently, the application/edhoc media type does not apply to these messages;
+* In the case when the server is Initiator, message_2 (and message_4, if present) is sent from the client prepended with the identifier C_I. See {{fig-coap2}}.
+
+The prepended identifiers are encoded in CBOR and thus self-delimiting. They are sent in front of the actual EDHOC message to keep track of messages in an EDHOC session, and only the part of the body following the identifier is used for EDHOC processing. In particular, the connection identifiers within the EDHOC messages are not impacted by the prepended identifiers.
+
+The application/edhoc media type does not apply to these messages;
 their media type is unnamed.
 
 An example of a successful EDHOC exchange using CoAP is shown in {{fig-coap1}}. In this case the CoAP Token enables correlation on the Initiator side, and the prepended C_R enables correlation on the Responder (server) side.
