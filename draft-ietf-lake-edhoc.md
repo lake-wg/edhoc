@@ -336,16 +336,16 @@ The data item METHOD in message_1 (see {{asym-msg1-form}}), is an integer specif
 The Initiator and the Responder need to have agreed on a single method to be used for EDHOC, see {{applicability}}.
 
 ~~~~~~~~~~~
-+--------+------------------+------------------+
-| Method | Initiator        | Responder        |
-|   Type | Authentication   | Authentication   |
-|  Value | Key              | Key              |
-+--------+------------------+------------------+
-|      0 | Signature Key    | Signature Key    |
-|      1 | Signature Key    | Static DH Key    |
-|      2 | Static DH Key    | Signature Key    |
-|      3 | Static DH Key    | Static DH Key    |
-+--------+------------------+------------------+
++--------+------------------+------------------+-------------------+
+| Method | Initiator        | Responder        |                   |
+|   Type | Authentication   | Authentication   | Reference         |
+|  Value | Key              | Key              |                   |
++--------+------------------+------------------+-------------------+
+|      0 | Signature Key    | Signature Key    | [[This document]] |
+|      1 | Signature Key    | Static DH Key    | [[This document]] |
+|      2 | Static DH Key    | Signature Key    | [[This document]] |
+|      3 | Static DH Key    | Static DH Key    | [[This document]] |
++--------+------------------+------------------+-------------------+
 ~~~~~~~~~~~
 {: #fig-method-types title="Authentication Keys for Method Types"}
 {: artwork-align="center"}
@@ -1354,7 +1354,7 @@ Desc: ChaCha20/Poly1305, SHAKE256, 16, X448, EdDSA,
 
 ## EDHOC Method Type Registry {#method-types}
 
-IANA has created a new registry entitled "EDHOC Method Type" under the new group name "Ephemeral Diffie-Hellman Over COSE (EDHOC)". The registration procedure is "Expert Review". The columns of the registry are Value and Description, where Value is an integer and the other columns are text strings. The initial contents of the registry are shown in {{fig-method-types}}.
+IANA has created a new registry entitled "EDHOC Method Type" under the new group name "Ephemeral Diffie-Hellman Over COSE (EDHOC)". The registration procedure is "Specification Required". The columns of the registry are Value, Initiator Authentication Key, Responder Authentication Key, and Reference, where Value is an integer and the other columns are text strings describing the authentication keys. The initial contents of the registry are shown in {{fig-method-types}}.
 
 ## EDHOC Error Codes Registry {#error-code-reg}
 
