@@ -865,21 +865,21 @@ TH_4 = H(TH_3, CIPHERTEXT_3)
 
 ~~~~~~~~
 Input to calculate TH_4 (CBOR Sequence) (53 bytes)
-58 20 a4 90 07 ce 54 76 2e 46 7c 4e 4a 44 69 2f 20 70 d3 e9 eb 00 f9
-5a c2 62 9b 2b be f7 fb 24 a3 70 52 be 01 46 c1 36 ac 2e ff d4 53 a7
-5e fa 90 89 6f 65 3b
+58 20 42 6f 8f 65 c1 7f 62 10 39 2e 9a 16 d5 1f e0 71 60 a2 5a c6 fd
+a4 40 cf b1 3e c1 96 23 1f 36 24 52 88 5c 63 fd 0b 17 f2 c3 f8 f1 0b
+c8 bf 3f 47 0e c8 a1
 ~~~~~~~~
 
 ~~~~~~~~
 TH_4 (Raw Value) (32 bytes)
-4b 9a dd 2a 9e eb 88 49 71 6c 79 68 78 4f 55 40 dd 64 a3 bb 07 f8 d0
-00 ad ce 88 b6 30 d8 84 eb
+ba 68 2e 71 65 e9 d4 84 bd 2e bb 03 1c 09 da 1e a5 b8 2e b3 32 43 9c
+4c 7e c7 3c 2c 23 9e 34 50
 ~~~~~~~~
 
 ~~~~~~~~
 TH_4 (CBOR Data Item) (34 bytes)
-58 20 4b 9a dd 2a 9e eb 88 49 71 6c 79 68 78 4f 55 40 dd 64 a3 bb 07
-f8 d0 00 ad ce 88 b6 30 d8 84 eb
+58 20 ba 68 2e 71 65 e9 d4 84 bd 2e bb 03 1c 09 da 1e a5 b8 2e b3 32
+43 9c 4c 7e c7 3c 2c 23 9e 34 50
 ~~~~~~~~
 
 
@@ -909,8 +909,8 @@ R constructs the associated data for message_4:
 
 ~~~~~~~~
 A_4 (CBOR Data Item) (45 bytes)
-83 68 45 6e 63 72 79 70 74 30 40 58 20 4b 9a dd 2a 9e eb 88 49 71 6c
-79 68 78 4f 55 40 dd 64 a3 bb 07 f8 d0 00 ad ce 88 b6 30 d8 84 eb
+83 68 45 6e 63 72 79 70 74 30 40 58 20 ba 68 2e 71 65 e9 d4 84 bd 2e
+bb 03 1c 09 da 1e a5 b8 2e b3 32 43 9c 4c 7e c7 3c 2c 23 9e 34 50
 ~~~~~~~~
 
 R constructs the input needed to derive the EDHOC message_4 key, see Section
@@ -925,7 +925,8 @@ and info for EDHOC_K_4 is:
 
     info =
     (
-     h'4B9ADD2A9EEB8849716C7968784F5540DD64A3BB07F8D000ADCE88B630D884EB',
+     h'BA682E7165E9D484BD2EBB031C09DA1EA5B82EB332439C4C7EC73C2C239
+     E3450',
      "EDHOC_K_4",
      h'',
      16
@@ -935,12 +936,12 @@ where the last value is the key length of EDHOC AEAD algorithm.
 
 ~~~~~~~~
 info for K_4 (CBOR Sequence) (46 bytes)
-58 20 4b 9a dd 2a 9e eb 88 49 71 6c 79 68 78 4f 55 40 dd 64 a3 bb 07
-f8 d0 00 ad ce 88 b6 30 d8 84 eb 69 45 44 48 4f 43 5f 4b 5f 34 40 10
+58 20 ba 68 2e 71 65 e9 d4 84 bd 2e bb 03 1c 09 da 1e a5 b8 2e b3 32
+43 9c 4c 7e c7 3c 2c 23 9e 34 50 69 45 44 48 4f 43 5f 4b 5f 34 40 10
 ~~~~~~~~
 ~~~~~~~~
 K_4 (Raw Value) (16 bytes)
-55 b5 7d 59 a8 26 f4 56 38 86 9b 75 07 0b 11 17
+4c ab dc 43 49 5d 37 0f 2b 03 f3 61 de c6 64 9d
 ~~~~~~~~
 
 R constructs the input needed to derive the EDHOC message_4 nonce,
@@ -956,7 +957,8 @@ and info for EDHOC_IV_4 is:
 
     info =
     (
-     h'4B9ADD2A9EEB8849716C7968784F5540DD64A3BB07F8D000ADCE88B630D884EB',
+     h'4BA682E7165E9D484BD2EBB031C09DA1EA5B82EB332439C4C7EC73C2C239E
+     3450',
      "EDHOC_IV_4",
      h'',
      13
@@ -966,13 +968,13 @@ where the last value is the nonce length of EDHOC AEAD algorithm.
 
 ~~~~~~~~
 info for IV_4 (CBOR Sequence) (47 bytes)
-58 20 4b 9a dd 2a 9e eb 88 49 71 6c 79 68 78 4f 55 40 dd 64 a3 bb 07
-f8 d0 00 ad ce 88 b6 30 d8 84 eb 6a 45 44 48 4f 43 5f 49 56 5f 34 40
+58 20 ba 68 2e 71 65 e9 d4 84 bd 2e bb 03 1c 09 da 1e a5 b8 2e b3 32
+43 9c 4c 7e c7 3c 2c 23 9e 34 50 6a 45 44 48 4f 43 5f 49 56 5f 34 40
 0d
 ~~~~~~~~
 ~~~~~~~~
 IV_4 (Raw Value) (13 bytes)
-20 7a 4e fc 25 a6 58 96 45 11 f1 63 76
+4b 06 be f6 7c f6 c2 ef 76 e3 3a 2a 21
 ~~~~~~~~
 
   R calculates CIPHERTEXT_4 as 'ciphertext' of COSE_Encrypt0 applied
@@ -981,14 +983,14 @@ IV_4 (Raw Value) (13 bytes)
 
 ~~~~~~~~
 CIPHERTEXT_4 (8 bytes)
-e9 e6 c8 b6 37 6d b0 b1
+b7 8d 96 39 ae 79 7b 08
 ~~~~~~~~
 
 message_4 is the CBOR bstr encoding of CIPHERTEXT_4:
 
 ~~~~~~~~
 message_4 (CBOR Sequence) (9 bytes)
-48 e9 e6 c8 b6 37 6d b0 b1
+48 b7 8d 96 39 ae 79 7b 08
 ~~~~~~~~
 
 
@@ -1015,7 +1017,8 @@ is defined in Section A.1of {{I-D.ietf-lake-edhoc}}.
 C_R is mapped to the Recipient ID of the server, i.e., the Sender ID of the client. Since C_R is byte valued it the OSCORE Sender/Recipient ID equals the byte string (in this case the empty byte string).
 
 ~~~~~~~~
-Client's OSCORE Sender ID (Raw Value) (0 bytes)
+Client's OSCORE Sender ID (Raw Value) (1 bytes)
+27
 ~~~~~~~~
 
 C_I is mapped to the Recipient ID of the client, i.e., the Sender ID of the server.
@@ -1023,22 +1026,23 @@ Since C_I is a numeric, it is converted to a byte string equal to its CBOR encod
 
 ~~~~~~~~
 Server's OSCORE Sender ID (Raw Value) (1 bytes)
-0c
+37
 ~~~~~~~~
 
 The OSCORE Master Secret is computed through Expand() using the Application hash algorithm, see Section 4.2 of {{I-D.ietf-lake-edhoc}}:
 
     OSCORE Master Secret =
-    = EDHOC-Exporter("OSCORE_Master_Secret", h'', key_length)
-    = EDHOC-KDF(PRK_4x3m, TH_4, "OSCORE_Master_Secret", h'', key_length)
+    = EDHOC-Exporter("OSCORE_Secret", h'', key_length)
+    = EDHOC-KDF(PRK_4x3m, TH_4, "OSCORE_Secret", h'', key_length)
     = HKDF-Expand(PRK_4x3m, info, key_length)
 
 where key_length is by default the key length of the Application AEAD algorithm, and info for the OSCORE Master Secret is:
 
     info =
     (
-     h'4B9ADD2A9EEB8849716C7968784F5540DD64A3BB07F8D000ADCE88B630D884EB',
-     "OSCORE_Master_Secret",
+     h'BA682E7165E9D484BD2EBB031C09DA1EA5B82EB332439C4C7EC73C2C239E
+     3450',
+     "OSCORE_Secret",
      h'',
      16
     )
@@ -1046,31 +1050,32 @@ where key_length is by default the key length of the Application AEAD algorithm,
 where the last value is the key length of Application AEAD algorithm.
 
 ~~~~~~~~
-info for OSCORE Master Secret (CBOR Sequence) (57 bytes)
-58 20 4b 9a dd 2a 9e eb 88 49 71 6c 79 68 78 4f 55 40 dd 64 a3 bb 07
-f8 d0 00 ad ce 88 b6 30 d8 84 eb 74 4f 53 43 4f 52 45 5f 4d 61 73 74
-65 72 5f 53 65 63 72 65 74 40 10
+info for OSCORE Master Secret (CBOR Sequence) (50 bytes)
+58 20 ba 68 2e 71 65 e9 d4 84 bd 2e bb 03 1c 09 da 1e a5 b8 2e b3 32
+43 9c 4c 7e c7 3c 2c 23 9e 34 50 6d 4f 53 43 4f 52 45 5f 53 65 63 72
+65 74 40 10
 
 ~~~~~~~~
 
 ~~~~~~~~
 OSCORE Master Secret (Raw Value) (16 bytes)
-c0 53 01 37 6c e9 5f 67 c4 14 d8 bb 5f 0f db 5e
+af 84 55 89 be b9 9d 0a 2b f4 42 7f fa 8d bb bc
 ~~~~~~~~
 
 The OSCORE Master Salt is computed through Expand() using the Application hash algorithm, see Section 4.2 of {{I-D.ietf-lake-edhoc}}:
 
     OSCORE Master Salt =
-    = EDHOC-Exporter("OSCORE_Master_Salt", h'', salt_length)
-    = EDHOC-KDF(PRK_4x3m, TH_4, "OSCORE_Master_Salt", h'', salt_length)
+    = EDHOC-Exporter("OSCORE_Salt", h'', salt_length)
+    = EDHOC-KDF(PRK_4x3m, TH_4, "OSCORE_Salt", h'', salt_length)
     = HKDF-Expand(PRK_4x3m, info, salt_length)
 
 where salt_length is the length of the OSCORE Master Salt, and info for the OSCORE Master Salt is:
 
     info =
     (
-     h'4B9ADD2A9EEB8849716C7968784F5540DD64A3BB07F8D000ADCE88B630D884EB',
-     "OSCORE_Master_Salt",
+     h'BA682E7165E9D484BD2EBB031C09DA1EA5B82EB332439C4C7EC73C2C239E
+     3450',
+     "OSCORE_Salt",
      h'',
      8
     )
@@ -1080,14 +1085,14 @@ where the last value is the length of the OSCORE Master Salt.
 
 ~~~~~~~~
 info for OSCORE Master Salt (CBOR Sequence) (55 bytes)
-58 20 4b 9a dd 2a 9e eb 88 49 71 6c 79 68 78 4f 55 40 dd 64 a3 bb 07
-f8 d0 00 ad ce 88 b6 30 d8 84 eb 72 4f 53 43 4f 52 45 5f 4d 61 73 74
-65 72 5f 53 61 6c 74 40 08
+58 20 ba 68 2e 71 65 e9 d4 84 bd 2e bb 03 1c 09 da 1e a5 b8 2e b3 32
+43 9c 4c 7e c7 3c 2c 23 9e 34 50 6b 4f 53 43 4f 52 45 5f 53 61 6c 74
+40 08
 ~~~~~~~~
 
 ~~~~~~~~
 OSCORE Master Salt (Raw Value) (8 bytes)
-74 01 b4 6f a8 2f 66 31
+7b c0 9a f2 54 a6 59 29
 ~~~~~~~~
 
 
@@ -1100,13 +1105,13 @@ Key update is defined in Section 4.4 of {{I-D.ietf-lake-edhoc}}:
 
 ~~~~~~~~
 KeyUpdate Nonce (Raw Value) (16 bytes)
-d4 91 a2 04 ca a6 b8 02 54 c4 71 e0 de ee d1 60
+05 bd 1f fd 85 c5 46 da 86 3c 97 0a 34 b7 43 a3
 ~~~~~~~~
 
 ~~~~~~~~
 PRK_4x3m after KeyUpdate (Raw Value) (32 bytes)
-82 09 6e 3a e6 3d 93 c7 b6 f8 8b 7c 1b 5e 63 f4 9f 74 c8 0e f3 14 42
-51 9f fb 20 e2 f8 87 3e b1
+f4 b6 07 c3 dd 08 cd a5 cf 96 34 4b 61 30 56 be d7 24 15 96 2c c1 55
+08 e7 6d ee ab e8 f3 ae ac
 ~~~~~~~~
 
 The OSCORE Master Secret is derived with the updated PRK_4x3m:
@@ -1117,7 +1122,7 @@ where info and key_length are unchanged.
 
 ~~~~~~~~
 OSCORE Master Secret after KeyUpdate (Raw Value) (16 bytes)
-a5 15 23 1d 9e c5 88 74 82 22 6b f9 e0 da 05 ce
+78 2b e7 48 63 16 b8 0d 89 b6 b7 32 a3 4e 0e 43
 ~~~~~~~~
 
 The OSCORE Master Salt is derived with the updated PRK_4x3m:
@@ -1128,7 +1133,7 @@ where info and salt_length are unchanged.
 
 ~~~~~~~~
 OSCORE Master Salt after KeyUpdate (Raw Value) (8 bytes)
-50 57 e5 92 ed 8b 11 28
+1d fc 71 74 b0 2c 1e 14
 ~~~~~~~~
 
 
