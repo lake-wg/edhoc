@@ -121,14 +121,14 @@ X (Raw Value) (Initiator's ephemeral private key) (32 bytes)
 1c d3 cc d7 bf d2 9c a4 e9
 ~~~~~~~~
 ~~~~~~~~
-G_X (Raw Value) (Initiator's ephemeral public key) (33 bytes)
-02 74 1a 13 d7 ba 04 8f bb 61 5e 94 38 6a a3 b6 1b ea 5b 3d 8f 65 f3
-26 20 b7 49 be e8 d2 78 ef a9
+G_X (Raw Value) (Initiator's ephemeral public key) (32 bytes)
+74 1a 13 d7 ba 04 8f bb 61 5e 94 38 6a a3 b6 1b ea 5b 3d 8f 65 f3 26
+20 b7 49 be e8 d2 78 ef a9
 ~~~~~~~~
 ~~~~~~~~
-G_X (CBOR Data Item) (Initiator's ephemeral public key) (35 bytes)
-58 21 02 74 1a 13 d7 ba 04 8f bb 61 5e 94 38 6a a3 b6 1b ea 5b 3d 8f
-65 f3 26 20 b7 49 be e8 d2 78 ef a9
+G_X (CBOR Data Item) (Initiator's ephemeral public key) (33 bytes)
+58 21 74 1a 13 d7 ba 04 8f bb 61 5e 94 38 6a a3 b6 1b ea 5b 3d 8f 65
+f3 26 20 b7 49 be e8 d2 78 ef a9
 ~~~~~~~~
 
 I selects its connection identifier C_I to be the int 14:
@@ -152,14 +152,15 @@ I constructs message_1:
     (
      0,
      6,
-     h'02741A13D7BA048FBB615E94386AA3B61BEA5B3D8F65F32620B749BEE8D278EFA9',
+     h'741A13D7BA048FBB615E94386AA3B61BEA5B3D8F65F32620B749BEE8D278
+     EFA9',
      14
     )
 
 ~~~~~~~~
-message_1 (CBOR Sequence) (38 bytes)
-00 06 58 21 02 74 1a 13 d7 ba 04 8f bb 61 5e 94 38 6a a3 b6 1b ea 5b
-3d 8f 65 f3 26 20 b7 49 be e8 d2 78 ef a9 0e
+message_1 (CBOR Sequence) (37 bytes)
+00 06 58 21 74 1a 13 d7 ba 04 8f bb 61 5e 94 38 6a a3 b6 1b ea 5b 3d
+8f 65 f3 26 20 b7 49 be e8 d2 78 ef a9 0e
 ~~~~~~~~
 
 
@@ -203,29 +204,35 @@ I creates an ephemeral key pair for use with the EDHOC key exchange algorithm:
 
 ~~~~~~~~
 X (Raw Value) (Initiator's ephemeral private key) (32 bytes)
-b3 11 19 98 cb 3f 66 86 63 ed 42 51 c7 8b e6 e9 5a 4d a1 27 e4 f6 fe
-e2 75 e8 55 d8 d9 df d8 ed
+36 8e c1 f6 9a eb 65 9b a3 7d 5a 8d 45 b2 1b dc 02 99 dc ea a8 ef 23
+5f 3c a4 2c e3 53 0f 95 25
 ~~~~~~~~
 
 ~~~~~~~~
-G_X (Raw Value) (Initiator's ephemeral public key) (32 bytes)
-3a a9 eb 32 01 b3 36 7b 8c 8b e3 8d 91 e5 7a 2b 43 3e 67 88 8c 86 d2
-ac 00 6a 52 08 42 ed 50 37
+G_X (Raw Value) (Initiator's ephemeral public key, 'x'-coordinate) (32 bytes)
+8a f6 f4 30 eb e1 8d 34 18 40 17 a9 a1 1b f5 11 c8 df f8 f8 34 73 0b
+96 c1 b7 c8 db ca 2f c3 b6
+~~~~~~~~
+~~~~~~~~
+Initiator's ephemeral public key, 'y'-coordinate (Raw Value) (32 bytes)
+51 e8 af 6c 6e db 78 16 01 ad 1d 9c 5f a8 bf 7a a1 57 16 c7 c0 6a 5d
+03 85 03 c6 14 ff 80 c9 b3
 ~~~~~~~~
 ~~~~~~~~
 G_X (CBOR Data Item) (Initiator's ephemeral public key) (34 bytes)
-58 20 3a a9 eb 32 01 b3 36 7b 8c 8b e3 8d 91 e5 7a 2b 43 3e 67 88 8c
-86 d2 ac 00 6a 52 08 42 ed 50 37
+58 20 8a f6 f4 30 eb e1 8d 34 18 40 17 a9 a1 1b f5 11 c8 df f8 f8 34
+73 0b 96 c1 b7 c8 db ca 2f c3 b6
 ~~~~~~~~
-I selects its connection identifier C_I to be the int 12:
+
+I selects its connection identifier C_I to be the int -24:
 
 ~~~~~~~~
 C_I (Raw Value) (Connection identifier chosen by I) (int)
-12
+-24
 ~~~~~~~~
 ~~~~~~~~
 C_I (CBOR Data Item) (Connection identifier chosen by I) (1 bytes)
-0c
+37
 ~~~~~~~~
 
 No external authorization data:
@@ -239,15 +246,16 @@ I constructs message_1:
     message_1 =
     (
      3,
-     0,
-     h'3AA9EB3201B3367B8C8BE38D91E57A2B433E67888C86D2AC006A520842ED5037',
-     12
+     [6, 2],
+     h'8AF6F430EBE18D34184017A9A11BF511C8DFF8F834730B96C1B7C8DBCA2F
+     C3B6',
+     -24
     )
 
 ~~~~~~~~
-message_1 (CBOR Sequence) (37 bytes)
-03 00 58 20 3a a9 eb 32 01 b3 36 7b 8c 8b e3 8d 91 e5 7a 2b 43 3e 67
-88 8c 86 d2 ac 00 6a 52 08 42 ed 50 37 0c
+message_1 (CBOR Sequence) (39 bytes)
+03 82 06 02 58 20 8a f6 f4 30 eb e1 8d 34 18 40 17 a9 a1 1b f5 11 c8
+df f8 f8 34 73 0b 96 c1 b7 c8 db ca 2f c3 b6 37
 ~~~~~~~~
 
 ## message_2
@@ -258,18 +266,24 @@ R creates an ephemeral key pair for use with the EDHOC key exchange algorithm:
 
 ~~~~~~~~
 Y (Raw Value) (Responder's ephemeral private key) (32 bytes)
-bd 86 ea f4 06 5a 83 6c d2 9d 0f 06 91 ca 2a 8e c1 3f 51 d1 c4 5e 1b
-43 72 c0 cb e4 93 ce f6 bd
+e2 f4 12 67 77 20 5e 85 3b 43 7d 6e ac a1 e1 f7 53 cd cc 3e 2c 69 fa
+88 4b 0a 1a 64 09 77 e4 18
+~~~~~~~~
+
+~~~~~~~~
+G_Y (Raw Value) (Responder's ephemeral public key, 'x'-coordinate) (32 bytes)
+41 97 01 d7 f0 0a 26 c2 dc 58 7a 36 dd 75 25 49 f3 37 63 c8 93 42 2c
+8e a0 f9 55 a1 3a 4f f5 d5
 ~~~~~~~~
 ~~~~~~~~
-G_Y (Raw Value) (Responder's ephemeral public key) (32 bytes)
-25 54 91 b0 5a 39 89 ff 2d 3f fe a6 20 98 aa b5 7c 16 0f 29 4e d9 48
-01 8b 41 90 f7 d1 61 82 4e
+Responder's ephemeral public key, 'y'-coordinate (Raw Value) (32 bytes)
+5e 4f 0d d8 a3 da 0b aa 16 b9 d3 ad 56 a0 c1 86 0a 94 0a f8 59 14 91
+5e 25 01 9b 40 24 17 e9 9d
 ~~~~~~~~
 ~~~~~~~~
 G_Y (CBOR Data Item) (Responder's ephemeral public key) (34 bytes)
-58 20 25 54 91 b0 5a 39 89 ff 2d 3f fe a6 20 98 aa b5 7c 16 0f 29 4e
-d9 48 01 8b 41 90 f7 d1 61 82 4e
+58 20 41 97 01 d7 f0 0a 26 c2 dc 58 7a 36 dd 75 25 49 f3 37 63 c8 93
+42 2c 8e a0 f9 55 a1 3a 4f f5 d5
 ~~~~~~~~
 
 PRK_2e is specified in Section 4.1.1 of {{I-D.ietf-lake-edhoc}}.
@@ -278,8 +292,8 @@ First, the ECDH shared secret G_XY is computed from G_X and Y, or G_Y and X:
 
 ~~~~~~~~
 G_XY (Raw Value) (ECDH shared secret) (32 bytes)
-6d 26 60 ec 2b 30 15 d9 3f e6 5d ae a5 12 74 bd 5b 1e bb ad 9b 62 4e
-67 0e 79 a6 55 e3 0e c3 4d
+2f 0c b7 e8 60 ba 53 8f bf 5c 8b de d0 09 f6 25 9b 4b 62 8f e1 eb 7d
+be 93 78 e5 ec f7 a8 24 ba
 ~~~~~~~~
 
 Then, PRK_2e is calculated using Extract() determined by the EDHOC hash algorithm:
@@ -294,8 +308,8 @@ salt (Raw Value) (0 bytes)
 ~~~~~~~~
 ~~~~~~~~
 PRK_2e (Raw Value) (32 bytes)
-d1 d0 11 a5 9a 6d 10 57 5e b2 20 c7 65 2e 6f 98 c4 17 a5 65 e4 e4 5c
-f5 b5 01 06 95 04 3b 0e b7
+fd 9e ef 62 74 87 e4 03 90 ca e9 22 51 2d b5 a6 47 c0 8d c9 0d eb 22
+b7 2e ce 6f 15 6f f1 c3 96
 ~~~~~~~~
 
 Since METHOD = 3, R authenticates using static DH.
@@ -305,14 +319,22 @@ the same curve as for the ephemeral keys, X25519:
 
 ~~~~~~~~
 R (Raw Value) (Responder's private authentication key) (32 bytes)
-52 8b 49 c6 70 f8 fc 16 a2 ad 95 c1 88 5b 2e 24 fb 15 76 22 72 79 2a
-a1 cf 05 1d f5 d9 3d 36 94
+72 cc 47 61 db d4 c7 8f 75 89 31 aa 58 9d 34 8d 1e f8 74 a7 e3 03 ed
+e2 f1 40 dc f3 e6 aa 4a ac
+~~~~~~~~
+
+~~~~~~~~
+G_R (Raw Value) (Responder's public authentication key, 'x'-coordinate) (32 bytes)
+bb c3 49 60 52 6e a4 d3 2e 94 0c ad 2a 23 41 48 dd c2 17 91 a1 2a fb
+cb ac 93 62 20 46 dd 44 f0
 ~~~~~~~~
 ~~~~~~~~
-G_R (Raw Value) (Responder's public authentication key) (32 bytes)
-e6 6f 35 59 90 22 3c 3f 6c af f8 62 e4 07 ed d1 17 4d 07 01 a0 9e cd
-6a 15 ce e2 c6 ce 21 aa 50
+Responder's public authentication key, 'y'-coordinate (Raw Value) (32 bytes)
+45 19 e2 57 23 6b 2a 0c e2 02 3f 09 31 f1 f3 86 ca 7a fd a6 4f cd e0
+10 8c 22 4c 51 ea bf 60 72
 ~~~~~~~~
+
+
 
 PRK_3e2m is specified in Section 4.1.2 of {{I-D.ietf-lake-edhoc}}.
 
@@ -326,24 +348,24 @@ where G_RX is the ECDH shared secret calculated from G_X and R, or G_R and X.
 
 ~~~~~~~~
 G_RX (Raw Value) (ECDH shared secret) (32 bytes)
-b5 8b 40 34 26 c0 3d b0 7b aa 93 44 d5 51 e6 7b 21 78 bf 05 ec 6f 52
-c3 6a 2f a5 be 23 2d d4 78
+f2 b6 ee a0 22 20 b9 5e ee 5a 0b c7 01 f0 74 e0 0a 84 3e a0 24 22 f6
+08 25 fb 26 9b 3e 16 14 23
 ~~~~~~~~
 ~~~~~~~~
 PRK_3e2m (Raw Value) (32 bytes)
-76 8e 13 75 27 2e 1e 68 b4 2c a3 24 84 80 d5 bb a8 8b cb 55 f6 60 ce
-7f 94 1e 67 09 10 31 17 a1
+af 4b 59 18 68 2a df 4c 96 fd 73 05 b6 9f 8f b7 8e fc 9a 23 0d d2 1f
+4c 61 be 7d 3c 10 94 46 b3
 ~~~~~~~~
 
-R selects its connection identifier C_R to be the empty byte string "":
+R selects its connection identifier C_R to be the int -8:
 
 ~~~~~~~~
 C_R (raw value) (Connection identifier chosen by R) (0 bytes)
-
+-8
 ~~~~~~~~
 ~~~~~~~~
 C_R (CBOR Data Item) (Connection identifier chosen by R) (1 bytes)
-40
+27
 ~~~~~~~~
 
 The transcript hash TH_2 is calculated using the EDHOC hash algorithm:
@@ -352,13 +374,13 @@ TH_2 = H(H(message_1), G_Y, C_R)
 
 ~~~~~~~~
 H(message_1) (Raw Value) (32 bytes)
-9b dd b0 cd 55 48 7f 82 a8 6f b7 2a 8b b3 58 52 68 91 a0 a6 c9 08 61
-24 12 f5 af 29 9d af 01 96
+ca 02 ca bd a5 a8 90 27 49 b4 2f 71 10 50 bb 4d bd 52 15 3e 87 52 75
+94 b3 9f 50 cd f0 19 88 8c
 ~~~~~~~~
 ~~~~~~~~
 H(message_1) (CBOR Data Item) (34 bytes)
-58 20 9b dd b0 cd 55 48 7f 82 a8 6f b7 2a 8b b3 58 52 68 91 a0 a6 c9
-08 61 24 12 f5 af 29 9d af 01 96
+58 20 ca 02 ca bd a5 a8 90 27 49 b4 2f 71 10 50 bb 4d bd 52 15 3e 87
+52 75 94 b3 9f 50 cd f0 19 88 8c
 ~~~~~~~~
 
 The input to calculate TH_2 is the CBOR sequence:
@@ -367,19 +389,19 @@ H(message_1), G_Y, C_R
 
 ~~~~~~~~
 Input to calculate TH_2 (CBOR Sequence) (69 bytes)
-58 20 9b dd b0 cd 55 48 7f 82 a8 6f b7 2a 8b b3 58 52 68 91 a0 a6 c9
-08 61 24 12 f5 af 29 9d af 01 96 58 20 25 54 91 b0 5a 39 89 ff 2d 3f
-fe a6 20 98 aa b5 7c 16 0f 29 4e d9 48 01 8b 41 90 f7 d1 61 82 4e 40
+58 20 ca 02 ca bd a5 a8 90 27 49 b4 2f 71 10 50 bb 4d bd 52 15 3e 87
+52 75 94 b3 9f 50 cd f0 19 88 8c 58 20 41 97 01 d7 f0 0a 26 c2 dc 58
+7a 36 dd 75 25 49 f3 37 63 c8 93 42 2c 8e a0 f9 55 a1 3a 4f f5 d5 27
 ~~~~~~~~
 ~~~~~~~~
 TH_2 (Raw Value) (32 bytes)
-71 a6 c7 c5 ba 9a d4 7f e7 2d a4 dc 35 9b f6 b2 76 d3 51 59 68 71 1b
-9a 91 1c 71 fc 09 6a ee 0e
+9b 99 cf d7 af dc bc c9 95 0a 63 73 50 7f 2a 81 01 33 19 62 56 97 e4
+f9 bf 7a 44 8f c8 e6 33 ca
 ~~~~~~~~
 ~~~~~~~~
 TH_2 (CBOR Data Item) (34 bytes)
-58 20 71 a6 c7 c5 ba 9a d4 7f e7 2d a4 dc 35 9b f6 b2 76 d3 51 59 68
-71 1b 9a 91 1c 71 fc 09 6a ee 0e
+58 20 9b 99 cf d7 af dc bc c9 95 0a 63 73 50 7f 2a 81 01 33 19 62 56
+97 e4 f9 bf 7a 44 8f c8 e6 33 ca
 ~~~~~~~~
 
 R constructs the remaining input needed to calculate MAC_2:
@@ -387,16 +409,16 @@ R constructs the remaining input needed to calculate MAC_2:
 MAC_2 = EDHOC-KDF(PRK_3e2m, TH_2, "MAC_2",
             << ID_CRED_R, CRED_R, ? EAD_2 >>, mac_length_2)
 
-CRED_R is identified by a 'kid' with integer value 5:
+CRED_R is identified by a 'kid' with integer value -19:
 
     ID_CRED_R =
     {
-     4 : 5
+     4 : -19
     }
 
 ~~~~~~~~
 ID_CRED_R (CBOR Data Item) (3 bytes)
-a1 04 05
+a1 04 32
 ~~~~~~~~
 
 CRED_R is an RPK encoded as a CCS:
@@ -405,20 +427,24 @@ CRED_R is an RPK encoded as a CCS:
       2 : "example.edu",                           /sub/
       8 : {                                        /cnf/
         1 : {                                      /COSE_Key/
-          1 : 1,                                   /kty/
-          2 : 5,                                   /kid/
-         -1 : 4,                                   /crv/
-         -2 : h'E66F355990223C3F6CAFF862E407EDD1   /x/
-                174D0701A09ECD6A15CEE2C6CE21AA50'
+          1 : 2,                                   /kty/
+          2 : -19,                                 /kid/
+         -1 : 1,                                   /crv/
+         -2 : h'BBC34960526EA4D32E940CAD2A234148
+                DDC21791A12AFBCBAC93622046DD44F0', /x/
+         -3 : h'4519E257236B2A0CE2023F0931F1F386
+                CA7AFDA64FCDE0108C224C51EABF6072'  /y/
         }
       }
     }
 
 ~~~~~~~~
-CRED_R (CBOR Data Item) (59 bytes)
-a2 02 6b 65 78 61 6d 70 6c 65 2e 65 64 75 08 a1 01 a4 01 01 02 05 20
-04 21 58 20 e6 6f 35 59 90 22 3c 3f 6c af f8 62 e4 07 ed d1 17 4d 07
-01 a0 9e cd 6a 15 ce e2 c6 ce 21 aa 50
+CRED_R (CBOR Data Item) (94 bytes)
+a2 02 6b 65 78 61 6d 70 6c 65 2e 65 64 75 08 a1 01 a5 01 02 02 32 20
+01 21 58 20 bb c3 49 60 52 6e a4 d3 2e 94 0c ad 2a 23 41 48 dd c2 17
+91 a1 2a fb cb ac 93 62 20 46 dd 44 f0 22 58 20 45 19 e2 57 23 6b 2a
+0c e2 02 3f 09 31 f1 f3 86 ca 7a fd a6 4f cd e0 10 8c 22 4c 51 ea bf
+60 72
 ~~~~~~~~
 
 No external authorization data:
@@ -430,7 +456,9 @@ EAD_2 (CBOR Sequence) (0 bytes)
 MAC_2 is computed through Expand() using the
 EDHOC hash algorithm, see Section 4.2 of {{I-D.ietf-lake-edhoc}}:
 
-MAC_2 = HKDF-Expand(PRK_3e2m, info, mac_length_2)
+MAC_2 = HKDF-Expand(PRK_3e2m, info, mac_length_2), where
+
+info = ( TH_2, “MAC_2”, << ID_CRED_R, CRED_R, ? EAD_2 >>, mac_length_2 )
 
 Since METHOD = 3, mac_length_2 is given by the EDHOC MAC length.
 
@@ -438,43 +466,48 @@ info for MAC_2 is:
 
     info =
     (
-     h'71A6C7C5BA9AD47FE72DA4DC359BF6B276D3515968711B9A911C71FC096AEE0E',
+     h'9B99CFD7AFDCBCC9950A6373507F2A81013319625697E4F9BF7A448FC8E6
+     33CA',
      "MAC_2",
-     h'A10405A2026B6578616D706C652E65647508A101A4010102052004215820E6
-       6F355990223C3F6CAFF862E407EDD1174D0701A09ECD6A15CEE2C6CE21AA50',
+     h'A10432A2026B6578616D706C652E65647508A101A5010202322001215820
+     BBC34960526EA4D32E940CAD2A234148DDC21791A12AFBCBAC93622046DD44
+     F02258204519E257236B2A0CE2023F0931F1F386CA7AFDA64FCDE0108C224C
+     51EABF6072',
      8
     )
 
 where the last value is the EDHOC MAC length.
 
 ~~~~~~~~
-info for MAC_2 (CBOR Sequence) (105 bytes)
-58 20 71 a6 c7 c5 ba 9a d4 7f e7 2d a4 dc 35 9b f6 b2 76 d3 51 59 68
-71 1b 9a 91 1c 71 fc 09 6a ee 0e 65 4d 41 43 5f 32 58 3e a1 04 05 a2
-02 6b 65 78 61 6d 70 6c 65 2e 65 64 75 08 a1 01 a4 01 01 02 05 20 04
-21 58 20 e6 6f 35 59 90 22 3c 3f 6c af f8 62 e4 07 ed d1 17 4d 07 01
-a0 9e cd 6a 15 ce e2 c6 ce 21 aa 50 08
+info for MAC_2 (CBOR Sequence) (140 bytes)
+58 20 9b 99 cf d7 af dc bc c9 95 0a 63 73 50 7f 2a 81 01 33 19 62 56
+97 e4 f9 bf 7a 44 8f c8 e6 33 ca 65 4d 41 43 5f 32 58 61 a1 04 32 a2
+02 6b 65 78 61 6d 70 6c 65 2e 65 64 75 08 a1 01 a5 01 02 02 32 20 01
+21 58 20 bb c3 49 60 52 6e a4 d3 2e 94 0c ad 2a 23 41 48 dd c2 17 91
+a1 2a fb cb ac 93 62 20 46 dd 44 f0 22 58 20 45 19 e2 57 23 6b 2a 0c
+e2 02 3f 09 31 f1 f3 86 ca 7a fd a6 4f cd e0 10 8c 22 4c 51 ea bf 60
+72 08
 ~~~~~~~~
 ~~~~~~~~
 MAC_2 (Raw Value) (8 bytes)
-8e 27 cb d4 94 f7 52 83
+33 24 d5 a4 af cd 43 26
 ~~~~~~~~
 
 ~~~~~~~~
 MAC_2 (CBOR Data Item) (9 bytes)
-48 8e 27 cb d4 94 f7 52 83
+48 33 24 d5 a4 af cd 43 26
 ~~~~~~~~
 
 Since METHOD = 3, Signature_or_MAC_2 is MAC_2:
 
 ~~~~~~~~
 Signature_or_MAC_2 (Raw Value) (8 bytes)
-8e 27 cb d4 94 f7 52 83
+33 24 d5 a4 af cd 43 26
 ~~~~~~~~
 
 ~~~~~~~~
 Signature_or_MAC_2 (CBOR Data Item) (9 bytes)
-48 8e 27 cb d4 94 f7 52 83
+48 33 24 d5 a4 af cd 43 26
 ~~~~~~~~
 
 R constructs the plaintext:
@@ -486,11 +519,11 @@ R constructs the plaintext:
      ? EAD_2
     )
 
-Since ID_CRED_R contains a single 'kid' parameter, only the int 5 is included in the plaintext.
+Since ID_CRED_R contains a single 'kid' parameter, only the int -19 is included in the plaintext.
 
 ~~~~~~~~
 PLAINTEXT_2 (CBOR Sequence) (10 bytes)
-05 48 8e 27 cb d4 94 f7 52 83
+32 48 33 24 d5 a4 af cd 43 26
 ~~~~~~~~
 
 The input needed to calculate KEYSTREAM_2 is defined in Section 4.2 of
@@ -504,7 +537,8 @@ where length is the length of PLAINTEXT_2, and info for KEYSTREAM_2 is:
 
     info =
     (
-     h'71A6C7C5BA9AD47FE72DA4DC359BF6B276D3515968711B9A911C71FC096AEE0E',
+     h'9B99CFD7AFDCBCC9950A6373507F2A81013319625697E4F9BF7A448FC8E6
+     33CA',
      "KEYSTREAM_2",
      h'',
      10
@@ -514,20 +548,20 @@ where last value is the length of PLAINTEXT_2.
 
 ~~~~~~~~
 info for KEYSTREAM_2 (CBOR Sequence) (48 bytes)
-58 20 71 a6 c7 c5 ba 9a d4 7f e7 2d a4 dc 35 9b f6 b2 76 d3 51 59 68
-71 1b 9a 91 1c 71 fc 09 6a ee 0e 6b 4b 45 59 53 54 52 45 41 4d 5f 32
+58 20 9b 99 cf d7 af dc bc c9 95 0a 63 73 50 7f 2a 81 01 33 19 62 56
+97 e4 f9 bf 7a 44 8f c8 e6 33 ca 6b 4b 45 59 53 54 52 45 41 4d 5f 32
 40 0a
 ~~~~~~~~
 ~~~~~~~~
 KEYSTREAM_2 (Raw Value) (10 bytes)
-0a b8 c2 0e 84 9e 52 f5 9d fb
+7b 86 c0 4a f7 3b 50 d3 1b 6f
 ~~~~~~~~
 
 R calculates CIPHERTEXT_2 as XOR between PLAINTEXT_2 and KEYSTREAM_2:
 
 ~~~~~~~~
 CIPHERTEXT_2 (Raw Value) (10 bytes)
-0f f0 4c 29 4f 4a c6 02 cf 78
+49 ce f3 6e 22 9f ff 1e 58 49
 ~~~~~~~~
 
 R constructs message_2:
@@ -543,8 +577,8 @@ the raw values of G_Y and CIPHERTEXT_2.
 
 ~~~~~~~~
 message_2 (CBOR Sequence) (45 bytes)
-58 2a 25 54 91 b0 5a 39 89 ff 2d 3f fe a6 20 98 aa b5 7c 16 0f 29 4e
-d9 48 01 8b 41 90 f7 d1 61 82 4e 0f f0 4c 29 4f 4a c6 02 cf 78 40
+58 2a 41 97 01 d7 f0 0a 26 c2 dc 58 7a 36 dd 75 25 49 f3 37 63 c8 93
+42 2c 8e a0 f9 55 a1 3a 4f f5 d5 49 ce f3 6e 22 9f ff 1e 58 49 27
 ~~~~~~~~
 
 
@@ -654,7 +688,9 @@ EAD_3 (CBOR Sequence) (0 bytes)
 MAC_3 is computed through Expand() using the EDHOC hash algorithm, see
 Section 4.2 of {{I-D.ietf-lake-edhoc}}:
 
-    MAC_3 = HKDF-Expand(PRK_4x3m, info, mac_length_3)
+    MAC_3 = HKDF-Expand(PRK_4x3m, info, mac_length_3), where
+
+info = ( TH_3, “MAC_3”, << ID_CRED_I, CRED_I, ? EAD_3 >>, mac_length_3 )
 
 Since METHOD = 3, mac_length_3 is given by the EDHOC MAC length.
 
@@ -1240,7 +1276,7 @@ c5 76 10 5d 95 b4 d8 c1 8e 8f 65 5f 54 68 80 a8 54 f2 da 10 6c e5 a3
 a0 2d 8b 3e de 7b aa bc a6
 ~~~~~~~~
 
-R selects its connection identifier C_R to be the int 23
+R selects its connection identifier C_R to be the int 23:
 
 ~~~~~~~~
 C_R (Raw Value) (Connection identifier chosen by R) (int)
