@@ -34,6 +34,8 @@ author:
   surname: Serafin
   org: ASSA ABLOY
   abbrev: ASSA ABLOY
+  street: Krakow
+  country: Poland
   email: marek.serafin@assaabloy.com
 
 normative:
