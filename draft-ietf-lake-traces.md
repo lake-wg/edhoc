@@ -34,8 +34,6 @@ author:
   surname: Serafin
   org: ASSA ABLOY
   abbrev: ASSA ABLOY
-  street:
-  country: Poland
   email: marek.serafin@assaabloy.com
 
 normative:
@@ -116,17 +114,20 @@ SUITES_I (CBOR Data Item) (1 bytes)
 I creates an ephemeral key pair for use with the EDHOC key exchange algorithm:
 
 ~~~~~~~~
-X (Raw Value) (Initiator's ephemeral private key) (32 bytes)
+Initiator's ephemeral private key
+X (Raw Value) (32 bytes)
 5c 41 72 ac a8 b8 2b 5a 62 e6 6f 72 22 16 f5 a1 0f 72 aa 69 f4 2c 1d
 1c d3 cc d7 bf d2 9c a4 e9
 ~~~~~~~~
 ~~~~~~~~
-G_X (Raw Value) (Initiator's ephemeral public key) (32 bytes)
+Initiator's ephemeral public key
+G_X (Raw Value) (32 bytes)
 74 1a 13 d7 ba 04 8f bb 61 5e 94 38 6a a3 b6 1b ea 5b 3d 8f 65 f3 26
 20 b7 49 be e8 d2 78 ef a9
 ~~~~~~~~
 ~~~~~~~~
-G_X (CBOR Data Item) (Initiator's ephemeral public key) (33 bytes)
+Initiator's ephemeral public key
+G_X (CBOR Data Item) (34 bytes)
 58 21 74 1a 13 d7 ba 04 8f bb 61 5e 94 38 6a a3 b6 1b ea 5b 3d 8f 65
 f3 26 20 b7 49 be e8 d2 78 ef a9
 ~~~~~~~~
@@ -203,23 +204,27 @@ SUITES_I (CBOR Data Item) (3 bytes)
 I creates an ephemeral key pair for use with the EDHOC key exchange algorithm:
 
 ~~~~~~~~
-X (Raw Value) (Initiator's ephemeral private key) (32 bytes)
+Initiator's ephemeral private key
+X (Raw Value) (32 bytes)
 36 8e c1 f6 9a eb 65 9b a3 7d 5a 8d 45 b2 1b dc 02 99 dc ea a8 ef 23
 5f 3c a4 2c e3 53 0f 95 25
 ~~~~~~~~
 
 ~~~~~~~~
-G_X (Raw Value) (Initiator's ephemeral public key, 'x'-coordinate) (32 bytes)
+Initiator's ephemeral public key, 'x'-coordinate
+G_X (Raw Value) (32 bytes)
 8a f6 f4 30 eb e1 8d 34 18 40 17 a9 a1 1b f5 11 c8 df f8 f8 34 73 0b
 96 c1 b7 c8 db ca 2f c3 b6
 ~~~~~~~~
 ~~~~~~~~
-Initiator's ephemeral public key, 'y'-coordinate (Raw Value) (32 bytes)
+Initiator's ephemeral public key, 'y'-coordinate
+(Raw Value) (32 bytes)
 51 e8 af 6c 6e db 78 16 01 ad 1d 9c 5f a8 bf 7a a1 57 16 c7 c0 6a 5d
 03 85 03 c6 14 ff 80 c9 b3
 ~~~~~~~~
 ~~~~~~~~
-G_X (CBOR Data Item) (Initiator's ephemeral public key) (34 bytes)
+Initiator's ephemeral public key, 'x'-coordinate
+G_X (CBOR Data Item) (34 bytes)
 58 20 8a f6 f4 30 eb e1 8d 34 18 40 17 a9 a1 1b f5 11 c8 df f8 f8 34
 73 0b 96 c1 b7 c8 db ca 2f c3 b6
 ~~~~~~~~
@@ -265,23 +270,27 @@ R supports the selected cipher suite 2 and not the by I more preferred cipher su
 R creates an ephemeral key pair for use with the EDHOC key exchange algorithm:
 
 ~~~~~~~~
-Y (Raw Value) (Responder's ephemeral private key) (32 bytes)
+Responder's ephemeral private key
+Y (Raw Value) (32 bytes)
 e2 f4 12 67 77 20 5e 85 3b 43 7d 6e ac a1 e1 f7 53 cd cc 3e 2c 69 fa
 88 4b 0a 1a 64 09 77 e4 18
 ~~~~~~~~
 
 ~~~~~~~~
-G_Y (Raw Value) (Responder's ephemeral public key, 'x'-coordinate) (32 bytes)
+Responder's ephemeral public key, 'x'-coordinate
+G_Y (Raw Value) (32 bytes)
 41 97 01 d7 f0 0a 26 c2 dc 58 7a 36 dd 75 25 49 f3 37 63 c8 93 42 2c
 8e a0 f9 55 a1 3a 4f f5 d5
 ~~~~~~~~
 ~~~~~~~~
-Responder's ephemeral public key, 'y'-coordinate (Raw Value) (32 bytes)
+Responder's ephemeral public key, 'y'-coordinate
+(Raw Value) (32 bytes)
 5e 4f 0d d8 a3 da 0b aa 16 b9 d3 ad 56 a0 c1 86 0a 94 0a f8 59 14 91
 5e 25 01 9b 40 24 17 e9 9d
 ~~~~~~~~
 ~~~~~~~~
-G_Y (CBOR Data Item) (Responder's ephemeral public key) (34 bytes)
+Responder's ephemeral public key, 'x'-coordinate
+G_Y (CBOR Data Item) (34 bytes)
 58 20 41 97 01 d7 f0 0a 26 c2 dc 58 7a 36 dd 75 25 49 f3 37 63 c8 93
 42 2c 8e a0 f9 55 a1 3a 4f f5 d5
 ~~~~~~~~
@@ -314,22 +323,25 @@ b7 2e ce 6f 15 6f f1 c3 96
 
 Since METHOD = 3, R authenticates using static DH.
 
-R's static key pair for use with the EDHOC key exchange algorithm is based on
+R's static Diffie-Hellman key pair for use with the EDHOC key exchange algorithm is based on
 the same curve as for the ephemeral keys, P-256:
 
 ~~~~~~~~
-R (Raw Value) (Responder's private authentication key) (32 bytes)
+Responder's private authentication key
+R (Raw Value) (32 bytes)
 72 cc 47 61 db d4 c7 8f 75 89 31 aa 58 9d 34 8d 1e f8 74 a7 e3 03 ed
 e2 f1 40 dc f3 e6 aa 4a ac
 ~~~~~~~~
 
 ~~~~~~~~
-G_R (Raw Value) (Responder's public authentication key, 'x'-coordinate) (32 bytes)
+Responder's public authentication key, 'x'-coordinate
+G_R (Raw Value) (32 bytes)
 bb c3 49 60 52 6e a4 d3 2e 94 0c ad 2a 23 41 48 dd c2 17 91 a1 2a fb
 cb ac 93 62 20 46 dd 44 f0
 ~~~~~~~~
 ~~~~~~~~
-Responder's public authentication key, 'y'-coordinate (Raw Value) (32 bytes)
+Responder's public authentication key, 'y'-coordinate
+(Raw Value) (32 bytes)
 45 19 e2 57 23 6b 2a 0c e2 02 3f 09 31 f1 f3 86 ca 7a fd a6 4f cd e0
 10 8c 22 4c 51 ea bf 60 72
 ~~~~~~~~
@@ -586,22 +598,25 @@ message_2 (CBOR Sequence) (45 bytes)
 
 Since METHOD = 3, I authenticates using static DH.
 
-I's static key pair for use with the EDHOC key exchange algorithm is based on
+I's static  Diffie-Hellman key pair for use with the EDHOC key exchange algorithm is based on
 the same curve as for the ephemeral keys, P-256:
 
 ~~~~~~~~
-I (Raw Value) (Initiator's private authentication key) (32 bytes)
+Initiator's private authentication key
+I (Raw Value) (32 bytes)
 fb 13 ad eb 65 18 ce e5 f8 84 17 66 08 41 14 2e 83 0a 81 fe 33 43 80
 a9 53 40 6a 13 05 e8 70 6b
 ~~~~~~~~
 
 ~~~~~~~~
-G_I (Raw Value) (Initiator's public authentication key, 'x'-coordinate) (32 bytes)
+Initiator's public authentication key, 'x'-coordinate
+G_I (Raw Value) (32 bytes)
 ac 75 e9 ec e3 e5 0b fc 8e d6 03 99 88 95 22 40 5c 47 bf 16 df 96 66
 0a 41 29 8c b4 30 7f 7e b6
 ~~~~~~~~
 ~~~~~~~~
-Initiator's public authentication key, 'y'-coordinate (Raw Value) (32 bytes)
+Initiator's public authentication key, 'y'-coordinate
+(Raw Value) (32 bytes)
 6e 5d e6 11 38 8a 4b 8a 82 11 33 4a c7 d3 7e cb 52 a3 87 d2 57 e6 db
 3c 2a 93 df 21 ff 3a ff c8
 ~~~~~~~~
@@ -1174,18 +1189,21 @@ SUITES_I (CBOR Data Item) (1 byte)
 I creates an ephemeral key pair for use with the EDHOC key exchange algorithm:
 
 ~~~~~~~~
-X (Raw Value) (Initiator's ephemeral private key) (32 bytes)
+Initiator's ephemeral private key
+X (Raw Value) (32 bytes)
 89 2e c2 8e 5c b6 66 91 08 47 05 39 50 0b 70 5e 60 d0 08 d3 47 c5 81
 7e e9 f3 32 7c 8a 87 bb 03
 ~~~~~~~~
 
 ~~~~~~~~
-G_X (Raw Value) (Initiator's ephemeral public key) (32 bytes)
+Initiator's ephemeral public key
+G_X (Raw Value) (32 bytes)
 31 f8 2c 7b 5b 9c bb f0 f1 94 d9 13 cc 12 ef 15 32 d3 28 ef 32 63 2a
 48 81 a1 c0 70 1e 23 7f 04
 ~~~~~~~~
 ~~~~~~~~
-G_X (CBOR Data Item) (Initiator's ephemeral public key) (34 bytes)
+Initiator's ephemeral public key
+G_X (CBOR Data Item) (34 bytes)
 58 20 31 f8 2c 7b 5b 9c bb f0 f1 94 d9 13 cc 12 ef 15 32 d3 28 ef 32
 63 2a 48 81 a1 c0 70 1e 23 7f 04
 ~~~~~~~~
@@ -1229,17 +1247,20 @@ R supports the most preferred and selected cipher suite 0, so SUITES_I is accept
 R creates an ephemeral key pair for use with the EDHOC key exchange algorithm:
 
 ~~~~~~~~
-Y (Raw Value) (Responder's ephemeral private key) (32 bytes)
+Responder's ephemeral private key
+Y (Raw Value) (32 bytes)
 e6 9c 23 fb f8 1b c4 35 94 24 46 83 7f e8 27 bf 20 6c 8f a1 0a 39 db
 47 44 9e 5a 81 34 21 e1 e8
 ~~~~~~~~
 ~~~~~~~~
-G_Y (Raw Value) (Responder's ephemeral public key) (33 bytes)
+Responder's ephemeral public key
+G_Y (Raw Value) (32 bytes)
 dc 88 d2 d5 1d a5 ed 67 fc 46 16 35 6b c8 ca 74 ef 9e be 8b 38 7e 62
 3a 36 0b a4 80 b9 b2 9d 1c
 ~~~~~~~~
 ~~~~~~~~
-G_Y (CBOR Data Item) (Responder's ephemeral public key) (35 bytes)
+Responder's ephemeral public key
+G_Y (CBOR Data Item) (34 bytes)
 58 20 dc 88 d2 d5 1d a5 ed 67 fc 46 16 35 6b c8 ca 74 ef 9e be 8b 38
 7e 62 3a 36 0b a4 80 b9 b2 9d 1c
 ~~~~~~~~
@@ -1276,12 +1297,14 @@ Since METHOD = 0, R authenticates using signatures. Since the selected cipher su
 R's signature key pair using EdDSA:
 
 ~~~~~~~~
-SK_R (Raw Value) (Responders's private authentication key) (32 bytes)
+Responder's private authentication key
+SK_R (Raw Value) (32 bytes)
 ef 14 0f f9 00 b0 ab 03 f0 c0 8d 87 9c bb d4 b3 1e a7 1e 6e 7e e7 ff
 cb 7e 79 55 77 7a 33 27 99
 ~~~~~~~~
 ~~~~~~~~
-PK_R (Raw Value) (Responders's public authentication key) (32 bytes)
+Responders's public authentication key
+PK_R (Raw Value) (32 bytes)
 a1 db 47 b9 51 84 85 4a d1 2a 0c 1a 35 4e 41 8a ac e3 3a a0 f2 c6 62
 c0 0b 3a c5 5d e9 2f 93 59
 ~~~~~~~~
@@ -1603,13 +1626,15 @@ Since METHOD = 0, I authenticates using signatures. Since the selected cipher su
 I's signature key pair using EdDSA:
 
 ~~~~~~~~
-SK_I (Raw Value) (Initiator's private authentication key) (32 bytes)
+Initiator's private authentication key
+SK_I (Raw Value) (32 bytes)
 4c 5b 25 87 8f 50 7c 6b 9d ae 68 fb d4 fd 3f f9 97 53 3d b0 af 00 b2
 5d 32 4e a2 8e 6c 21 3b c8
 ~~~~~~~~
 
 ~~~~~~~~
-PK_I (Raw Value) (Responders's public authentication key) (32 bytes)
+Initiator's public authentication key
+PK_I (Raw Value) (32 bytes)
 ed 06 a8 ae 61 a8 29 ba 5f a5 45 25 c9 d0 7f 48 dd 44 a3 02 f4 3e 0f
 23 d8 cc 20 b7 30 85 14 1e
 ~~~~~~~~
