@@ -2163,58 +2163,52 @@ OSCORE Master Salt after KeyUpdate (Raw Value) (8 bytes)
 
 ~~~~~~~~
         Version: 3 (0x2)
-        Serial Number: 1642698782 (0x61e9981e)
-    Signature Algorithm: ecdsa-with-SHA256
-        Issuer: CN=EDHOC Root
+        Serial Number: 1647419076 (0x62319ec4)
+        Signature Algorithm: ED25519
+        Issuer: CN = EDHOC Root Ed25519
         Validity
-            Not Before: Jan 20 17:13:02 2022 GMT
+            Not Before: Mar 16 08:24:36 2022 GMT
             Not After : Dec 31 23:00:00 2029 GMT
-        Subject: CN=EDHOC Responder
+        Subject: CN = EDHOC Responder Ed25519
         Subject Public Key Info:
-            Public Key Algorithm: id-ecPublicKey
-                Public-Key: (256 bit)
+            Public Key Algorithm: ED25519
+                ED25519 Public-Key:
                 pub:
-                    04:bb:c3:49:60:52:6e:a4:d3:2e:94:0c:ad:2a:23:
-                    41:48:dd:c2:17:91:a1:2a:fb:cb:ac:93:62:20:46:
-                    dd:44:f0:45:19:e2:57:23:6b:2a:0c:e2:02:3f:09:
-                    31:f1:f3:86:ca:7a:fd:a6:4f:cd:e0:10:8c:22:4c:
-                    51:ea:bf:60:72
-                ASN1 OID: prime256v1
-                NIST CURVE: P-256
-    Signature Algorithm: ecdsa-with-SHA256
-         30:45:02:20:30:19:4e:f5:fc:65:c8:b7:95:cd:cd:0b:b4:31:
-         bf:83:ee:67:41:c1:37:0c:22:c8:eb:8e:e9:ed:d2:a7:05:19:
-         02:21:00:b5:83:0e:9c:89:a6:2a:c7:3c:e1:eb:ce:00:61:70:
-         7d:b8:a8:8e:23:70:9b:4a:cc:58:a1:31:3b:13:3d:05:58
+                    a1:db:47:b9:51:84:85:4a:d1:2a:0c:1a:35:4e:41:
+                    8a:ac:e3:3a:a0:f2:c6:62:c0:0b:3a:c5:5d:e9:2f:
+                    93:59
+    Signature Algorithm: ED25519
+    Signature Value:
+        b7:23:bc:01:ea:b0:92:8e:8b:2b:6c:98:de:19:cc:38:23:d4:
+        6e:7d:69:87:b0:32:47:8f:ec:fa:f1:45:37:a1:af:14:cc:8b:
+        e8:29:c6:b7:30:44:10:18:37:eb:4a:bc:94:95:65:d8:6d:ce:
+        51:cf:ae:52:ab:82:c1:52:cb:02
 ~~~~~~~~
 
 ### Initiator Certificate {#init-cer}
 
 ~~~~~~~~
         Version: 3 (0x2)
-        Serial Number: 1642698740 (0x61e997f4)
-    Signature Algorithm: ecdsa-with-SHA256
-        Issuer: CN=EDHOC Root
+        Serial Number: 1647419040 (0x62319ea0)
+        Signature Algorithm: ED25519
+        Issuer: CN = EDHOC Root Ed25519
         Validity
-            Not Before: Jan 20 17:12:20 2022 GMT
+            Not Before: Mar 16 08:24:00 2022 GMT
             Not After : Dec 31 23:00:00 2029 GMT
-        Subject: CN=EDHOC Initiator
+        Subject: CN = EDHOC Initiator Ed25519
         Subject Public Key Info:
-            Public Key Algorithm: id-ecPublicKey
-                Public-Key: (256 bit)
+            Public Key Algorithm: ED25519
+                ED25519 Public-Key:
                 pub:
-                    04:8a:93:ca:7e:1b:c8:46:47:d7:e7:eb:4c:61:07:
-                    c4:dc:4e:53:df:81:df:d1:98:1c:7f:82:4a:7c:1b:
-                    61:a6:fc:91:36:28:13:c2:5d:b6:af:93:be:22:c3:
-                    50:ce:b2:51:89:5b:9f:3a:8d:85:a3:58:23:a2:22:
-                    2b:9d:e2:c8:c8
-                ASN1 OID: prime256v1
-                NIST CURVE: P-256
-    Signature Algorithm: ecdsa-with-SHA256
-         30:45:02:20:32:fc:fc:a3:e8:04:88:51:5e:c1:1e:f5:70:c6:
-         b8:33:b4:30:dc:bd:d3:27:d9:65:f2:2d:4a:d2:d3:4e:07:09:
-         02:21:00:8b:bf:ec:d2:63:f6:99:e5:e2:3c:be:c5:84:78:6f:
-         f5:ea:18:e2:32:36:e5:11:d9:56:93:5f:ff:28:17:20:ae
+                    ed:06:a8:ae:61:a8:29:ba:5f:a5:45:25:c9:d0:7f:
+                    48:dd:44:a3:02:f4:3e:0f:23:d8:cc:20:b7:30:85:
+                    14:1e
+    Signature Algorithm: ED25519
+    Signature Value:
+        52:12:41:d8:b3:a7:70:99:6b:cf:c9:b9:ea:d4:e7:e0:a1:c0:
+        db:35:3a:3b:df:29:10:b3:92:75:ae:48:b7:56:01:59:81:85:
+        0d:27:db:67:34:e3:7f:67:21:22:67:dd:05:ee:ff:27:b9:e7:
+        a8:13:fa:57:4b:72:a0:0b:43:0b
 ~~~~~~~~
 
 
@@ -2222,29 +2216,26 @@ OSCORE Master Salt after KeyUpdate (Raw Value) (8 bytes)
 
 ~~~~~~~~
         Version: 3 (0x2)
-        Serial Number: 1642698693 (0x61e997c5)
-    Signature Algorithm: ecdsa-with-SHA256
-        Issuer: CN=EDHOC Root
+        Serial Number: 1647418996 (0x62319e74)
+        Signature Algorithm: ED25519
+        Issuer: CN = EDHOC Root Ed25519
         Validity
-            Not Before: Jan 20 17:11:33 2022 GMT
+            Not Before: Mar 16 08:23:16 2022 GMT
             Not After : Dec 31 23:00:00 2029 GMT
-        Subject: CN=EDHOC Root
+        Subject: CN = EDHOC Root Ed25519
         Subject Public Key Info:
-            Public Key Algorithm: id-ecPublicKey
-                Public-Key: (256 bit)
+            Public Key Algorithm: ED25519
+                ED25519 Public-Key:
                 pub:
-                    04:27:ec:f4:b4:66:d3:cd:61:14:4c:94:40:21:83:
-                    8d:57:bf:67:01:97:33:78:a1:5b:3f:5d:27:57:5d:
-                    34:c4:a9:7b:79:e0:f2:4b:44:6b:ca:67:e1:3d:75:
-                    d0:95:73:12:4b:49:b8:38:b1:09:73:f0:fb:67:e1:
-                    26:05:1c:95:95
-                ASN1 OID: prime256v1
-                NIST CURVE: P-256
-    Signature Algorithm: ecdsa-with-SHA256
-         30:44:02:20:13:73:43:26:f2:ca:35:d1:ae:db:6d:5e:1c:8e:
-         b7:b9:65:da:67:ea:d3:31:4e:50:29:09:b9:d7:57:cb:a1:68:
-         02:20:49:ba:0b:a4:f0:6e:fe:8c:0d:9c:3d:31:15:eb:9c:96:
-         ca:46:d1:28:49:9b:68:95:7d:0a:85:af:13:6b:f3:06
+                    2b:7b:3e:80:57:c8:64:29:44:d0:6a:fe:7a:71:d1:
+                    c9:bf:96:1b:62:92:ba:c4:b0:4f:91:66:9b:bb:71:
+                    3b:e4
+    Signature Algorithm: ED25519
+    Signature Value:
+        4b:b5:2b:bf:15:39:b7:1a:4a:af:42:97:78:f2:9e:da:7e:81:
+        46:80:69:8f:16:c4:8f:2a:6f:a4:db:e8:25:41:c5:82:07:ba:
+        1b:c9:cd:b0:c2:fa:94:7f:fb:f0:f0:ec:0e:e9:1a:7f:f3:7a:
+        94:d9:25:1f:a5:cd:f1:e6:7a:0f
 ~~~~~~~~
 
 
