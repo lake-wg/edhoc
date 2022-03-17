@@ -107,10 +107,13 @@ R (Raw Value) (Responder's private authentication key) (32 bytes)
 72 cc 47 61 db d4 c7 8f 75 89 31 aa 58 9d 34 8d 1e f8 74 a7 e3 03 ed
 e2 f1 40 dc f3 e6 aa 4a ac
 
-G_R (Raw Value) (Responder's public authentication key) (65 bytes)
-04 bb c3 49 60 52 6e a4 d3 2e 94 0c ad 2a 23 41 48 dd c2 17 91 a1 2a
-fb cb ac 93 62 20 46 dd 44 f0 45 19 e2 57 23 6b 2a 0c e2 02 3f 09 31
-f1 f3 86 ca 7a fd a6 4f cd e0 10 8c 22 4c 51 ea bf 60 72
+G_R (Raw Value) (Responder's public authentication key, 'x'-coordinate) (32 bytes)
+bb c3 49 60 52 6e a4 d3 2e 94 0c ad 2a 23 41 48 dd c2 17 91 a1 2a fb
+cb ac 93 62 20 46 dd 44 f0
+
+Responder's public authentication key ('y'-coordinate) (32 bytes)
+45 19 e2 57 23 6b 2a 0c e2 02 3f 09 31 f1 f3 86 ca 7a fd a6 4f cd e0
+10 8c 22 4c 51 ea bf 60 72
 
 G_RX (Raw Value) (ECDH shared secret) (32 bytes)
 f2 b6 ee a0 22 20 b9 5e ee 5a 0b c7 01 f0 74 e0 0a 84 3e a0 24 22 f6
@@ -152,10 +155,10 @@ a1 04 32
 
 CRED_R (CBOR Data Item) (94 bytes)
 a2 02 6b 65 78 61 6d 70 6c 65 2e 65 64 75 08 a1 01 a5 01 01 02 32 20
-01 21 58 20 bb c3 49 60 52 6e a4 d3 2e 94 0c ad 2a 23 41 48 dd c2 17
-91 a1 2a fb cb ac 93 62 20 46 dd 44 f0 22 58 20 45 19 e2 57 23 6b 2a
-0c e2 02 3f 09 31 f1 f3 86 ca 7a fd a6 4f cd e0 10 8c 22 4c 51 ea bf
-60 72
+01 21 58 20 c3 49 60 52 6e a4 d3 2e 94 0c ad 2a 23 41 48 dd c2 17 91
+a1 2a fb cb ac 93 62 20 46 dd 44 f0 00 22 58 20 00 00 00 00 00 00 00
+b5 04 15 10 00 00 00 d0 a1 04 2b 00 00 00 00 00 00 00 00 00 00 00 00
+00 a2
 
 EAD_2 (CBOR Sequence) (0 bytes)
 
@@ -163,25 +166,25 @@ info for MAC_2 (CBOR Sequence) (140 bytes)
 58 20 9b 99 cf d7 af dc bc c9 95 0a 63 73 50 7f 2a 81 01 33 19 62 56
 97 e4 f9 bf 7a 44 8f c8 e6 33 ca 65 4d 41 43 5f 32 58 61 a1 04 32 a2
 02 6b 65 78 61 6d 70 6c 65 2e 65 64 75 08 a1 01 a5 01 01 02 32 20 01
-21 58 20 bb c3 49 60 52 6e a4 d3 2e 94 0c ad 2a 23 41 48 dd c2 17 91
-a1 2a fb cb ac 93 62 20 46 dd 44 f0 22 58 20 45 19 e2 57 23 6b 2a 0c
-e2 02 3f 09 31 f1 f3 86 ca 7a fd a6 4f cd e0 10 8c 22 4c 51 ea bf 60
-72 08
+21 58 20 c3 49 60 52 6e a4 d3 2e 94 0c ad 2a 23 41 48 dd c2 17 91 a1
+2a fb cb ac 93 62 20 46 dd 44 f0 00 22 58 20 00 00 00 00 00 00 00 b5
+04 15 10 00 00 00 d0 a1 04 2b 00 00 00 00 00 00 00 00 00 00 00 00 00
+a2 08
 
 MAC_2 (Raw Value) (8 bytes)
-34 ac 0b 3d 33 96 c1 bb
+40 46 7f 23 11 bd a5 7a
 
 MAC_2 (CBOR Data Item) (9 bytes)
-48 34 ac 0b 3d 33 96 c1 bb
+48 40 46 7f 23 11 bd a5 7a
 
 Signature_or_MAC_2 (Raw Value) (8 bytes)
-34 ac 0b 3d 33 96 c1 bb
+40 46 7f 23 11 bd a5 7a
 
 Signature_or_MAC_2 (CBOR Data Item) (9 bytes)
-48 34 ac 0b 3d 33 96 c1 bb
+48 40 46 7f 23 11 bd a5 7a
 
 PLAINTEXT_2 (CBOR Sequence) (10 bytes)
-32 48 34 ac 0b 3d 33 96 c1 bb
+32 48 40 46 7f 23 11 bd a5 7a
 
 info for KEYSTREAM_2 (CBOR Sequence) (48 bytes)
 58 20 9b 99 cf d7 af dc bc c9 95 0a 63 73 50 7f 2a 81 01 33 19 62 56
@@ -192,14 +195,14 @@ KEYSTREAM_2 (Raw Value) (10 bytes)
 7b 86 c0 4a f7 3b 50 d3 1b 6f
 
 CIPHERTEXT_2 (Raw Value) (10 bytes)
-49 ce f4 e6 fc 06 63 45 da d4
+49 ce 80 0c 88 18 41 6e be 15
 
 CIPHERTEXT_2 (CBOR Data Item) (11 bytes)
-4a 49 ce f4 e6 fc 06 63 45 da d4
+4a 49 ce 80 0c 88 18 41 6e be 15
 
 message_2 (CBOR Sequence) (45 bytes)
 58 2a 41 97 01 d7 f0 0a 26 c2 dc 58 7a 36 dd 75 25 49 f3 37 63 c8 93
-42 2c 8e a0 f9 55 a1 3a 4f f5 d5 49 ce f4 e6 fc 06 63 45 da d4 27
+42 2c 8e a0 f9 55 a1 3a 4f f5 d5 49 ce 80 0c 88 18 41 6e be 15 27
 
 
 
@@ -209,10 +212,13 @@ I (Raw Value) (Initiator's private authentication key) (32 bytes)
 8e a3 ac 17 0f b9 00 ae 50 5b 18 74 7f b5 04 db da 74 8c 6d 0c 17 60
 1d 7b a3 14 30 d7 45 17 8a
 
-G_I (Raw Value) (Initiator's public authentication key) (65 bytes)
-04 8a 93 ca 7e 1b c8 46 47 d7 e7 eb 4c 61 07 c4 dc 4e 53 df 81 df d1
-98 1c 7f 82 4a 7c 1b 61 a6 fc 91 36 28 13 c2 5d b6 af 93 be 22 c3 50
-ce b2 51 89 5b 9f 3a 8d 85 a3 58 23 a2 22 2b 9d e2 c8 c8
+G_I (Raw Value) (Initiator's public authentication key, 'x'-coordinate) (32 bytes)
+8a 93 ca 7e 1b c8 46 47 d7 e7 eb 4c 61 07 c4 dc 4e 53 df 81 df d1 98
+1c 7f 82 4a 7c 1b 61 a6 fc
+
+Initiator's public authentication key ('y'-coordinate) (32 bytes)
+91 36 28 13 c2 5d b6 af 93 be 22 c3 50 ce b2 51 89 5b 9f 3a 8d 85 a3
+58 23 a2 22 2b 9d e2 c8 c8
 
 G_IY (Raw Value) (ECDH shared secret) (32 bytes)
 57 97 42 05 e1 e1 45 10 45 83 e7 f6 0b 8f 9f d3 f1 92 d3 6c 9b d8 88
@@ -224,127 +230,127 @@ a3 ab 66 a8 89 1d 56 cc 4a
 
 Input to calculate TH_3 (CBOR Sequence) (45 bytes)
 58 20 9b 99 cf d7 af dc bc c9 95 0a 63 73 50 7f 2a 81 01 33 19 62 56
-97 e4 f9 bf 7a 44 8f c8 e6 33 ca 4a 49 ce f4 e6 fc 06 63 45 da d4
+97 e4 f9 bf 7a 44 8f c8 e6 33 ca 4a 49 ce 80 0c 88 18 41 6e be 15
 
 TH_3 (Raw Value) (32 bytes)
-62 e4 92 47 65 f8 20 88 e5 5c d0 9d 55 28 0d 8a ff 99 97 75 11 04 bf
-aa 55 1e 36 c9 91 32 0b 1b
+e1 2b 96 8b 7b cb 03 7d 53 69 b8 ce e0 65 91 8c c9 31 90 1d b9 92 23
+ef 6c 45 61 70 85 05 7c 28
 
 TH_3 (CBOR Data Item) (34 bytes)
-58 20 62 e4 92 47 65 f8 20 88 e5 5c d0 9d 55 28 0d 8a ff 99 97 75 11
-04 bf aa 55 1e 36 c9 91 32 0b 1b
+58 20 e1 2b 96 8b 7b cb 03 7d 53 69 b8 ce e0 65 91 8c c9 31 90 1d b9
+92 23 ef 6c 45 61 70 85 05 7c 28
 
 ID_CRED_I (CBOR Data Item) (3 bytes)
 a1 04 2b
 
 CRED_I (CBOR Data Item) (106 bytes)
 a2 02 77 34 32 2d 35 30 2d 33 31 2d 46 46 2d 45 46 2d 33 37 2d 33 32
-2d 33 39 08 a1 01 a5 01 01 02 2b 20 01 21 58 20 8a 93 ca 7e 1b c8 46
-47 d7 e7 eb 4c 61 07 c4 dc 4e 53 df 81 df d1 98 1c 7f 82 4a 7c 1b 61
-a6 fc 22 58 20 91 36 28 13 c2 5d b6 af 93 be 22 c3 50 ce b2 51 89 5b
-9f 3a 8d 85 a3 58 23 a2 22 2b 9d e2 c8 c8
+2d 33 39 08 a1 01 a5 01 01 02 2b 20 01 21 58 20 93 ca 7e 1b c8 46 47
+d7 e7 eb 4c 61 07 c4 dc 4e 53 df 81 df d1 98 1c 7f 82 4a 7c 1b 61 a6
+fc 93 22 58 20 ca 7e 1b c8 46 47 d7 e7 eb 4c 61 07 c4 dc 4e 53 df 81
+df d1 98 1c 7f 82 4a 7c 1b 61 a6 fc 93 ca
 
 EAD_3 (CBOR Sequence) (0 bytes)
 
 info for MAC_3 (CBOR Sequence) (152 bytes)
-58 20 62 e4 92 47 65 f8 20 88 e5 5c d0 9d 55 28 0d 8a ff 99 97 75 11
-04 bf aa 55 1e 36 c9 91 32 0b 1b 65 4d 41 43 5f 33 58 6d a1 04 2b a2
+58 20 e1 2b 96 8b 7b cb 03 7d 53 69 b8 ce e0 65 91 8c c9 31 90 1d b9
+92 23 ef 6c 45 61 70 85 05 7c 28 65 4d 41 43 5f 33 58 6d a1 04 2b a2
 02 77 34 32 2d 35 30 2d 33 31 2d 46 46 2d 45 46 2d 33 37 2d 33 32 2d
-33 39 08 a1 01 a5 01 01 02 2b 20 01 21 58 20 8a 93 ca 7e 1b c8 46 47
-d7 e7 eb 4c 61 07 c4 dc 4e 53 df 81 df d1 98 1c 7f 82 4a 7c 1b 61 a6
-fc 22 58 20 91 36 28 13 c2 5d b6 af 93 be 22 c3 50 ce b2 51 89 5b 9f
-3a 8d 85 a3 58 23 a2 22 2b 9d e2 c8 c8 08
+33 39 08 a1 01 a5 01 01 02 2b 20 01 21 58 20 93 ca 7e 1b c8 46 47 d7
+e7 eb 4c 61 07 c4 dc 4e 53 df 81 df d1 98 1c 7f 82 4a 7c 1b 61 a6 fc
+93 22 58 20 ca 7e 1b c8 46 47 d7 e7 eb 4c 61 07 c4 dc 4e 53 df 81 df
+d1 98 1c 7f 82 4a 7c 1b 61 a6 fc 93 ca 08
 
 MAC_3 (Raw Value) (8 bytes)
-b3 a8 08 8b 02 8a 20 3d
+f7 18 85 f9 18 bd 39 eb
 
 MAC_3 (CBOR Data Item) (9 bytes)
-48 b3 a8 08 8b 02 8a 20 3d
+48 f7 18 85 f9 18 bd 39 eb
 
 Signature_or_MAC_3 (Raw Value) (8 bytes)
-b3 a8 08 8b 02 8a 20 3d
+f7 18 85 f9 18 bd 39 eb
 
 Signature_or_MAC_3 (CBOR Data Item) (9 bytes)
-48 b3 a8 08 8b 02 8a 20 3d
+48 f7 18 85 f9 18 bd 39 eb
 
 P_3 (CBOR Sequence) (10 bytes)
-2b 48 b3 a8 08 8b 02 8a 20 3d
+2b 48 f7 18 85 f9 18 bd 39 eb
 
 A_3 (CBOR Data Item) (45 bytes)
-83 68 45 6e 63 72 79 70 74 30 40 58 20 62 e4 92 47 65 f8 20 88 e5 5c
-d0 9d 55 28 0d 8a ff 99 97 75 11 04 bf aa 55 1e 36 c9 91 32 0b 1b
+83 68 45 6e 63 72 79 70 74 30 40 58 20 e1 2b 96 8b 7b cb 03 7d 53 69
+b8 ce e0 65 91 8c c9 31 90 1d b9 92 23 ef 6c 45 61 70 85 05 7c 28
 
 info for K_3 (CBOR Sequence) (40 bytes)
-58 20 62 e4 92 47 65 f8 20 88 e5 5c d0 9d 55 28 0d 8a ff 99 97 75 11
-04 bf aa 55 1e 36 c9 91 32 0b 1b 63 4b 5f 33 40 10
+58 20 e1 2b 96 8b 7b cb 03 7d 53 69 b8 ce e0 65 91 8c c9 31 90 1d b9
+92 23 ef 6c 45 61 70 85 05 7c 28 63 4b 5f 33 40 10
 
 K_3 (Raw Value) (16 bytes)
-89 aa 3d ab 8b 85 46 70 62 1f e4 e4 a4 31 96 fc
+03 38 b3 1d 37 b4 ef 7d 4a a8 0d 6a 1a 45 3a 68
 
 info for IV_3 (CBOR Sequence) (41 bytes)
-58 20 62 e4 92 47 65 f8 20 88 e5 5c d0 9d 55 28 0d 8a ff 99 97 75 11
-04 bf aa 55 1e 36 c9 91 32 0b 1b 64 49 56 5f 33 40 0d
+58 20 e1 2b 96 8b 7b cb 03 7d 53 69 b8 ce e0 65 91 8c c9 31 90 1d b9
+92 23 ef 6c 45 61 70 85 05 7c 28 64 49 56 5f 33 40 0d
 
 IV_3 (Raw Value) (13 bytes)
-f0 e6 95 b3 d0 87 33 7f 79 73 91 1b ba
+54 15 21 f6 69 5e a0 76 d9 02 1e 44 da
 
 CIPHERTEXT_3 (Raw Value) (18 bytes)
-07 38 5e 43 88 7d f6 19 76 a7 66 29 42 44 b4 9a 77 20
+42 44 6b db 96 53 a3 b9 bf c1 e3 14 cc 2b 89 0c d0 93
 
 CIPHERTEXT_3 (CBOR Data Item) (19 bytes)
-52 07 38 5e 43 88 7d f6 19 76 a7 66 29 42 44 b4 9a 77 20
+52 42 44 6b db 96 53 a3 b9 bf c1 e3 14 cc 2b 89 0c d0 93
 
 message_3 (CBOR Sequence) (19 bytes)
-52 07 38 5e 43 88 7d f6 19 76 a7 66 29 42 44 b4 9a 77 20
+52 42 44 6b db 96 53 a3 b9 bf c1 e3 14 cc 2b 89 0c d0 93
 
 
 
 
 
 Input to calculate TH_4 (CBOR Sequence) (53 bytes)
-58 20 62 e4 92 47 65 f8 20 88 e5 5c d0 9d 55 28 0d 8a ff 99 97 75 11
-04 bf aa 55 1e 36 c9 91 32 0b 1b 52 07 38 5e 43 88 7d f6 19 76 a7 66
-29 42 44 b4 9a 77 20
+58 20 e1 2b 96 8b 7b cb 03 7d 53 69 b8 ce e0 65 91 8c c9 31 90 1d b9
+92 23 ef 6c 45 61 70 85 05 7c 28 52 42 44 6b db 96 53 a3 b9 bf c1 e3
+14 cc 2b 89 0c d0 93
 
 TH_4 (Raw Value) (32 bytes)
-87 bd ce ae 32 c3 fa 0a da 08 fa e2 7d b1 b3 77 ac 51 c8 f7 d2 cd 14
-44 06 02 75 5b 62 bd a4 0f
+73 08 ab 7d 0c 4a 1e d6 3a 65 10 32 2e ab 13 c9 02 ef b5 05 2c 3d c4
+4b 4a 67 24 a7 5d aa 29 87
 
 TH_4 (CBOR Data Item) (34 bytes)
-58 20 87 bd ce ae 32 c3 fa 0a da 08 fa e2 7d b1 b3 77 ac 51 c8 f7 d2
-cd 14 44 06 02 75 5b 62 bd a4 0f
+58 20 73 08 ab 7d 0c 4a 1e d6 3a 65 10 32 2e ab 13 c9 02 ef b5 05 2c
+3d c4 4b 4a 67 24 a7 5d aa 29 87
 
 EAD_4 (CBOR Sequence) (0 bytes)
 
 P_4 (CBOR Sequence) (0 bytes)
 
 A_4 (CBOR Data Item) (45 bytes)
-83 68 45 6e 63 72 79 70 74 30 40 58 20 87 bd ce ae 32 c3 fa 0a da 08
-fa e2 7d b1 b3 77 ac 51 c8 f7 d2 cd 14 44 06 02 75 5b 62 bd a4 0f
+83 68 45 6e 63 72 79 70 74 30 40 58 20 73 08 ab 7d 0c 4a 1e d6 3a 65
+10 32 2e ab 13 c9 02 ef b5 05 2c 3d c4 4b 4a 67 24 a7 5d aa 29 87
 
 info for K_4 (CBOR Sequence) (46 bytes)
-58 20 87 bd ce ae 32 c3 fa 0a da 08 fa e2 7d b1 b3 77 ac 51 c8 f7 d2
-cd 14 44 06 02 75 5b 62 bd a4 0f 69 45 44 48 4f 43 5f 4b 5f 34 40 10
+58 20 73 08 ab 7d 0c 4a 1e d6 3a 65 10 32 2e ab 13 c9 02 ef b5 05 2c
+3d c4 4b 4a 67 24 a7 5d aa 29 87 69 45 44 48 4f 43 5f 4b 5f 34 40 10
 
 K_4 (Raw Value) (16 bytes)
-45 ec 24 e8 35 c7 e5 ba db 22 89 f3 8f 7e c8 bc
+63 0a 5a 53 f8 12 ba f2 ae d4 2f 50 d5 18 79 14
 
 info for IV_4 (CBOR Sequence) (47 bytes)
-58 20 87 bd ce ae 32 c3 fa 0a da 08 fa e2 7d b1 b3 77 ac 51 c8 f7 d2
-cd 14 44 06 02 75 5b 62 bd a4 0f 6a 45 44 48 4f 43 5f 49 56 5f 34 40
+58 20 73 08 ab 7d 0c 4a 1e d6 3a 65 10 32 2e ab 13 c9 02 ef b5 05 2c
+3d c4 4b 4a 67 24 a7 5d aa 29 87 6a 45 44 48 4f 43 5f 49 56 5f 34 40
 0d
 
 IV_4 (Raw Value) (13 bytes)
-fd ca b2 0c 6d d8 62 4e f9 27 56 ce 0d
+72 82 9c e4 30 59 26 0f 78 f9 5c 1c d8
 
 CIPHERTEXT_4 (8 bytes)
-83 ef 1c b9 f4 5c 23 e6
+65 49 03 03 60 f5 ef d4
 
 CIPHERTEXT_4 (CBOR Data Item) (9 bytes)
-48 83 ef 1c b9 f4 5c 23 e6
+48 65 49 03 03 60 f5 ef d4
 
 message_4 (CBOR Sequence) (9 bytes)
-48 83 ef 1c b9 f4 5c 23 e6
+48 65 49 03 03 60 f5 ef d4
 
 OSCORE AEAD Algorithm (int)
 10
@@ -359,20 +365,20 @@ Server's OSCORE Sender ID (Raw Value) (1 bytes)
 37
 
 info for OSCORE Master Secret (CBOR Sequence) (50 bytes)
-58 20 87 bd ce ae 32 c3 fa 0a da 08 fa e2 7d b1 b3 77 ac 51 c8 f7 d2
-cd 14 44 06 02 75 5b 62 bd a4 0f 6d 4f 53 43 4f 52 45 5f 53 65 63 72
+58 20 73 08 ab 7d 0c 4a 1e d6 3a 65 10 32 2e ab 13 c9 02 ef b5 05 2c
+3d c4 4b 4a 67 24 a7 5d aa 29 87 6d 4f 53 43 4f 52 45 5f 53 65 63 72
 65 74 40 10
 
 OSCORE Master Secret (Raw Value) (16 bytes)
-22 a3 35 91 06 ed bb 7c 98 db aa 5f ce 14 04 e2
+b2 c3 ed 8f c9 3f cc eb ce 79 6f 72 e2 33 56 9c
 
 info for OSCORE Master Salt (CBOR Sequence) (48 bytes)
-58 20 87 bd ce ae 32 c3 fa 0a da 08 fa e2 7d b1 b3 77 ac 51 c8 f7 d2
-cd 14 44 06 02 75 5b 62 bd a4 0f 6b 4f 53 43 4f 52 45 5f 53 61 6c 74
+58 20 73 08 ab 7d 0c 4a 1e d6 3a 65 10 32 2e ab 13 c9 02 ef b5 05 2c
+3d c4 4b 4a 67 24 a7 5d aa 29 87 6b 4f 53 43 4f 52 45 5f 53 61 6c 74
 40 08
 
 OSCORE Master Salt (Raw Value) (8 bytes)
-31 b8 35 6a d1 14 8d 8f
+87 99 71 21 fd a7 a2 aa
 
 KeyUpdate Nonce (Raw Value) (16 bytes)
 05 bd 1f fd 85 c5 46 da 86 3c 97 0a 34 b7 43 a3
@@ -382,8 +388,7 @@ PRK_4x3m  after KeyUpdate (Raw Value) (32 bytes)
 fd a1 5b ab c0 fa ed 5a 0f
 
 OSCORE Master Secret after KeyUpdate (Raw Value) (16 bytes)
-aa 1d 15 f8 07 6d a0 33 63 f3 ec 61 7d 34 9e 63
+84 50 62 2c e0 65 9f 08 da ef f0 d9 3e b6 4a 92
 
 OSCORE Master Salt after KeyUpdate (Raw Value) (8 bytes)
-ec 9f 21 e0 48 83 e6 93
-
+fd ff 48 82 ab f5 eb 73
