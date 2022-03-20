@@ -1459,7 +1459,9 @@ IANA has added the well-known URI "edhoc" to the "Well-Known URIs" registry unde
 
 ## Media Types Registry {#media-type}
 
-IANA has added the media type "application/edhoc" to the "Media Types" registry.
+IANA has added the media types "application/edhoc" and "application/edhoc+cbor-seq" to the "Media Types" registry.
+
+### application/edhoc Media Type Registration
 
 - Type name: application
 
@@ -1499,17 +1501,59 @@ IANA has added the media type "application/edhoc" to the "Media Types" registry.
 
 - Change Controller: IESG
 
+### application/edhoc+cbor-seq Media Type Registration
+
+- Type name: application
+
+- Subtype name: edhoc+cbor-seq
+
+- Required parameters: N/A
+
+- Optional parameters: N/A
+
+- Encoding considerations: binary
+
+- Security considerations: See Section 7 of this document.
+
+- Interoperability considerations: N/A
+
+- Published specification: \[\[this document\]\] (this document)
+
+- Applications that use this media type: To be identified
+
+- Fragment identifier considerations: N/A
+
+- Additional information:
+
+  * Magic number(s): N/A
+
+  * File extension(s): N/A
+
+  * Macintosh file type code(s): N/A
+
+- Person & email address to contact for further information: See "Authors' Addresses" section.
+
+- Intended usage: COMMON
+
+- Restrictions on usage: N/A
+
+- Author: See "Authors' Addresses" section.
+
+- Change Controller: IESG
+
 ## CoAP Content-Formats Registry {#content-format}
 
-IANA has added the media type "application/edhoc" to the "CoAP Content-Formats" registry under the group name "Constrained RESTful Environments (CoRE) Parameters".
+IANA has added the media types "application/edhoc" and "application/edhoc+cbor-seq" to the "CoAP Content-Formats" registry under the group name "Constrained RESTful Environments (CoRE) Parameters".
 
--  Media Type: application/edhoc
-
--  Encoding:
-
--  ID: TBD42
-
--  Reference: \[\[this document\]\]
+~~~~~~~~~~~
++----------------------------+----------+-------+------------------------+
+| Media Type                 | Encoding | ID    | Reference              |
++----------------------------+----------+-------+------------------------+
+| application/edhoc          | -        | TBD42 | \[\[this document\]\]  |
+| application/edhoc+cbor-seq | -        | TBD43 | \[\[this document\]\]  |
++----------------------------+----------+-------+------------------------+
+~~~~~~~~~~~
+{: #fig-format-ids title="CoAP Content-Format IDs"}
 
 ## Resource Type (rt=) Link Target Attribute Values Registry {#rt}
 
@@ -1627,7 +1671,7 @@ In order for the server to correlate a message received from a client to a messa
 The prepended identifiers are encoded in CBOR and thus self-delimiting. They are sent in front of the actual EDHOC message to keep track of messages in an EDHOC session, and only the part of the body following the identifier is used for EDHOC processing. In particular, the connection identifiers within the EDHOC messages are not impacted by the prepended identifiers.
 
 The application/edhoc media type does not apply to these messages;
-their media type is unnamed.
+their media type is application/edhoc+cbor-seq.
 
 An example of a successful EDHOC exchange using CoAP is shown in {{fig-coap1}}. In this case the CoAP Token enables correlation on the Initiator side, and the prepended C_R enables correlation on the Responder (server) side.
 
@@ -1636,6 +1680,7 @@ Client    Server
   |          |
   +--------->| Header: POST (Code=0.02)
   |   POST   | Uri-Path: "/.well-known/edhoc"
+  |          | Content-Format: application/edhoc+cbor-seq
   |          | Payload: true, EDHOC message_1
   |          |
   |<---------+ Header: 2.04 Changed
@@ -1644,6 +1689,7 @@ Client    Server
   |          |
   +--------->| Header: POST (Code=0.02)
   |   POST   | Uri-Path: "/.well-known/edhoc"
+  |          | Content-Format: application/edhoc+cbor-seq
   |          | Payload: C_R, EDHOC message_3
   |          |
   |<---------+ Header: 2.04 Changed
@@ -1670,6 +1716,7 @@ Client    Server
   |          |
   +--------->| Header: POST (Code=0.02)
   |   POST   | Uri-Path: "/.well-known/edhoc"
+  |          | Content-Format: application/edhoc+cbor-seq
   |          | Payload: C_I, EDHOC message_2
   |          |
   |<---------+ Header: 2.04 Changed
