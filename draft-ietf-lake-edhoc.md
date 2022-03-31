@@ -358,7 +358,8 @@ EDHOC includes the selection of connection identifiers (C_I, C_R) identifying a 
 
 Connection identifiers may be used to correlate EDHOC messages and facilitate the retrieval of protocol state during EDHOC execution (see {{transport}}) or in subsequent applications of  EDHOC, e.g., in OSCORE (see {{ci-oscore}}). The connection identifiers do not have any cryptographic purpose in EDHOC.
 
-Connection identifiers in EDHOC are byte strings or integers, encoded in CBOR. One byte connection identifiers (the integers -24 to 23 and the empty CBOR byte string h'') are realistic in many scenarios as most constrained devices only have a few connections. An endpoint may choose to select only integer or only byte string connection identifiers.
+Connection identifiers in EDHOC are CBOR byte strings. Since most constrained devices only have a few connections short identifiers are desirable in many cases. However, except for the empty byte string h'' which encodes as as one byte (0x40), all byte strings are CBOR encoded as two or more bytes. Therefore EDHOC specifies certain byte strings to be represented as CBOR ints on the wire, see {{bstr-repr}}.
+
 
 ### Selection of Connection Identifiers
 
@@ -368,7 +369,29 @@ If connection identifiers are used by an application protocol for which EDHOC es
 
 ### Use of Connection Identifiers with OSCORE {#ci-oscore}
 
-For OSCORE, the choice of connection identifier results in the endpoint selecting its Recipient ID, see Section 3.1 of {{RFC8613}}, for which certain uniqueness requirements apply, see Section 3.3 of {{RFC8613}}. Therefore, the Initiator and the Responder MUST NOT select connection identifiers such that it results in same OSCORE Recipient ID. Since the Recipient ID is a byte string and an EDHOC connection identifier is either a CBOR byte string or a CBOR integer, care must be taken when selecting the connection identifiers and converting them to Recipient IDs. A mapping from EDHOC connection identifier to OSCORE Recipient ID is specified in {{edhoc-to-oscore}}.
+For OSCORE, the choice of connection identifier results in the endpoint selecting its Recipient ID, see Section 3.1 of {{RFC8613}}, for which certain uniqueness requirements apply, see Section 3.3 of {{RFC8613}}. Therefore, the Initiator and the Responder MUST NOT select connection identifiers such that it results in same OSCORE Recipient ID. Since the connection identifier is byte-valued, it is converted to an OSCORE Recipient ID equal to the byte string.
+
+For example, a byte-string valued C_I equal to 0xFF (0x41FF in CBOR encoding) is converted to a (typically client) Responder ID equal to 0xFF.
+
+### Representation of Byte-String Identifiers {#bstr-repr}
+
+The integers -24, ..., 23 are all CBOR encoded as one byte, see {{fig-int-one-byte}}.
+
+~~~~~~~~~~~
+Integer:               -24   -23  ...   -2    -1     0     1  ...   23
+CBOR encoding (1 byte): 37    36  ...   21    20    00    01  ...   17
+~~~~~~~~~~~
+{: #fig-int-one-byte title="One-Byte CBOR Encoded Integers"}
+{: artwork-align="center"}
+
+To allow more byte string identifiers that are only one byte on the wire, certain byte strings are defined to  have integer representations in the interval -24, ... ,23. These byte strings are those for which there is an integer in the interval -24, ..., 23 that happens to have this byte string as its CBOR encoding, see {{fig-bstr-as-int}} and compare {{fig-int-one-byte}}.
+
+~~~~~~~~~~~
+Byte string           h'37' h'36' ... h'21' h'20' h'00' h'01' ... h'17'
+Integer:               -24   -23  ...   -2    -1     0     1  ...   23
+~~~~~~~~~~~
+{: #fig-bstr-as-int title="Byte Strings Represented as Integers"}
+{: artwork-align="center"}
 
 
 ## Transport {#transport}
@@ -752,7 +775,7 @@ message_1 = (
   METHOD : int,
   SUITES_I : suites,
   G_X : bstr,
-  C_I : bstr / int,
+  C_I : bstr,
   ? EAD_1 : ead,
 )
 
@@ -805,7 +828,7 @@ message_2 SHALL be a CBOR Sequence (see {{CBOR}}) as defined below
 ~~~~~~~~~~~ CDDL
 message_2 = (
   G_Y_CIPHERTEXT_2 : bstr,
-  C_R : bstr / int,
+  C_R : bstr,
 )
 ~~~~~~~~~~~
 
@@ -1537,41 +1560,7 @@ Expert reviewers should take into consideration the following points:
 
 # Use with OSCORE and Transfer over CoAP {#transfer}
 
-This appendix describes how to select EDHOC connection identifiers and derive an OSCORE security context when OSCORE is used with EDHOC, and how to transfer EDHOC messages over CoAP.
-
-## Selecting EDHOC Connection Identifier {#edhoc-to-oscore}
-
-This section specifies a rule for converting from EDHOC connection identifier to OSCORE Sender/Recipient ID. (An identifier is Sender ID or Recipient ID depending on from which endpoint is the point of view, see Section 3.1 of {{RFC8613}}.) Typically the Initiator is OSCORE client, in which case C_R becomes the client Sender ID.
-
-* If the EDHOC connection identifier is numeric, i.e., encoded as a CBOR integer on the wire, it is converted to an OSCORE Sender/Recipient ID equal to the CBOR encoding.
-
-For example, a numeric C_R equal to 10 (0x0A in CBOR encoding) is converted to a (typically client) Sender ID equal to 0x0A, while a numeric C_I equal to -12 (0x2B in CBOR encoding) is converted to a (typically client) Sender ID equal to 0x2B.
-
-* If the EDHOC connection identifier is byte-valued, hence encoded as a CBOR byte string on the wire, it is converted to an OSCORE Sender/Recipient ID equal to the byte string.
-
-For example, a byte-string valued C_R equal to 0xFF (0x41FF in CBOR encoding) is converted to a (typically client) Sender ID equal to 0xFF.
-
-Two EDHOC connection identifiers are called "equivalent" if and only if, when converted, they both result in the same OSCORE Sender/Recipient ID. For example, the two EDHOC connection identifiers with CBOR encoding 0x0A (numeric) and 0x410A (byte-valued) are equivalent since they both result in the same OSCORE Sender/Recipient ID 0x0A.
-
-When EDHOC is used to establish an OSCORE security context, the connection identifiers C_I and C_R MUST NOT be equivalent. Furthermore, in case of multiple OSCORE security contexts with potentially different endpoints, to facilitate the retrieval of the correct OSCORE security context, an endpoint SHOULD select an EDHOC connection identifier that when converted to OSCORE Recipient ID does not coincide with its other Recipient IDs.
-
-An endpoint MAY choose to select only a specific range of connection identifiers, e.g., connection identifiers which are only int or only bstr. The number of unique OSCORE Sender/Recipient ID of a given byte length on the wire is reduced by this choice, an example is given in {{fig-number-connection-id}}.
-
-
-~~~~~~~~~~~
-+---------------------+----------------------+
-|     Size of SID/RID |  Number of CI as int |
-+=====================+======================+
-|                   0 |                    0 |
-+---------------------+----------------------+
-|                   1 |                   48 |
-+---------------------+----------------------+
-|                   2 |                  464 |
-+---------------------+----------------------+
-~~~~~~~~~~~
-{: #fig-number-connection-id title="Number of integer EDHOC Connection Identifiers corresponding to OSCORE Sender/Recipient Identifiers of a given size in bytes."}
-
-
+This appendix describes how to derive an OSCORE security context when OSCORE is used with EDHOC, and how to transfer EDHOC messages over CoAP.
 
 ## Deriving the OSCORE Security Context {#oscore-ctx-derivation}
 
@@ -1596,7 +1585,7 @@ Master Salt   = EDHOC-Exporter("OSCORE_Salt", h'', salt_length)
 
 * The HKDF Algorithm is the one based on the application hash algorithm of the selected cipher suite for the EDHOC session. For example, if SHA-256 is the application hash algorithm of the selected cipher suite, HKDF SHA-256 is used as HKDF Algorithm in the OSCORE Security Context.
 
-* In case the Client is Initiator and the Server is Responder, the Client's OSCORE Sender ID and the Server's OSCORE Sender ID are determined from the EDHOC connection identifiers C_R and C_I for the EDHOC session, respectively, by applying the conversion in {{edhoc-to-oscore}}. The reverse applies in case the Client is the Responder and the Server is the Initiator.
+* In case the Client is Initiator and the Server is Responder, the Client's OSCORE Sender ID and the Server's OSCORE Sender ID are determined from the EDHOC connection identifiers C_R and C_I for the EDHOC session, respectively, by applying the conversion in {{ci-oscore}}. The reverse applies in case the Client is the Responder and the Server is the Initiator.
 
 Client and Server use the parameters above to establish an OSCORE Security Context, as per Section 3.2.1 of {{RFC8613}}.
 
