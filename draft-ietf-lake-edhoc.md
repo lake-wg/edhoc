@@ -499,7 +499,7 @@ Example: CWT or CCS can be identified by a key identifier using the 'kid' parame
 
 * ID_CRED_x = { 4 : key_id_x }, where key_id_x : kid, for x = I or R.
 
-Note that 'kid' is extended to support int values to allow more one-byte identifiers (see {{kid-header-param}} and {{kid-key-common-param}}) which may be useful in many scenarios since constrained devices only have a few keys. As stated in Section 3.1 of {{I-D.ietf-cose-rfc8152bis-struct}}, applications MUST NOT assume that 'kid' values are unique and several keys associated with a 'kid' may need to be checked before the correct one is found. Applications might use additional information such as 'kid context' or lower layers to determine which key to try first. Applications should strive to make ID_CRED_x as unique as possible, since the recipient may otherwise have to try several keys.
+The COSE 'kid' parameter has byte string as value. To allow more one-byte key identifiers, which may be useful in many scenarios since constrained devices only have a few keys, we use the same integer representation as for connection identifiers, see {{bstr-repr}}. As stated in Section 3.1 of {{I-D.ietf-cose-rfc8152bis-struct}}, applications MUST NOT assume that 'kid' values are unique and several keys associated with a 'kid' may need to be checked before the correct one is found. Applications might use additional information such as 'kid context' or lower layers to determine which key to try first. Applications should strive to make ID_CRED_x as unique as possible, since the recipient may otherwise have to try several keys.
 
 See {{COSE}} for more examples.
 
@@ -862,9 +862,9 @@ The Responder SHALL compose message_2 as follows:
 
 * CIPHERTEXT_2 is calculated by using the Expand function as a binary additive stream cipher.
 
-   * plaintext = ( ? PAD, ID_CRED_R / bstr / int, Signature_or_MAC_2, ? EAD_2 )
+   * plaintext = ( ? PAD, ID_CRED_R / bstr / -24..23, Signature_or_MAC_2, ? EAD_2 )
 
-      * If ID_CRED_R contains a single 'kid' parameter, i.e., ID_CRED_R = { 4 : kid_R }, then only the byte string or integer kid_R is conveyed in the plaintext encoded accordingly as bstr or int.
+      * If ID_CRED_R contains a single 'kid' parameter, i.e., ID_CRED_R = { 4 : kid_R }, then only the byte string kid_R is conveyed in the plaintext encoded as described in {{bstr-repr}}.
 
       * PAD = 1*true is padding that may be used to hide the length of the unpadded plaintext
 
@@ -937,9 +937,9 @@ The Initiator SHALL compose message_3 as follows:
       * key_length - length of the encryption key of the EDHOC AEAD algorithm
    * IV_3 = EDHOC-KDF( PRK_3e2m, TH_3, "IV_3", h'', iv_length )
       * iv_length - length of the initialization vector of the EDHOC AEAD algorithm
-   * P = ( ? PAD, ID_CRED_I / bstr / int, Signature_or_MAC_3, ? EAD_3 )
+   * P = ( ? PAD, ID_CRED_I / bstr / -24..23, Signature_or_MAC_3, ? EAD_3 )
 
-      * If ID_CRED_I contains a single 'kid' parameter, i.e., ID_CRED_I = { 4 : kid_I }, only the byte string or integer kid_I is conveyed in the plaintext encoded accordingly as bstr or int.
+      * If ID_CRED_I contains a single 'kid' parameter, i.e., ID_CRED_I = { 4 : kid_I }, only the byte string kid_I is conveyed in the plaintext encoded as described in {{bstr-repr}}.
 
        * PAD = 1*true is padding that may be used to hide the length of the unpadded plaintext
 
@@ -1145,7 +1145,7 @@ An implementation MAY support only Initiator or only Responder.
 
 An implementation MAY support only a single method. None of the methods are mandatory-to-implement.
 
-Implementations MUST support 'kid' parameters of type int. None of the other COSE header parameters are mandatory-to-implement.
+Implementations MUST support 'kid' parameters represented as integers as described in {{bstr-repr}}. None of the other COSE header parameters are mandatory-to-implement.
 
 An implementation MAY support only a single credential type (CCS, CWT, X.509, C509). None of the credential types are mandatory-to-implement.
 
@@ -1422,51 +1422,6 @@ IANA has registered the following entries in the "COSE Header Parameters" regist
 +-----------+-------+----------------+---------------------------+
 ~~~~~~~~~~~
 
-## COSE Header Parameters Registry {#kid-header-param}
-
-IANA has extended the Value Type of 'kid' in the "COSE Header Parameters" registry under the group name "CBOR Object Signing and Encryption (COSE)" to also allow the Value Type int. The resulting Value Type is bstr / int. The Value Registry for this item is empty and omitted from the table below.
-
-~~~~~~~~~~~
-+------+-------+------------+----------------+
-| Name | Label | Value Type | Description    |
-+------+-------+------------+----------------+
-| kid  |   4   | bstr / int | Key identifier |
-+------+-------+------------+----------------+
-~~~~~~~~~~~
-
-## COSE Key Common Parameters Registry {#kid-key-common-param}
-
-IANA has extended the Value Type of 'kid' in the "COSE Key Common Parameters" registry under the group name "CBOR Object Signing and Encryption (COSE)" to also allow the Value Type int. The resulting Value Type is bstr / int. The Value Registry for this item is empty and omitted from the table below.
-
-~~~~~~~~~~~
-+------+-------+------------+----------------+
-| Name | Label | Value Type | Description    |
-+------+-------+------------+----------------+
-| kid  |   2   | bstr / int | Key identifi-  |
-|      |       |            | cation value - |
-|      |       |            | match to kid   |
-|      |       |            | in message     |
-+------+-------+------------+----------------+
-~~~~~~~~~~~
-
-
-## CWT Confirmation Methods Registry {#kid-cwt-conf-meth-param}
-
-IANA has extended the Value Type of 'kid' in the "CWT Confirmation Methods" registry under the group name "CBOR Web Token (CWT) Claims" to also allow the Value Type int. The incorrect term binary string has been corrected to bstr. The resulting Value Type is bstr / int. The new updated content for the 'kid' method is shown in the list below.
-
-- Confirmation Method Name: kid
-
-- Confirmation Method Description: Key Identifier
-
-- JWT Confirmation Method Name: kid
-
-- Confirmation Key: 3
-
-- Confirmation Value Type(s): bstr / int
-
-- Change Controller: IESG
-
-- Specification Document(s): Section 3.4 of RFC 8747 [[This document]]
 
 ## The Well-Known URI Registry {#well-known}
 
