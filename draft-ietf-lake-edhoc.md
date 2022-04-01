@@ -499,7 +499,7 @@ Example: CWT or CCS can be identified by a key identifier using the 'kid' parame
 
 * ID_CRED_x = { 4 : key_id_x }, where key_id_x : kid, for x = I or R.
 
-The COSE 'kid' parameter has byte string as value. To allow more one-byte key identifiers, which may be useful in many scenarios since constrained devices only have a few keys, we use the same integer representation as for connection identifiers, see {{bstr-repr}}. As stated in Section 3.1 of {{I-D.ietf-cose-rfc8152bis-struct}}, applications MUST NOT assume that 'kid' values are unique and several keys associated with a 'kid' may need to be checked before the correct one is found. Applications might use additional information such as 'kid context' or lower layers to determine which key to try first. Applications should strive to make ID_CRED_x as unique as possible, since the recipient may otherwise have to try several keys.
+The value of a COSE 'kid' parameter is a byte string. To allow more one-byte key identifiers, which may be useful in many scenarios since constrained devices only have a few keys, we use the same integer representation as for connection identifiers, see {{bstr-repr}}. As stated in Section 3.1 of {{I-D.ietf-cose-rfc8152bis-struct}}, applications MUST NOT assume that 'kid' values are unique and several keys associated with a 'kid' may need to be checked before the correct one is found. Applications might use additional information such as 'kid context' or lower layers to determine which key to try first. Applications should strive to make ID_CRED_x as unique as possible, since the recipient may otherwise have to try several keys.
 
 See {{COSE}} for more examples.
 
