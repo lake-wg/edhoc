@@ -1701,13 +1701,13 @@ message_1 = (
   METHOD : int,
   SUITES_I : suites,
   G_X : bstr,
-  C_I : bstr / int,
+  C_I : bstr / -24..23,
   ? EAD_1 : ead,
 )
 
 message_2 = (
   G_Y_CIPHERTEXT_2 : bstr,
-  C_R : bstr / int,
+  C_R : bstr / -24..23,
 )
 
 message_3 = (
