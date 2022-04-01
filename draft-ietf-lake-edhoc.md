@@ -369,11 +369,11 @@ If connection identifiers are used by an application protocol for which EDHOC es
 
 ### Use of Connection Identifiers with OSCORE {#ci-oscore}
 
-For OSCORE, the choice of connection identifier results in the endpoint selecting its Recipient ID, see Section 3.1 of {{RFC8613}}, for which certain uniqueness requirements apply, see Section 3.3 of {{RFC8613}}. Therefore, the Initiator and the Responder MUST NOT select connection identifiers such that it results in same OSCORE Recipient ID. Since the connection identifier is byte-valued, it is converted to an OSCORE Recipient ID equal to the byte string.
+For OSCORE, the choice of connection identifier results in the endpoint selecting its Recipient ID, see Section 3.1 of {{RFC8613}}, for which certain uniqueness requirements apply, see Section 3.3 of {{RFC8613}}. Therefore, the Initiator and the Responder MUST NOT select connection identifiers such that it results in same OSCORE Recipient ID. Since the connection identifier is a byte string, it is converted to an OSCORE Recipient ID equal to the byte string.
 
-For example, a byte-string valued C_I equal to 0xFF (0x41FF in CBOR encoding) is converted to a (typically client) Responder ID equal to 0xFF.
+For example, a byte string valued C_I equal to 0xFF (0x41FF in CBOR encoding) is converted to a (typically client) Responder ID equal to 0xFF.
 
-### Representation of Byte-String Identifiers {#bstr-repr}
+### Representation of Byte String Identifiers {#bstr-repr}
 
 The integers -24, ..., 23 are all CBOR encoded as one byte, see {{fig-int-one-byte}}.
 
