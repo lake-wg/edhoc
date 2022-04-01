@@ -358,7 +358,7 @@ EDHOC includes the selection of connection identifiers (C_I, C_R) identifying a 
 
 Connection identifiers may be used to correlate EDHOC messages and facilitate the retrieval of protocol state during EDHOC execution (see {{transport}}) or in subsequent applications of  EDHOC, e.g., in OSCORE (see {{ci-oscore}}). The connection identifiers do not have any cryptographic purpose in EDHOC.
 
-Connection identifiers in EDHOC are CBOR byte strings. Since most constrained devices only have a few connections short identifiers are desirable in many cases. However, except for the empty byte string h'' which encodes as as one byte (0x40), all byte strings are CBOR encoded as two or more bytes. Therefore EDHOC specifies certain byte strings to be represented as CBOR ints on the wire, see {{bstr-repr}}.
+Connection identifiers in EDHOC are CBOR byte strings. Since most constrained devices only have a few connections, short identifiers are desirable in many cases. However, except for the empty byte string h'' which encodes as as one byte (0x40), all byte strings are CBOR encoded as two or more bytes. Therefore EDHOC specifies certain byte strings to be represented as CBOR ints on the wire, see {{bstr-repr}}.
 
 
 ### Selection of Connection Identifiers
