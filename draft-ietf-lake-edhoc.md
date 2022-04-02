@@ -213,13 +213,13 @@ A typical setting is when one of the endpoints is constrained or in a constraine
 
 ## Message Size Examples
 
-Compared to the DTLS 1.3 handshake {{I-D.ietf-tls-dtls13}} with ECDHE and connection ID, the EDHOC message size when transferred in CoAP can be less than 1/6 when RPK authentication is used, see {{I-D.ietf-lwig-security-protocol-comparison}}. {{fig-sizes}} shows examples of EDHOC message sizes based on the assumptions in Section 2 of {{I-D.ietf-lwig-security-protocol-comparison}}, comparing different kinds of authentication keys and COSE header parameters for identification: static Diffie-Hellman keys or signature keys, either in CBOR Web Token (CWT) / CWT Claims Set (CCS) {{RFC8392}} identified by a key identifier using 'kid' {{I-D.ietf-cose-rfc8152bis-struct}}, or in X.509 certificates identified by a hash value using 'x5t' {{I-D.ietf-cose-x509}}.
+Compared to the DTLS 1.3 handshake {{I-D.ietf-tls-dtls13}} with ECDHE and connection ID, the EDHOC message size when transferred in CoAP can be less than 1/6 when RPK authentication is used, see {{I-D.ietf-lwig-security-protocol-comparison}}. {{fig-sizes}} shows examples of EDHOC message sizes based on the assumptions in Section 2 of {{I-D.ietf-lwig-security-protocol-comparison}}, comparing different kinds of authentication keys and COSE header parameters for identification: static Diffie-Hellman keys or signature keys, either in CBOR Web Token (CWT) / CWT Claims Set (CCS) {{RFC8392}} identified by an integer key identifier using 'intkid' {{kid-header-param}}, or in X.509 certificates identified by a hash value using 'x5t' {{I-D.ietf-cose-x509}}.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 ========================================================
                     Static DH Keys        Signature Keys
-                    --------------        --------------
-                    kid        x5t        kid        x5t
+                 -----------------     -----------------
+                 intkid        x5t     intkid        x5t
 --------------------------------------------------------
 message_1            37         37         37         37
 message_2            45         58        102        115
@@ -404,7 +404,7 @@ EDHOC performs the following authentication related operations:
 
 Other authentication related verifications are out of scope for EDHOC, and is the responsibility of the application. In particular, the authentication credential needs to be validated in the context of the connection for which EDHOC is used, see {{auth-validation}}. EDHOC MUST allow the application to read received information about credential (ID_CRED_R, ID_CRED_I). EDHOC MUST have access to the authentication key and the authentication credential.
 
-Note that the type of authentication key, authentication credential, and the identification of the credential have a large impact on the message size. For example, the signature_or_MAC field is much smaller with a static DH key than with a signature key. A CCS is much smaller than a self-signed certificate/CWT, but if it is possible to reference the credential with a COSE header like 'kid', then that is in turn much smaller than a CCS.
+Note that the type of authentication key, authentication credential, and the identification of the credential have a large impact on the message size. For example, the signature_or_MAC field is much smaller with a static DH key than with a signature key. A CCS is much smaller than a self-signed certificate/CWT, but if it is possible to reference the credential with a COSE header like 'kid' or 'intkid', then that is in turn much smaller than a CCS.
 
 ### Authentication Keys {#auth-keys}
 
@@ -425,7 +425,7 @@ EDHOC relies on COSE for identification of credentials (see {{id_cred}}), for ex
 
 Since CRED_R is used in the integrity verification, see {{asym-msg2-proc}}, it needs to be specified such that it is identical when used by Initiator or Responder. Similarly for CRED_I, see {{asym-msg3-proc}}. The Initiator and Responder are expected to agree on a specific encoding of the credential, see {{applicability}}.
 
-It is RECOMMENDED that the COSE 'kid' parameter, when used to identify the authentication credential, refers to a specific encoding. The Initiator and Responder SHOULD use an available authentication credential (transported in EDHOC or otherwise provisioned) without re-encoding. If for some reason re-encoding of the authentication credential may occur, then a potential common encoding for CBOR based credentials is bytewise lexicographic order of their deterministic encodings as specified in Section 4.2.1 of {{RFC8949}}.
+It is RECOMMENDED that the COSE 'kid'/'intkid' parameter, when used to identify the authentication credential, refers to a specific encoding. The Initiator and Responder SHOULD use an available authentication credential (transported in EDHOC or otherwise provisioned) without re-encoding. If for some reason re-encoding of the authentication credential may occur, then a potential common encoding for CBOR based credentials is bytewise lexicographic order of their deterministic encodings as specified in Section 4.2.1 of {{RFC8949}}.
 
 * When the authentication credential is an X.509 certificate, CRED_x SHALL be the DER encoded certificate, encoded as a bstr {{I-D.ietf-cose-x509}}.
 * When the authentication credential is a C509 certificate, CRED_x SHALL be the C509Certificate {{I-D.ietf-cose-cbor-encoded-cert}}.
@@ -441,7 +441,7 @@ An example of a CRED_x is shown below:
   8 : {                                        /cnf/
     1 : {                                      /COSE_Key/
       1 : 1,                                   /kty/
-      2 : 0,                                   /kid/
+   TBD6 : 0,                                   /intkid/
      -1 : 4,                                   /crv/
      -2 : h'b1a3e89460e88d3a8d54211dc95f0b90   /x/
             3ff205eb71912d6db8f4af980d2db83a'
@@ -472,11 +472,13 @@ Example: X.509 certificates can be identified by a hash value using the 'x5t' pa
 
 * ID_CRED_x = { 34 : COSE_CertHash }, for x = I or R,
 
-Example: CWT or CCS can be identified by a key identifier using the 'kid' parameter:
+Example: CWT or CCS can be identified by a bstr valued key identifier using the 'kid' parameter:
 
 * ID_CRED_x = { 4 : key_id_x }, where key_id_x : kid, for x = I or R.
 
-Note that 'kid' is extended to support int values to allow more one-byte identifiers (see {{kid-header-param}} and {{kid-key-common-param}}) which may be useful in many scenarios since constrained devices only have a few keys. As stated in Section 3.1 of {{I-D.ietf-cose-rfc8152bis-struct}}, applications MUST NOT assume that 'kid' values are unique and several keys associated with a 'kid' may need to be checked before the correct one is found. Applications might use additional information such as 'kid context' or lower layers to determine which key to try first. Applications should strive to make ID_CRED_x as unique as possible, since the recipient may otherwise have to try several keys.
+Note that the 'intkid' parameter (see {{kid-header-param}}) has CBOR int values thereby allowing several one-byte identifers which may be useful in constrained settings.
+
+As stated in Section 3.1 of {{I-D.ietf-cose-rfc8152bis-struct}}, applications MUST NOT assume that 'kid' values are unique and several keys associated with a 'kid' may need to be checked before the correct one is found. The same applies to 'intkid'. Applications might use additional information such as 'kid context' or lower layers to determine which key to try first. Applications should strive to make ID_CRED_x as unique as possible, since the recipient may otherwise have to try several keys.
 
 See {{COSE}} for more examples.
 
@@ -839,9 +841,9 @@ The Responder SHALL compose message_2 as follows:
 
 * CIPHERTEXT_2 is calculated by using the Expand function as a binary additive stream cipher.
 
-   * plaintext = ( ? PAD, ID_CRED_R / bstr / int, Signature_or_MAC_2, ? EAD_2 )
+   * plaintext = ( ? PAD, ID_CRED_R / int, Signature_or_MAC_2, ? EAD_2 )
 
-      * If ID_CRED_R contains a single 'kid' parameter, i.e., ID_CRED_R = { 4 : kid_R }, then only the byte string or integer kid_R is conveyed in the plaintext encoded accordingly as bstr or int.
+      * If ID_CRED_R contains a single 'intkid' parameter, i.e., ID_CRED_R = { TBD5 : kid_R }, then only the CBOR int kid_R is conveyed in the plaintext.
 
       * PAD = 1*true is padding that may be used to hide the length of the unpadded plaintext
 
@@ -914,9 +916,9 @@ The Initiator SHALL compose message_3 as follows:
       * key_length - length of the encryption key of the EDHOC AEAD algorithm
    * IV_3 = EDHOC-KDF( PRK_3e2m, TH_3, "IV_3", h'', iv_length )
       * iv_length - length of the initialization vector of the EDHOC AEAD algorithm
-   * P = ( ? PAD, ID_CRED_I / bstr / int, Signature_or_MAC_3, ? EAD_3 )
+   * P = ( ? PAD, ID_CRED_I / int, Signature_or_MAC_3, ? EAD_3 )
 
-      * If ID_CRED_I contains a single 'kid' parameter, i.e., ID_CRED_I = { 4 : kid_I }, only the byte string or integer kid_I is conveyed in the plaintext encoded accordingly as bstr or int.
+      * If ID_CRED_I contains a single 'intkid' parameter, i.e., ID_CRED_I = { TBD5 : kid_I }, only the CBOR int kid_I is conveyed in the plaintext.
 
        * PAD = 1*true is padding that may be used to hide the length of the unpadded plaintext
 
@@ -1122,7 +1124,7 @@ An implementation MAY support only Initiator or only Responder.
 
 An implementation MAY support only a single method. None of the methods are mandatory-to-implement.
 
-Implementations MUST support 'kid' parameters of type int. None of the other COSE header parameters are mandatory-to-implement.
+Implementations MUST support 'intkid' parameters. None of the other COSE header parameters are mandatory-to-implement.
 
 An implementation MAY support only a single credential type (CCS, CWT, X.509, C509). None of the credential types are mandatory-to-implement.
 
@@ -1202,7 +1204,7 @@ An attacker observing network traffic may use connection identifiers sent in cle
 
 Since the publication of {{RFC3552}} there has been an increased awareness of the need to protect against endpoints that are compromised, malicious, or whose interests simply do not align with the interests of users {{I-D.arkko-arch-internet-threat-model-guidance}}. {{RFC7624}} describes an updated threat model for Internet confidentiality, see {{sec-prop}}. {{I-D.arkko-arch-internet-threat-model-guidance}} further expands the threat model. Implementations and users SHOULD consider these threat models. In particular, even data sent protected to the other endpoint such as ID_CRED and EAD can be used for tracking, see Section 2.7 of {{I-D.arkko-arch-internet-threat-model-guidance}}.
 
-Information regarding the lengths of ID_CRED_I, ID_CRED_R, EAD_2, EAD_3, and EAD_4 are leaked to an passive attacker. Many COSE header parameters have variable length. To mitigate an attacker from differentiating endpoints with identifiers of different length, and implementation may e.g., only use fix length identifiers like 'kid' of length 1 for the Responders. Alternatively padding may be used to hide the length of e.g., certificates by value in 'x5chain' or 'c5c'.
+Information regarding the lengths of ID_CRED_I, ID_CRED_R, EAD_2, EAD_3, and EAD_4 are leaked to an passive attacker. Many COSE header parameters have variable length. To mitigate an attacker from differentiating endpoints with identifiers of different length, and implementation may e.g., only use fix length identifiers like 'intkid' of length 1 for the Responders. Alternatively padding may be used to hide the length of e.g., certificates by value in 'x5chain' or 'c5c'.
 
 ## Denial-of-Service {#dos}
 
@@ -1401,49 +1403,49 @@ IANA has registered the following entries in the "COSE Header Parameters" regist
 
 ## COSE Header Parameters Registry {#kid-header-param}
 
-IANA has extended the Value Type of 'kid' in the "COSE Header Parameters" registry under the group name "CBOR Object Signing and Encryption (COSE)" to also allow the Value Type int. The resulting Value Type is bstr / int. The Value Registry for this item is empty and omitted from the table below.
+IANA has defined the parameter 'intkid' in the "COSE Header Parameters" registry under the group name "CBOR Object Signing and Encryption (COSE)". The Value Type is int. The Value Registry for this item is empty and omitted from the table below.
 
 ~~~~~~~~~~~
-+------+-------+------------+----------------+
-| Name | Label | Value Type | Description    |
-+------+-------+------------+----------------+
-| kid  |   4   | bstr / int | Key identifier |
-+------+-------+------------+----------------+
++--------+-------+------------+------------------------+
+| Name   | Label | Value Type | Description            |
++--------+-------+------------+------------------------+
+| intkid | TBD5  |     int    | Integer Key identifier |
++--------+-------+------------+------------------------+
 ~~~~~~~~~~~
 
 ## COSE Key Common Parameters Registry {#kid-key-common-param}
 
-IANA has extended the Value Type of 'kid' in the "COSE Key Common Parameters" registry under the group name "CBOR Object Signing and Encryption (COSE)" to also allow the Value Type int. The resulting Value Type is bstr / int. The Value Registry for this item is empty and omitted from the table below.
+IANA has defined the parameter 'intkid' in the "COSE Key Common Parameters" registry under the group name "CBOR Object Signing and Encryption (COSE)". The Value Type is int. The Value Registry for this item is empty and omitted from the table below.
 
 ~~~~~~~~~~~
-+------+-------+------------+----------------+
-| Name | Label | Value Type | Description    |
-+------+-------+------------+----------------+
-| kid  |   2   | bstr / int | Key identifi-  |
-|      |       |            | cation value - |
-|      |       |            | match to kid   |
-|      |       |            | in message     |
-+------+-------+------------+----------------+
++--------+-------+------------+------------------------+
+| Name   | Label | Value Type | Description            |
++--------+-------+------------+------------------------+
+| intkid | TBD6  |     int    | Key identification     |
+|        |       |            | value - match to       |
+|        |       |            | intkid in message      |
++--------+-------+------------+------------------------+
 ~~~~~~~~~~~
 
 
 ## CWT Confirmation Methods Registry {#kid-cwt-conf-meth-param}
 
-IANA has extended the Value Type of 'kid' in the "CWT Confirmation Methods" registry under the group name "CBOR Web Token (CWT) Claims" to also allow the Value Type int. The incorrect term binary string has been corrected to bstr. The resulting Value Type is bstr / int. The new updated content for the 'kid' method is shown in the list below.
+IANA has defined the parameter 'intkid' in the "CWT Confirmation Methods" registry under the group name "CBOR Web Token (CWT) Claims". The Value Type is int.
 
-- Confirmation Method Name: kid
+- Confirmation Method Name: intkid
 
-- Confirmation Method Description: Key Identifier
+- Confirmation Method Description: Integer Key Identifier
 
-- JWT Confirmation Method Name: kid
+- JWT Confirmation Method Name: intkid
 
-- Confirmation Key: 3
+- Confirmation Key: TBD7
 
-- Confirmation Value Type(s): bstr / int
+- Confirmation Value Type(s): int
 
 - Change Controller: IESG
 
-- Specification Document(s): Section 3.4 of RFC 8747 [[This document]]
+- Specification Document(s): [[This document]]
+
 
 ## The Well-Known URI Registry {#well-known}
 
@@ -1456,6 +1458,7 @@ IANA has added the well-known URI "edhoc" to the "Well-Known URIs" registry unde
 - Specification document(s): \[\[this document\]\]
 
 - Related information: None
+
 
 ## Media Types Registry {#media-type}
 
@@ -1499,6 +1502,7 @@ IANA has added the media type "application/edhoc" to the "Media Types" registry.
 
 - Change Controller: IESG
 
+
 ## CoAP Content-Formats Registry {#content-format}
 
 IANA has added the media type "application/edhoc" to the "CoAP Content-Formats" registry under the group name "Constrained RESTful Environments (CoRE) Parameters".
@@ -1510,6 +1514,7 @@ IANA has added the media type "application/edhoc" to the "CoAP Content-Formats" 
 -  ID: TBD42
 
 -  Reference: \[\[this document\]\]
+
 
 ## Resource Type (rt=) Link Target Attribute Values Registry {#rt}
 
@@ -1541,35 +1546,31 @@ This appendix describes how to select EDHOC connection identifiers and derive an
 
 ## Selecting EDHOC Connection Identifier {#edhoc-to-oscore}
 
-This section specifies a rule for converting from EDHOC connection identifier to OSCORE Sender/Recipient ID. (An identifier is Sender ID or Recipient ID depending on from which endpoint is the point of view, see Section 3.1 of {{RFC8613}}.) Typically the Initiator is OSCORE client, in which case C_R becomes the client Sender ID.
+This section specifies a rule for converting from EDHOC connection identifier to OSCORE Sender/Recipient ID. (An identifier is Sender ID or Recipient ID depending on from which endpoint is the point of view, see Section 3.1 of {{RFC8613}}.) Typically the Initiator is OSCORE client, in which case C_R becomes the client Sender ID. An EDHOC connection identifier may be a CBOR byte string or a CBOR integer, and the OSCORE Sender/Recipient ID is a (raw) byte string.
 
-* If the EDHOC connection identifier is numeric, i.e., encoded as a CBOR integer on the wire, it is converted to an OSCORE Sender/Recipient ID equal to the CBOR encoding.
+For simplicity we just call the identifiers "EDHOC identifiers" and "OSCORE identifiers".
 
-For example, a numeric C_R equal to 10 (0x0A in CBOR encoding) is converted to a (typically client) Sender ID equal to 0x0A, while a numeric C_I equal to -12 (0x2B in CBOR encoding) is converted to a (typically client) Sender ID equal to 0x2B.
+We would like the EDHOC identifiers, OSCORE identifiers, and the mapping from EDHOC identifiers to OSCORE identifiers to support the following:
 
-* If the EDHOC connection identifier is byte-valued, hence encoded as a CBOR byte string on the wire, it is converted to an OSCORE Sender/Recipient ID equal to the byte string.
+* Short encoding of identifiers.
+   * For EDHOC the shortest encoding is 1 byte, for example the integers -24, ... ,23.
+   * For OSCORE the shortest is 0 byte (the empty byte string) but there also need to be sufficient 1-byte identifiers for the expected number of communicating endpoints.
 
-For example, a byte-string valued C_R equal to 0xFF (0x41FF in CBOR encoding) is converted to a (typically client) Sender ID equal to 0xFF.
+ * The mapping shall be injective so two different OSCORE identifiers correspond to two different EDHOC identifiers, even if one EDHOC identifier is bstr and the other is int.
 
-Two EDHOC connection identifiers are called "equivalent" if and only if, when converted, they both result in the same OSCORE Sender/Recipient ID. For example, the two EDHOC connection identifiers with CBOR encoding 0x0A (numeric) and 0x410A (byte-valued) are equivalent since they both result in the same OSCORE Sender/Recipient ID 0x0A.
-
-When EDHOC is used to establish an OSCORE security context, the connection identifiers C_I and C_R MUST NOT be equivalent. Furthermore, in case of multiple OSCORE security contexts with potentially different endpoints, to facilitate the retrieval of the correct OSCORE security context, an endpoint SHOULD select an EDHOC connection identifier that when converted to OSCORE Recipient ID does not coincide with its other Recipient IDs.
-
-An endpoint MAY choose to select only a specific range of connection identifiers, e.g., connection identifiers which are only int or only bstr. The number of unique OSCORE Sender/Recipient ID of a given byte length on the wire is reduced by this choice, an example is given in {{fig-number-connection-id}}.
+ * There shall be a simple inverse mapping.
 
 
-~~~~~~~~~~~
-+---------------------+----------------------+
-|     Size of SID/RID |  Number of CI as int |
-+=====================+======================+
-|                   0 |                    0 |
-+---------------------+----------------------+
-|                   1 |                   48 |
-+---------------------+----------------------+
-|                   2 |                  464 |
-+---------------------+----------------------+
-~~~~~~~~~~~
-{: #fig-number-connection-id title="Number of integer EDHOC Connection Identifiers corresponding to OSCORE Sender/Recipient Identifiers of a given size in bytes."}
+The rule: With the exeption of the empty byte string the EDHOC identifier is converted to an OSCORE identifier equal to the CBOR encoding. The empty CBOR byte string is converted to the empty string.
+
+
+For example:
+
+* A numeric C_R equal to 10 (0x0A in CBOR encoding) is converted to a (typically client) Sender ID equal to 0x0A, while a numeric C_I equal to -12 (0x2B in CBOR encoding) is converted to a (typically client) Sender ID equal to 0x2B.
+
+* A byte-string valued C_R equal to 0xFF (0x41FF in CBOR encoding) is converted to a (typically client) Sender ID equal to 0x41FF.
+
+* If C_R equals the empty CBOR byte string (0x40 in CBOR encoding) then the (typically client) Sender ID equals the empty string 0x.
 
 
 
@@ -1820,9 +1821,7 @@ Different header parameters to identify X.509 or C509 certificates by reference 
 
    * ID_CRED_x = { TBD4 : uri }, for x = I or R.
 
-When ID_CRED_x does not contain the actual credential, it may be very short, e.g., if the endpoints have agreed to use a key identifier parameter 'kid':
-
-* ID_CRED_x = { 4 : key_id_x }, where key_id_x : kid, for x = I or R.
+When ID_CRED_x does not contain the actual credential, it may be very short, e.g., if the endpoints have agreed to use the integer key identifier parameter 'intkid', see {{asym-msg2-proc}} and {{asym-msg3-proc}}.
 
 Note that a COSE header map can contain several header parameters, for example { x5u, x5t } or { kid, kid_context }.
 
