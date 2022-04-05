@@ -34,7 +34,7 @@ author:
   surname: Serafin
   org: ASSA ABLOY
   abbrev: ASSA ABLOY
-  street: Krakow
+  street: 32-080 Zabierzów
   country: Poland
   email: marek.serafin@assaabloy.com
 
