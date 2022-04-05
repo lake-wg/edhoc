@@ -375,7 +375,9 @@ For example, a byte string valued C_I equal to 0xFF (0x41FF in CBOR encoding) is
 
 ### Representation of Byte String Identifiers {#bstr-repr}
 
-The integers -24, ..., 23 are all CBOR encoded as one byte, see {{fig-int-one-byte}}.
+To allow byte string identifiers with minimal overhead on the wire, certain byte strings are defined to have integer representations. These byte strings are those for which there is an integer that happens to have this byte string as its CBOR encoding.
+
+Note that the integers -24, ..., 23 are all CBOR encoded as one byte, see {{fig-int-one-byte}}.
 
 ~~~~~~~~~~~
 Integer:               -24   -23  ...   -2    -1     0     1  ...   23
@@ -384,14 +386,21 @@ CBOR encoding (1 byte): 37    36  ...   21    20    00    01  ...   17
 {: #fig-int-one-byte title="One-Byte CBOR Encoded Integers"}
 {: artwork-align="center"}
 
-To allow more byte string identifiers that are only one byte on the wire, certain byte strings are defined to  have integer representations in the interval -24, ... ,23. These byte strings are those for which there is an integer in the interval -24, ..., 23 that happens to have this byte string as its CBOR encoding, see {{fig-bstr-as-int}} and compare {{fig-int-one-byte}}.
+The byte strings which coincide with the CBOR encoding of an integer are thus not represented by their CBOR byte string encoding, but with the CBOR int encoding of the corresponding integer.
+
+For example, h'21' is represented by 0x21 (CBOR encoding of the integer -2), not by 0x4121;  h'189B' is represented by 0x189B (CBOR encoding of the integer 155) not by 0x42189B. The byte strings which have one byte integer representations are shown in {{fig-bstr-as-int}}.
 
 ~~~~~~~~~~~
-Byte string           h'37' h'36' ... h'21' h'20' h'00' h'01' ... h'17'
+Byte string:          h'37' h'36' ... h'21' h'20' h'00' h'01' ... h'17'
 Integer:               -24   -23  ...   -2    -1     0     1  ...   23
+CBOR encoding:          37    36  ...   21    20    00    01  ...   17
 ~~~~~~~~~~~
 {: #fig-bstr-as-int title="Byte Strings Represented as Integers"}
 {: artwork-align="center"}
+
+Byte strings which do not correspond to CBOR encoding of integers are encoded as normal CBOR byte strings. For example, h'A5' is represented by 0x41A5; h'4711' is represented by 0x424711.
+
+One way to view this representation of byte strings is as a transport encoding. A byte string which parses as a CBOR int is just copied directly into the message, a byte string which doesn't parse as a CBOR int is encoded as a CBOR bstr during transport.
 
 
 ## Transport {#transport}
@@ -472,7 +481,7 @@ An example of a CRED_x is shown below:
   }
 }
 ~~~~~~~~~~~
-{: title="CWT Claims Set (CCS) containing an X25519 static Diffie-Hellman key and an EUI-64 identity."}
+{: title="CWT Claims Set (CCS) containing an X25519 static Diffie-Hellman key and an EUI-64 identity. Integer representation of kid is assumed."}
 
 
 ### Identification of Credentials {#id_cred}
@@ -775,7 +784,7 @@ message_1 = (
   METHOD : int,
   SUITES_I : suites,
   G_X : bstr,
-  C_I : bstr,
+  C_I : bstr / int,
   ? EAD_1 : ead,
 )
 
@@ -787,7 +796,7 @@ where:
 * METHOD - authentication method, see {{method}}.
 * SUITES_I - array of cipher suites which the Initiator supports in order of preference, the first cipher suite in network byte order is the most preferred by I, the last is the one selected by I for this session. If the most preferred cipher suite is selected then SUITES_I contains only that cipher suite and is encoded as an int. The processing steps are detailed below and in {{wrong-selected}}.
 * G_X - the ephemeral public key of the Initiator
-* C_I - variable length connection identifier
+* C_I - variable length connection identifier. Note that connection identifiers are byte strings but may be represented as integers in the message, see {{bstr-repr}}.
 * EAD_1 - external authorization data, see {{AD}}.
 
 ### Initiator Processing of Message 1 {#init-proc-msg1}
@@ -828,14 +837,14 @@ message_2 SHALL be a CBOR Sequence (see {{CBOR}}) as defined below
 ~~~~~~~~~~~ CDDL
 message_2 = (
   G_Y_CIPHERTEXT_2 : bstr,
-  C_R : bstr,
+  C_R : bstr / int,
 )
 ~~~~~~~~~~~
 
 where:
 
-* G_Y_CIPHERTEXT_2 - the concatenation of G_Y (i.e., the ephemeral public key of the Responder) and CIPHERTEXT_2
-* C_R - variable length connection identifier
+* G_Y_CIPHERTEXT_2 - the concatenation of G_Y (i.e., the ephemeral public key of the Responder) and CIPHERTEXT_2.
+* C_R - variable length connection identifier. Note that connection identifiers are byte strings but may be represented as integers in the message, see {{bstr-repr}}.
 
 ### Responder Processing of Message 2 {#asym-msg2-proc}
 
@@ -862,9 +871,9 @@ The Responder SHALL compose message_2 as follows:
 
 * CIPHERTEXT_2 is calculated by using the Expand function as a binary additive stream cipher.
 
-   * plaintext = ( ? PAD, ID_CRED_R / bstr / -24..23, Signature_or_MAC_2, ? EAD_2 )
+   * plaintext = ( ? PAD, ID_CRED_R / bstr / int, Signature_or_MAC_2, ? EAD_2 )
 
-      * If ID_CRED_R contains a single 'kid' parameter, i.e., ID_CRED_R = { 4 : kid_R }, then only the byte string kid_R is conveyed in the plaintext encoded as described in {{bstr-repr}}.
+      * If ID_CRED_R contains a single 'kid' parameter, i.e., ID_CRED_R = { 4 : kid_R }, then only the byte string kid_R is conveyed in the plaintext, represented as described in {{bstr-repr}}.
 
       * PAD = 1*true is padding that may be used to hide the length of the unpadded plaintext
 
@@ -937,9 +946,9 @@ The Initiator SHALL compose message_3 as follows:
       * key_length - length of the encryption key of the EDHOC AEAD algorithm
    * IV_3 = EDHOC-KDF( PRK_3e2m, TH_3, "IV_3", h'', iv_length )
       * iv_length - length of the initialization vector of the EDHOC AEAD algorithm
-   * P = ( ? PAD, ID_CRED_I / bstr / -24..23, Signature_or_MAC_3, ? EAD_3 )
+   * P = ( ? PAD, ID_CRED_I / bstr / int, Signature_or_MAC_3, ? EAD_3 )
 
-      * If ID_CRED_I contains a single 'kid' parameter, i.e., ID_CRED_I = { 4 : kid_I }, only the byte string kid_I is conveyed in the plaintext encoded as described in {{bstr-repr}}.
+      * If ID_CRED_I contains a single 'kid' parameter, i.e., ID_CRED_I = { 4 : kid_I }, only the byte string kid_I is conveyed in the plaintext, represented as described in {{bstr-repr}}.
 
        * PAD = 1*true is padding that may be used to hide the length of the unpadded plaintext
 
@@ -1225,7 +1234,7 @@ An attacker observing network traffic may use connection identifiers sent in cle
 
 Since the publication of {{RFC3552}} there has been an increased awareness of the need to protect against endpoints that are compromised, malicious, or whose interests simply do not align with the interests of users {{I-D.arkko-arch-internet-threat-model-guidance}}. {{RFC7624}} describes an updated threat model for Internet confidentiality, see {{sec-prop}}. {{I-D.arkko-arch-internet-threat-model-guidance}} further expands the threat model. Implementations and users SHOULD consider these threat models. In particular, even data sent protected to the other endpoint such as ID_CRED and EAD can be used for tracking, see Section 2.7 of {{I-D.arkko-arch-internet-threat-model-guidance}}.
 
-Information regarding the lengths of ID_CRED_I, ID_CRED_R, EAD_2, EAD_3, and EAD_4 are leaked to an passive attacker. Many COSE header parameters have variable length. To mitigate an attacker from differentiating endpoints with identifiers of different length, and implementation may e.g., only use fix length identifiers like 'kid' of length 1 for the Responders. Alternatively padding may be used to hide the length of e.g., certificates by value in 'x5chain' or 'c5c'.
+Information regarding the lengths of ID_CRED_I, ID_CRED_R, EAD_2, EAD_3, and EAD_4 are leaked to an passive attacker. Many COSE header parameters have variable length. To mitigate an attacker from differentiating endpoints with identifiers of different length, and implementation may e.g., only use fix length identifiers like 'kid' with integer representations of length 1 for the Responders. Alternatively padding may be used to hide the length of e.g., certificates by value in 'x5chain' or 'c5c'.
 
 ## Denial-of-Service {#dos}
 
@@ -1247,7 +1256,7 @@ All private keys, symmetric keys, and IVs MUST be secret. Implementations should
 
 The Initiator and the Responder are responsible for verifying the integrity and validity of certificates. The selection of trusted CAs should be done very carefully and certificate revocation should be supported. The choice of revocation mechanism is left to the application. For example, in case of X.509 certificates, Certificate Revocation Lists {{RFC5280}} or OCSP {{RFC6960}} may be used. Verification of validity may require the use of a Real-Time Clock (RTC). The private authentication keys MUST be kept secret, only the Responder SHALL have access to the Responder's private authentication key and only the Initiator SHALL have access to the Initiator's private authentication key.
 
-The Initiator and the Responder are allowed to select the connection identifiers C_I and C_R, respectively, for the other party to use in the ongoing EDHOC protocol as well as in a subsequent application protocol (e.g., OSCORE {{RFC8613}}). The choice of connection identifier is not security critical in EDHOC but intended to simplify the retrieval of the right security context in combination with using short identifiers. If the wrong connection identifier of the other party is used in a protocol message it will result in the receiving party not being able to retrieve a security context (which will terminate the protocol) or retrieve the wrong security context (which also terminates the protocol as the message cannot be verified).
+The Initiator and the Responder are allowed to select its connection identifiers C_I and C_R, respectively, for the other party to use in the ongoing EDHOC protocol as well as in a subsequent application protocol (e.g., OSCORE {{RFC8613}}). The choice of connection identifier is not security critical in EDHOC but intended to simplify the retrieval of the right security context in combination with using short identifiers. If the wrong connection identifier of the other party is used in a protocol message it will result in the receiving party not being able to retrieve a security context (which will terminate the protocol) or retrieve the wrong security context (which also terminates the protocol as the message cannot be verified).
 
 If two nodes unintentionally initiate two simultaneous EDHOC message exchanges with each other even if they only want to complete a single EDHOC message exchange, they MAY terminate the exchange with the lexicographically smallest G_X. Note that in cases where several EDHOC exchanges with different parameter sets (method, COSE headers, etc.) are used, an attacker can affect which of the parameter sets that will be used by blocking some of the parameter sets.
 
@@ -1701,13 +1710,13 @@ message_1 = (
   METHOD : int,
   SUITES_I : suites,
   G_X : bstr,
-  C_I : bstr / -24..23,
+  C_I : bstr / int,
   ? EAD_1 : ead,
 )
 
 message_2 = (
   G_Y_CIPHERTEXT_2 : bstr,
-  C_R : bstr / -24..23,
+  C_R : bstr / int,
 )
 
 message_3 = (
