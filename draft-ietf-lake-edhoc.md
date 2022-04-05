@@ -474,7 +474,7 @@ An example of a CRED_x is shown below:
   8 : {                                        /cnf/
     1 : {                                      /COSE_Key/
       1 : 1,                                   /kty/
-      2 : 0,                                   /kid/
+      2 : h'00',                               /kid/
      -1 : 4,                                   /crv/
      -2 : h'b1a3e89460e88d3a8d54211dc95f0b90   /x/
             3ff205eb71912d6db8f4af980d2db83a'
@@ -482,7 +482,7 @@ An example of a CRED_x is shown below:
   }
 }
 ~~~~~~~~~~~
-{: title="CWT Claims Set (CCS) containing an X25519 static Diffie-Hellman key and an EUI-64 identity. Integer representation of kid is assumed."}
+{: title="CWT Claims Set (CCS) containing an X25519 static Diffie-Hellman key and an EUI-64 identity."}
 
 
 ### Identification of Credentials {#id_cred}
