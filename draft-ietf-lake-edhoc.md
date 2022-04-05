@@ -367,12 +367,6 @@ C_I and C_R are chosen by I and R, respectively. The Initiator selects C_I and s
 
 If connection identifiers are used by an application protocol for which EDHOC establishes keys then the selected connection identifiers SHALL adhere to the requirements for that protocol, see {{ci-oscore}} for an example.
 
-### Use of Connection Identifiers with OSCORE {#ci-oscore}
-
-For OSCORE, the choice of connection identifier results in the endpoint selecting its Recipient ID, see Section 3.1 of {{RFC8613}}, for which certain uniqueness requirements apply, see Section 3.3 of {{RFC8613}}. Therefore, the Initiator and the Responder MUST NOT select connection identifiers such that it results in same OSCORE Recipient ID. Since the connection identifier is a byte string, it is converted to an OSCORE Recipient ID equal to the byte string.
-
-For example, a byte string valued C_I equal to 0xFF (0x41FF in CBOR encoding) is converted to a (typically client) Responder ID equal to 0xFF.
-
 ### Representation of Byte String Identifiers {#bstr-repr}
 
 To allow byte string identifiers with minimal overhead on the wire, certain byte strings are defined to have integer representations. These byte strings are those for which there is an integer that happens to have this byte string as its CBOR encoding.
@@ -401,6 +395,13 @@ CBOR encoding:          37    36  ...   21    20    00    01  ...   17
 Byte strings which do not correspond to CBOR encoding of integers are encoded as normal CBOR byte strings. For example, h'A5' is represented by 0x41A5; h'4711' is represented by 0x424711.
 
 One way to view this representation of byte strings is as a transport encoding. A byte string which parses as a CBOR int is just copied directly into the message, a byte string which doesn't parse as a CBOR int is encoded as a CBOR bstr during transport.
+
+
+### Use of Connection Identifiers with OSCORE {#ci-oscore}
+
+For OSCORE, the choice of connection identifier results in the endpoint selecting its Recipient ID, see Section 3.1 of {{RFC8613}}, for which certain uniqueness requirements apply, see Section 3.3 of {{RFC8613}}. Therefore, the Initiator and the Responder MUST NOT select connection identifiers such that it results in same OSCORE Recipient ID. Since the connection identifier is a byte string, it is converted to an OSCORE Recipient ID equal to the byte string.
+
+For example, a C_I equal to 0xFF is converted to a (typically client) Responder ID equal to 0xFF; a C_R equal to 0x21 is converted to a (typically server) Responder ID equal to 0x21. Note that the representation of connection identifiers as CBOR byte strings or CBOR ints in EDHOC messages as described in {{bstr-repr}} has no impact on this mapping.
 
 
 ## Transport {#transport}
