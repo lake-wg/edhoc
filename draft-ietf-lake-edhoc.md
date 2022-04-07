@@ -62,9 +62,9 @@ normative:
   RFC8742:
   RFC8747:
   RFC8949:
+  RFC9175:
   I-D.ietf-cose-x509:
   I-D.ietf-cose-rfc8152bis-algs:
-  I-D.ietf-core-echo-request-tag:
   I-D.ietf-cose-rfc8152bis-struct:
 
 informative:
@@ -575,7 +575,7 @@ Other conditions may be part of the application profile, such as target applicat
 
 EDHOC uses Extract-and-Expand {{RFC5869}} with the EDHOC hash algorithm in the selected cipher suite to derive keys used in EDHOC and in the application. Extract is used to derive fixed-length uniformly pseudorandom keys (PRK) from ECDH shared secrets. Expand is used to derive additional output keying material (OKM) from the PRKs.
 
-This section defines Extract, Expand and other key derivation functions based on these: Expand is used to define EDHOC-KDF and in turn EDHOC-Exporter, whereas Extract is used to define EDHOC-KeyUpdate. In EDHOC a specific message always use the same key, but how the key is derived depends on the method. A diagram of the EDHOC key schedule can be found in Figure 2 of {{Vucinic22}}.
+This section defines Extract, Expand and other key derivation functions based on these: Expand is used to define EDHOC-KDF and in turn EDHOC-Exporter, whereas Extract is used to define EDHOC-KeyUpdate. In EDHOC a specific message is protected with a certain pseudorandom key, but how the key is derived depends on the method. A diagram of the EDHOC key schedule can be found in Figure 2 of {{Vucinic22}}.
 
 ## Extract {#extract}
 
@@ -1212,7 +1212,7 @@ Information regarding the lengths of ID_CRED_I, ID_CRED_R, EAD_2, EAD_3, and EAD
 
 ## Denial-of-Service {#dos}
 
-EDHOC itself does not provide countermeasures against Denial-of-Service attacks. In particular, by sending a number of new or replayed message_1 an attacker may cause the Responder to allocate state, perform cryptographic operations, and amplify messages. To mitigate such attacks, an implementation SHOULD rely on lower layer mechanisms. For instance, when EDHOC is transferred as an exchange of CoAP messages, the CoAP server can use the Echo option defined in {{I-D.ietf-core-echo-request-tag}} which forces the CoAP client to demonstrate reachability at its apparent network address.
+EDHOC itself does not provide countermeasures against Denial-of-Service attacks. In particular, by sending a number of new or replayed message_1 an attacker may cause the Responder to allocate state, perform cryptographic operations, and amplify messages. To mitigate such attacks, an implementation SHOULD rely on lower layer mechanisms. For instance, when EDHOC is transferred as an exchange of CoAP messages, the CoAP server can use the Echo option defined in {{RFC9175}} which forces the CoAP client to demonstrate reachability at its apparent network address.
 
 An attacker can also send faked message_2, message_3, message_4, or error in an attempt to trick the receiving party to send an error message and discontinue the session. EDHOC implementations MAY evaluate if a received message is likely to have been forged by an attacker and ignore it without sending an error message or discontinuing the session.
 
@@ -1624,13 +1624,15 @@ with response code 2.04 (Changed), in the latter
    the client to the server's resource in the payload of a POST request.
    If EDHOC message_4 is used, or in case of an error message, it is sent from the server to the client in the payload of the response, with response codes analogously to message_2. In case of an error message in response to message_4, it is sent analogously to errors in response to message_2.
 
-In order to correlate a message received from a client to a message previously sent by the server, messages sent by the client are prepended with the CBOR serialization of the connection identifier which the server has chosen. This applies independently of if the CoAP server is Responder or Initiator. For the default case when the server is Responder, the prepended connection identifier is C_R, and C_I if the server is Initiator. If message_1 is sent to the server, the CBOR simple value "true" (0xf5) is sent in its place (given that the server has not selected C_R yet).
+In order for the server to correlate a message received from a client to a message previously sent in the same EDHOC session over CoAP, messages sent by the client are prepended with the CBOR serialization of the connection identifier which the server has chosen. This applies independently of if the CoAP server is Responder or Initiator.
 
-These identifiers are encoded in CBOR and thus self-delimiting.
-They are sent in front of the actual EDHOC message,
-and only the part of the body following the identifier is used for EDHOC processing.
+* For the default case when the server is Responder, message_3 is sent from the client prepended with the identifier C_R. In this case message_1 is also sent by the client, and to indicate that this is a new EDHOC session it is prepended with a dummy identifier, the CBOR simple value "true" (0xf5), since the server has not selected C_R yet. See {{fig-coap1}}.
 
-Consequently, the application/edhoc media type does not apply to these messages;
+* In the case when the server is Initiator, message_2 (and message_4, if present) is sent from the client prepended with the identifier C_I. See {{fig-coap2}}.
+
+The prepended identifiers are encoded in CBOR and thus self-delimiting. They are sent in front of the actual EDHOC message to keep track of messages in an EDHOC session, and only the part of the body following the identifier is used for EDHOC processing. In particular, the connection identifiers within the EDHOC messages are not impacted by the prepended identifiers.
+
+The application/edhoc media type does not apply to these messages;
 their media type is unnamed.
 
 An example of a successful EDHOC exchange using CoAP is shown in {{fig-coap1}}. In this case the CoAP Token enables correlation on the Initiator side, and the prepended C_R enables correlation on the Responder (server) side.
@@ -1684,7 +1686,7 @@ Client    Server
 {: #fig-coap2 title="Example of transferring EDHOC in CoAP when the Initiator is CoAP server."}
 {: artwork-align="center"}
 
-To protect against denial-of-service attacks, the CoAP server MAY respond to the first POST request with a 4.01 (Unauthorized) containing an Echo option {{I-D.ietf-core-echo-request-tag}}. This forces the Initiator to demonstrate its reachability at its apparent network address. If message fragmentation is needed, the EDHOC messages may be fragmented using the CoAP Block-Wise Transfer mechanism {{RFC7959}}.
+To protect against denial-of-service attacks, the CoAP server MAY respond to the first POST request with a 4.01 (Unauthorized) containing an Echo option {{RFC9175}}. This forces the Initiator to demonstrate its reachability at its apparent network address. If message fragmentation is needed, the EDHOC messages may be fragmented using the CoAP Block-Wise Transfer mechanism {{RFC7959}}.
 
 EDHOC does not restrict how error messages are transported with CoAP, as long as the appropriate error message can to be transported in response to a message that failed (see {{error}}). EDHOC error messages transported with CoAP are carried in the payload.
 
