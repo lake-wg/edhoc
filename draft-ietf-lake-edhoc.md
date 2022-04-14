@@ -930,7 +930,7 @@ The Initiator SHALL compose message_3 as follows:
 
 * Encode message_3 as a CBOR data item as specified in {{asym-msg3-form}}.
 
-*  Make the connection identifiers (C_I, C_R) and the application algorithms in the selected cipher suite available to the application. The application can now derive application keys using the EDHOC-Exporter interface, see {{exporter}}.
+*  Make the connection identifiers (C_I, C_R) and the application algorithms in the selected cipher suite available to the application. The application can now compute PRK_out and derive application keys using the EDHOC-Exporter interface, see {{exporter}}.
 
 After sending message_3, the Initiator is assured that no other party than the Responder can compute the key PRK_out (implicit key authentication). The Initiator can securely derive application keys and send protected application data. However, the Initiator does not know that the Responder has actually computed the key PRK_out and therefore the Initiator SHOULD NOT permanently store the keying material PRK_out, or derive application keys, until the Initiator is assured that the Responder has actually computed the key PRK_out (explicit key confirmation). This is similar to waiting for acknowledgement (ACK) in a transport protocol. Explicit key confirmation is e.g., assured when the Initiator has verified an OSCORE message or message_4 from the Responder.
 
@@ -954,7 +954,7 @@ The Responder SHALL process message_3 as follows:
 
 If any processing step fails, the Responder MUST send an EDHOC error message back, formatted as defined in {{error}}, and the session MUST be discontinued.
 
-After verifying message_3, the Responder is assured that the Initiator has calculated the key PRK_3m (explicit key confirmation) and that no other party than the Initiator can compute the key. The Responder can securely derive and store the keying material PRK_out and send protected application data.
+After verifying message_3, the Responder is assured that the Initiator has calculated the key PRK_3m (explicit key confirmation), that no other party than the Initiator can compute the key PRK_3m, and that no other party than the Initiator can compute the key PRK_out (implicit key authentication). The Responder can securely derive and store the keying material PRK_out and send protected application data.
 
 ## EDHOC Message 4 {#m4}
 
@@ -1011,6 +1011,8 @@ The Initiator SHALL process message_4 as follows:
 * Make EAD_4 (if present) available to the application for EAD processing.
 
 If any processing step fails, the Responder MUST send an EDHOC error message back, formatted as defined in {{error}}, and the session MUST be discontinued.
+
+After verifying message_4, the Initiator is assured that the Responder has calculated the key PRK_out (explicit key confirmation) and that no other party can derive the key.
 
 # Error Handling {#error}
 
@@ -1164,7 +1166,7 @@ Compromise of the long-term keys (private signature or static DH keys) does not 
 
 Based on the cryptographic algorithms requirements {{sec_algs}}, EDHOC provides a minimum of 64-bit security against online brute force attacks and a minimum of 128-bit security against offline brute force attacks. To break 64-bit security against online brute force an attacker would on average have to send 4.3 billion messages per second for 68 years, which is infeasible in constrained IoT radio technologies. A forgery against a 64-bit MAC in EDHOC breaks the security of all future application data, while a forgery against a 64-bit MAC in the subsequent application protocol (e.g., OSCORE {{RFC8613}}) typically only breaks the security of the data in the forged packet.
 
-After sending message_3, the Initiator is assured that no other party than the Responder can compute the key PRK_3m (implicit key authentication). The Initiator does however not know that the Responder has actually computed the key PRK_3m. While the Initiator can securely send protected application data, the Initiator SHOULD NOT permanently store the keying material PRK_out until the Initiator is assured that the Responder has actually computed the key PRK_out (explicit key confirmation). Explicit key confirmation is e.g., assured when the Initiator has verified an OSCORE message or message_4 from the Responder. After verifying message_3, the Responder is assured that the Initiator has calculated the key PRK_3m (explicit key confirmation) and that no other party than the Initiator can compute the key. The Responder can securely derive and store the keying material PRK_out and send protected application data.
+After sending message_3, the Initiator is assured that no other party than the Responder can compute the key PRK_out (implicit key authentication). The Initiator does however not know that the Responder has actually computed the key PRK_out. While the Initiator can securely send protected application data, the Initiator SHOULD NOT permanently store the keying material PRK_out until the Initiator is assured that the Responder has actually computed the key PRK_out (explicit key confirmation). Explicit key confirmation is e.g., assured when the Initiator has verified an OSCORE message or message_4 from the Responder. After verifying message_3, the Responder is assured that the Initiator has calculated the key PRK_m (explicit key confirmation) and that no other party than the Initiator can compute the keys PRK_m and PRK_out. The Responder can securely derive and store the keying material PRK_out and send protected application data.
 
 External authorization data sent in message_1 (EAD_1) or message_2 (EAD_2) should be considered unprotected by EDHOC, see {{unprot-data}}. EAD_2 is encrypted but the Responder has not yet authenticated the Initiator.  External authorization data sent in message_3 (EAD_3) or message_4 (EAD_4) is protected between Initiator and Responder by the protocol, but note that EAD fields may be used by the application before the message verification is completed, see {{AD}}.
 
