@@ -629,7 +629,7 @@ If the Initiator authenticates with a static Diffie-Hellman key, then PRK_3m = E
 
 ### PRK_out
 
-The pseudo-random key PRK_out is used to encrypt message_4 and to derive application specific data. PRK_out is derived as follows:
+The pseudo-random key PRK_out is used to derive application specific data and keying material to encrypt message_4. PRK_out is derived as follows:
 
 PRK_out = Extract(PRK_3m, TH_4)
 
