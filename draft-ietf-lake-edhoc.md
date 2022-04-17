@@ -691,7 +691,7 @@ where label is a registered tstr from the EDHOC Exporter Label registry ({{expor
 The transcript hash TH_4 is a CBOR encoded bstr and the input to the hash function is a CBOR Sequence.
 
 ~~~~~~~~~~~
-   TH_4 = H( TH_3, CIPHERTEXT_3 )
+   TH_4 = H( TH_3, PLAINTEXT_3 )
 ~~~~~~~~~~~
 
 where H() is the EDHOC hash algorithm in the selected cipher suite. Examples of use of the EDHOC-Exporter are given in {{asym-msg4-proc}} and {{transfer}}.
@@ -837,17 +837,17 @@ The Responder SHALL compose message_2 as follows:
 
    * payload = MAC_2
 
-* CIPHERTEXT_2 is calculated by using the Expand function as a binary additive stream cipher.
+* CIPHERTEXT_2 is calculated by using the Expand function as a binary additive stream cipher over the following plaintext:
 
-   * plaintext = ( ? PAD, ID_CRED_R / bstr / int, Signature_or_MAC_2, ? EAD_2 )
+   * PLAINTEXT_2 = ( ? PAD, ID_CRED_R / bstr / int, Signature_or_MAC_2, ? EAD_2 )
 
       * If ID_CRED_R contains a single 'kid' parameter, i.e., ID_CRED_R = { 4 : kid_R }, then only the byte string or integer kid_R is conveyed in the plaintext encoded accordingly as bstr or int.
 
       * PAD = 1*true is padding that may be used to hide the length of the unpadded plaintext
 
-   * Compute KEYSTREAM_2 = EDHOC-KDF( PRK_2e, TH_2, "KEYSTREAM_2", h'', plaintext_length ), where plaintext_length is the length of the plaintext.
+   * Compute KEYSTREAM_2 = EDHOC-KDF( PRK_2e, TH_2, "KEYSTREAM_2", h'', plaintext_length ), where plaintext_length is the length of PLAINTEXT_2.
 
-   * CIPHERTEXT_2 = plaintext XOR KEYSTREAM_2
+   * CIPHERTEXT_2 = PLAINTEXT_2 XOR KEYSTREAM_2
 
 * Encode message_2 as a sequence of CBOR encoded data items as specified in {{asym-msg2-form}}.
 
@@ -887,7 +887,7 @@ message_3 = (
 
 The Initiator SHALL compose message_3 as follows:
 
-* Compute the transcript hash TH_3 = H(TH_2, CIPHERTEXT_2) where H() is the EDHOC hash algorithm of the selected cipher suite. The transcript hash TH_3 is a CBOR encoded bstr and the input to the hash function is a CBOR Sequence.  Note that H(TH_2, CIPHERTEXT_2) can be computed and cached already in the processing of message_2.
+* Compute the transcript hash TH_3 = H(TH_2, PLAINTEXT_2) where H() is the EDHOC hash algorithm of the selected cipher suite. The transcript hash TH_3 is a CBOR encoded bstr and the input to the hash function is a CBOR Sequence.  Note that H(TH_2, PLAINTEXT_2) can be computed and cached already in the processing of message_2.
 
 * Compute MAC_3 = EDHOC-KDF( PRK_4x3m, TH_3, "MAC_3", << ID_CRED_I, CRED_I, ? EAD_3 >>, mac_length_3 ). If the Initiator authenticates with a static Diffie-Hellman key (method equals 2 or 3), then mac_length_3 is the EDHOC MAC length given by the selected cipher suite.  If the Initiator authenticates with a signature key (method equals 0 or 1), then mac_length_3 is equal to the output size of the EDHOC hash algorithm given by the selected cipher suite.
     * ID_CRED_I - identifier to facilitate the retrieval of CRED_I, see {{id_cred}}
@@ -903,7 +903,7 @@ The Initiator SHALL compose message_3 as follows:
 
    * payload = MAC_3
 
-* Compute a COSE_Encrypt0 object as defined in Sections 5.2 and 5.3 of {{I-D.ietf-cose-rfc8152bis-struct}}, with the EDHOC AEAD algorithm of the selected cipher suite, using the encryption key K_3, the initialization vector IV_3, the plaintext P, and the following parameters as input (see {{COSE}}):
+* Compute a COSE_Encrypt0 object as defined in Sections 5.2 and 5.3 of {{I-D.ietf-cose-rfc8152bis-struct}}, with the EDHOC AEAD algorithm of the selected cipher suite, using the encryption key K_3, the initialization vector IV_3, the plaintext PLAINTEXT_3, and the following parameters as input (see {{COSE}}):
 
    * protected = h''
    * external_aad = TH_3
@@ -914,7 +914,7 @@ The Initiator SHALL compose message_3 as follows:
       * key_length - length of the encryption key of the EDHOC AEAD algorithm
    * IV_3 = EDHOC-KDF( PRK_3e2m, TH_3, "IV_3", h'', iv_length )
       * iv_length - length of the initialization vector of the EDHOC AEAD algorithm
-   * P = ( ? PAD, ID_CRED_I / bstr / int, Signature_or_MAC_3, ? EAD_3 )
+   * PLAINTEXT_3 = ( ? PAD, ID_CRED_I / bstr / int, Signature_or_MAC_3, ? EAD_3 )
 
       * If ID_CRED_I contains a single 'kid' parameter, i.e., ID_CRED_I = { 4 : kid_I }, only the byte string or integer kid_I is conveyed in the plaintext encoded accordingly as bstr or int.
 
@@ -973,7 +973,7 @@ message_4 = (
 
 The Responder SHALL compose message_4 as follows:
 
-* Compute a COSE_Encrypt0 as defined in Sections 5.2 and 5.3 of {{I-D.ietf-cose-rfc8152bis-struct}}, with the EDHOC AEAD algorithm of the selected cipher suite, using the encryption key K_4, the initialization vector IV_4, the plaintext P, and the following parameters as input (see {{COSE}}):
+* Compute a COSE_Encrypt0 as defined in Sections 5.2 and 5.3 of {{I-D.ietf-cose-rfc8152bis-struct}}, with the EDHOC AEAD algorithm of the selected cipher suite, using the encryption key K_4, the initialization vector IV_4, the plaintext PLAINTEXT_4, and the following parameters as input (see {{COSE}}):
 
    * protected = h''
    * external_aad = TH_4
@@ -984,7 +984,7 @@ The Responder SHALL compose message_4 as follows:
        * key_length - length of the encryption key of the EDHOC AEAD algorithm
     * IV_4 = EDHOC-Exporter( "EDHOC_IV_4", h'', iv_length )
        * iv_length - length of the initialization vector of the EDHOC AEAD algorithm
-    * P = ( ? PAD, ? EAD_4 )
+    * PLAINTEXT_4 = ( ? PAD, ? EAD_4 )
       * PAD = 1*true is padding that may be used to hide the length of the unpadded plaintext.
       * EAD_4 - external authorization data, see {{AD}}.
 
