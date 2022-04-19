@@ -358,7 +358,7 @@ EDHOC includes the selection of connection identifiers (C_I, C_R) identifying a 
 
 Connection identifiers may be used to correlate EDHOC messages and facilitate the retrieval of protocol state during EDHOC execution (see {{transport}}) or in subsequent applications of  EDHOC, e.g., in OSCORE (see {{ci-oscore}}). The connection identifiers do not have any cryptographic purpose in EDHOC.
 
-Connection identifiers in EDHOC are CBOR byte strings. Since most constrained devices only have a few connections, short identifiers are desirable in many cases. However, except for the empty byte string h'' which encodes as as one byte (0x40), all byte strings are CBOR encoded as two or more bytes. Therefore EDHOC specifies certain byte strings to be represented as CBOR ints on the wire, see {{bstr-repr}}.
+Connection identifiers in EDHOC are CBOR byte strings. Since most constrained devices only have a few connections, short identifiers are desirable in many cases. However, except for the empty byte string h'', which encodes as one byte (0x40), all byte strings are CBOR encoded as two or more bytes. Therefore EDHOC specifies certain byte strings to be represented as CBOR ints on the wire, see {{bstr-repr}}.
 
 
 ### Selection of Connection Identifiers
@@ -369,9 +369,9 @@ If connection identifiers are used by an application protocol for which EDHOC es
 
 ### Representation of Byte String Identifiers {#bstr-repr}
 
-To allow byte string identifiers with minimal overhead on the wire, certain byte strings are defined to have integer representations. These byte strings are those for which there is an integer that happens to have this byte string as its CBOR encoding.
+To allow identifiers with minimal overhead on the wire, certain byte strings are defined to have integer representations.
 
-Note that the integers -24, ..., 23 are all CBOR encoded as one byte, see {{fig-int-one-byte}}.
+The integers with one-byte CBOR encoding are -24, ..., 23, see {{fig-int-one-byte}}. This correspondence between integers and byte strings is a natural mapping between the byte strings with CBOR diagnostic notation h'00', h'01', ..., h'37' (except h'18' and h'19') and integers which are CBOR encoded as one byte.
 
 ~~~~~~~~~~~
 Integer:               -24   -23  ...   -2    -1     0     1  ...   23
@@ -380,21 +380,17 @@ CBOR encoding (1 byte): 37    36  ...   21    20    00    01  ...   17
 {: #fig-int-one-byte title="One-Byte CBOR Encoded Integers"}
 {: artwork-align="center"}
 
-The byte strings which coincide with the CBOR encoding of an integer are thus not represented by their CBOR byte string encoding, but with the CBOR int encoding of the corresponding integer.
+The byte strings which coincide with a one-byte CBOR encoding of an integer MUST be represented by the CBOR encoding of that integer. Other byte strings are encoded as normal CBOR byte strings.
 
-For example, h'21' is represented by 0x21 (CBOR encoding of the integer -2), not by 0x4121;  h'189B' is represented by 0x189B (CBOR encoding of the integer 155) not by 0x42189B. The byte strings which have one byte integer representations are shown in {{fig-bstr-as-int}}.
+For example:
 
-~~~~~~~~~~~
-Byte string:          h'37' h'36' ... h'21' h'20' h'00' h'01' ... h'17'
-Integer:               -24   -23  ...   -2    -1     0     1  ...   23
-CBOR encoding:          37    36  ...   21    20    00    01  ...   17
-~~~~~~~~~~~
-{: #fig-bstr-as-int title="Byte Strings Represented as Integers"}
-{: artwork-align="center"}
+* h'21' is represented by 0x21 (CBOR encoding of the integer -2), not by 0x4121.
+* h'0D' is represented by 0x0D (CBOR encoding of the integer 13), not by 0x410D.
+* h'18' is represented by 0x4118.
+* h'38' is represented by 0x4138.
+* h'ABCD' is represented by 0x42ABCD.
 
-Byte strings which do not correspond to CBOR encoding of integers are encoded as normal CBOR byte strings. For example, h'A5' is represented by 0x41A5; h'4711' is represented by 0x424711.
-
-One way to view this representation of byte strings is as a transport encoding. A byte string which parses as a CBOR int is just copied directly into the message, a byte string which doesn't parse as a CBOR int is encoded as a CBOR bstr during transport.
+One way to view this representation of byte strings is as a transport encoding: A byte string which parses as a CBOR int in the range -24, ..., 23 is just copied directly into the message, a byte string which doesn't is encoded as a CBOR bstr during transport.
 
 
 ### Use of Connection Identifiers with OSCORE {#ci-oscore}
@@ -509,7 +505,9 @@ Example: CWT or CCS can be identified by a key identifier using the 'kid' parame
 
 * ID_CRED_x = { 4 : key_id_x }, where key_id_x : kid, for x = I or R.
 
-The value of a COSE 'kid' parameter is a byte string. To allow more one-byte key identifiers, which may be useful in many scenarios since constrained devices only have a few keys, we use the same integer representation as for connection identifiers, see {{bstr-repr}}. As stated in Section 3.1 of {{I-D.ietf-cose-rfc8152bis-struct}}, applications MUST NOT assume that 'kid' values are unique and several keys associated with a 'kid' may need to be checked before the correct one is found. Applications might use additional information such as 'kid context' or lower layers to determine which key to try first. Applications should strive to make ID_CRED_x as unique as possible, since the recipient may otherwise have to try several keys.
+The value of a COSE 'kid' parameter is a byte string. To allow one-byte encodings of ID_CRED_x with key identifiers 'kid', which is useful in scenarios with only a few keys, the integer representation of identifiers in {{bstr-repr}} is applied. For details, see {{asym-msg2-proc}} and {{asym-msg3-proc}}.
+
+As stated in Section 3.1 of {{I-D.ietf-cose-rfc8152bis-struct}}, applications MUST NOT assume that 'kid' values are unique and several keys associated with a 'kid' may need to be checked before the correct one is found. Applications might use additional information such as 'kid context' or lower layers to determine which key to try first. Applications should strive to make ID_CRED_x as unique as possible, since the recipient may otherwise have to try several keys.
 
 See {{COSE}} for more examples.
 
@@ -785,7 +783,7 @@ message_1 = (
   METHOD : int,
   SUITES_I : suites,
   G_X : bstr,
-  C_I : bstr / int,
+  C_I : bstr / -24..23,
   ? EAD_1 : ead,
 )
 
@@ -797,7 +795,7 @@ where:
 * METHOD - authentication method, see {{method}}.
 * SUITES_I - array of cipher suites which the Initiator supports in order of preference, the first cipher suite in network byte order is the most preferred by I, the last is the one selected by I for this session. If the most preferred cipher suite is selected then SUITES_I contains only that cipher suite and is encoded as an int. The processing steps are detailed below and in {{wrong-selected}}.
 * G_X - the ephemeral public key of the Initiator
-* C_I - variable length connection identifier. Note that connection identifiers are byte strings but may be represented as integers in the message, see {{bstr-repr}}.
+* C_I - variable length connection identifier. Note that connection identifiers are byte strings but certain values are represented as integers in the message, see {{bstr-repr}}.
 * EAD_1 - external authorization data, see {{AD}}.
 
 ### Initiator Processing of Message 1 {#init-proc-msg1}
@@ -838,14 +836,14 @@ message_2 SHALL be a CBOR Sequence (see {{CBOR}}) as defined below
 ~~~~~~~~~~~ CDDL
 message_2 = (
   G_Y_CIPHERTEXT_2 : bstr,
-  C_R : bstr / int,
+  C_R : bstr / -24..23,
 )
 ~~~~~~~~~~~
 
 where:
 
 * G_Y_CIPHERTEXT_2 - the concatenation of G_Y (i.e., the ephemeral public key of the Responder) and CIPHERTEXT_2.
-* C_R - variable length connection identifier. Note that connection identifiers are byte strings but may be represented as integers in the message, see {{bstr-repr}}.
+* C_R - variable length connection identifier. Note that connection identifiers are byte strings but certain values are represented as integers in the message, see {{bstr-repr}}.
 
 ### Responder Processing of Message 2 {#asym-msg2-proc}
 
@@ -872,7 +870,7 @@ The Responder SHALL compose message_2 as follows:
 
 * CIPHERTEXT_2 is calculated by using the Expand function as a binary additive stream cipher.
 
-   * plaintext = ( ? PAD, ID_CRED_R / bstr / int, Signature_or_MAC_2, ? EAD_2 )
+   * plaintext = ( ? PAD, ID_CRED_R / bstr / -24..23, Signature_or_MAC_2, ? EAD_2 )
 
       * If ID_CRED_R contains a single 'kid' parameter, i.e., ID_CRED_R = { 4 : kid_R }, then only the byte string kid_R is conveyed in the plaintext, represented as described in {{bstr-repr}}.
 
@@ -947,9 +945,9 @@ The Initiator SHALL compose message_3 as follows:
       * key_length - length of the encryption key of the EDHOC AEAD algorithm
    * IV_3 = EDHOC-KDF( PRK_3e2m, TH_3, "IV_3", h'', iv_length )
       * iv_length - length of the initialization vector of the EDHOC AEAD algorithm
-   * P = ( ? PAD, ID_CRED_I / bstr / int, Signature_or_MAC_3, ? EAD_3 )
+   * P = ( ? PAD, ID_CRED_I / bstr / -24..23, Signature_or_MAC_3, ? EAD_3 )
 
-      * If ID_CRED_I contains a single 'kid' parameter, i.e., ID_CRED_I = { 4 : kid_I }, only the byte string kid_I is conveyed in the plaintext, represented as described in {{bstr-repr}}.
+      * If ID_CRED_I contains a single 'kid' parameter, i.e., ID_CRED_I = { 4 : kid_I }, then only the byte string kid_I is conveyed in the plaintext, represented as described in {{bstr-repr}}.
 
        * PAD = 1*true is padding that may be used to hide the length of the unpadded plaintext
 
@@ -1155,7 +1153,9 @@ An implementation MAY support only Initiator or only Responder.
 
 An implementation MAY support only a single method. None of the methods are mandatory-to-implement.
 
-Implementations MUST support 'kid' parameters represented as integers as described in {{bstr-repr}}. None of the other COSE header parameters are mandatory-to-implement.
+Implementations MUST support byte string identifiers represented as one-byte CBOR ints, as described in {{bstr-repr}}.
+
+Implementations MUST support 'kid' parameters. None of the other COSE header parameters are mandatory-to-implement.
 
 An implementation MAY support only a single credential type (CCS, CWT, X.509, C509). None of the credential types are mandatory-to-implement.
 
@@ -1235,7 +1235,7 @@ An attacker observing network traffic may use connection identifiers sent in cle
 
 Since the publication of {{RFC3552}} there has been an increased awareness of the need to protect against endpoints that are compromised, malicious, or whose interests simply do not align with the interests of users {{I-D.arkko-arch-internet-threat-model-guidance}}. {{RFC7624}} describes an updated threat model for Internet confidentiality, see {{sec-prop}}. {{I-D.arkko-arch-internet-threat-model-guidance}} further expands the threat model. Implementations and users SHOULD consider these threat models. In particular, even data sent protected to the other endpoint such as ID_CRED and EAD can be used for tracking, see Section 2.7 of {{I-D.arkko-arch-internet-threat-model-guidance}}.
 
-Information regarding the lengths of ID_CRED_I, ID_CRED_R, EAD_2, EAD_3, and EAD_4 are leaked to an passive attacker. Many COSE header parameters have variable length. To mitigate an attacker from differentiating endpoints with identifiers of different length, and implementation may e.g., only use fix length identifiers like 'kid' with integer representations of length 1 for the Responders. Alternatively padding may be used to hide the length of e.g., certificates by value in 'x5chain' or 'c5c'.
+Information regarding the lengths of ID_CRED_I, ID_CRED_R, EAD_2, EAD_3, and EAD_4 are leaked to a passive attacker. Many COSE header parameters have variable length. To mitigate an attacker from differentiating endpoints with identifiers of different length, an implementation may, e.g., only use fix length identifiers like 'kid' with one-byte CBOR int representations for the Responders. Alternatively padding may be used to hide the length of, e.g., certificates by value in 'x5chain' or 'c5c'.
 
 ## Denial-of-Service {#dos}
 
@@ -1711,13 +1711,13 @@ message_1 = (
   METHOD : int,
   SUITES_I : suites,
   G_X : bstr,
-  C_I : bstr / int,
+  C_I : bstr / -24..23,
   ? EAD_1 : ead,
 )
 
 message_2 = (
   G_Y_CIPHERTEXT_2 : bstr,
-  C_R : bstr / int,
+  C_R : bstr / -24..23,
 )
 
 message_3 = (
