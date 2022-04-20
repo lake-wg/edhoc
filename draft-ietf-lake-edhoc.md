@@ -505,7 +505,7 @@ Example: CWT or CCS can be identified by a key identifier using the 'kid' parame
 
 * ID_CRED_x = { 4 : key_id_x }, where key_id_x : kid, for x = I or R.
 
-The value of a COSE 'kid' parameter is a byte string. To allow one-byte encodings of ID_CRED_x with key identifiers 'kid', which is useful in scenarios with only a few keys, the integer representation of identifiers in {{bstr-repr}} is applied. For details, see {{asym-msg2-proc}} and {{asym-msg3-proc}}.
+The value of a COSE 'kid' parameter is a byte string. To allow one-byte encodings of ID_CRED_x with key identifiers 'kid', which is useful in scenarios with only a few keys, the integer representation of identifiers in {{bstr-repr}} MUST be applied. For details, see {{asym-msg2-proc}} and {{asym-msg3-proc}}.
 
 As stated in Section 3.1 of {{I-D.ietf-cose-rfc8152bis-struct}}, applications MUST NOT assume that 'kid' values are unique and several keys associated with a 'kid' may need to be checked before the correct one is found. Applications might use additional information such as 'kid context' or lower layers to determine which key to try first. Applications should strive to make ID_CRED_x as unique as possible, since the recipient may otherwise have to try several keys.
 
@@ -1152,8 +1152,6 @@ In the absence of an application profile specifying otherwise:
 An implementation MAY support only Initiator or only Responder.
 
 An implementation MAY support only a single method. None of the methods are mandatory-to-implement.
-
-Implementations MUST support byte string identifiers represented as one-byte CBOR ints, as described in {{bstr-repr}}.
 
 Implementations MUST support 'kid' parameters. None of the other COSE header parameters are mandatory-to-implement.
 
