@@ -942,11 +942,11 @@ The Initiator SHALL compose message_3 as follows:
    where
 
    * K_3 = EDHOC-KDF( PRK_3e2m, TH_3, "K_3", h'', key_length )
-  
+
        * key_length - length of the encryption key of the EDHOC AEAD algorithm
-  
+
    * IV_3 = EDHOC-KDF( PRK_3e2m, TH_3, "IV_3", h'', iv_length )
-   
+
        * iv_length - length of the initialization vector of the EDHOC AEAD algorithm
 
    * PLAINTEXT_3 = ( ? PAD, ID_CRED_I / bstr / -24..23, Signature_or_MAC_3, ? EAD_3 )
