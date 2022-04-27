@@ -303,7 +303,7 @@ To simplify for implementors, the use of CBOR and COSE in EDHOC is summarized in
 
 The EDHOC protocol consists of three mandatory messages (message_1, message_2, message_3) between Initiator and Responder, an optional fourth message (message_4), and an error message. All EDHOC messages are CBOR Sequences {{RFC8742}}. {{fig-flow}} illustrates an EDHOC message flow with the optional fourth message as well as the content of each message. The protocol elements in the figure are introduced in {{overview}} and {{asym}}. Message formatting and processing are specified in {{asym}} and {{error}}.
 
-Application data may be protected using the agreed application algorithms (AEAD, hash) in the selected cipher suite (see {{cs}}) and the application can make use of the established connection identifiers C_I and C_R (see {{ci}}). EDHOC may be used with the media type application/edhoc defined in {{media-type}}.
+Application data may be protected using the agreed application algorithms (AEAD, hash) in the selected cipher suite (see {{cs}}) and the application can make use of the established connection identifiers C_I and C_R (see {{ci}}). EDHOC may be used with the media type application/edhoc+cbor-seq defined in {{media-type}}.
 
 The Initiator can derive symmetric application keys after creating EDHOC message_3, see {{exporter}}. Protected application data can therefore be sent in parallel or together with EDHOC message_3. EDHOC message_4 is typically not sent.
 
@@ -1459,47 +1459,7 @@ IANA has added the well-known URI "edhoc" to the "Well-Known URIs" registry unde
 
 ## Media Types Registry {#media-type}
 
-IANA has added the media types "application/edhoc" and "application/edhoc+cbor-seq" to the "Media Types" registry.
-
-### application/edhoc Media Type Registration
-
-- Type name: application
-
-- Subtype name: edhoc
-
-- Required parameters: N/A
-
-- Optional parameters: N/A
-
-- Encoding considerations: binary
-
-- Security considerations: See Section 7 of this document.
-
-- Interoperability considerations: N/A
-
-- Published specification: \[\[this document\]\] (this document)
-
-- Applications that use this media type: To be identified
-
-- Fragment identifier considerations: N/A
-
-- Additional information:
-
-  * Magic number(s): N/A
-
-  * File extension(s): N/A
-
-  * Macintosh file type code(s): N/A
-
-- Person & email address to contact for further information: See "Authors' Addresses" section.
-
-- Intended usage: COMMON
-
-- Restrictions on usage: N/A
-
-- Author: See "Authors' Addresses" section.
-
-- Change Controller: IESG
+IANA has added the media types "application/edhoc+cbor-seq" and "application/cid-edhoc+cbor-seq" to the "Media Types" registry.
 
 ### application/edhoc+cbor-seq Media Type Registration
 
@@ -1541,17 +1501,57 @@ IANA has added the media types "application/edhoc" and "application/edhoc+cbor-s
 
 - Change Controller: IESG
 
+### application/cid-edhoc+cbor-seq Media Type Registration
+
+- Type name: application
+
+- Subtype name: cid-edhoc+cbor-seq
+
+- Required parameters: N/A
+
+- Optional parameters: N/A
+
+- Encoding considerations: binary
+
+- Security considerations: See Section 7 of this document.
+
+- Interoperability considerations: N/A
+
+- Published specification: \[\[this document\]\] (this document)
+
+- Applications that use this media type: To be identified
+
+- Fragment identifier considerations: N/A
+
+- Additional information:
+
+  * Magic number(s): N/A
+
+  * File extension(s): N/A
+
+  * Macintosh file type code(s): N/A
+
+- Person & email address to contact for further information: See "Authors' Addresses" section.
+
+- Intended usage: COMMON
+
+- Restrictions on usage: N/A
+
+- Author: See "Authors' Addresses" section.
+
+- Change Controller: IESG
+
 ## CoAP Content-Formats Registry {#content-format}
 
-IANA has added the media types "application/edhoc" and "application/edhoc+cbor-seq" to the "CoAP Content-Formats" registry under the group name "Constrained RESTful Environments (CoRE) Parameters".
+IANA has added the media types "application/edhoc+cbor-seq" and "application/cid-edhoc+cbor-seq" to the "CoAP Content-Formats" registry under the group name "Constrained RESTful Environments (CoRE) Parameters".
 
 ~~~~~~~~~~~
-+----------------------------+----------+-------+------------------------+
-| Media Type                 | Encoding | ID    | Reference              |
-+----------------------------+----------+-------+------------------------+
-| application/edhoc          | -        | TBD42 | \[\[this document\]\]  |
-| application/edhoc+cbor-seq | -        | TBD43 | \[\[this document\]\]  |
-+----------------------------+----------+-------+------------------------+
++--------------------------------+----------+-------+------------------------+
+| Media Type                     | Encoding | ID    | Reference              |
++--------------------------------+----------+-------+------------------------+
+| application/edhoc+cbor-seq     | -        | TBD42 | \[\[this document\]\]  |
+| application/cid-edhoc+cbor-seq | -        | TBD43 | \[\[this document\]\]  |
++--------------------------------+----------+-------+------------------------+
 ~~~~~~~~~~~
 {: #fig-format-ids title="CoAP Content-Format IDs"}
 
@@ -1670,8 +1670,8 @@ In order for the server to correlate a message received from a client to a messa
 
 The prepended identifiers are encoded in CBOR and thus self-delimiting. They are sent in front of the actual EDHOC message to keep track of messages in an EDHOC session, and only the part of the body following the identifier is used for EDHOC processing. In particular, the connection identifiers within the EDHOC messages are not impacted by the prepended identifiers.
 
-The application/edhoc media type does not apply to these messages;
-their media type is application/edhoc+cbor-seq.
+The application/edhoc+cbor-seq media type does not apply to these messages;
+their media type is application/cid-edhoc+cbor-seq.
 
 An example of a successful EDHOC exchange using CoAP is shown in {{fig-coap1}}. In this case the CoAP Token enables correlation on the Initiator side, and the prepended C_R enables correlation on the Responder (server) side.
 
@@ -1680,20 +1680,20 @@ Client    Server
   |          |
   +--------->| Header: POST (Code=0.02)
   |   POST   | Uri-Path: "/.well-known/edhoc"
-  |          | Content-Format: application/edhoc+cbor-seq
+  |          | Content-Format: application/cid-edhoc+cbor-seq
   |          | Payload: true, EDHOC message_1
   |          |
   |<---------+ Header: 2.04 Changed
-  |   2.04   | Content-Format: application/edhoc
+  |   2.04   | Content-Format: application/edhoc+cbor-seq
   |          | Payload: EDHOC message_2
   |          |
   +--------->| Header: POST (Code=0.02)
   |   POST   | Uri-Path: "/.well-known/edhoc"
-  |          | Content-Format: application/edhoc+cbor-seq
+  |          | Content-Format: application/cid-edhoc+cbor-seq
   |          | Payload: C_R, EDHOC message_3
   |          |
   |<---------+ Header: 2.04 Changed
-  |   2.04   | Content-Format: application/edhoc
+  |   2.04   | Content-Format: application/edhoc+cbor-seq
   |          | Payload: EDHOC message_4
   |          |
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -1711,16 +1711,16 @@ Client    Server
   |   POST   | Uri-Path: "/.well-known/edhoc"
   |          |
   |<---------+ Header: 2.04 Changed
-  |   2.04   | Content-Format: application/edhoc
+  |   2.04   | Content-Format: application/edhoc+cbor-seq
   |          | Payload: EDHOC message_1
   |          |
   +--------->| Header: POST (Code=0.02)
   |   POST   | Uri-Path: "/.well-known/edhoc"
-  |          | Content-Format: application/edhoc+cbor-seq
+  |          | Content-Format: application/cid-edhoc+cbor-seq
   |          | Payload: C_I, EDHOC message_2
   |          |
   |<---------+ Header: 2.04 Changed
-  |   2.04   | Content-Format: application/edhoc
+  |   2.04   | Content-Format: application/edhoc+cbor-seq
   |          | Payload: EDHOC message_3
   |          |
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -1733,7 +1733,7 @@ EDHOC does not restrict how error messages are transported with CoAP, as long as
 
 ### Transferring EDHOC and OSCORE over CoAP {#edhoc-oscore-over-coap}
 
-When using EDHOC over CoAP for establishing an OSCORE Security Context, EDHOC error messages sent as CoAP responses MUST be sent in the payload of error responses, i.e., they MUST specify a CoAP error response code. In particular, it is RECOMMENDED that such error responses have response code either 4.00 (Bad Request) in case of client error (e.g., due to a malformed EDHOC message), or 5.00 (Internal Server Error) in case of server error (e.g., due to failure in deriving EDHOC keying material). The Content-Format of the error response MUST be set to application/edhoc, see {{content-format}}.
+When using EDHOC over CoAP for establishing an OSCORE Security Context, EDHOC error messages sent as CoAP responses MUST be sent in the payload of error responses, i.e., they MUST specify a CoAP error response code. In particular, it is RECOMMENDED that such error responses have response code either 4.00 (Bad Request) in case of client error (e.g., due to a malformed EDHOC message), or 5.00 (Internal Server Error) in case of server error (e.g., due to failure in deriving EDHOC keying material). The Content-Format of the error response MUST be set to application/edhoc+cbor-seq, see {{content-format}}.
 
 A method for combining EDHOC and OSCORE protocols in two round-trips is specified in {{I-D.ietf-core-oscore-edhoc}}. That specification also contains conversion from OSCORE Sender/Recipient IDs to EDHOC connection identifiers, web-linking and target attributes for discovering of EDHOC resources.
 
