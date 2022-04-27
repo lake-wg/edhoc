@@ -56,6 +56,7 @@ normative:
   RFC8376:
   RFC8392:
   RFC8410:
+  RFC8152:
   RFC8610:
   RFC8613:
   RFC8724:
@@ -130,6 +131,14 @@ informative:
       -
         ins: H. Krawczyk
     date: May 2010
+
+  Thormaker2021:
+    target: https://eprint.iacr.org/2021/509.pdf
+    title: "On using the same key pair for Ed25519 and an X25519 based KEM"
+    author:
+      -
+        ins: E. Thormarker
+    date: April 2021
 
   CNSA:
     target: https://apps.nsa.gov/iaarchive/programs/iad-initiatives/cnsa-suite.cfm
@@ -1177,6 +1186,8 @@ To reduce message overhead EDHOC does not use explicit nonces and instead relies
 As discussed in {{SIGMA}}, the encryption of message_2 does only need to protect against passive attacker as active attackers can always get the Responder's identity by sending their own message_1. EDHOC uses the Expand function (typically HKDF-Expand) as a binary additive stream cipher. HKDF-Expand provides better confidentiality than AES-CTR but is not often used as it is slow on long messages, and most applications require both IND-CCA confidentiality as well as integrity protection. For the encryption of message_2, any speed difference is negligible, IND-CCA does not increase security, and integrity is provided by the inner MAC (and signature depending on method).
 
 Requirements for how to securely generate, validate, and process the ephemeral public keys depend on the elliptic curve. For X25519 and X448, the requirements are defined in {{RFC7748}}. For secp256r1, secp384r1, and secp521r1, the requirements are defined in Section 5 of {{SP-800-56A}}. For secp256r1, secp384r1, and secp521r1, at least partial public-key validation MUST be done.
+
+Following the recommendations in Section 12 of {{RFC8152}}, a given key pair should be used for a single algorithm. Notably, a static Diffie-Hellman key over X25519 used for authentication in method 1, 2 or 3 MUST NOT not be used as a key for Ed25519 authentication in method 0. Such a use case could be allowed if a cryptographic analysis dedicated to this joint use case was performed, in a similar fashion to, e.g., the analysis of {{Thormaker2021}}.
 
 So-called selfie attacks are mitigated as long as the Initiator does not have its own identity in the set of Responder identities it is allowed to communicate with. In trust on first use (TOFU) use cases the Initiator should verify that the the Responder's identity is not equal to its own. Any future EHDOC methods using e.g., pre-shared keys might need to mitigate this in other ways.
 
