@@ -667,7 +667,7 @@ PRK_out = Extract(PRK_3m, TH_4)
 The transcript hash TH_4 is a CBOR encoded bstr and the input to the hash function is a CBOR Sequence.
 
 ~~~~~~~~~~~
-   TH_4 = H( TH_3, CIPHERTEXT_3 )
+   TH_4 = H( TH_3, PLAINTEXT_3 )
 ~~~~~~~~~~~
 
 where H() is the EDHOC hash algorithm in the selected cipher suite.
