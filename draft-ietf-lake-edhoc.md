@@ -853,7 +853,7 @@ The Responder SHALL compose message_2 as follows:
 
 * Choose a connection identifier C_R and store it for the length of the protocol.
 
-* Compute the transcript hash TH_2 = H( H(message_1), G_Y, C_R ) where H() is the EDHOC hash algorithm of the selected cipher suite. The transcript hash TH_2 is a CBOR encoded bstr and the input to the hash function is a CBOR Sequence. Note that H(message_1) can be computed and cached already in the processing of message_1.
+* Compute the transcript hash TH_2 = H( G_Y, C_R, H(message_1) ) where H() is the EDHOC hash algorithm of the selected cipher suite. The transcript hash TH_2 is a CBOR encoded bstr and the input to the hash function is a CBOR Sequence. Note that H(message_1) can be computed and cached already in the processing of message_1.
 
 * Compute MAC_2 = EDHOC-KDF( PRK_3e2m, TH_2, "MAC_2", << ID_CRED_R, CRED_R, ? EAD_2 >>, mac_length_2 ). If the Responder authenticates with a static Diffie-Hellman key (method equals 1 or 3), then mac_length_2 is the EDHOC MAC length given by the selected cipher suite. If the Responder authenticates with a signature key (method equals 0 or 2), then mac_length_2 is equal to the output size of the EDHOC hash algorithm given by the selected cipher suite.
     * ID_CRED_R - identifier to facilitate the retrieval of CRED_R, see {{id_cred}}
