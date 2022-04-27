@@ -358,7 +358,8 @@ EDHOC includes the selection of connection identifiers (C_I, C_R) identifying a 
 
 Connection identifiers may be used to correlate EDHOC messages and facilitate the retrieval of protocol state during EDHOC execution (see {{transport}}) or in subsequent applications of  EDHOC, e.g., in OSCORE (see {{ci-oscore}}). The connection identifiers do not have any cryptographic purpose in EDHOC.
 
-Connection identifiers in EDHOC are byte strings or integers, encoded in CBOR. One byte connection identifiers (the integers -24 to 23 and the empty CBOR byte string h'') are realistic in many scenarios as most constrained devices only have a few connections. An endpoint may choose to select only integer or only byte string connection identifiers.
+Connection identifiers in EDHOC are CBOR byte strings. Since most constrained devices only have a few connections, short identifiers are desirable in many cases. However, except for the empty byte string h'', which encodes as one byte (0x40), all byte strings are CBOR encoded as two or more bytes. Therefore EDHOC specifies certain byte strings to be represented as CBOR ints on the wire, see {{bstr-repr}}.
+
 
 ### Selection of Connection Identifiers
 
@@ -366,9 +367,37 @@ C_I and C_R are chosen by I and R, respectively. The Initiator selects C_I and s
 
 If connection identifiers are used by an application protocol for which EDHOC establishes keys then the selected connection identifiers SHALL adhere to the requirements for that protocol, see {{ci-oscore}} for an example.
 
+### Representation of Byte String Identifiers {#bstr-repr}
+
+To allow identifiers with minimal overhead on the wire, certain byte strings are defined to have integer representations.
+
+The integers with one-byte CBOR encoding are -24, ..., 23, see {{fig-int-one-byte}}. This correspondence between integers and byte strings is a natural mapping between the byte strings with CBOR diagnostic notation h'00', h'01', ..., h'37' (except h'18', h'19', ..., h'1F') and integers which are CBOR encoded as one byte.
+
+~~~~~~~~~~~
+Integer:               -24   -23  ...   -2    -1     0     1  ...   23
+CBOR encoding (1 byte): 37    36  ...   21    20    00    01  ...   17
+~~~~~~~~~~~
+{: #fig-int-one-byte title="One-Byte CBOR Encoded Integers"}
+{: artwork-align="center"}
+
+The byte strings which coincide with a one-byte CBOR encoding of an integer MUST be represented by the CBOR encoding of that integer. Other byte strings are encoded as normal CBOR byte strings.
+
+For example:
+
+* h'21' is represented by 0x21 (CBOR encoding of the integer -2), not by 0x4121.
+* h'0D' is represented by 0x0D (CBOR encoding of the integer 13), not by 0x410D.
+* h'18' is represented by 0x4118.
+* h'38' is represented by 0x4138.
+* h'ABCD' is represented by 0x42ABCD.
+
+One way to view this representation of byte strings is as a transport encoding: A byte string which parses as a CBOR int in the range -24, ..., 23 is just copied directly into the message, a byte string which doesn't is encoded as a CBOR bstr during transport.
+
+
 ### Use of Connection Identifiers with OSCORE {#ci-oscore}
 
-For OSCORE, the choice of connection identifier results in the endpoint selecting its Recipient ID, see Section 3.1 of {{RFC8613}}, for which certain uniqueness requirements apply, see Section 3.3 of {{RFC8613}}. Therefore, the Initiator and the Responder MUST NOT select connection identifiers such that it results in same OSCORE Recipient ID. Since the Recipient ID is a byte string and an EDHOC connection identifier is either a CBOR byte string or a CBOR integer, care must be taken when selecting the connection identifiers and converting them to Recipient IDs. A mapping from EDHOC connection identifier to OSCORE Recipient ID is specified in {{edhoc-to-oscore}}.
+For OSCORE, the choice of connection identifier results in the endpoint selecting its Recipient ID, see Section 3.1 of {{RFC8613}}, for which certain uniqueness requirements apply, see Section 3.3 of {{RFC8613}}. Therefore, the Initiator and the Responder MUST NOT select connection identifiers such that it results in same OSCORE Recipient ID. Since the connection identifier is a byte string, it is converted to an OSCORE Recipient ID equal to the byte string.
+
+For example, a C_I equal to 0xFF is converted to a (typically client) Responder ID equal to 0xFF; a C_R equal to 0x21 is converted to a (typically server) Responder ID equal to 0x21. Note that the representation of connection identifiers as CBOR byte strings or CBOR ints in EDHOC messages as described in {{bstr-repr}} has no impact on this mapping.
 
 
 ## Transport {#transport}
@@ -441,7 +470,7 @@ An example of a CRED_x is shown below:
   8 : {                                        /cnf/
     1 : {                                      /COSE_Key/
       1 : 1,                                   /kty/
-      2 : 0,                                   /kid/
+      2 : h'00',                               /kid/
      -1 : 4,                                   /crv/
      -2 : h'b1a3e89460e88d3a8d54211dc95f0b90   /x/
             3ff205eb71912d6db8f4af980d2db83a'
@@ -476,7 +505,9 @@ Example: CWT or CCS can be identified by a key identifier using the 'kid' parame
 
 * ID_CRED_x = { 4 : key_id_x }, where key_id_x : kid, for x = I or R.
 
-Note that 'kid' is extended to support int values to allow more one-byte identifiers (see {{kid-header-param}} and {{kid-key-common-param}}) which may be useful in many scenarios since constrained devices only have a few keys. As stated in Section 3.1 of {{I-D.ietf-cose-rfc8152bis-struct}}, applications MUST NOT assume that 'kid' values are unique and several keys associated with a 'kid' may need to be checked before the correct one is found. Applications might use additional information such as 'kid context' or lower layers to determine which key to try first. Applications should strive to make ID_CRED_x as unique as possible, since the recipient may otherwise have to try several keys.
+The value of a COSE 'kid' parameter is a byte string. To allow one-byte encodings of ID_CRED_x with key identifiers 'kid', which is useful in scenarios with only a few keys, the integer representation of identifiers in {{bstr-repr}} MUST be applied. For details, see {{asym-msg2-proc}} and {{asym-msg3-proc}}.
+
+As stated in Section 3.1 of {{I-D.ietf-cose-rfc8152bis-struct}}, applications MUST NOT assume that 'kid' values are unique and several keys associated with a 'kid' may need to be checked before the correct one is found. Applications might use additional information such as 'kid context' or lower layers to determine which key to try first. Applications should strive to make ID_CRED_x as unique as possible, since the recipient may otherwise have to try several keys.
 
 See {{COSE}} for more examples.
 
@@ -700,7 +731,7 @@ Application keys and other application specific data can be derived using the ED
 
 where label is a registered tstr from the EDHOC Exporter Label registry ({{exporter-label}}), context is a bstr defined by the application, and length is a uint defined by the application. The (label, context) pair must be unique, i.e., a (label, context) MUST NOT be used for two different purposes. However an application can re-derive the same key several times as long as it is done in a secure way. For example, in most encryption algorithms the same key can be reused with different nonces. The context can for example be the empty CBOR byte string.
 
- Examples of use of the EDHOC-Exporter are given in {{asym-msg4-proc}} and {{transfer}}.
+Examples of use of the EDHOC-Exporter are given in {{asym-msg4-proc}} and {{transfer}}.
 
 * K_4 and IV_4 are derived with the EDHOC-Exporter using the empty CBOR byte string h'' as context, and labels "EDHOC_K_4" and "EDHOC_IV_4", respectively. IVs are only used if the EDHOC AEAD algorithm uses IVs.
 
@@ -758,7 +789,7 @@ message_1 = (
   METHOD : int,
   SUITES_I : suites,
   G_X : bstr,
-  C_I : bstr / int,
+  C_I : bstr / -24..23,
   ? EAD_1 : ead,
 )
 
@@ -770,7 +801,7 @@ where:
 * METHOD - authentication method, see {{method}}.
 * SUITES_I - array of cipher suites which the Initiator supports in order of preference, the first cipher suite in network byte order is the most preferred by I, the last is the one selected by I for this session. If the most preferred cipher suite is selected then SUITES_I contains only that cipher suite and is encoded as an int. The processing steps are detailed below and in {{wrong-selected}}.
 * G_X - the ephemeral public key of the Initiator
-* C_I - variable length connection identifier
+* C_I - variable length connection identifier. Note that connection identifiers are byte strings but certain values are represented as integers in the message, see {{bstr-repr}}.
 * EAD_1 - external authorization data, see {{AD}}.
 
 ### Initiator Processing of Message 1 {#init-proc-msg1}
@@ -811,14 +842,14 @@ message_2 SHALL be a CBOR Sequence (see {{CBOR}}) as defined below
 ~~~~~~~~~~~ CDDL
 message_2 = (
   G_Y_CIPHERTEXT_2 : bstr,
-  C_R : bstr / int,
+  C_R : bstr / -24..23,
 )
 ~~~~~~~~~~~
 
 where:
 
-* G_Y_CIPHERTEXT_2 - the concatenation of G_Y (i.e., the ephemeral public key of the Responder) and CIPHERTEXT_2
-* C_R - variable length connection identifier
+* G_Y_CIPHERTEXT_2 - the concatenation of G_Y (i.e., the ephemeral public key of the Responder) and CIPHERTEXT_2.
+* C_R - variable length connection identifier. Note that connection identifiers are byte strings but certain values are represented as integers in the message, see {{bstr-repr}}.
 
 ### Responder Processing of Message 2 {#asym-msg2-proc}
 
@@ -828,7 +859,7 @@ The Responder SHALL compose message_2 as follows:
 
 * Choose a connection identifier C_R and store it for the length of the protocol.
 
-* Compute the transcript hash TH_2 = H( H(message_1), G_Y, C_R ) where H() is the EDHOC hash algorithm of the selected cipher suite. The transcript hash TH_2 is a CBOR encoded bstr and the input to the hash function is a CBOR Sequence. Note that H(message_1) can be computed and cached already in the processing of message_1.
+* Compute the transcript hash TH_2 = H( G_Y, C_R, H(message_1) ) where H() is the EDHOC hash algorithm of the selected cipher suite. The transcript hash TH_2 is a CBOR encoded bstr and the input to the hash function is a CBOR Sequence. Note that H(message_1) can be computed and cached already in the processing of message_1.
 
 * Compute MAC_2 = EDHOC-KDF( PRK_3e2m, TH_2, "MAC_2", << ID_CRED_R, CRED_R, ? EAD_2 >>, mac_length_2 ). If the Responder authenticates with a static Diffie-Hellman key (method equals 1 or 3), then mac_length_2 is the EDHOC MAC length given by the selected cipher suite. If the Responder authenticates with a signature key (method equals 0 or 2), then mac_length_2 is equal to the output size of the EDHOC hash algorithm given by the selected cipher suite.
     * ID_CRED_R - identifier to facilitate the retrieval of CRED_R, see {{id_cred}}
@@ -843,17 +874,17 @@ The Responder SHALL compose message_2 as follows:
 
    * payload = MAC_2
 
-* CIPHERTEXT_2 is calculated by using the Expand function as a binary additive stream cipher.
+* CIPHERTEXT_2 is calculated by using the Expand function as a binary additive stream cipher over the following plaintext:
 
-   * plaintext = ( ? PAD, ID_CRED_R / bstr / int, Signature_or_MAC_2, ? EAD_2 )
+   * PLAINTEXT_2 = ( ? PAD, ID_CRED_R / bstr / -24..23, Signature_or_MAC_2, ? EAD_2 )
 
-      * If ID_CRED_R contains a single 'kid' parameter, i.e., ID_CRED_R = { 4 : kid_R }, then only the byte string or integer kid_R is conveyed in the plaintext encoded accordingly as bstr or int.
+      * If ID_CRED_R contains a single 'kid' parameter, i.e., ID_CRED_R = { 4 : kid_R }, then only the byte string kid_R is conveyed in the plaintext, represented as described in {{bstr-repr}}.
 
       * PAD = 1*true is padding that may be used to hide the length of the unpadded plaintext
 
-   * Compute KEYSTREAM_2 = EDHOC-KDF( PRK_2e, TH_2, "KEYSTREAM_2", h'', plaintext_length ), where plaintext_length is the length of the plaintext.
+   * Compute KEYSTREAM_2 = EDHOC-KDF( PRK_2e, TH_2, "KEYSTREAM_2", h'', plaintext_length ), where plaintext_length is the length of PLAINTEXT_2.
 
-   * CIPHERTEXT_2 = plaintext XOR KEYSTREAM_2
+   * CIPHERTEXT_2 = PLAINTEXT_2 XOR KEYSTREAM_2
 
 * Encode message_2 as a sequence of CBOR encoded data items as specified in {{asym-msg2-form}}.
 
@@ -893,7 +924,7 @@ message_3 = (
 
 The Initiator SHALL compose message_3 as follows:
 
-* Compute the transcript hash TH_3 = H(TH_2, CIPHERTEXT_2) where H() is the EDHOC hash algorithm of the selected cipher suite. The transcript hash TH_3 is a CBOR encoded bstr and the input to the hash function is a CBOR Sequence.  Note that H(TH_2, CIPHERTEXT_2) can be computed and cached already in the processing of message_2.
+* Compute the transcript hash TH_3 = H(TH_2, PLAINTEXT_2) where H() is the EDHOC hash algorithm of the selected cipher suite. The transcript hash TH_3 is a CBOR encoded bstr and the input to the hash function is a CBOR Sequence.  Note that H(TH_2, PLAINTEXT_2) can be computed and cached already in the processing of message_2.
 
 * Compute MAC_3 = EDHOC-KDF( PRK_3m, TH_3, "MAC_3", << ID_CRED_I, CRED_I, ? EAD_3 >>, mac_length_3 ). If the Initiator authenticates with a static Diffie-Hellman key (method equals 2 or 3), then mac_length_3 is the EDHOC MAC length given by the selected cipher suite.  If the Initiator authenticates with a signature key (method equals 0 or 1), then mac_length_3 is equal to the output size of the EDHOC hash algorithm given by the selected cipher suite.
     * ID_CRED_I - identifier to facilitate the retrieval of CRED_I, see {{id_cred}}
@@ -909,7 +940,7 @@ The Initiator SHALL compose message_3 as follows:
 
    * payload = MAC_3
 
-* Compute a COSE_Encrypt0 object as defined in Sections 5.2 and 5.3 of {{I-D.ietf-cose-rfc8152bis-struct}}, with the EDHOC AEAD algorithm of the selected cipher suite, using the encryption key K_3, the initialization vector IV_3, the plaintext P, and the following parameters as input (see {{COSE}}):
+* Compute a COSE_Encrypt0 object as defined in Sections 5.2 and 5.3 of {{I-D.ietf-cose-rfc8152bis-struct}}, with the EDHOC AEAD algorithm of the selected cipher suite, using the encryption key K_3, the initialization vector IV_3, the plaintext PLAINTEXT_3, and the following parameters as input (see {{COSE}}):
 
    * protected = h''
    * external_aad = TH_3
@@ -917,12 +948,16 @@ The Initiator SHALL compose message_3 as follows:
    where
 
    * K_3 = EDHOC-KDF( PRK_3e2m, TH_3, "K_3", h'', key_length )
-      * key_length - length of the encryption key of the EDHOC AEAD algorithm
-   * IV_3 = EDHOC-KDF( PRK_3e2m, TH_3, "IV_3", h'', iv_length )
-      * iv_length - length of the initialization vector of the EDHOC AEAD algorithm
-   * P = ( ? PAD, ID_CRED_I / bstr / int, Signature_or_MAC_3, ? EAD_3 )
 
-      * If ID_CRED_I contains a single 'kid' parameter, i.e., ID_CRED_I = { 4 : kid_I }, only the byte string or integer kid_I is conveyed in the plaintext encoded accordingly as bstr or int.
+       * key_length - length of the encryption key of the EDHOC AEAD algorithm
+
+   * IV_3 = EDHOC-KDF( PRK_3e2m, TH_3, "IV_3", h'', iv_length )
+
+       * iv_length - length of the initialization vector of the EDHOC AEAD algorithm
+
+   * PLAINTEXT_3 = ( ? PAD, ID_CRED_I / bstr / -24..23, Signature_or_MAC_3, ? EAD_3 )
+
+       * If ID_CRED_I contains a single 'kid' parameter, i.e., ID_CRED_I = { 4 : kid_I }, then only the byte string kid_I is conveyed in the plaintext, represented as described in {{bstr-repr}}.
 
        * PAD = 1*true is padding that may be used to hide the length of the unpadded plaintext
 
@@ -979,7 +1014,7 @@ message_4 = (
 
 The Responder SHALL compose message_4 as follows:
 
-* Compute a COSE_Encrypt0 as defined in Sections 5.2 and 5.3 of {{I-D.ietf-cose-rfc8152bis-struct}}, with the EDHOC AEAD algorithm of the selected cipher suite, using the encryption key K_4, the initialization vector IV_4, the plaintext P, and the following parameters as input (see {{COSE}}):
+* Compute a COSE_Encrypt0 as defined in Sections 5.2 and 5.3 of {{I-D.ietf-cose-rfc8152bis-struct}}, with the EDHOC AEAD algorithm of the selected cipher suite, using the encryption key K_4, the initialization vector IV_4, the plaintext PLAINTEXT_4, and the following parameters as input (see {{COSE}}):
 
    * protected = h''
    * external_aad = TH_4
@@ -990,7 +1025,7 @@ The Responder SHALL compose message_4 as follows:
        * key_length - length of the encryption key of the EDHOC AEAD algorithm
     * IV_4 = EDHOC-Exporter( "EDHOC_IV_4", h'', iv_length )
        * iv_length - length of the initialization vector of the EDHOC AEAD algorithm
-    * P = ( ? PAD, ? EAD_4 )
+    * PLAINTEXT_4 = ( ? PAD, ? EAD_4 )
       * PAD = 1*true is padding that may be used to hide the length of the unpadded plaintext.
       * EAD_4 - external authorization data, see {{AD}}.
 
@@ -1130,7 +1165,7 @@ An implementation MAY support only Initiator or only Responder.
 
 An implementation MAY support only a single method. None of the methods are mandatory-to-implement.
 
-Implementations MUST support 'kid' parameters of type int. None of the other COSE header parameters are mandatory-to-implement.
+Implementations MUST support 'kid' parameters. None of the other COSE header parameters are mandatory-to-implement.
 
 An implementation MAY support only a single credential type (CCS, CWT, X.509, C509). None of the credential types are mandatory-to-implement.
 
@@ -1210,7 +1245,7 @@ An attacker observing network traffic may use connection identifiers sent in cle
 
 Since the publication of {{RFC3552}} there has been an increased awareness of the need to protect against endpoints that are compromised, malicious, or whose interests simply do not align with the interests of users {{I-D.arkko-arch-internet-threat-model-guidance}}. {{RFC7624}} describes an updated threat model for Internet confidentiality, see {{sec-prop}}. {{I-D.arkko-arch-internet-threat-model-guidance}} further expands the threat model. Implementations and users SHOULD consider these threat models. In particular, even data sent protected to the other endpoint such as ID_CRED and EAD can be used for tracking, see Section 2.7 of {{I-D.arkko-arch-internet-threat-model-guidance}}.
 
-Information regarding the lengths of ID_CRED_I, ID_CRED_R, EAD_2, EAD_3, and EAD_4 are leaked to an passive attacker. Many COSE header parameters have variable length. To mitigate an attacker from differentiating endpoints with identifiers of different length, and implementation may e.g., only use fix length identifiers like 'kid' of length 1 for the Responders. Alternatively padding may be used to hide the length of e.g., certificates by value in 'x5chain' or 'c5c'.
+Information regarding the lengths of ID_CRED_I, ID_CRED_R, EAD_2, EAD_3, and EAD_4 are leaked to a passive attacker. Many COSE header parameters have variable length. To mitigate an attacker from differentiating endpoints with identifiers of different length, an implementation may, e.g., only use fix length identifiers like 'kid' with one-byte CBOR int representations for the Responders. Alternatively padding may be used to hide the length of, e.g., certificates by value in 'x5chain' or 'c5c'.
 
 ## Denial-of-Service {#dos}
 
@@ -1232,7 +1267,7 @@ All private keys, symmetric keys, and IVs MUST be secret. Implementations should
 
 The Initiator and the Responder are responsible for verifying the integrity and validity of certificates. The selection of trusted CAs should be done very carefully and certificate revocation should be supported. The choice of revocation mechanism is left to the application. For example, in case of X.509 certificates, Certificate Revocation Lists {{RFC5280}} or OCSP {{RFC6960}} may be used. Verification of validity may require the use of a Real-Time Clock (RTC). The private authentication keys MUST be kept secret, only the Responder SHALL have access to the Responder's private authentication key and only the Initiator SHALL have access to the Initiator's private authentication key.
 
-The Initiator and the Responder are allowed to select the connection identifiers C_I and C_R, respectively, for the other party to use in the ongoing EDHOC protocol as well as in a subsequent application protocol (e.g., OSCORE {{RFC8613}}). The choice of connection identifier is not security critical in EDHOC but intended to simplify the retrieval of the right security context in combination with using short identifiers. If the wrong connection identifier of the other party is used in a protocol message it will result in the receiving party not being able to retrieve a security context (which will terminate the protocol) or retrieve the wrong security context (which also terminates the protocol as the message cannot be verified).
+The Initiator and the Responder are allowed to select its connection identifiers C_I and C_R, respectively, for the other party to use in the ongoing EDHOC protocol as well as in a subsequent application protocol (e.g., OSCORE {{RFC8613}}). The choice of connection identifier is not security critical in EDHOC but intended to simplify the retrieval of the right security context in combination with using short identifiers. If the wrong connection identifier of the other party is used in a protocol message it will result in the receiving party not being able to retrieve a security context (which will terminate the protocol) or retrieve the wrong security context (which also terminates the protocol as the message cannot be verified).
 
 If two nodes unintentionally initiate two simultaneous EDHOC message exchanges with each other even if they only want to complete a single EDHOC message exchange, they MAY terminate the exchange with the lexicographically smallest G_X. Note that in cases where several EDHOC exchanges with different parameter sets (method, COSE headers, etc.) are used, an attacker can affect which of the parameter sets that will be used by blocking some of the parameter sets.
 
@@ -1407,51 +1442,6 @@ IANA has registered the following entries in the "COSE Header Parameters" regist
 +-----------+-------+----------------+---------------------------+
 ~~~~~~~~~~~
 
-## COSE Header Parameters Registry {#kid-header-param}
-
-IANA has extended the Value Type of 'kid' in the "COSE Header Parameters" registry under the group name "CBOR Object Signing and Encryption (COSE)" to also allow the Value Type int. The resulting Value Type is bstr / int. The Value Registry for this item is empty and omitted from the table below.
-
-~~~~~~~~~~~
-+------+-------+------------+----------------+
-| Name | Label | Value Type | Description    |
-+------+-------+------------+----------------+
-| kid  |   4   | bstr / int | Key identifier |
-+------+-------+------------+----------------+
-~~~~~~~~~~~
-
-## COSE Key Common Parameters Registry {#kid-key-common-param}
-
-IANA has extended the Value Type of 'kid' in the "COSE Key Common Parameters" registry under the group name "CBOR Object Signing and Encryption (COSE)" to also allow the Value Type int. The resulting Value Type is bstr / int. The Value Registry for this item is empty and omitted from the table below.
-
-~~~~~~~~~~~
-+------+-------+------------+----------------+
-| Name | Label | Value Type | Description    |
-+------+-------+------------+----------------+
-| kid  |   2   | bstr / int | Key identifi-  |
-|      |       |            | cation value - |
-|      |       |            | match to kid   |
-|      |       |            | in message     |
-+------+-------+------------+----------------+
-~~~~~~~~~~~
-
-
-## CWT Confirmation Methods Registry {#kid-cwt-conf-meth-param}
-
-IANA has extended the Value Type of 'kid' in the "CWT Confirmation Methods" registry under the group name "CBOR Web Token (CWT) Claims" to also allow the Value Type int. The incorrect term binary string has been corrected to bstr. The resulting Value Type is bstr / int. The new updated content for the 'kid' method is shown in the list below.
-
-- Confirmation Method Name: kid
-
-- Confirmation Method Description: Key Identifier
-
-- JWT Confirmation Method Name: kid
-
-- Confirmation Key: 3
-
-- Confirmation Value Type(s): bstr / int
-
-- Change Controller: IESG
-
-- Specification Document(s): Section 3.4 of RFC 8747 [[This document]]
 
 ## The Well-Known URI Registry {#well-known}
 
@@ -1545,41 +1535,7 @@ Expert reviewers should take into consideration the following points:
 
 # Use with OSCORE and Transfer over CoAP {#transfer}
 
-This appendix describes how to select EDHOC connection identifiers and derive an OSCORE security context when OSCORE is used with EDHOC, and how to transfer EDHOC messages over CoAP.
-
-## Selecting EDHOC Connection Identifier {#edhoc-to-oscore}
-
-This section specifies a rule for converting from EDHOC connection identifier to OSCORE Sender/Recipient ID. (An identifier is Sender ID or Recipient ID depending on from which endpoint is the point of view, see Section 3.1 of {{RFC8613}}.) Typically the Initiator is OSCORE client, in which case C_R becomes the client Sender ID.
-
-* If the EDHOC connection identifier is numeric, i.e., encoded as a CBOR integer on the wire, it is converted to an OSCORE Sender/Recipient ID equal to the CBOR encoding.
-
-For example, a numeric C_R equal to 10 (0x0A in CBOR encoding) is converted to a (typically client) Sender ID equal to 0x0A, while a numeric C_I equal to -12 (0x2B in CBOR encoding) is converted to a (typically client) Sender ID equal to 0x2B.
-
-* If the EDHOC connection identifier is byte-valued, hence encoded as a CBOR byte string on the wire, it is converted to an OSCORE Sender/Recipient ID equal to the byte string.
-
-For example, a byte-string valued C_R equal to 0xFF (0x41FF in CBOR encoding) is converted to a (typically client) Sender ID equal to 0xFF.
-
-Two EDHOC connection identifiers are called "equivalent" if and only if, when converted, they both result in the same OSCORE Sender/Recipient ID. For example, the two EDHOC connection identifiers with CBOR encoding 0x0A (numeric) and 0x410A (byte-valued) are equivalent since they both result in the same OSCORE Sender/Recipient ID 0x0A.
-
-When EDHOC is used to establish an OSCORE security context, the connection identifiers C_I and C_R MUST NOT be equivalent. Furthermore, in case of multiple OSCORE security contexts with potentially different endpoints, to facilitate the retrieval of the correct OSCORE security context, an endpoint SHOULD select an EDHOC connection identifier that when converted to OSCORE Recipient ID does not coincide with its other Recipient IDs.
-
-An endpoint MAY choose to select only a specific range of connection identifiers, e.g., connection identifiers which are only int or only bstr. The number of unique OSCORE Sender/Recipient ID of a given byte length on the wire is reduced by this choice, an example is given in {{fig-number-connection-id}}.
-
-
-~~~~~~~~~~~
-+---------------------+----------------------+
-|     Size of SID/RID |  Number of CI as int |
-+=====================+======================+
-|                   0 |                    0 |
-+---------------------+----------------------+
-|                   1 |                   48 |
-+---------------------+----------------------+
-|                   2 |                  464 |
-+---------------------+----------------------+
-~~~~~~~~~~~
-{: #fig-number-connection-id title="Number of integer EDHOC Connection Identifiers corresponding to OSCORE Sender/Recipient Identifiers of a given size in bytes."}
-
-
+This appendix describes how to derive an OSCORE security context when OSCORE is used with EDHOC, and how to transfer EDHOC messages over CoAP.
 
 ## Deriving the OSCORE Security Context {#oscore-ctx-derivation}
 
@@ -1604,7 +1560,7 @@ Master Salt   = EDHOC-Exporter("OSCORE_Salt", h'', salt_length)
 
 * The HKDF Algorithm is the one based on the application hash algorithm of the selected cipher suite for the EDHOC session. For example, if SHA-256 is the application hash algorithm of the selected cipher suite, HKDF SHA-256 is used as HKDF Algorithm in the OSCORE Security Context.
 
-* In case the Client is Initiator and the Server is Responder, the Client's OSCORE Sender ID and the Server's OSCORE Sender ID are determined from the EDHOC connection identifiers C_R and C_I for the EDHOC session, respectively, by applying the conversion in {{edhoc-to-oscore}}. The reverse applies in case the Client is the Responder and the Server is the Initiator.
+* In case the Client is Initiator and the Server is Responder, the Client's OSCORE Sender ID and the Server's OSCORE Sender ID are determined from the EDHOC connection identifiers C_R and C_I for the EDHOC session, respectively, by applying the conversion in {{ci-oscore}}. The reverse applies in case the Client is the Responder and the Server is the Initiator.
 
 Client and Server use the parameters above to establish an OSCORE Security Context, as per Section 3.2.1 of {{RFC8613}}.
 
@@ -1632,7 +1588,7 @@ In order for the server to correlate a message received from a client to a messa
 
 * In the case when the server is Initiator, message_2 (and message_4, if present) is sent from the client prepended with the identifier C_I. See {{fig-coap2}}.
 
-The prepended identifiers are encoded in CBOR and thus self-delimiting. They are sent in front of the actual EDHOC message to keep track of messages in an EDHOC session, and only the part of the body following the identifier is used for EDHOC processing. In particular, the connection identifiers within the EDHOC messages are not impacted by the prepended identifiers.
+The prepended identifiers are encoded in CBOR and thus self-delimiting. The integer representation of identifiers described in {{bstr-repr}} is used, when applicable. They are sent in front of the actual EDHOC message to keep track of messages in an EDHOC session, and only the part of the body following the identifier is used for EDHOC processing. In particular, the connection identifiers within the EDHOC messages are not impacted by the prepended identifiers.
 
 The application/edhoc media type does not apply to these messages;
 their media type is unnamed.
@@ -1765,13 +1721,13 @@ message_1 = (
   METHOD : int,
   SUITES_I : suites,
   G_X : bstr,
-  C_I : bstr / int,
+  C_I : bstr / -24..23,
   ? EAD_1 : ead,
 )
 
 message_2 = (
   G_Y_CIPHERTEXT_2 : bstr,
-  C_R : bstr / int,
+  C_R : bstr / -24..23,
 )
 
 message_3 = (
