@@ -670,26 +670,13 @@ If the Initiator authenticates with a static Diffie-Hellman key, then PRK_4e3m =
 
 else PRK_4e3m = PRK_3e2m.
 
-### PRK_out
-
-The pseudo-random key PRK_out is used to derive application specific data and keying material to encrypt message_4. PRK_out is derived as follows:
-
-PRK_out = Extract(PRK_4e3m, TH_4)
-
-The transcript hash TH_4 is a CBOR encoded bstr and the input to the hash function is a CBOR Sequence.
-
-~~~~~~~~~~~
-   TH_4 = H( TH_3, PLAINTEXT_3 )
-~~~~~~~~~~~
-
-where H() is the EDHOC hash algorithm in the selected cipher suite.
 
 ## Expand {#expand}
 
-The keys, IVs and MACs used in EDHOC are derived from the PRKs using Expand, and instantiated with the EDHOC AEAD algorithm in the selected cipher suite.
+The keys, IVs, salts, and MACs used in EDHOC are derived from the PRKs using Expand.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
-   OKM = EDHOC-KDF( PRK, transcript_hash, label, context, length )
+   OKM = EDHOC-KDF( PRK, label, context, length )
        = Expand( PRK, info, length )
 ~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -697,8 +684,7 @@ where info is encoded as the CBOR sequence
 
 ~~~~~~~~~~~ CDDL
 info = (
-  transcript_hash : bstr,
-  label : tstr,
+  label : uint,
   context : bstr,
   length : uint,
 )
@@ -706,14 +692,11 @@ info = (
 
 where
 
-  + transcript_hash is a bstr set to one of the transcript hashes TH_2, TH_3, or TH_4 as defined in Sections {{asym-msg2-form}}{: format="counter"}, {{asym-msg3-form}}{: format="counter"}, and {{exporter}}{: format="counter"}.
+  + label is a uint
 
-  + label is a tstr set to the name of the derived key, IV or MAC; i.e., "KEYSTREAM_2", "MAC_2", "K_3", "IV_3", or "MAC_3".
-
-  + context is a bstr
+  + context is a bstr typically including one of the transcript hashes TH_2, TH_3, or TH_4 as defined in Sections {{asym-msg2-form}}{: format="counter"}, {{asym-msg3-form}}{: format="counter"}, and {{exporter}}{: format="counter"}.
 
   + length is the length of output keying material (OKM) in bytes
-
 
 The definition of Expand depends on the EDHOC hash algorithm of the selected cipher suite:
 
@@ -723,14 +706,29 @@ The definition of Expand depends on the EDHOC hash algorithm of the selected cip
 
 where L = 8*length, the output length in bits.
 
-The keys, IVs and MACs are derived as follows:
+The keys, IVs, salts and MACs are derived as follows (IVs are only used if the EDHOC AEAD algorithm uses IV):
 
-* KEYSTREAM_2 is derived using the transcript hash TH_2 and the pseudorandom key PRK_2e.
-* MAC_2 is derived using the transcript hash TH_2 and the pseudorandom key PRK_3e2m.
-* K_3 and IV_3 are derived using the transcript hash TH_3 and the pseudorandom key PRK_3e2m. IVs are only used if the EDHOC AEAD algorithm uses IVs.
-* MAC_3 is derived using the transcript hash TH_3 and the pseudorandom key PRK_4e3m.
+* KEYSTREAM_2 and SALT_3e2m is derived using the transcript hash TH_2 and the pseudorandom key PRK_2e.
+* MAC_2 is derived using context_2, see {{asym-msg2-proc}}}, and the pseudorandom key PRK_3e2m.
+* K_3, IV_3 and SALT_4e3m are derived using the transcript hash TH_3 and the pseudorandom key PRK_3e2m.
+* MAC_3 is derived using context_3, see {{asym-msg3-proc}} and the pseudorandom key PRK_4e3m.
+* PRK_out, K_4 and IV_4 are derived using the transcript hash TH_4 and the pseudorandom key PRK_4e3m.
 
-KEYSTREAM_2, K_3, and IV_3 use an empty CBOR byte string h'' as context. MAC_2 and MAC_3 use context as defined in {{asym-msg2-proc}} and {{asym-msg3-proc}}, respectively.
+~~~~~~~~~~~~~~~~~~~~~~~
+KEYSTREAM_2   = EDHOC-KDF( PRK_2e,   0, TH_2,      plaintext_length )
+SALT_3e2m     = EDHOC-KDF( PRK_2e,   1, TH_2,      hash_length )
+MAC_2         = EDHOC-KDF( PRK_3e2m, 2, context_2, mac_length_2 )
+K_3           = EDHOC-KDF( PRK_3e2m, 3, TH_3,      key_length )
+IV_3          = EDHOC-KDF( PRK_3e2m, 4, TH_3,      iv_length )
+SALT_4e3m     = EDHOC-KDF( PRK_3e2m, 5, TH_3,      hash_length )
+MAC_3         = EDHOC-KDF( PRK_4e3m, 6, context_3, mac_length_3 )
+PRK_out       = EDHOC-KDF( PRK_4e3m, 7, TH_4,      hash_length )
+K_4           = EDHOC-KDF( PRK_4e3m, 8, TH_4,      key_length )
+IV_4          = EDHOC-KDF( PRK_4e3m, 9, TH_4,      iv_length )
+~~~~~~~~~~~~~~~~~~~~~~~
+
+The pseudo-random key PRK_out is used to derive application specific data and for key update.
+
 
 ## EDHOC-Exporter {#exporter}
 
@@ -738,27 +736,36 @@ Application keys and other application specific data can be derived using the ED
 
 ~~~~~~~~~~~
    EDHOC-Exporter(label, context, length)
-     = EDHOC-KDF(PRK_out, '', label, context, length)
+     = EDHOC-KDF(PRK_exporter, label, context, length)
 ~~~~~~~~~~~
+where
 
-where label is a registered tstr from the EDHOC Exporter Label registry ({{exporter-label}}), context is a bstr defined by the application, and length is a uint defined by the application. The (label, context) pair must be unique, i.e., a (label, context) MUST NOT be used for two different purposes. However an application can re-derive the same key several times as long as it is done in a secure way. For example, in most encryption algorithms the same key can be reused with different nonces. The context can for example be the empty CBOR byte string.
+~~~~~~~~~~~~~~~~~~~~~~~
+PRK_exporter  = EDHOC-KDF( PRK_out, 10, h'', hash_length ).
+~~~~~~~~~~~~~~~~~~~~~~~
+
+and where
+
+* label is a registered uint from the EDHOC Exporter Label registry ({{exporter-label}})
+* context is a bstr defined by the application
+* length is a uint defined by the application.
+
+
+The (label, context) pair must be unique, i.e., a (label, context) MUST NOT be used for two different purposes. However an application can re-derive the same key several times as long as it is done in a secure way. For example, in most encryption algorithms the same key can be reused with different nonces. The context can for example be the empty CBOR byte string.
 
 Examples of use of the EDHOC-Exporter are given in {{asym-msg4-proc}} and {{transfer}}.
 
-* K_4 and IV_4 are derived with the EDHOC-Exporter using the empty CBOR byte string h'' as context, and labels "EDHOC_K_4" and "EDHOC_IV_4", respectively. IVs are only used if the EDHOC AEAD algorithm uses IVs.
-
-With SHA-256, no context, and OKM length smaller than 24, any label longer than 20 characters requires an additional iteration of the hash function to compute. The labels in this specification have all been chosen to fit within this limit.
 
 ## EDHOC-KeyUpdate {#keyupdate}
 
-To provide forward secrecy in an even more efficient way than re-running EDHOC, EDHOC provides the function EDHOC-KeyUpdate. When EDHOC-KeyUpdate is called the old PRK_out is deleted and the new PRK_out is calculated as a "hash" of the old key using the Extract function as illustrated by the following pseudocode:
+To provide forward secrecy in an even more efficient way than re-running EDHOC, EDHOC provides the function EDHOC-KeyUpdate. When EDHOC-KeyUpdate is called the old PRK_out is deleted and the new PRK_out is calculated as a "hash" of the old key using the Expand function as illustrated by the following pseudocode:
 
 ~~~~~~~~~~~
-   EDHOC-KeyUpdate( nonce ):
-      PRK_out = Extract( nonce, PRK_out )
+   EDHOC-KeyUpdate( context ):
+      PRK_out = EDHOC-KDF( PRK_out, 11, context, hash_length )
 ~~~~~~~~~~~
 
-The EDHOC-KeyUpdate takes a nonce as input to guarantee that there are no short cycles and to enable binding of the updated PRK_out to some event that triggered the keyUpdate. The Initiator and the Responder need to agree on the nonce, which can, e.g., be a counter or a pseudo-random number such as a hash. The Initiator and the Responder also need to cache the old PRK_out until it has verfied that other endpoint has the correct new PRK_out. {{I-D.ietf-core-oscore-key-update}} describes key update for OSCORE using EDHOC-KeyUpdate.
+The EDHOC-KeyUpdate takes a context as input to enable binding of the updated PRK_out to some event that triggered the keyUpdate. The Initiator and the Responder need to agree on the context, which can, e.g., be a counter or a pseudo-random number such as a hash. The Initiator and the Responder also need to cache the old PRK_out until it has verfied that other endpoint has the correct new PRK_out. {{I-D.ietf-core-oscore-key-update}} describes key update for OSCORE using EDHOC-KeyUpdate.
 
 While the KeyUpdate method provides forward secrecy it does not give as strong security properties as re-running EDHOC, see {{security}}.
 
@@ -873,7 +880,8 @@ The Responder SHALL compose message_2 as follows:
 
 * Compute the transcript hash TH_2 = H( G_Y, C_R, H(message_1) ) where H() is the EDHOC hash algorithm of the selected cipher suite. The transcript hash TH_2 is a CBOR encoded bstr and the input to the hash function is a CBOR Sequence. Note that H(message_1) can be computed and cached already in the processing of message_1.
 
-* Compute MAC_2 = EDHOC-KDF( PRK_3e2m, TH_2, "MAC_2", << ID_CRED_R, CRED_R, ? EAD_2 >>, mac_length_2 ). If the Responder authenticates with a static Diffie-Hellman key (method equals 1 or 3), then mac_length_2 is the EDHOC MAC length given by the selected cipher suite. If the Responder authenticates with a signature key (method equals 0 or 2), then mac_length_2 is equal to the output size of the EDHOC hash algorithm given by the selected cipher suite.
+* Compute MAC_2 = EDHOC-KDF( PRK_3e2m, 2, context_2, mac_length_2 ), where context_2 = << TH_2, ID_CRED_R, CRED_R, ? EAD_2 >>
+   * If the Responder authenticates with a static Diffie-Hellman key (method equals 1 or 3), then mac_length_2 is the EDHOC MAC length given by the selected cipher suite. If the Responder authenticates with a signature key (method equals 0 or 2), then mac_length_2 is equal to the output size of the EDHOC hash algorithm given by the selected cipher suite.
     * ID_CRED_R - identifier to facilitate the retrieval of CRED_R, see {{id_cred}}
     * CRED_R - CBOR item containing the authentication credential of the Responder, see {{auth-cred}}
     * EAD_2 - external authorization data, see {{AD}}
@@ -938,7 +946,8 @@ The Initiator SHALL compose message_3 as follows:
 
 * Compute the transcript hash TH_3 = H(TH_2, PLAINTEXT_2) where H() is the EDHOC hash algorithm of the selected cipher suite. The transcript hash TH_3 is a CBOR encoded bstr and the input to the hash function is a CBOR Sequence.  Note that H(TH_2, PLAINTEXT_2) can be computed and cached already in the processing of message_2.
 
-* Compute MAC_3 = EDHOC-KDF( PRK_4e3m, TH_3, "MAC_3", << ID_CRED_I, CRED_I, ? EAD_3 >>, mac_length_3 ). If the Initiator authenticates with a static Diffie-Hellman key (method equals 2 or 3), then mac_length_3 is the EDHOC MAC length given by the selected cipher suite.  If the Initiator authenticates with a signature key (method equals 0 or 1), then mac_length_3 is equal to the output size of the EDHOC hash algorithm given by the selected cipher suite.
+* Compute MAC_3 = EDHOC-KDF( PRK_4e3m, 6, context_3, mac_length_3 ), where context_3 = << TH_3, ID_CRED_I, CRED_I, ? EAD_3 >>
+    * If the Initiator authenticates with a static Diffie-Hellman key (method equals 2 or 3), then mac_length_3 is the EDHOC MAC length given by the selected cipher suite.  If the Initiator authenticates with a signature key (method equals 0 or 1), then mac_length_3 is equal to the output size of the EDHOC hash algorithm given by the selected cipher suite.
     * ID_CRED_I - identifier to facilitate the retrieval of CRED_I, see {{id_cred}}
     * CRED_I - CBOR item containing the authentication credential of the Initiator, see {{auth-cred}}
     * EAD_3 - external authorization data, see {{AD}}
@@ -977,7 +986,9 @@ The Initiator SHALL compose message_3 as follows:
 
 * Encode message_3 as a CBOR data item as specified in {{asym-msg3-form}}.
 
-*  Make the connection identifiers (C_I, C_R) and the application algorithms in the selected cipher suite available to the application. The application can now compute PRK_out and derive application keys using the EDHOC-Exporter interface, see {{exporter}}.
+*  Make the connection identifiers (C_I, C_R) and the application algorithms in the selected cipher suite available to the application.
+
+* Compute the transcript hash TH_4 = H( TH_3, PLAINTEXT_3 ) where H() is the EDHOC hash algorithm of the selected cipher suite. The transcript hash TH_4 is a CBOR encoded bstr and the input to the hash function is a CBOR Sequence. The application can now compute PRK_out and derive application keys using the EDHOC-Exporter interface, see {{exporter}}.
 
 After sending message_3, the Initiator is assured that no other party than the Responder can compute the key PRK_out (implicit key authentication). The Initiator can securely derive application keys and send protected application data. However, the Initiator does not know that the Responder has actually computed the key PRK_out and therefore the Initiator SHOULD NOT permanently store the keying material PRK_out, or derive application keys, until the Initiator is assured that the Responder has actually computed the key PRK_out (explicit key confirmation). This is similar to waiting for acknowledgement (ACK) in a transport protocol. Explicit key confirmation is e.g., assured when the Initiator has verified an OSCORE message or message_4 from the Responder.
 
@@ -1291,33 +1302,19 @@ The sequence of transcript hashes in EHDOC (TH_2, TH_3, TH_4) do not make use of
 
 ## EDHOC Exporter Label Registry {#exporter-label}
 
-IANA has created a new registry titled "EDHOC Exporter Label" under the new group name "Ephemeral Diffie-Hellman Over COSE (EDHOC)". The registration procedure is "Expert Review". The columns of the registry are Label, Description, and Reference. All columns are text strings where Label consists only of the printable ASCII characters 0x21 - 0x7e. Labels beginning with "PRIVATE" MAY be used for private use without registration. All other label values MUST be registered. The initial contents of the registry are:
+IANA has created a new registry titled "EDHOC Exporter Label" under the new group name "Ephemeral Diffie-Hellman Over COSE (EDHOC)". The registration procedure is "Expert Review". The columns of the registry are Label, and Description. Label is a uint. Description is a text string. The initial contents of the registry are:
+
+<!-- TBD Labels for private use? -->
 
 ~~~~~~~~~~~~~~~~~~~~~~~
-Label: EDHOC_K_4
-Description: Key used to protect EDHOC message_4
-Reference: [[this document]]
-~~~~~~~~~~~~~~~~~~~~~~~
-
-~~~~~~~~~~~~~~~~~~~~~~~
-Label: EDHOC_IV_4
-Description: IV used to protect EDHOC message_4
-Reference: [[this document]]
-~~~~~~~~~~~~~~~~~~~~~~~
-
-~~~~~~~~~~~~~~~~~~~~~~~
-Label: OSCORE_Secret
+Label: 0
 Description: Derived OSCORE Master Secret
-Reference: [[this document]]
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 ~~~~~~~~~~~~~~~~~~~~~~~
-Label: OSCORE_Salt
+Label: 1
 Description: Derived OSCORE Master Salt
-Reference: [[this document]]
 ~~~~~~~~~~~~~~~~~~~~~~~
-
-
 
 
 ## EDHOC Cipher Suites Registry {#suites-registry}
@@ -1557,15 +1554,15 @@ After successful processing of EDHOC message_3, Client and Server derive Securit
 
 * The Master Secret and Master Salt are derived by using the EDHOC-Exporter interface, see {{exporter}}.
 
-The EDHOC Exporter Labels for deriving the OSCORE Master Secret and the OSCORE Master Salt, are "OSCORE_Secret" and "OSCORE_Salt", respectively.
+The EDHOC Exporter Labels for deriving the OSCORE Master Secret and the OSCORE Master Salt, are the uints 0 and 1, respectively.
 
 The context parameter is h'' (0x40), the empty CBOR byte string.
 
-By default, key_length is the key length (in bytes) of the application AEAD Algorithm of the selected cipher suite for the EDHOC session. Also by default, salt_length has value 8. The Initiator and Responder MAY agree out-of-band on a longer key_length than the default and on a different salt_length.
+By default, oscore_key_length is the key length (in bytes) of the application AEAD Algorithm of the selected cipher suite for the EDHOC session. Also by default, oscore_salt_length has value 8. The Initiator and Responder MAY agree out-of-band on a longer oscore_key_length than the default and on a different oscore_salt_length.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
-Master Secret = EDHOC-Exporter("OSCORE_Secret", h'', key_length)
-Master Salt   = EDHOC-Exporter("OSCORE_Salt", h'', salt_length)
+Master Secret = EDHOC-Exporter( 0, h'', oscore_key_length )
+Master Salt   = EDHOC-Exporter( 1, h'', oscore_salt_length )
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 * The AEAD Algorithm is the application AEAD algorithm of the selected cipher suite for the EDHOC session.
