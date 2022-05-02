@@ -606,7 +606,7 @@ Other conditions may be part of the application profile, such as target applicat
 
 EDHOC uses Extract-and-Expand {{RFC5869}} with the EDHOC hash algorithm in the selected cipher suite to derive keys used in EDHOC and in the application. This section defines Extract, Expand and other key derivation functions based on these.
 
-Extract is used to derive EDHOC internal fixed-length uniformly pseudorandom keys (PRK) from ECDH shared secrets. Expand is used to generate MACs and derive additional output keying material (OKM) from PRKs. Expand is used to define EDHOC-KDF and, in turn, EDHOC-KeyUpdate and EDHOC-Exporter.
+Extract is used to derive EDHOC internal fixed-length uniformly pseudorandom keys (PRK) from ECDH shared secrets. Expand is used to define EDHOC-KDF for generating MACs and for deriving additional output keying material (OKM) from PRKs. EDHOC-KDF, in turn, is used to define EDHOC-KeyUpdate and EDHOC-Exporter.
 
  In EDHOC a specific message is protected with a certain pseudorandom key, but how the key is derived depends on the method as detailed below.
 
@@ -716,6 +716,8 @@ The keys, IVs, salts and MACs are derived as follows (IVs are only used if the E
 * MAC_3 is derived using context_3, see {{asym-msg3-proc}} and the pseudorandom key PRK_4e3m.
 * PRK_out, K_4 and IV_4 are derived using the transcript hash TH_4 and the pseudorandom key PRK_4e3m.
 
+The derivations made with EDHOC-KDF during the message processing (see {{asym}}) are compiled in {{fig-edhoc-kdf}}.
+
 ~~~~~~~~~~~~~~~~~~~~~~~
 KEYSTREAM_2   = EDHOC-KDF( PRK_2e,   0, TH_2,      plaintext_length )
 SALT_3e2m     = EDHOC-KDF( PRK_2e,   1, TH_2,      hash_length )
@@ -728,8 +730,11 @@ PRK_out       = EDHOC-KDF( PRK_4e3m, 7, TH_4,      hash_length )
 K_4           = EDHOC-KDF( PRK_4e3m, 8, TH_4,      key_length )
 IV_4          = EDHOC-KDF( PRK_4e3m, 9, TH_4,      iv_length )
 ~~~~~~~~~~~~~~~~~~~~~~~
+{: #fig-edhoc-kdf title="Key derivations using EDHOC-KDF"}
+{: artwork-align="center"}
 
 The pseudo-random key PRK_out is used to derive application specific data and for key update.
+
 
 
 ## EDHOC-Exporter {#exporter}
@@ -742,16 +747,17 @@ Application keys and other application specific data can be derived using the ED
 ~~~~~~~~~~~
 where
 
-~~~~~~~~~~~~~~~~~~~~~~~
-PRK_exporter  = EDHOC-KDF( PRK_out, 10, h'', hash_length ).
-~~~~~~~~~~~~~~~~~~~~~~~
-
-and where
-
 * label is a registered uint from the EDHOC Exporter Label registry ({{exporter-label}})
 * context is a bstr defined by the application
-* length is a uint defined by the application.
+* length is a uint defined by the application
 
+where
+
+~~~~~~~~~~~~~~~~~~~~~~~
+PRK_exporter  = EDHOC-KDF( PRK_out, 10, h'', hash_length )
+~~~~~~~~~~~~~~~~~~~~~~~
+
+and where hash_length denotes the length of the hash function output in bytes, as specified by the COSE hash algorithm definition.
 
 The (label, context) pair must be unique, i.e., a (label, context) MUST NOT be used for two different purposes. However an application can re-derive the same key several times as long as it is done in a secure way. For example, in most encryption algorithms the same key can be reused with different nonces. The context can for example be the empty CBOR byte string.
 
@@ -766,6 +772,8 @@ To provide forward secrecy in an even more efficient way than re-running EDHOC, 
    EDHOC-KeyUpdate( context ):
       PRK_out = EDHOC-KDF( PRK_out, 11, context, hash_length )
 ~~~~~~~~~~~
+
+where hash_length denotes the length of the hash function output in bytes, as specified by the COSE hash algorithm definition.
 
 The EDHOC-KeyUpdate takes a context as input to enable binding of the updated PRK_out to some event that triggered the keyUpdate. The Initiator and the Responder need to agree on the context, which can, e.g., be a counter or a pseudo-random number such as a hash. The Initiator and the Responder also need to cache the old PRK_out until it has verfied that other endpoint has the correct new PRK_out. {{I-D.ietf-core-oscore-key-update}} describes key update for OSCORE using EDHOC-KeyUpdate.
 
