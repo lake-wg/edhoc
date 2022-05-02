@@ -604,9 +604,11 @@ Other conditions may be part of the application profile, such as target applicat
 
 # Key Derivation {#key-der}
 
-EDHOC uses Extract-and-Expand {{RFC5869}} with the EDHOC hash algorithm in the selected cipher suite to derive keys used in EDHOC and in the application. Extract is used to derive the EDHOC internal fixed-length uniformly pseudorandom keys (PRK) from ECDH shared secrets. Expand is used to generate MACs and derive additional output keying material (OKM) from PRKs.
+EDHOC uses Extract-and-Expand {{RFC5869}} with the EDHOC hash algorithm in the selected cipher suite to derive keys used in EDHOC and in the application. This section defines Extract, Expand and other key derivation functions based on these.
 
-This section defines Extract, Expand and other key derivation functions based on these: Expand is used to define EDHOC-KDF and, in turn, EDHOC-KeyUpdate and EDHOC-Exporter. In EDHOC a specific message is protected with a certain pseudorandom key, but how the key is derived depends on the method.
+Extract is used to derive EDHOC internal fixed-length uniformly pseudorandom keys (PRK) from ECDH shared secrets. Expand is used to generate MACs and derive additional output keying material (OKM) from PRKs. Expand is used to define EDHOC-KDF and, in turn, EDHOC-KeyUpdate and EDHOC-Exporter.
+
+ In EDHOC a specific message is protected with a certain pseudorandom key, but how the key is derived depends on the method as detailed below.
 
 <!-- A diagram of the EDHOC key schedule can be found in Figure 2 of {{Vucinic22}}. TBD: Rewrite the diagram -->
 
@@ -694,7 +696,7 @@ where
 
   + label is a uint
 
-  + context is a bstr typically including one of the transcript hashes TH_2, TH_3, or TH_4 as defined in Sections {{asym-msg2-form}}{: format="counter"}, {{asym-msg3-form}}{: format="counter"}, and {{exporter}}{: format="counter"}.
+  + context is a bstr typically including one of the transcript hashes TH_2, TH_3, or TH_4 as defined in Sections {{asym-msg2-proc}}{: format="counter"} and {{asym-msg3-proc}}{: format="counter"}.
 
   + length is the length of output keying material (OKM) in bytes
 
