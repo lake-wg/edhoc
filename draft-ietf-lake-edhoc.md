@@ -727,7 +727,16 @@ IV_4          = EDHOC-KDF( PRK_4e3m, 9, TH_4,      iv_length )
 {: #fig-edhoc-kdf title="Key derivations using EDHOC-KDF"}
 {: artwork-align="center"}
 
- The pseudo-random key PRK_out is used to derive application specific data and for key update, as described in the following sections.
+### PRK_out {#prkout}
+ The pseudo-random key PRK_out, computed as shown in {{fig-edhoc-kdf}}, is used to derive application specific data ({{exporter}}) and for key update ({{keyupdate}}).
+
+  The transcript hash TH_4 is a CBOR encoded bstr and the input to the hash function is a CBOR Sequence:
+
+~~~~~~~~~~~~~~~~~~~~~~~
+TH_4 = H( TH_3, PLAINTEXT_3 )
+~~~~~~~~~~~~~~~~~~~~~~~
+
+   where H() is the EDHOC hash algorithm of the selected cipher suite.
 
 
 ## EDHOC-Exporter {#exporter}
@@ -987,7 +996,7 @@ The Initiator SHALL compose message_3 as follows:
 
 *  Make the connection identifiers (C_I, C_R) and the application algorithms in the selected cipher suite available to the application.
 
-* Compute the transcript hash TH_4 = H( TH_3, PLAINTEXT_3 ) where H() is the EDHOC hash algorithm of the selected cipher suite. The transcript hash TH_4 is a CBOR encoded bstr and the input to the hash function is a CBOR Sequence. The application can now compute PRK_out and derive application keys using the EDHOC-Exporter interface, see {{exporter}}.
+The application can now compute PRK_out, see {{prkout}}, and derive application keys using the EDHOC-Exporter interface, see {{exporter}}.
 
 After sending message_3, the Initiator is assured that no other party than the Responder can compute the key PRK_out (implicit key authentication). The Initiator can securely derive application keys and send protected application data. However, the Initiator does not know that the Responder has actually computed the key PRK_out and therefore the Initiator SHOULD NOT permanently store the keying material PRK_out, or derive application keys, until the Initiator is assured that the Responder has actually computed the key PRK_out (explicit key confirmation). This is similar to waiting for acknowledgement (ACK) in a transport protocol. Explicit key confirmation is e.g., assured when the Initiator has verified an OSCORE message or message_4 from the Responder.
 
