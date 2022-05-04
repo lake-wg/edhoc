@@ -996,7 +996,7 @@ The Initiator SHALL compose message_3 as follows:
 
 *  Make the connection identifiers (C_I, C_R) and the application algorithms in the selected cipher suite available to the application.
 
-The application can now compute PRK_out, see {{prkout}}, derive application keys using the EDHOC-Exporter interface, see {{exporter}}, and send protected application data. The Initiator SHOULD NOT persistently store the keying material until the Initiator has verified message_4 or message protected with a derived application key, such as an OSCORE message, from the Responder. This is similar to waiting for acknowledgement (ACK) in a transport protocol. 
+The Initiator can now compute PRK_out, see {{prkout}}, derive application keys using the EDHOC-Exporter interface, see {{exporter}}, and send protected application data. The Initiator SHOULD NOT persistently store the keying material until the Initiator has verified message_4 or message protected with a derived application key, such as an OSCORE message, from the Responder. This is similar to waiting for acknowledgement (ACK) in a transport protocol.
 
 ### Responder Processing of Message 3
 
@@ -1014,7 +1014,7 @@ The Responder SHALL process message_3 as follows:
 
 * Verify Signature_or_MAC_3 using the algorithm in the selected cipher suite. The verification process depends on the method, see {{asym-msg3-proc}}.
 
-*  Make the connection identifiers (C_I, C_R) and the application algorithms in the selected cipher suite available to the application. 
+*  Make the connection identifiers (C_I, C_R) and the application algorithms in the selected cipher suite available to the application.
 
 After verifying message_3, the Responder can compute PRK_out, see {{prkout}}, derive application keys using the EDHOC-Exporter interface, see {{exporter}}, persistently store the keying material, and send protected application data.
 
