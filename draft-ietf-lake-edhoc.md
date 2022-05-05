@@ -110,6 +110,23 @@ informative:
       -
         ins: R. Davis
     date: April 2018
+    
+  Degabriele2011:
+    target: https://eprint.iacr.org/2011/615
+    title: On the Joint Security of Encryption and Signature in EMV
+    author: 
+      -
+        ins: J. P. Degabriele
+      -
+        ins: A. Lehmann 
+      -
+        ins: K. G. Paterson 
+      - 
+        ins: N. P. Smart 
+      -
+        ins: M. Strefler
+    date: December 2011  
+
 
   SECG:
     target: https://www.secg.org/sec1-v2.pdf
@@ -1187,7 +1204,7 @@ As discussed in {{SIGMA}}, the encryption of message_2 does only need to protect
 
 Requirements for how to securely generate, validate, and process the ephemeral public keys depend on the elliptic curve. For X25519 and X448, the requirements are defined in {{RFC7748}}. For secp256r1, secp384r1, and secp521r1, the requirements are defined in Section 5 of {{SP-800-56A}}. For secp256r1, secp384r1, and secp521r1, at least partial public-key validation MUST be done.
 
-Following the recommendations in Section 12 of {{RFC8152}}, a given key pair should be used for a single algorithm. Notably, a static Diffie-Hellman key over X25519 used for authentication in method 1, 2 or 3 MUST NOT not be used as a key for Ed25519 authentication in method 0. Such a use case could be allowed if a cryptographic analysis dedicated to this joint use case was performed, in a similar fashion to, e.g., the analysis of {{Thormaker2021}}.
+A static Diffie-Hellman key for authentication in method 1, 2 or 3 MUST NOT not be used as a digital signature key for authentication in method 0, unless proven secure by a dedicated cryptographic analysis. A preliminary conjecture is that a minor change to EDHOC may be sufficient to fit the analysis of secure shared signature and ECDH key usage in [[Degabriele2011]] and [[Thormarker2021]].
 
 So-called selfie attacks are mitigated as long as the Initiator does not have its own identity in the set of Responder identities it is allowed to communicate with. In trust on first use (TOFU) use cases the Initiator should verify that the the Responder's identity is not equal to its own. Any future EHDOC methods using e.g., pre-shared keys might need to mitigate this in other ways.
 
