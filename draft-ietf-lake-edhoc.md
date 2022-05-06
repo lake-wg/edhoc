@@ -604,15 +604,17 @@ Other conditions may be part of the application profile, such as target applicat
 
 # Key Derivation {#key-der}
 
-EDHOC uses Extract-and-Expand {{RFC5869}} with the EDHOC hash algorithm in the selected cipher suite to derive keys used in EDHOC and in the application. This section defines Extract, Expand, and other key derivation functions based on these.
+## Keys for EDHOC Message Processing
 
-Extract is used to derive fixed-length uniformly pseudorandom keys (PRK) from ECDH shared secrets. Expand is used to define EDHOC-KDF for generating MACs and for deriving output keying material (OKM) from PRKs. EDHOC-KDF, in turn, is used to define EDHOC-KeyUpdate and EDHOC-Exporter.
+EDHOC uses Extract-and-Expand {{RFC5869}} with the EDHOC hash algorithm in the selected cipher suite to derive keys used in message processing. This section defines Extract ({{extract}}) and Expand ({{expand}}), and how to use them to derive PRK_out ({{prkout}}) which is the shared secret key resulting from a successful EDHOC exchange.
 
- In EDHOC a specific message is protected with a certain pseudorandom key, but how the key is derived depends on the method as detailed below.
+Extract is used to derive fixed-length uniformly pseudorandom keys (PRK) from ECDH shared secrets. Expand is used to define EDHOC-KDF for generating MACs and for deriving output keying material (OKM) from PRKs.
+
+ In EDHOC a specific message is protected with a certain pseudorandom key, but how the key is derived depends on the method as detailed in {{asym}}.
 
 <!-- A diagram of the EDHOC key schedule can be found in Figure 2 of {{Vucinic22}}. TBD: Rewrite the diagram -->
 
-## Extract {#extract}
+### Extract {#extract}
 
 The pseudorandom keys (PRKs) used for EDHOC message processing are derived using Extract:
 
@@ -628,7 +630,9 @@ The definition of Extract depends on the EDHOC hash algorithm of the selected ci
 * if the EDHOC hash algorithm is SHAKE128, then Extract( salt, IKM ) = KMAC128( salt, IKM, 256, "" )
 * if the EDHOC hash algorithm is SHAKE256, then Extract( salt, IKM ) = KMAC256( salt, IKM, 512, "" )
 
-### PRK_2e
+The rest of the section defines the pseudo-random keys PRK_2e, PRK_3e2m and PRK_4e3m; their use is shown in {{fig-edhoc-kdf}}.
+
+#### PRK_2e
 
 The pseudo-random key PRK_2e is derived with the following input:
 
@@ -650,7 +654,7 @@ Example: Assuming the use of SHA-256 the extract phase of HKDF produces PRK_2e a
 
 where salt = 0x (zero-length byte string).
 
-### PRK_3e2m
+#### PRK_3e2m
 
 The pseudo-random key PRK_3e2m is derived as follows:
 
@@ -661,7 +665,7 @@ If the Responder authenticates with a static Diffie-Hellman key, then PRK_3e2m =
 
 else PRK_3e2m = PRK_2e.
 
-### PRK_4e3m
+#### PRK_4e3m
 
 The pseudo-random key PRK_4e3m is derived as follows:
 
@@ -673,7 +677,7 @@ If the Initiator authenticates with a static Diffie-Hellman key, then PRK_4e3m =
 else PRK_4e3m = PRK_3e2m.
 
 
-## Expand and EDHOC-KDF {#expand}
+### Expand and EDHOC-KDF {#expand}
 
 The output keying material (OKM) - including keys, IVs, and salts - are derived from the PRKs using the EDHOC-KDF, which is defined through Expand:
 
@@ -710,7 +714,7 @@ The definition of Expand depends on the EDHOC hash algorithm of the selected cip
 
 where L = 8*length, the output length in bits.
 
-{{fig-edhoc-kdf}} lists the derivations made with EDHOC-KDF during message processing, as detailed in {{asym}}.
+{{fig-edhoc-kdf}} lists derivations made with EDHOC-KDF during message processing. How the output keying material is used is specified in {{asym}}.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 KEYSTREAM_2   = EDHOC-KDF( PRK_2e,   0, TH_2,      plaintext_length )
@@ -724,24 +728,28 @@ PRK_out       = EDHOC-KDF( PRK_4e3m, 7, TH_4,      hash_length )
 K_4           = EDHOC-KDF( PRK_4e3m, 8, TH_4,      key_length )
 IV_4          = EDHOC-KDF( PRK_4e3m, 9, TH_4,      iv_length )
 ~~~~~~~~~~~~~~~~~~~~~~~
-{: #fig-edhoc-kdf title="Key derivations using EDHOC-KDF"}
+{: #fig-edhoc-kdf title="Key derivations using EDHOC-KDF."}
 {: artwork-align="center"}
 
 ### PRK_out {#prkout}
- The pseudo-random key PRK_out, computed as shown in {{fig-edhoc-kdf}}, is used to derive application specific data ({{exporter}}) and for key update ({{keyupdate}}).
 
-  The transcript hash TH_4 is a CBOR encoded bstr and the input to the hash function is a CBOR Sequence:
+ The pseudo-random key PRK_out, derived as shown in {{fig-edhoc-kdf}}, is the only secret key shared between Initiator and Responder that needs to be stored after a successful EDHOC exchange, see {{m3}}. Keys for applications are derived from PRK_out, see {{exporter}}.
+
+  The transcript hash TH_4 used to derive PRK_out is a CBOR encoded bstr and the input to the hash function is a CBOR Sequence:
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 TH_4 = H( TH_3, PLAINTEXT_3 )
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-   where H() is the EDHOC hash algorithm of the selected cipher suite.
+   where H() is the EDHOC hash algorithm of the selected cipher suite, and the arguments are defined in {{asym-msg3-proc}}.
 
+## Keys for EDHOC Applications
 
-## EDHOC-Exporter {#exporter}
+This section defines EDHOC-Exporter and EDHOC-KeyUpdate in terms of EDHOC-KDF and PRK_out.
 
-Application keys and other application specific data can be derived using the EDHOC-Exporter interface defined as:
+### EDHOC-Exporter {#exporter}
+
+Keying material for the application can be derived using the EDHOC-Exporter interface defined as:
 
 ~~~~~~~~~~~
    EDHOC-Exporter(label, context, length)
@@ -752,25 +760,24 @@ where
 * label is a registered uint from the EDHOC Exporter Label registry ({{exporter-label}})
 * context is a bstr defined by the application
 * length is a uint defined by the application
-
-where
+* PRK_exporter is derived from PRK_out:
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 PRK_exporter  = EDHOC-KDF( PRK_out, 10, h'', hash_length )
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-and where hash_length denotes the length of the hash function output in bytes, as specified by the COSE hash algorithm definition.
+where hash_length denotes the length of the hash function output in bytes, as specified by the COSE hash algorithm definition.
 
-PRK_exporter MUST be derived anew, if PRK_out is updated, e.g. as a result of a key update, see {{keyupdate}}.
+PRK_exporter MUST be derived anew if PRK_out is updated, in particular if EDHOC-KeyUpdate is used, see {{keyupdate}}.
 
 The (label, context) pair must be unique, i.e., a (label, context) MUST NOT be used for two different purposes. However an application can re-derive the same key several times as long as it is done in a secure way. For example, in most encryption algorithms the same key can be reused with different nonces. The context can for example be the empty CBOR byte string.
 
 Examples of use of the EDHOC-Exporter are given in {{transfer}}.
 
 
-## EDHOC-KeyUpdate {#keyupdate}
+### EDHOC-KeyUpdate {#keyupdate}
 
-To provide forward secrecy in an even more efficient way than re-running EDHOC, EDHOC provides the function EDHOC-KeyUpdate. When EDHOC-KeyUpdate is called the old PRK_out is deleted and the new PRK_out is calculated as a "hash" of the old key using the Expand function as illustrated by the following pseudocode:
+To provide forward secrecy in an even more efficient way than re-running EDHOC, EDHOC provides the function EDHOC-KeyUpdate. When EDHOC-KeyUpdate is called, the old PRK_out is deleted and the new PRK_out is calculated as a "hash" of the old key using the Expand function as illustrated by the following pseudocode:
 
 ~~~~~~~~~~~
    EDHOC-KeyUpdate( context ):
