@@ -263,7 +263,7 @@ Initiator                                                   Responder
 {: #fig-sigma title="MAC-then-Sign variant of the SIGMA-I protocol used by EDHOC."}
 {: artwork-align="center"}
 
-The parties exchanging messages are called Initiator (I) and Responder (R). They exchange ephemeral public keys, compute a shared secret, and derive symmetric application keys used to protect application data.
+The parties exchanging messages are called Initiator (I) and Responder (R). They exchange ephemeral public keys, compute a shared secret key PRK_out, and derive symmetric application keys used to protect application data.
 
 * G_X and G_Y are the ECDH ephemeral public keys of I and R, respectively.
 
@@ -281,7 +281,7 @@ In order to create a "full-fledged" protocol some additional protocol elements a
 
 * Computationally independent keys derived from the ECDH shared secret and used for authenticated encryption of different messages.
 
-* An optional fourth message giving explicit key confirmation to I in deployments where no protected application data is sent from R to I.
+* An optional fourth message giving key confirmation to I in deployments where no protected application data is sent from R to I.
 
 * A keying material exporter and a key update function with forward secrecy.
 
@@ -735,14 +735,6 @@ IV_4          = EDHOC-KDF( PRK_4e3m, 9, TH_4,      iv_length )
 
  The pseudo-random key PRK_out, derived as shown in {{fig-edhoc-kdf}}, is the only secret key shared between Initiator and Responder that needs to be stored after a successful EDHOC exchange, see {{m3}}. Keys for applications are derived from PRK_out, see {{exporter}}.
 
-  The transcript hash TH_4 used to derive PRK_out is a CBOR encoded bstr and the input to the hash function is a CBOR Sequence:
-
-~~~~~~~~~~~~~~~~~~~~~~~
-TH_4 = H( TH_3, PLAINTEXT_3 )
-~~~~~~~~~~~~~~~~~~~~~~~
-
-   where H() is the EDHOC hash algorithm of the selected cipher suite, and the arguments are defined in {{asym-msg3-proc}}.
-
 ## Keys for EDHOC Applications
 
 This section defines EDHOC-Exporter and EDHOC-KeyUpdate in terms of EDHOC-KDF and PRK_out.
@@ -965,7 +957,7 @@ message_3 = (
 
 The Initiator SHALL compose message_3 as follows:
 
-* Compute the transcript hash TH_3 = H(TH_2, PLAINTEXT_2) where H() is the EDHOC hash algorithm of the selected cipher suite. The transcript hash TH_3 is a CBOR encoded bstr and the input to the hash function is a CBOR Sequence.  Note that H(TH_2, PLAINTEXT_2) can be computed and cached already in the processing of message_2.
+* Compute the transcript hash TH_3 = H(TH_2, PLAINTEXT_2) where H() is the EDHOC hash algorithm of the selected cipher suite. The transcript hash TH_3 is a CBOR encoded bstr and the input to the hash function is a CBOR Sequence. Note that H(TH_2, PLAINTEXT_2) can be computed and cached already in the processing of message_2.
 
 * Compute MAC_3 as in {{expand}}, with context_3 = << ID_CRED_I, TH_3, CRED_I, ? EAD_3 >>
     * If the Initiator authenticates with a static Diffie-Hellman key (method equals 2 or 3), then mac_length_3 is the EDHOC MAC length given by the selected cipher suite.  If the Initiator authenticates with a signature key (method equals 0 or 1), then mac_length_3 is equal to the output size of the EDHOC hash algorithm given by the selected cipher suite.
@@ -1001,11 +993,16 @@ The Initiator SHALL compose message_3 as follows:
 
    CIPHERTEXT_3 is the 'ciphertext' of COSE_Encrypt0.
 
+* Compute the transcript hash TH_4 = H(TH_3, PLAINTEXT_3) where H() is the EDHOC hash algorithm of the selected cipher suite. The transcript hash TH_4 is a CBOR encoded bstr and the input to the hash function is a CBOR Sequence.
+
+* Calculate PRK_out as defined in {{fig-edhoc-kdf}}. The Initiator can now derive application keys using the EDHOC-Exporter interface, see {{exporter}}.
+
 * Encode message_3 as a CBOR data item as specified in {{asym-msg3-form}}.
 
 *  Make the connection identifiers (C_I, C_R) and the application algorithms in the selected cipher suite available to the application.
 
-The Initiator can now compute PRK_out, see {{prkout}}, derive application keys using the EDHOC-Exporter interface, see {{exporter}}, and send protected application data. The Initiator SHOULD NOT persistently store the keying material until the Initiator has verified message_4 or message protected with a derived application key, such as an OSCORE message, from the Responder. This is similar to waiting for acknowledgement (ACK) in a transport protocol.
+ The Initiator SHOULD NOT persistently store PRK_out or application keys until the Initiator has verified message_4 or a message protected with a derived application key, such as an OSCORE message, from the Responder. This is similar to waiting for acknowledgement (ACK) in a transport protocol.
+
 
 ### Responder Processing of Message 3
 
@@ -1085,7 +1082,7 @@ The Initiator SHALL process message_4 as follows:
 
 If any processing step fails, the Responder MUST send an EDHOC error message back, formatted as defined in {{error}}, and the session MUST be discontinued.
 
-After verifying message_4, the Initiator is assured that the Responder has calculated the key PRK_out (explicit key confirmation) and that no other party can derive the key.
+After verifying message_4, the Initiator is assured that the Responder has calculated the key PRK_out (key confirmation) and that no other party can derive the key.
 
 # Error Handling {#error}
 
@@ -1239,7 +1236,7 @@ Compromise of the long-term keys (private signature or static DH keys) does not 
 
 Based on the cryptographic algorithms requirements {{sec_algs}}, EDHOC provides a minimum of 64-bit security against online brute force attacks and a minimum of 128-bit security against offline brute force attacks. To break 64-bit security against online brute force an attacker would on average have to send 4.3 billion messages per second for 68 years, which is infeasible in constrained IoT radio technologies. A forgery against a 64-bit MAC in EDHOC breaks the security of all future application data, while a forgery against a 64-bit MAC in the subsequent application protocol (e.g., OSCORE {{RFC8613}}) typically only breaks the security of the data in the forged packet.
 
-After sending message_3, the Initiator is assured that no other party than the Responder can compute the key PRK_out (implicit key authentication). The Initiator does however not know that the Responder has actually computed the key PRK_out. While the Initiator can securely send protected application data, the Initiator SHOULD NOT permanently store the keying material PRK_out until the Initiator is assured that the Responder has actually computed the key PRK_out (explicit key confirmation). Explicit key confirmation is e.g., assured when the Initiator has verified an OSCORE message or message_4 from the Responder. After verifying message_3, the Responder is assured that the Initiator has calculated the key PRK_4e3m (explicit key confirmation) and that no other party than the Initiator can compute the keys PRK_4e3m and PRK_out. The Responder can securely derive and store the keying material PRK_out and send protected application data.
+After sending message_3, the Initiator is assured that no other party than the Responder can compute the key PRK_out. While the Initiator can securely send protected application data, the Initiator SHOULD NOT persistently store the keying material PRK_out until the Initiator has verified an OSCORE message or message_4 from the Responder. After verifying message_3, the Responder is assured that the Initiator no other party than the Initiator can compute the key PRK_out, and that it has access to all information needed to compute PRK_out. The Responder can securely derive and store the keying material PRK_out, and send protected application data.
 
 External authorization data sent in message_1 (EAD_1) or message_2 (EAD_2) should be considered unprotected by EDHOC, see {{unprot-data}}. EAD_2 is encrypted but the Responder has not yet authenticated the Initiator.  External authorization data sent in message_3 (EAD_3) or message_4 (EAD_4) is protected between Initiator and Responder by the protocol, but note that EAD fields may be used by the application before the message verification is completed, see {{AD}}.
 
