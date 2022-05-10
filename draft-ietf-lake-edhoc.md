@@ -1580,12 +1580,12 @@ IANA has added the media types "application/edhoc+cbor-seq" and "application/cid
 IANA has added the media types "application/edhoc+cbor-seq" and "application/cid-edhoc+cbor-seq" to the "CoAP Content-Formats" registry under the group name "Constrained RESTful Environments (CoRE) Parameters".
 
 ~~~~~~~~~~~
-+--------------------------------+----------+-------+------------------------+
-| Media Type                     | Encoding | ID    | Reference              |
-+--------------------------------+----------+-------+------------------------+
-| application/edhoc+cbor-seq     | -        | TBD42 | \[\[this document\]\]  |
-| application/cid-edhoc+cbor-seq | -        | TBD43 | \[\[this document\]\]  |
-+--------------------------------+----------+-------+------------------------+
++--------------------------------+----------+------+-------------------+
+| Media Type                     | Encoding | ID   | Reference         |
++--------------------------------+----------+------+-------------------+
+| application/edhoc+cbor-seq     | -        | TBD5 | [[this document]] |
+| application/cid-edhoc+cbor-seq | -        | TBD6 | [[this document]] |
++--------------------------------+----------+------+-------------------+
 ~~~~~~~~~~~
 {: #fig-format-ids title="CoAP Content-Format IDs"}
 
