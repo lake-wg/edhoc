@@ -56,6 +56,7 @@ normative:
   RFC8376:
   RFC8392:
   RFC8410:
+  RFC8152:
   RFC8610:
   RFC8613:
   RFC8724:
@@ -109,6 +110,23 @@ informative:
       -
         ins: R. Davis
     date: April 2018
+    
+  Degabriele2011:
+    target: https://eprint.iacr.org/2011/615
+    title: On the Joint Security of Encryption and Signature in EMV
+    author: 
+      -
+        ins: J. P. Degabriele
+      -
+        ins: A. Lehmann 
+      -
+        ins: K. G. Paterson 
+      - 
+        ins: N. P. Smart 
+      -
+        ins: M. Strefler
+    date: December 2011  
+
 
   SECG:
     target: https://www.secg.org/sec1-v2.pdf
@@ -130,6 +148,14 @@ informative:
       -
         ins: H. Krawczyk
     date: May 2010
+
+  Thormaker2021:
+    target: https://eprint.iacr.org/2021/509.pdf
+    title: "On using the same key pair for Ed25519 and an X25519 based KEM"
+    author:
+      -
+        ins: E. Thormarker
+    date: April 2021
 
   CNSA:
     target: https://apps.nsa.gov/iaarchive/programs/iad-initiatives/cnsa-suite.cfm
@@ -1255,6 +1281,8 @@ To reduce message overhead EDHOC does not use explicit nonces and instead relies
 As discussed in {{SIGMA}}, the encryption of message_2 does only need to protect against passive attacker as active attackers can always get the Responder's identity by sending their own message_1. EDHOC uses the Expand function (typically HKDF-Expand) as a binary additive stream cipher. HKDF-Expand provides better confidentiality than AES-CTR but is not often used as it is slow on long messages, and most applications require both IND-CCA confidentiality as well as integrity protection. For the encryption of message_2, any speed difference is negligible, IND-CCA does not increase security, and integrity is provided by the inner MAC (and signature depending on method).
 
 Requirements for how to securely generate, validate, and process the ephemeral public keys depend on the elliptic curve. For X25519 and X448, the requirements are defined in {{RFC7748}}. For secp256r1, secp384r1, and secp521r1, the requirements are defined in Section 5 of {{SP-800-56A}}. For secp256r1, secp384r1, and secp521r1, at least partial public-key validation MUST be done.
+
+A static Diffie-Hellman key for authentication in method 1, 2 or 3 MUST NOT not be used as a digital signature key for authentication in method 0, unless proven secure by a dedicated cryptographic analysis. A preliminary conjecture is that a minor change to EDHOC may be sufficient to fit the analysis of secure shared signature and ECDH key usage in [[Degabriele2011]] and [[Thormarker2021]].
 
 So-called selfie attacks are mitigated as long as the Initiator does not have its own identity in the set of Responder identities it is allowed to communicate with. In trust on first use (TOFU) use cases the Initiator should verify that the the Responder's identity is not equal to its own. Any future EHDOC methods using e.g., pre-shared keys might need to mitigate this in other ways.
 
