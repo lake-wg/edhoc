@@ -1342,7 +1342,7 @@ The sequence of transcript hashes in EHDOC (TH_2, TH_3, TH_4) do not make use of
 
 ## EDHOC Exporter Label Registry {#exporter-label}
 
-IANA has created a new registry titled "EDHOC Exporter Label" under the new group name "Ephemeral Diffie-Hellman Over COSE (EDHOC)". The registration procedure is "Expert Review". The columns of the registry are Label, and Description. Label is a uint. Description is a text string. The initial contents of the registry are:
+IANA has created a new registry titled "EDHOC Exporter Label" under the new group name "Ephemeral Diffie-Hellman Over COSE (EDHOC)". The registration procedure is "Expert Review". The columns of the registry are Label and Description. Label is a uint. Description is a text string. The initial contents of the registry are:
 
 <!-- TBD Labels for private use? -->
 
@@ -1359,34 +1359,30 @@ Description: Derived OSCORE Master Salt
 
 ## EDHOC Cipher Suites Registry {#suites-registry}
 
-IANA has created a new registry titled "EDHOC Cipher Suites" under the new group name "Ephemeral Diffie-Hellman Over COSE (EDHOC)". The registration procedure is "Expert Review". The columns of the registry are Value, Array, Description, and Reference, where Value is an integer and the other columns are text strings. The initial contents of the registry are:
+IANA has created a new registry titled "EDHOC Cipher Suites" under the new group name "Ephemeral Diffie-Hellman Over COSE (EDHOC)". The registration procedure is "Expert Review". The columns of the registry are Value, Array and Description, where Value is an integer and the other columns are text strings. The initial contents of the registry are:
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 Value: -24
 Algorithms: N/A
 Desc: Reserved for Private Use
-Reference: [[this document]]
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 Value: -23
 Algorithms: N/A
 Desc: Reserved for Private Use
-Reference: [[this document]]
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 Value: -22
 Algorithms: N/A
 Desc: Reserved for Private Use
-Reference: [[this document]]
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 Value: -21
 Algorithms: N/A
 Desc: Reserved for Private Use
-Reference: [[this document]]
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -1394,7 +1390,6 @@ Value: 0
 Array: 10, -16, 8, 4, -8, 10, -16
 Desc: AES-CCM-16-64-128, SHA-256, 8, X25519, EdDSA,
       AES-CCM-16-64-128, SHA-256
-Reference: [[this document]]
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -1402,7 +1397,6 @@ Value: 1
 Array: 30, -16, 16, 4, -8, 10, -16
 Desc: AES-CCM-16-128-128, SHA-256, 16, X25519, EdDSA,
       AES-CCM-16-64-128, SHA-256
-Reference: [[this document]]
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -1410,7 +1404,6 @@ Value: 2
 Array: 10, -16, 8, 1, -7, 10, -16
 Desc: AES-CCM-16-64-128, SHA-256, 8, P-256, ES256,
       AES-CCM-16-64-128, SHA-256
-Reference: [[this document]]
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -1418,7 +1411,6 @@ Value: 3
 Array: 30, -16, 16, 1, -7, 10, -16
 Desc: AES-CCM-16-128-128, SHA-256, 16, P-256, ES256,
       AES-CCM-16-64-128, SHA-256
-Reference: [[this document]]
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -1426,7 +1418,6 @@ Value: 4
 Array: 24, -16, 16, 4, -8, 24, -16
 Desc: ChaCha20/Poly1305, SHA-256, 16, X25519, EdDSA,
       ChaCha20/Poly1305, SHA-256
-Reference: [[this document]]
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -1434,7 +1425,6 @@ Value: 5
 Array: 24, -16, 16, 1, -7, 24, -16
 Desc: ChaCha20/Poly1305, SHA-256, 16, P-256, ES256,
       ChaCha20/Poly1305, SHA-256
-Reference: [[this document]]
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -1442,7 +1432,6 @@ Value: 6
 Array: 1, -16, 16, 4, -7, 1, -16
 Desc: A128GCM, SHA-256, 16, X25519, ES256,
       A128GCM, SHA-256
-Reference: [[this document]]
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -1450,7 +1439,6 @@ Value: 24
 Array: 3, -43, 16, 2, -35, 3, -43
 Desc: A256GCM, SHA-384, 16, P-384, ES384,
       A256GCM, SHA-384
-Reference: [[this document]]
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -1458,12 +1446,11 @@ Value: 25
 Array: 24, -45, 16, 5, -8, 24, -45
 Desc: ChaCha20/Poly1305, SHAKE256, 16, X448, EdDSA,
       ChaCha20/Poly1305, SHAKE256
-Reference: [[this document]]
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 ## EDHOC Method Type Registry {#method-types}
 
-IANA has created a new registry entitled "EDHOC Method Type" under the new group name "Ephemeral Diffie-Hellman Over COSE (EDHOC)". The registration procedure is "Expert Review". The columns of the registry are Value, Description, and Reference, where Value is an integer and the other columns are text strings. The initial contents of the registry are shown in {{fig-method-types}}.
+IANA has created a new registry entitled "EDHOC Method Type" under the new group name "Ephemeral Diffie-Hellman Over COSE (EDHOC)". The registration procedure is "Specification Required". The columns of the registry are Value, Initiator Authentication Key, and Responder Authentication Key, where Value is an integer and the other columns are text strings describing the authentication keys. The initial contents of the registry are shown in {{fig-method-types}}.
 
 ## EDHOC Error Codes Registry {#error-code-reg}
 
