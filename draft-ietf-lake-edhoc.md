@@ -1827,7 +1827,6 @@ error = (
 )
 
 info = (
-  transcript_hash : bstr,
   label : tstr,
   context : bstr,
   length : uint,
