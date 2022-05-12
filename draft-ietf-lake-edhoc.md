@@ -1264,7 +1264,7 @@ Based on the cryptographic algorithms requirements {{sec_algs}}, EDHOC provides 
 
 After sending message_3, the Initiator is assured that no other party than the Responder can compute the key PRK_out. While the Initiator can securely send protected application data, the Initiator SHOULD NOT persistently store the keying material PRK_out until the Initiator has verified an OSCORE message or message_4 from the Responder. After verifying message_3, the Responder is assured that an honest Initiator has computed the key PRK_out. The Responder can securely derive and store the keying material PRK_out, and send protected application data.
 
-External authorization data sent in message_1 (EAD_1) or message_2 (EAD_2) should be considered unprotected by EDHOC, see {{unprot-data}}. EAD_2 is encrypted but the Responder has not yet authenticated the Initiator.  External authorization data sent in message_3 (EAD_3) or message_4 (EAD_4) is protected between Initiator and Responder by the protocol, but note that EAD fields may be used by the application before the message verification is completed, see {{AD}}.
+External authorization data sent in message_1 (EAD_1) or message_2 (EAD_2) should be considered unprotected by EDHOC, see {{unprot-data}}. EAD_2 is encrypted but the Responder has not yet authenticated the Initiator.  External authorization data sent in message_3 (EAD_3) or message_4 (EAD_4) is protected between Initiator and Responder by the protocol, but note that EAD fields may be used by the application before the message verification is completed, see {{AD}}. Designing a secure mechanism that uses EAD is not necessarily straightforward. This document only provides the EAD transport mechanism, but the problem of agreeing on the surrounding context and the meaning of the information passed to and from the application remains. Any new uses of EAD should be subject to careful review.
 
 Key compromise impersonation (KCI): In EDHOC authenticated with signature keys, EDHOC provides KCI protection against an attacker having access to the long-term key or the ephemeral secret key. With static Diffie-Hellman key authentication, KCI protection would be provided against an attacker having access to the long-term Diffie-Hellman key, but not to an attacker having access to the ephemeral secret key. Note that the term KCI has typically been used for compromise of long-term keys, and that an attacker with access to the ephemeral secret key can only attack that specific session.
 
@@ -1939,13 +1939,13 @@ TBD
 
 In order to reduce the number of messages and round trips, or to simplify processing, external security applications may be integrated into EDHOC by transporting external authorization related data (EAD) in the messages.
 
-The EAD format is specified in {{AD}}, this section contains examples and further details of how EAD is used.
+The EAD format is specified in {{AD}}, this section contains examples and further details of how EAD may be used with an appropriate accompanying specification.
 
-* One example is third-party authorization information requested in EAD_1 and an authorization artifact (“voucher”, cf. {{RFC8366}}) returned in EAD_2, see {{I-D.selander-ace-ake-authz}}.
+* One example is third-party assisted authorization, requested with EAD_1, and an authorization artifact (“voucher”, cf. {{RFC8366}}) returned in EAD_2, see {{I-D.selander-ace-ake-authz}}.
 
-* Another example is remote attestation requested in EAD_2, and an Entity Attestation Token (EAT, {{I-D.ietf-rats-eat}}) returned in EAD_3.
+* Another example is remote attestation, requested in EAD_2, and an Entity Attestation Token (EAT, {{I-D.ietf-rats-eat}}) returned in EAD_3.
 
-* A third example is certificate enrolment where a Certificate Signing Request (CSR, {{RFC2986}}) is included EAD_3, and the issued public key certificate (X.509 {{RFC5280}}, C509 {{I-D.ietf-cose-cbor-encoded-cert}}) or a reference thereof is returned i EAD_4.
+* A third example is certificate enrolment, where a Certificate Signing Request (CSR, {{RFC2986}}) is included EAD_3, and the issued public key certificate (X.509 {{RFC5280}}, C509 {{I-D.ietf-cose-cbor-encoded-cert}}) or a reference thereof is returned in EAD_4.
 
 External authorization data should be considered unprotected by EDHOC, and the protection of EAD is the responsibility of the security application (third party authorization, remote attestation, certificate enrolment, etc.). The security properties of the EAD fields (after EDHOC processing) are discussed in {{sec-prop}}.
 
@@ -1953,7 +1953,7 @@ The content of the EAD field may be used in the EDHOC processing of the message 
 
 Conversely, the security application may need to wait for EDHOC message verification to complete. In the third example above, the validation of a CSR carried in EAD_3 is not started by the Responder before EDHOC has successfully verified message_3 and proven the possession of the private key of the Initiator.
 
-The security application may reuse EDHOC protocol fields which therefore need to be available to the application. For example, the security application may use the same crypto algorithms as in the EDHOC session and therefore needs access to the selected cipher suite (or the whole SUITES_I). The application may use the ephemeral public keys G_X and G_Y, as ephemeral keys or as nonces. How the security application gets access to these message fields is out of scope for this specification.
+The security application may reuse EDHOC protocol fields which therefore need to be available to the application. For example, the security application may use the same crypto algorithms as in the EDHOC session and therefore needs access to the selected cipher suite (or the whole SUITES_I). The application may use the ephemeral public keys G_X and G_Y, as ephemeral keys or as nonces, see {{I-D.selander-ace-ake-authz}}.
 
 The processing of (ead_label, ead_value) by the security application needs to be described in the specification where the ead_label is registered, see {{iana-ead}}, including the ead_value for each message and actions in case of errors. An application may support multiple security applications that make use of EAD, which may result in multiple (ead_label, ead_value) pairs in one EAD field, see {{AD}}. Any dependencies on security applications with previously registered EAD fields needs to be documented, and the processing needs to consider their simultaneous use.
 
