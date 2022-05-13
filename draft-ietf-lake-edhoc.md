@@ -2015,6 +2015,54 @@ may need ... no, they don't need anything special: after an error, the next thin
 
 RFC Editor: Please remove this appendix.
 
+
+* From -13 to -14
+  * Merge of section 1.1 and 1.2
+  * Connection and key identifiers restricted to be byte strings
+  * Representation of byte strings as one-byte CBOR ints (-24..23)
+  * Simplified mapping between EDHOC and OSCORE identifiers
+  * Rewrite of 3.5
+     * Clarification of authentication related operations performed by EDHOC
+     * Authentication related verifications, including old section 3.5.1, moved to new appendix D
+  * Rewrite of 3.8
+     * Move content about use of EAD to new appendix E
+     * ead_value changed to bstr
+  * EDHOC-KDF updated
+     * transcript_hash argument removed
+     * TH included in context argument
+     * label argument is now type uint, all labels replaced
+  * Key schedule updated
+     * New salts derived to avoid reuse of same key with expand and extract
+     * PRK_4x3m renamed PRK_4e3m
+     * K_4 and IV_4 derived from PRK_4e3m
+     * New PRK: PRK_out derived from PRK_4e3m and TH_4
+     * Clarified main output of EDHOC is the shared secret PRK_out
+     * Exporter defined by EDHOC-KDF and new PRK PRK_exporter derived from PRK_out
+     * Key update defined by Expand instead of Extract
+  * All applications of EDHOC-KDF in one place
+  * Update of processing
+    * EAD and ID_CRED passed to application when available
+    * identity verification and credential retrieval omitted in protocol description
+    * Transcript hash defined by plaintext messages instead of ciphertext
+    * Removed general G_X checking against selfie-attacks
+  * Support for padding of plaintext
+  * Updated compliance requirements
+  * Updated security considerations
+    * Updated and more clear requirements on MAC length
+    * Clarification of key confirmation
+    * Forbid use of same key for signature and static DH
+  * Clarifications of
+     * connection identifiers
+     * cipher suites, including negotiation
+     * EAD
+     * Error messages
+  * Updated media types
+  * Applicability template renamed application profile
+  * Editorials
+
+* From -12 to -13
+   * no changes
+
 * From -12:
   * Shortened labels to derive OSCORE key and salt
   * ead_value changed to bstr
