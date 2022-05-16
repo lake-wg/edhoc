@@ -2044,6 +2044,7 @@ RFC Editor: Please remove this appendix.
     * EAD and ID_CRED passed to application when available
     * identity verification and credential retrieval omitted in protocol description
     * Transcript hash defined by plaintext messages instead of ciphertext
+    * Changed order of input to TH_2
     * Removed general G_X checking against selfie-attacks
   * Support for padding of plaintext
   * Updated compliance requirements
