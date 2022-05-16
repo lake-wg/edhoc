@@ -79,8 +79,8 @@ informative:
   RFC8446:
   RFC8937:
   RFC9000:
+  RFC9147:
   I-D.ietf-lake-reqs:
-  I-D.ietf-tls-dtls13:
   I-D.ietf-lake-traces:
   I-D.ietf-core-oscore-edhoc:
   I-D.ietf-cose-cbor-encoded-cert:
@@ -231,7 +231,7 @@ Some security solutions for such settings exist already. CBOR Object Signing and
 
 This document specifies Ephemeral Diffie-Hellman Over COSE (EDHOC), a lightweight authenticated key exchange protocol providing good security properties including forward secrecy, identity protection, and cipher suite negotiation. Authentication can be based on raw public keys (RPK) or public key certificates and requires the application to provide input on how to verify that endpoints are trusted. This specification emphasizes the possibility to reference rather than to transport credentials in order to reduce message overhead, but the latter is also supported. EDHOC does not currently support pre-shared key (PSK) authentication as authentication with static Diffie-Hellman public keys by reference produces equally small message sizes but with much simpler key distribution and identity protection.
 
-EDHOC makes use of known protocol constructions, such as SIGMA {{SIGMA}} and Extract-and-Expand {{RFC5869}}. EDHOC uses COSE for cryptography and identification of credentials (including COSE_Key, CBOR Web Token (CWT), CWT Claims Set (CCS), X.509 and CBOR encoded X.509 (C509) certificates, see {{auth-cred}}). COSE provides crypto agility and enables the use of future algorithms and credential types targeting IoT.
+EDHOC makes use of known protocol constructions, such as SIGMA {{SIGMA}} and Extract-and-Expand {{RFC5869}}. EDHOC uses COSE for cryptography and identification of credentials (including COSE_Key, CBOR Web Token (CWT), CWT Claims Set (CCS), X.509, and CBOR encoded X.509 (C509) certificates, see {{auth-cred}}). COSE provides crypto agility and enables the use of future algorithms and credential types targeting IoT.
 
 EDHOC is designed for highly constrained settings making it especially suitable for low-power wide area networks {{RFC8376}} such as Cellular IoT, 6TiSCH, and LoRaWAN. A main objective for EDHOC is to be a lightweight authenticated key exchange for OSCORE, i.e., to provide authentication and session key establishment for IoT use cases such as those built on CoAP {{RFC7252}} involving 'things' with embedded microcontrollers, sensors, and actuators. By reusing the same lightweight primitives as OSCORE (CBOR, COSE, CoAP) the additional code size can be kept very low. Note that while CBOR and COSE primitives are built into the protocol messages, EDHOC is not bound to a particular transport.
 
@@ -239,7 +239,7 @@ A typical setting is when one of the endpoints is constrained or in a constraine
 
 ## Message Size Examples
 
-Compared to the DTLS 1.3 handshake {{I-D.ietf-tls-dtls13}} with ECDHE and connection ID, the EDHOC message size when transferred in CoAP can be less than 1/6 when RPK authentication is used, see {{I-D.ietf-lwig-security-protocol-comparison}}. {{fig-sizes}} shows examples of EDHOC message sizes based on the assumptions in Section 2 of {{I-D.ietf-lwig-security-protocol-comparison}}, comparing different kinds of authentication keys and COSE header parameters for identification: static Diffie-Hellman keys or signature keys, either in CBOR Web Token (CWT) / CWT Claims Set (CCS) {{RFC8392}} identified by a key identifier using 'kid' {{I-D.ietf-cose-rfc8152bis-struct}}, or in X.509 certificates identified by a hash value using 'x5t' {{I-D.ietf-cose-x509}}.
+Compared to the DTLS 1.3 handshake {{RFC9147}} with ECDHE and connection ID, the EDHOC message size when transferred in CoAP can be less than 1/6 when RPK authentication is used, see {{I-D.ietf-lwig-security-protocol-comparison}}. {{fig-sizes}} shows examples of EDHOC message sizes based on the assumptions in Section 2 of {{I-D.ietf-lwig-security-protocol-comparison}}, comparing different kinds of authentication keys and COSE header parameters for identification: static Diffie-Hellman keys or signature keys, either in CBOR Web Token (CWT) / CWT Claims Set (CCS) {{RFC8392}} identified by a key identifier using 'kid' {{I-D.ietf-cose-rfc8152bis-struct}}, or in X.509 certificates identified by a hash value using 'x5t' {{I-D.ietf-cose-x509}}.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 ========================================================
@@ -272,7 +272,7 @@ Readers are expected to be familiar with the terms and concepts described in CBO
 
 EDHOC specifies different authentication methods of the ephemeral Diffie-Hellman key exchange: signature keys and static Diffie-Hellman keys. This section outlines the signature key based method. Further details of protocol elements and other authentication methods are provided in the remainder of this document.
 
-SIGMA (SIGn-and-MAc) is a family of theoretical protocols with a large number of variants {{SIGMA}}. Like IKEv2 {{RFC7296}} and (D)TLS 1.3 {{RFC8446}}{{I-D.ietf-tls-dtls13}}, EDHOC authenticated with signature keys is built on a variant of the SIGMA protocol which provides identity protection of the initiator (SIGMA-I) against active attackers, and like IKEv2, EDHOC implements the MAC-then-Sign variant of the SIGMA-I protocol shown in {{fig-sigma}}.
+SIGMA (SIGn-and-MAc) is a family of theoretical protocols with a large number of variants {{SIGMA}}. Like IKEv2 {{RFC7296}} and (D)TLS 1.3 {{RFC8446}}{{RFC9147}}, EDHOC authenticated with signature keys is built on a variant of the SIGMA protocol which provides identity protection of the initiator (SIGMA-I) against active attackers, and like IKEv2, EDHOC implements the MAC-then-Sign variant of the SIGMA-I protocol shown in {{fig-sigma}}.
 
 ~~~~~~~~~~~
 Initiator                                                   Responder
@@ -351,7 +351,7 @@ Initiator                                                   Responder
 |<- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - +
 |                             message_4                             |
 ~~~~~~~~~~~
-{: #fig-flow title="EDHOC message flow including the optional fourth message. The Signature_or_MAC fields represent signature or MAC depending on authentication method. The SIGMA construction allows message_2 to include a plain encryption Enc(), whereas message_3 is required to be authenticated encryption AEAD()."}
+{: #fig-flow title="EDHOC message flow including the optional fourth message."}
 {: artwork-align="center"}
 
 
@@ -362,16 +362,15 @@ The data item METHOD in message_1 (see {{asym-msg1-form}}), is an integer specif
 The Initiator and the Responder need to have agreed on a single method to be used for EDHOC, see {{applicability}}.
 
 ~~~~~~~~~~~
-+--------+------------------+------------------+
-| Method | Initiator        | Responder        |
-|   Type | Authentication   | Authentication   |
-|  Value | Key              | Key              |
-+--------+------------------+------------------+
-|      0 | Signature Key    | Signature Key    |
-|      1 | Signature Key    | Static DH Key    |
-|      2 | Static DH Key    | Signature Key    |
-|      3 | Static DH Key    | Static DH Key    |
-+--------+------------------+------------------+
++-------------+--------------------+--------------------+
+| Method Type | Initiator          | Responder          |
+|       Value | Authentication Key | Authentication Key |
++-------------+--------------------+--------------------+
+|           0 | Signature Key      | Signature Key      |
+|           1 | Signature Key      | Static DH Key      |
+|           2 | Static DH Key      | Signature Key      |
+|           3 | Static DH Key      | Static DH Key      |
++-------------+--------------------+--------------------+
 ~~~~~~~~~~~
 {: #fig-method-types title="Authentication Keys for Method Types"}
 {: artwork-align="center"}
@@ -541,7 +540,7 @@ See {{COSE}} for more examples.
 
 An EDHOC cipher suite consists of an ordered set of algorithms from the "COSE Algorithms" and "COSE Elliptic Curves" registries as well as the EDHOC MAC length. All algorithm names and definitions follows from COSE {{I-D.ietf-cose-rfc8152bis-algs}}. Note that COSE sometimes uses peculiar names such as ES256 for ECDSA with SHA-256, A128 for AES-128, and Ed25519 for the curve edwards25519. Algorithms need to be specified with enough parameters to make them completely determined. The MAC length MUST be at least 8 bytes. Any cryptographic algorithm used in the COSE header parameters in ID_CRED is selected independently of the cipher suite. EDHOC is currently only specified for use with key exchange algorithms of type ECDH curves, but any Key Encapsulation Method (KEM), including Post-Quantum Cryptography (PQC) KEMs, can be used in method 0, see {{pqc}}. Use of other types of key exchange algorithms to replace static DH authentication (method 1,2,3) would likely require a specification updating EDHOC with new methods.
 
-EDHOC supports all signature algorithms defined by COSE. Just like in (D)TLS 1.3 {{RFC8446}}{{I-D.ietf-tls-dtls13}} and IKEv2 {{RFC7296}}, a signature in COSE is determined by the signature algorithm and the authentication key algorithm together, see {{auth-keys}}. The exact details of the authentication key algorithm depend on the type of authentication credential. COSE supports different formats for storing the public authentication keys including COSE_Key and X.509, which use different names and ways to represent the authentication key and the authentication key algorithm.
+EDHOC supports all signature algorithms defined by COSE. Just like in (D)TLS 1.3 {{RFC8446}}{{RFC9147}} and IKEv2 {{RFC7296}}, a signature in COSE is determined by the signature algorithm and the authentication key algorithm together, see {{auth-keys}}. The exact details of the authentication key algorithm depend on the type of authentication credential. COSE supports different formats for storing the public authentication keys including COSE_Key and X.509, which use different names and ways to represent the authentication key and the authentication key algorithm.
 
 An EDHOC cipher suite consists of the following parameters:
 
