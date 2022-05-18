@@ -79,12 +79,12 @@ informative:
   RFC8937:
   RFC9000:
   RFC9147:
+  RFC9176:
   I-D.ietf-lake-reqs:
   I-D.ietf-lake-traces:
   I-D.ietf-core-oscore-edhoc:
   I-D.ietf-cose-cbor-encoded-cert:
   I-D.ietf-core-oscore-key-update:
-  I-D.ietf-core-resource-directory:
   I-D.ietf-lwig-curve-representations:
   I-D.ietf-lwig-security-protocol-comparison:
   I-D.selander-ace-ake-authz:
@@ -189,20 +189,6 @@ informative:
       -
         ins: C. Schürmann
     date: November 2018
-
-  Vucinic22:
-    target: https://hal.inria.fr/hal-03434293v3/document
-    title: Lightweight Authenticated Key Exchange with EDHOC
-    author:
-      -
-        ins: M. Vučinić
-      -
-        ins: G. Selander
-      -
-        ins: J. Preuß Mattsson
-      -
-        ins: T. Watteyne
-    date: January 2022
 
   CborMe:
     target: http://cbor.me/
@@ -1653,7 +1639,7 @@ From then on, Client and Server retrieve the OSCORE protocol state using the Rec
 
 This section specifies one instance for how EDHOC can be transferred as an exchange of CoAP {{RFC7252}} messages. CoAP provides a reliable transport that can preserve packet ordering and handle message duplication. CoAP can also perform fragmentation and protect against denial-of-service attacks. The underlying CoAP transport should be used in reliable mode, in particular when fragmentation is used, to avoid, e.g.,  situations with hanging endpoints waiting for each other.
 
-By default, the CoAP client is the Initiator and the CoAP server is the Responder, but the roles SHOULD be chosen to protect the most sensitive identity, see {{security}}. Client applications can use the resource type "core.edhoc" to discover a server's EDHOC resource, i.e., where to send a request for executing the EDHOC protocol, see {{rt}}. According to this specification, EDHOC is transferred in POST requests and 2.04 (Changed) responses to the Uri-Path: "/.well-known/edhoc", see {{well-known}}. An application may define its own path that can be discovered, e.g., using a resource directory {{I-D.ietf-core-resource-directory}}.
+By default, the CoAP client is the Initiator and the CoAP server is the Responder, but the roles SHOULD be chosen to protect the most sensitive identity, see {{security}}. Client applications can use the resource type "core.edhoc" to discover a server's EDHOC resource, i.e., where to send a request for executing the EDHOC protocol, see {{rt}}. According to this specification, EDHOC is transferred in POST requests and 2.04 (Changed) responses to the Uri-Path: "/.well-known/edhoc", see {{well-known}}. An application may define its own path that can be discovered, e.g., using a resource directory {{RFC9176}}.
 
 By default, the message flow is as follows:
 EDHOC message_1 is sent in the payload of a POST request from the client to the
