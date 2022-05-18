@@ -1985,15 +1985,15 @@ Deduplication of CoAP messages is described in Section 4.5 of {{RFC7252}}. This 
 
 Message deduplication is resource demanding and therefore not supported in all CoAP implementations. Since EDHOC is targeting constrained environments, it is desirable that EDHOC can optionally support transport layers which do not handle message duplication. Special care is needed to avoid issues with duplicate messages, see {{proc-outline}}.
 
-The guiding principle here is similar to the deduplication processing on CoAP messaging layer: a received duplicate EDHOC message SHALL NOT result in a response consisting of another instance of the next EDHOC message. The result MAY be that a duplicate EDHOC response is sent, provided it is still relevant with respect to the current protocol state. In any case, the received message MUST NOT be processed more than once in the same EDHOC session. This is called "EDHOC message deduplication".
+The guiding principle here is similar to the deduplication processing on CoAP messaging layer: a received duplicate EDHOC message SHALL NOT result in another instance of the next EDHOC message. The result MAY be that a duplicate next EDHOC message is sent, provided it is still relevant with respect to the current protocol state. In any case, the received message MUST NOT be processed more than once in the same EDHOC session. This is called "EDHOC message deduplication".
 
-An EDHOC implementation MAY store the previously sent EDHOC message to be able to resend it. An EDHOC implementation MAY keep the protocol state to be able to recreate the previously sent EDHOC message and resend it. The previous message or protocol state MUST NOT be kept longer than what is required for retransmission, for example, in the case of CoAP transport, no longer than the EXCHANGE_LIFETIME (see Section 4.8.2 of {{RFC7252}}).
+An EDHOC implementation MAY store the previously sent EDHOC message to be able to resend it.
 
-Note that the requirements in {{proc-outline}} still apply because duplicate messages are not processed by the EDHOC state machine:
+In principle, if the EDHOC implementation would deterministically regenerate the identical EDHOC message previously sent, it would be possible to instead store the protocol state to be able to recreate and resend the previously sent EDHOC message. However, even if the protocol state is fixed, the message generation may introduce differences which compromises security. For example, in the generation of message_3, if I is performing a (non-deterministic) ECDSA signature (say, method 0 or 1, cipher suite 2 or 3) then PLAINTEXT_3 is randomized, but K_3 and IV_3 are the same, leading to a key and nonce reuse.
 
-* EDHOC messages SHALL be processed according to the current protocol state.
+The EDHOC implementation MUST NOT store previous protocol state and regenerate an EDHOC message if there is a risk that the same key and IV are used for two (or more) distinct messages.
 
-* Different instances of the same message MUST NOT be processed in one session.
+The previous message or protocol state MUST NOT be kept longer than what is required for retransmission, for example, in the case of CoAP transport, no longer than the EXCHANGE_LIFETIME (see Section 4.8.2 of {{RFC7252}}).
 
 # Transports Not Natively Providing Correlation
 
