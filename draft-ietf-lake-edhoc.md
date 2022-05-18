@@ -2051,6 +2051,7 @@ RFC Editor: Please remove this appendix.
     * Updated and more clear requirements on MAC length
     * Clarification of key confirmation
     * Forbid use of same key for signature and static DH
+  * Updated appendix on message deduplication
   * Clarifications of
      * connection identifiers
      * cipher suites, including negotiation
