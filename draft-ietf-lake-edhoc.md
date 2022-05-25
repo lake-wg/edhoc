@@ -4,7 +4,10 @@ docname: draft-ietf-lake-edhoc-latest
 abbrev: EDHOC
 
 ipr: trust200902
+area: SEC
+workgroup: LAKE Working Group
 cat: std
+consensus: true
 
 coding: utf-8
 pi: # can use array (if all yes) or hash here
