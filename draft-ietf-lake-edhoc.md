@@ -942,9 +942,9 @@ The Initiator SHALL process message_2 as follows:
 
 * Retrieve the protocol state using the message correlation provided by the transport (e.g., the CoAP Token, the 5-tuple, or the prepended C_I, see {{coap}}).
 
-* Decrypt CIPHERTEXT_2, see {{asym-msg2-proc}}, and discard padding, if present.
+* Decrypt CIPHERTEXT_2, see {{asym-msg2-proc}}, and, if present, discard padding.
 
-* Make ID_CRED_R and EAD_2 (if present) available to the application for authentication- and EAD processing.
+* Make ID_CRED_R and (if present) EAD_2 available to the application for authentication- and EAD processing.
 
 * Obtain the authentication credential (CRED_R) and the authentication key of R from the application (or by other means).
 
@@ -1027,7 +1027,7 @@ The Responder SHALL process message_3 as follows:
 
 * Decrypt and verify the COSE_Encrypt0 as defined in Sections 5.2 and 5.3 of {{I-D.ietf-cose-rfc8152bis-struct}}, with the EDHOC AEAD algorithm in the selected cipher suite, and the parameters defined in {{asym-msg3-proc}}. Discard padding, if present.
 
-* Make ID_CRED_I and EAD_3 (if present) available to the application for authentication- and EAD processing.
+* Make ID_CRED_I and (if present) EAD_3 available to the application for authentication- and EAD processing.
 
 * Obtain the authentication credential (CRED_I) and the authentication key of I from the application (or by other means).
 
@@ -1091,7 +1091,7 @@ The Initiator SHALL process message_4 as follows:
 
 * Decrypt and verify the COSE_Encrypt0 as defined in Sections 5.2 and 5.3 of {{I-D.ietf-cose-rfc8152bis-struct}}, with the EDHOC AEAD algorithm in the selected cipher suite, and the parameters defined in {{asym-msg4-proc}}. Discard padding, if present.
 
-* Make EAD_4 (if present) available to the application for EAD processing.
+* Make (if present) EAD_4 available to the application for EAD processing.
 
 If any processing step fails, the Responder MUST send an EDHOC error message back, formatted as defined in {{error}}, and the session MUST be discontinued.
 
@@ -1658,7 +1658,7 @@ In order for the server to correlate a message received from a client to a messa
 
 * For the default case when the server is Responder, message_3 is sent from the client prepended with the identifier C_R. In this case message_1 is also sent by the client, and to indicate that this is a new EDHOC session it is prepended with a dummy identifier, the CBOR simple value "true" (0xf5), since the server has not selected C_R yet. See {{fig-coap1}}.
 
-* In the case when the server is Initiator, message_2 (and message_4, if present) is sent from the client prepended with the identifier C_I. See {{fig-coap2}}.
+* In the case when the server is Initiator, message_2 (and, if present, message_4) is sent from the client prepended with the identifier C_I. See {{fig-coap2}}.
 
 The prepended identifiers are encoded in CBOR and thus self-delimiting. The integer representation of identifiers described in {{bstr-repr}} is used, when applicable. They are sent in front of the actual EDHOC message to keep track of messages in an EDHOC session, and only the part of the body following the identifier is used for EDHOC processing. In particular, the connection identifiers within the EDHOC messages are not impacted by the prepended identifiers.
 
