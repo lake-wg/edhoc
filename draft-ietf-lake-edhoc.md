@@ -446,7 +446,7 @@ EDHOC performs the following authentication related operations:
 
 Other authentication related verifications are out of scope for EDHOC, and is the responsibility of the application. In particular, the authentication credential needs to be validated in the context of the connection for which EDHOC is used, see {{auth-validation}}. EDHOC MUST allow the application to read received information about credential (ID_CRED_R, ID_CRED_I). EDHOC MUST have access to the authentication key and the authentication credential.
 
-Note that the type of authentication key, authentication credential, and the identification of the credential have a large impact on the message size. For example, the signature_or_MAC field is much smaller with a static DH key than with a signature key. A CCS is much smaller than a self-signed certificate/CWT, but if it is possible to reference the credential with a COSE header like 'kid', then that is in turn much smaller than a CCS.
+Note that the type of authentication key, authentication credential, and the identification of the credential have a large impact on the message size. For example, the Signature_or_MAC field is much smaller with a static DH key than with a signature key. A CCS is much smaller than a self-signed certificate/CWT, but if it is possible to reference the credential with a COSE header like 'kid', then that is in turn much smaller than a CCS.
 
 ### Authentication Keys {#auth-keys}
 
@@ -643,11 +643,11 @@ The definition of Extract depends on the EDHOC hash algorithm of the selected ci
 * if the EDHOC hash algorithm is SHAKE128, then Extract( salt, IKM ) = KMAC128( salt, IKM, 256, "" )
 * if the EDHOC hash algorithm is SHAKE256, then Extract( salt, IKM ) = KMAC256( salt, IKM, 512, "" )
 
-The rest of the section defines the pseudo-random keys PRK_2e, PRK_3e2m and PRK_4e3m; their use is shown in {{fig-edhoc-kdf}}.
+The rest of the section defines the pseudorandom keys PRK_2e, PRK_3e2m and PRK_4e3m; their use is shown in {{fig-edhoc-kdf}}.
 
 #### PRK_2e
 
-The pseudo-random key PRK_2e is derived with the following input:
+The pseudorandom key PRK_2e is derived with the following input:
 
 * The salt SHALL be a zero-length byte string. Note that {{RFC5869}} specifies that if the salt is not provided, it is set to a string of zeros (see Section 2.2 of {{RFC5869}}). For implementation purposes, not providing the salt is the same as setting the salt to the zero-length byte string (0x).
 
@@ -669,7 +669,7 @@ where salt = 0x (zero-length byte string).
 
 #### PRK_3e2m
 
-The pseudo-random key PRK_3e2m is derived as follows:
+The pseudorandom key PRK_3e2m is derived as follows:
 
 If the Responder authenticates with a static Diffie-Hellman key, then PRK_3e2m = Extract( SALT_3e2m, G_RX ), where
 
@@ -680,7 +680,7 @@ else PRK_3e2m = PRK_2e.
 
 #### PRK_4e3m
 
-The pseudo-random key PRK_4e3m is derived as follows:
+The pseudorandom key PRK_4e3m is derived as follows:
 
 If the Initiator authenticates with a static Diffie-Hellman key, then PRK_4e3m = Extract( SALT_4e3m, G_IY ), where
 
@@ -746,7 +746,7 @@ IV_4          = EDHOC-KDF( PRK_4e3m, 9, TH_4,      iv_length )
 
 ### PRK_out {#prkout}
 
- The pseudo-random key PRK_out, derived as shown in {{fig-edhoc-kdf}}, is the only secret key shared between Initiator and Responder that needs to be stored after a successful EDHOC exchange, see {{m3}}. Keys for applications are derived from PRK_out, see {{exporter}}.
+ The pseudorandom key PRK_out, derived as shown in {{fig-edhoc-kdf}}, is the only secret key shared between Initiator and Responder that needs to be stored after a successful EDHOC exchange, see {{m3}}. Keys for applications are derived from PRK_out, see {{exporter}}.
 
 ## Keys for EDHOC Applications
 
@@ -791,7 +791,7 @@ To provide forward secrecy in an even more efficient way than re-running EDHOC, 
 
 where hash_length denotes the length of the hash function output in bytes, as specified by the COSE hash algorithm definition.
 
-The EDHOC-KeyUpdate takes a context as input to enable binding of the updated PRK_out to some event that triggered the keyUpdate. The Initiator and the Responder need to agree on the context, which can, e.g., be a counter or a pseudo-random number such as a hash. The Initiator and the Responder also need to cache the old PRK_out until it has verfied that the other endpoint has the correct new PRK_out. {{I-D.ietf-core-oscore-key-update}} describes key update for OSCORE using EDHOC-KeyUpdate.
+The EDHOC-KeyUpdate takes a context as input to enable binding of the updated PRK_out to some event that triggered the keyUpdate. The Initiator and the Responder need to agree on the context, which can, e.g., be a counter or a pseudorandom number such as a hash. The Initiator and the Responder also need to cache the old PRK_out until it has verfied that the other endpoint has the correct new PRK_out. {{I-D.ietf-core-oscore-key-update}} describes key update for OSCORE using EDHOC-KeyUpdate.
 
 While this key update method provides forward secrecy it does not give as strong security properties as re-running EDHOC, see {{security}}.
 
@@ -1101,7 +1101,7 @@ After verifying message_4, the Initiator is assured that the Responder has calcu
 
 This section defines the format for error messages, and the processing associated to the currently defined error codes. Additional error codes may be registered, see {{error-code-reg}}.
 
-There are many kinds of errors that can occur during EDHOC processing. As in CoAP, an error can be triggered by errors in the received message or internal errors in the recieving endpoint. Except for processing and formatting errors, it is up to the implementation when to send an error message. Sending error messages is essential for debugging but MAY be skipped if, for example, a session cannot be found or due to denial-of-service reasons, see {{dos}}. Errors messages in EDHOC are always fatal. After sending an error message, the sender MUST discontinue the protocol. The receiver SHOULD treat an error message as an indication that the other party likely has discontinued the protocol. But as the error message is not authenticated, a received error message might also have been sent by an attacker and the receiver MAY therefore try to continue the protocol.
+There are many kinds of errors that can occur during EDHOC processing. As in CoAP, an error can be triggered by errors in the received message or internal errors in the receiving endpoint. Except for processing and formatting errors, it is up to the implementation when to send an error message. Sending error messages is essential for debugging but MAY be skipped if, for example, a session cannot be found or due to denial-of-service reasons, see {{dos}}. Errors messages in EDHOC are always fatal. After sending an error message, the sender MUST discontinue the protocol. The receiver SHOULD treat an error message as an indication that the other party likely has discontinued the protocol. But as the error message is not authenticated, a received error message might also have been sent by an attacker and the receiver MAY therefore try to continue the protocol.
 
 
 An EDHOC error message can be sent by either endpoint as a reply to any non-error EDHOC message. How errors at the EDHOC layer are transported depends on lower layers, which need to enable error messages to be sent and processed as intended.
@@ -1269,15 +1269,15 @@ As discussed in {{SIGMA}}, the encryption of message_2 does only need to protect
 
 Requirements for how to securely generate, validate, and process the ephemeral public keys depend on the elliptic curve. For X25519 and X448, the requirements are defined in {{RFC7748}}. For secp256r1, secp384r1, and secp521r1, the requirements are defined in Section 5 of {{SP-800-56A}}. For secp256r1, secp384r1, and secp521r1, at least partial public-key validation MUST be done.
 
-As noted in Section 12 of {{I-D.ietf-cose-rfc8152bis-struct}} the use of a single key for multiple algorithms is strongly disencouraged unless proven secure by a dedicated cryptographic analysis. In particular this recommendation applies to using the same private key for static Diffie-Hellman authentication and digital signature authentication. A preliminary conjecture is that a minor change to EDHOC may be sufficient to fit the analysis of secure shared signature and ECDH key usage in {{Degabriele11}} and {{Thormarker21}}.
+As noted in Section 12 of {{I-D.ietf-cose-rfc8152bis-struct}} the use of a single key for multiple algorithms is strongly discouraged unless proven secure by a dedicated cryptographic analysis. In particular this recommendation applies to using the same private key for static Diffie-Hellman authentication and digital signature authentication. A preliminary conjecture is that a minor change to EDHOC may be sufficient to fit the analysis of secure shared signature and ECDH key usage in {{Degabriele11}} and {{Thormarker21}}.
 
-So-called selfie attacks are mitigated as long as the Initiator does not have its own identity in the set of Responder identities it is allowed to communicate with. In trust on first use (TOFU) use cases the Initiator should verify that the the Responder's identity is not equal to its own. Any future EHDOC methods using e.g., pre-shared keys might need to mitigate this in other ways.
+So-called selfie attacks are mitigated as long as the Initiator does not have its own identity in the set of Responder identities it is allowed to communicate with. In trust on first use (TOFU) use cases the Initiator should verify that the Responder's identity is not equal to its own. Any future EHDOC methods using e.g., pre-shared keys might need to mitigate this in other ways.
 
 ## Cipher Suites and Cryptographic Algorithms {#sec_algs}
 
 When using private cipher suite or registering new cipher suites, the choice of key length used in the different algorithms needs to be harmonized, so that a sufficient security level is maintained for certificates, EDHOC, and the protection of application data. The Initiator and the Responder should enforce a minimum security level.
 
-The output size of the EDHOC hash algorithm MUST be at least 256-bits, i.e., the hash algorithms SHA-1 and SHA-256/64 (SHA-256 truncated to 64-bits) SHALL NOT be supported for use in EDHOC except for certificate identification with x5t and c5t. For security considerations of SHA-1, see {{RFC6194}}. As EDHOC integrity protects the whole authentication credential, the choice of hash algorithm in x5t and c5t does not affect security and it is RECOMMENDED to use the same hash algorithm as in the cipher suite but with as much truncation as possible, i.e, when the EDHOC hash algorithm is SHA-256 it is RECOMMENDED to use SHA-256/64 in x5t and c5t. The EDHOC MAC length MUST be at least 8 bytes and the tag length of the EDHOC AEAD algorithm MUST be at least 64-bits. Note that secp256k1 is only defined for use with ECDSA and not for ECDH. Note that some COSE algorithms are marked as not recommended in the COSE IANA registry.
+The output size of the EDHOC hash algorithm MUST be at least 256-bits, i.e., the hash algorithms SHA-1 and SHA-256/64 (SHA-256 truncated to 64-bits) SHALL NOT be supported for use in EDHOC except for certificate identification with x5t and c5t. For security considerations of SHA-1, see {{RFC6194}}. As EDHOC integrity protects the whole authentication credential, the choice of hash algorithm in x5t and c5t does not affect security and it is RECOMMENDED to use the same hash algorithm as in the cipher suite but with as much truncation as possible, i.e., when the EDHOC hash algorithm is SHA-256 it is RECOMMENDED to use SHA-256/64 in x5t and c5t. The EDHOC MAC length MUST be at least 8 bytes and the tag length of the EDHOC AEAD algorithm MUST be at least 64-bits. Note that secp256k1 is only defined for use with ECDSA and not for ECDH. Note that some COSE algorithms are marked as not recommended in the COSE IANA registry.
 
 ## Post-Quantum Considerations {#pqc}
 
@@ -1295,7 +1295,7 @@ An attacker observing network traffic may use connection identifiers sent in cle
 
 Since the publication of {{RFC3552}} there has been an increased awareness of the need to protect against endpoints that are compromised, malicious, or whose interests simply do not align with the interests of users {{I-D.arkko-arch-internet-threat-model-guidance}}. {{RFC7624}} describes an updated threat model for Internet confidentiality, see {{sec-prop}}. {{I-D.arkko-arch-internet-threat-model-guidance}} further expands the threat model. Implementations and users SHOULD consider these threat models. In particular, even data sent protected to the other endpoint such as ID_CRED and EAD can be used for tracking, see Section 2.7 of {{I-D.arkko-arch-internet-threat-model-guidance}}.
 
-The fields ID_CRED_I, ID_CRED_R, EAD_2, EAD_3, and EAD_4 have variable length and information regarding the length may leak to an attacker. An passive attacker may e.g., be able to differentiating endpoints using identifiers of different length. To mitigate this information leakage an inmplementation may ensure that the fields have fixed length or use padding. An implementation may e.g., only use fix length identifiers like 'kid' of length 1. Alternatively padding may be used to hide the true length of e.g., certificates by value in 'x5chain' or 'c5c'.
+The fields ID_CRED_I, ID_CRED_R, EAD_2, EAD_3, and EAD_4 have variable length and information regarding the length may leak to an attacker. An passive attacker may e.g., be able to differentiating endpoints using identifiers of different length. To mitigate this information leakage an implementation may ensure that the fields have fixed length or use padding. An implementation may e.g., only use fix length identifiers like 'kid' of length 1. Alternatively padding may be used to hide the true length of e.g., certificates by value in 'x5chain' or 'c5c'.
 
 ## Denial-of-Service {#dos}
 
@@ -1323,7 +1323,7 @@ If two nodes unintentionally initiate two simultaneous EDHOC message exchanges w
 
 If supported by the device, it is RECOMMENDED that at least the long-term private keys are stored in a Trusted Execution Environment (TEE) and that sensitive operations using these keys are performed inside the TEE.  To achieve even higher security it is RECOMMENDED that additional operations such as ephemeral key generation, all computations of shared secrets, and storage of the PRK keys can be done inside the TEE. The use of a TEE aims at preventing code within that environment to be tampered with, and preventing data used by such code to be read or tampered with by code outside that environment.
 
-Note that HKDF-Expand has a relativly small maximum output length of 255  * hash_length. This means that when when SHA-256 is used as hash algorithm, message_2 cannot be longer than 8160 bytes.
+Note that HKDF-Expand has a relatively small maximum output length of 255  * hash_length. This means that when SHA-256 is used as hash algorithm, message_2 cannot be longer than 8160 bytes.
 
 The sequence of transcript hashes in EHDOC (TH_2, TH_3, TH_4) do not make use of a so called running hash, this is a design choice as running hashes are often not supported on constrained platforms.
 
@@ -1917,13 +1917,12 @@ When PKI is not used (CCS, self-signed certificate/CWT), the trust anchor is the
 
 ## Revocation Status {#revocation}
 
-The application may need to verify that the credentials are not revoked, see {{impl-cons}}. Some use cases may be served by short-lived credentials, for example, where the validity of the credential is on par with with the interval between revocation checks. But, in general, credential life time and revokation checking are complementary measures to control credential status. Revocation information may be transported as External Authentication Data (EAD), see {{ead-appendix}}.
+The application may need to verify that the credentials are not revoked, see {{impl-cons}}. Some use cases may be served by short-lived credentials, for example, where the validity of the credential is on par with the interval between revocation checks. But, in general, credential lifetime and revocation checking are complementary measures to control credential status. Revocation information may be transported as External Authentication Data (EAD), see {{ead-appendix}}.
 
 
 ## Trust-on-first-use {#tofu}
 
 TBD
-
 
 
 # Use of External Authorization Data {#ead-appendix}
@@ -1932,7 +1931,7 @@ In order to reduce the number of messages and round trips, or to simplify proces
 
 The EAD format is specified in {{AD}}, this section contains examples and further details of how EAD may be used with an appropriate accompanying specification.
 
-* One example is third-party assisted authorization, requested with EAD_1, and an authorization artifact (“voucher”, cf. {{RFC8366}}) returned in EAD_2, see {{I-D.selander-ace-ake-authz}}.
+* One example is third party assisted authorization, requested with EAD_1, and an authorization artifact (“voucher”, cf. {{RFC8366}}) returned in EAD_2, see {{I-D.selander-ace-ake-authz}}.
 
 * Another example is remote attestation, requested in EAD_2, and an Entity Attestation Token (EAT, {{I-D.ietf-rats-eat}}) returned in EAD_3.
 
