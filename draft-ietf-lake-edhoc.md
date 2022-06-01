@@ -387,8 +387,8 @@ To allow identifiers with minimal overhead on the wire, certain byte strings are
 The integers with one-byte CBOR encoding are -24, ..., 23, see {{fig-int-one-byte}}. This correspondence between integers and byte strings is a natural mapping between the byte strings with CBOR diagnostic notation h'00', h'01', ..., h'37' (except h'18', h'19', ..., h'1F') and integers which are CBOR encoded as one byte.
 
 ~~~~~~~~~~~
-Integer:               -24   -23  ...   -2    -1     0     1  ...   23
-CBOR encoding (1 byte): 37    36  ...   21    20    00    01  ...   17
+Integer:                -24  -23   ...   -2   -1    0    1   ...   23
+CBOR encoding (1 byte):  37   36   ...   21   20   00   01   ...   17
 ~~~~~~~~~~~
 {: #fig-int-one-byte title="One-Byte CBOR Encoded Integers"}
 {: artwork-align="center"}
