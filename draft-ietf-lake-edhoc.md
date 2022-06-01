@@ -450,7 +450,7 @@ Note that the type of authentication key, authentication credential, and the ide
 
 ### Authentication Keys {#auth-keys}
 
-The authentication key (i.e. the public key used for authentication) MUST be a signature key or static Diffie-Hellman key. The Initiator and the Responder MAY use different types of authentication keys, e.g., one uses a signature key and the other uses a static Diffie-Hellman key.
+The authentication key (i.e., the public key used for authentication) MUST be a signature key or static Diffie-Hellman key. The Initiator and the Responder MAY use different types of authentication keys, e.g., one uses a signature key and the other uses a static Diffie-Hellman key.
 
 The authentication key algorithm needs to be compatible with the method and the cipher suite (see {{cs}}). The authentication key algorithm needs to be compatible with the EDHOC key exchange algorithm when static Diffie-Hellman authentication is used, and compatible with the EDHOC signature algorithm when signature authentication is used.
 
@@ -855,7 +855,7 @@ The Initiator SHALL compose message_1 as follows:
 
 * Construct SUITES_I complying with the definition in {{asym-msg1-form}}}, and furthermore:
    * The Initiator MUST select its most preferred cipher suite, conditioned on what it can assume to be supported by the Responder.
-   * The selected cipher suite (i.e. the last cipher suite in SUITES_I) MAY be different between sessions, e.g., based on previous error messages (see next bullet), but all cipher suites which are more preferred by I than the selected cipher suite MUST be included in SUITES_I.
+   * The selected cipher suite (i.e., the last cipher suite in SUITES_I) MAY be different between sessions, e.g., based on previous error messages (see next bullet), but all cipher suites which are more preferred by I than the selected cipher suite MUST be included in SUITES_I.
    * If the Initiator previously received from the Responder an error message with error code 2 containing SUITES_R (see {{wrong-selected}}) which indicates cipher suites supported by the Responder, then the Initiator SHOULD select its most preferred supported cipher suite among those (bearing in mind that error messages are not authenticated and may be forged).
    * The Initiator MUST NOT change the supported cipher suites and the order of preference in SUITES_I based on previous error messages.
 
@@ -1223,7 +1223,7 @@ Implementations MAY support message_4. Error codes (ERR_CODE) 1 and 2 MUST be su
 
 Implementations MAY support EAD.
 
-Implementations MAY support padding of plaintext when sending messages. Implementations MUST support padding of plaintext when receiving messages, i.e. MUST be able to parse padded messages.
+Implementations MAY support padding of plaintext when sending messages. Implementations MUST support padding of plaintext when receiving messages, i.e., MUST be able to parse padded messages.
 
 Implementations MUST support cipher suite 2 and 3. Cipher suites 2 (AES-CCM-16-64-128, SHA-256, 8, P-256, ES256, AES-CCM-16-64-128, SHA-256) and 3 (AES-CCM-16-128-128, SHA-256, 16, P-256, ES256, AES-CCM-16-64-128, SHA-256) only differ in size of the MAC length, so supporting one or both of these is no essential difference. Implementations only need to implement the algorithms needed for their supported methods.
 
@@ -1745,7 +1745,7 @@ The encoding of the point at infinity is not supported. Compact representation d
 
 Using compact representation have some security benefits. An implementation does not need to check that the point is not the point at infinity (the identity element). Similarly, as not even the sign of the y-coordinate is encoded, compact representation trivially avoids so called "benign malleability" attacks where an attacker changes the sign, see {{SECG}}.
 
-# Use of CBOR, CDDL and COSE in EDHOC {#CBORandCOSE}
+# Use of CBOR, CDDL, and COSE in EDHOC {#CBORandCOSE}
 
 This Appendix is intended to simplify for implementors not familiar with CBOR {{RFC8949}}, CDDL {{RFC8610}}, COSE {{I-D.ietf-cose-rfc8152bis-struct}}, and HKDF {{RFC5869}}.
 
