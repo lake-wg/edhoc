@@ -2204,7 +2204,50 @@ RFC Editor: Please remove this appendix.
 # Acknowledgments
 {: numbered="no"}
 
-The authors want to thank Christian Amsüss, Alessandro Bruni, Karthikeyan Bhargavan, Carsten Bormann, Timothy Claeys, Martin Disch, Stephen Farrell, Loïc Ferreira, Theis Grønbech Petersen, Felix Günther, Dan Harkins, Klaus Hartke, Russ Housley, Stefan Hristozov, Marc Ilunga, Charlie Jacomme, Elise Klein, Steve Kremer, Alexandros Krontiris, Ilari Liusvaara, Kathleen Moriarty, David Navarro, Karl Norrman, Salvador Pérez, Maïwenn Racouchot, Eric Rescorla, Michael Richardson, Thorvald Sahl Jørgensen, Jim Schaad, Carsten Schürmann, Ludwig Seitz, Stanislav Smyshlyaev, Valery Smyslov, Peter van der Stok, Rene Struik, Vaishnavi Sundararajan, Erik Thormarker, Marco Tiloca, Sean Turner, Michel Veillette, and Mališa Vučinić for reviewing and commenting on intermediate versions of the draft. We are especially indebted to Jim Schaad for his continuous reviewing and implementation of different versions of the draft.
+The authors want to thank
+{{{Christian Amsüss}}},
+{{{Alessandro Bruni}}},
+{{{Karthikeyan Bhargavan}}},
+{{{Carsten Bormann}}},
+{{{Timothy Claeys}}},
+{{{Martin Disch}}},
+{{{Stephen Farrell}}},
+{{{Loïc Ferreira}}},
+{{{Theis Grønbech Petersen}}},
+{{{Felix Günther}}},
+{{{Dan Harkins}}},
+{{{Klaus Hartke}}},
+{{{Russ Housley}}},
+{{{Stefan Hristozov}}},
+{{{Marc Ilunga}}},
+{{{Charlie Jacomme}}},
+{{{Elise Klein}}},
+{{{Steve Kremer}}},
+{{{Alexandros Krontiris}}},
+{{{Ilari Liusvaara}}},
+{{{Kathleen Moriarty}}},
+{{{David Navarro}}},
+{{{Karl Norrman}}},
+{{{Salvador Pérez}}},
+{{{Maïwenn Racouchot}}},
+{{{Eric Rescorla}}},
+{{{Michael Richardson}}},
+{{{Thorvald Sahl Jørgensen}}},
+{{{Jim Schaad}}},
+{{{Carsten Schürmann}}},
+{{{Ludwig Seitz}}},
+{{{Stanislav Smyshlyaev}}},
+{{{Valery Smyslov}}},
+{{{Peter van der Stok}}},
+{{{Rene Struik}}},
+{{{Vaishnavi Sundararajan}}},
+{{{Erik Thormarker}}},
+{{{Marco Tiloca}}},
+{{{Sean Turner}}},
+{{{Michel Veillette}}},
+and
+{{{Mališa Vučinić}}}
+for reviewing and commenting on intermediate versions of the draft. We are especially indebted to {{{Jim Schaad}}} for his continuous reviewing and implementation of different versions of the draft.
 
 Work on this document has in part been supported by the H2020 project SIFIS-Home (grant agreement 952652).
 
