@@ -524,7 +524,7 @@ Examples:
 
 * The CBOR map { 4 : h'FF' } is not encoded as 0xA10441FF but as the CBOR byte string h'FF', i.e. 0x41FF.
 
-* The CBOR map { 4 : h'21' } is neither encoded as 0xA1044121, nor as the CBOR byte string h'21' i.e. 0x4121, but as the CBOR integer 0x21.
+* The CBOR map { 4 : h'21' } is neither encoded as 0xA1044121, nor as the CBOR byte string h'21', i.e. 0x4121, but as the CBOR integer 0x21.
 
 As stated in Section 3.1 of {{I-D.ietf-cose-rfc8152bis-struct}}, applications MUST NOT assume that 'kid' values are unique and several keys associated with a 'kid' may need to be checked before the correct one is found. Applications might use additional information such as 'kid context' or lower layers to determine which key to try first. Applications should strive to make ID_CRED_x as unique as possible, since the recipient may otherwise have to try several keys.
 
