@@ -932,11 +932,11 @@ The Responder SHALL compose message_2 as follows:
 
 * CIPHERTEXT_2 is calculated by using the Expand function as a binary additive stream cipher over the following plaintext:
 
-   * PLAINTEXT_2 = ( ? PAD, ID_CRED_R / bstr / -24..23, Signature_or_MAC_2, ? EAD_2 )
+   * PLAINTEXT_2 = ( ? PAD_2, ID_CRED_R / bstr / -24..23, Signature_or_MAC_2, ? EAD_2 )
 
       * If ID_CRED_R contains a single 'kid' parameter, i.e., ID_CRED_R = { 4 : kid_R }, then only the byte string kid_R is conveyed in the plaintext, represented as described in {{bstr-repr}}.
 
-      * PAD = 1* `true` (see {{CBOR}}) is padding that may be used to hide the length of the unpadded plaintext
+      * PAD_2 = 1* `true` (see {{CBOR}}) is padding that may be used to hide the length of the unpadded plaintext
 
    * Compute KEYSTREAM_2 as in {{expand}}, where plaintext_length is the length of PLAINTEXT_2.
 
@@ -952,7 +952,7 @@ The Initiator SHALL process message_2 as follows:
 
 * Retrieve the protocol state using the message correlation provided by the transport (e.g., the CoAP Token, the 5-tuple, or the prepended C_I, see {{coap}}).
 
-* Decrypt CIPHERTEXT_2, see {{asym-msg2-proc}}, and, if present, discard padding.
+* Decrypt CIPHERTEXT_2, see {{asym-msg2-proc}}, and, if present, discard the padding PAD_2.
 
 * Make ID_CRED_R and (if present) EAD_2 available to the application for authentication- and EAD processing.
 
@@ -1004,11 +1004,11 @@ The Initiator SHALL compose message_3 as follows:
 
    * K_3 and IV_3 are defined in {{expand}}
 
-   * PLAINTEXT_3 = ( ? PAD, ID_CRED_I / bstr / -24..23, Signature_or_MAC_3, ? EAD_3 )
+   * PLAINTEXT_3 = ( ? PAD_3, ID_CRED_I / bstr / -24..23, Signature_or_MAC_3, ? EAD_3 )
 
        * If ID_CRED_I contains a single 'kid' parameter, i.e., ID_CRED_I = { 4 : kid_I }, then only the byte string kid_I is conveyed in the plaintext, represented as described in {{bstr-repr}}.
 
-       * PAD = 1* `true` (see {{CBOR}}) is padding that may be used to hide the length of the unpadded plaintext
+       * PAD_3 = 1* `true` (see {{CBOR}}) is padding that may be used to hide the length of the unpadded plaintext
 
    CIPHERTEXT_3 is the 'ciphertext' of COSE_Encrypt0.
 
@@ -1031,7 +1031,7 @@ The Responder SHALL process message_3 as follows:
 
 * Retrieve the protocol state using the message correlation provided by the transport (e.g., the CoAP Token, the 5-tuple, or the prepended C_R, see {{coap}}).
 
-* Decrypt and verify the COSE_Encrypt0 as defined in Sections 5.2 and 5.3 of {{I-D.ietf-cose-rfc8152bis-struct}}, with the EDHOC AEAD algorithm in the selected cipher suite, and the parameters defined in {{asym-msg3-proc}}. Discard padding, if present.
+* Decrypt and verify the COSE_Encrypt0 as defined in Sections 5.2 and 5.3 of {{I-D.ietf-cose-rfc8152bis-struct}}, with the EDHOC AEAD algorithm in the selected cipher suite, and the parameters defined in {{asym-msg3-proc}}. Discard the padding PAD_3, if present.
 
 * Make ID_CRED_I and (if present) EAD_3 available to the application for authentication- and EAD processing.
 
@@ -1076,8 +1076,8 @@ The Responder SHALL compose message_4 as follows:
 
    * K_4 and IV_4 are defined in {{expand}}
 
-    * PLAINTEXT_4 = ( ? PAD, ? EAD_4 )
-      * PAD = 1* `true` (see {{CBOR}}) is padding that may be used to hide the length of the unpadded plaintext.
+    * PLAINTEXT_4 = ( ? PAD_4, ? EAD_4 )
+      * PAD_4 = 1* `true` (see {{CBOR}}) is padding that may be used to hide the length of the unpadded plaintext.
       * EAD_4 - external authorization data, see {{AD}}.
 
   CIPHERTEXT_4 is the 'ciphertext' of COSE_Encrypt0.
@@ -1092,7 +1092,7 @@ The Initiator SHALL process message_4 as follows:
 
 * Retrieve the protocol state using the message correlation provided by the transport (e.g., the CoAP Token, the 5-tuple, or the prepended C_I, see {{coap}}).
 
-* Decrypt and verify the COSE_Encrypt0 as defined in Sections 5.2 and 5.3 of {{I-D.ietf-cose-rfc8152bis-struct}}, with the EDHOC AEAD algorithm in the selected cipher suite, and the parameters defined in {{asym-msg4-proc}}. Discard padding, if present.
+* Decrypt and verify the COSE_Encrypt0 as defined in Sections 5.2 and 5.3 of {{I-D.ietf-cose-rfc8152bis-struct}}, with the EDHOC AEAD algorithm in the selected cipher suite, and the parameters defined in {{asym-msg4-proc}}. Discard the padding PAD_4, if present.
 
 * Make (if present) EAD_4 available to the application for EAD processing.
 
