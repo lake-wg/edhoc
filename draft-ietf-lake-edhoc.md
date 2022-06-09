@@ -371,7 +371,7 @@ EDHOC includes the selection of connection identifiers (C_I, C_R) identifying a 
 
 Connection identifiers may be used to correlate EDHOC messages and facilitate the retrieval of protocol state during EDHOC execution (see {{transport}}) or in subsequent applications of  EDHOC, e.g., in OSCORE (see {{ci-oscore}}). The connection identifiers do not have any cryptographic purpose in EDHOC except facilitating the retrieval of security data associated to the protocol state.
 
-Connection identifiers in EDHOC are CBOR byte strings. Since most constrained devices only have a few connections, short identifiers are desirable in many cases. However, except for the empty byte string h'', which encodes as one byte (0x40), all byte strings are CBOR encoded as two or more bytes. Therefore EDHOC specifies certain byte strings to be represented as CBOR ints on the wire, see {{bstr-repr}}.
+Connection identifiers in EDHOC are intrinsically byte strings. Most constrained devices only have a few connections for which short identifiers may be sufficient. In some cases minimum length identifiers are necessary to comply with overhead requirements. However, CBOR byte strings - with the exception of the empty byte string h’’ which encodes as one byte (0x40) - are encoded as two or more bytes. To enable one-byte encoding of certain byte strings while maintaining CBOR encoding, EDHOC represents certain byte string identifiers as CBOR ints on the wire, see {{bstr-repr}}.
 
 
 ### Selection of Connection Identifiers
@@ -410,7 +410,9 @@ One way to view this representation of byte strings is as a transport encoding: 
 
 For OSCORE, the choice of connection identifier results in the endpoint selecting its Recipient ID, see Section 3.1 of {{RFC8613}}, for which certain uniqueness requirements apply, see Section 3.3 of {{RFC8613}}. Therefore, the Initiator and the Responder MUST NOT select connection identifiers such that it results in same OSCORE Recipient ID. Since the connection identifier is a byte string, it is converted to an OSCORE Recipient ID equal to the byte string.
 
-For example, a C_I equal to 0xFF is converted to a (typically client) Responder ID equal to 0xFF; a C_R equal to 0x21 is converted to a (typically server) Responder ID equal to 0x21. Note that the representation of connection identifiers as CBOR byte strings or CBOR ints in EDHOC messages as described in {{bstr-repr}} has no impact on this mapping.
+Examples:
+   * A connection identifier 0xFF (represented in the EDHOC message as the CBOR byte string 0x41FF, see {{bstr-repr}}) is converted to the OSCORE Recipient ID 0xFF
+   * A connection identifier 0x21 (represented in the EDHOC message as the CBOR int 0x21, see {{bstr-repr}}) is converted to the OSCORE Recipient ID 0x21.
 
 
 ## Transport {#transport}
@@ -727,7 +729,15 @@ The definition of Expand depends on the EDHOC hash algorithm of the selected cip
 
 where L = 8*length, the output length in bits.
 
-{{fig-edhoc-kdf}} lists derivations made with EDHOC-KDF during message processing. How the output keying material is used is specified in {{asym}}.
+{{fig-edhoc-kdf}} lists derivations made with EDHOC-KDF during message processing, where
+
+* hash_length - length of output size of the EDHOC hash algorithm of the selected cipher suite
+
+* key_length - length of the encryption key of the EDHOC AEAD algorithm
+
+* iv_length - length of the initialization vector of the EDHOC AEAD algorithm
+
+Further details of the key derivation and how the output keying material is used is specified in {{asym}}.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 KEYSTREAM_2   = EDHOC-KDF( PRK_2e,   0, TH_2,      plaintext_length )
@@ -771,7 +781,7 @@ where
 PRK_exporter  = EDHOC-KDF( PRK_out, 10, h'', hash_length )
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-where hash_length denotes the length of the hash function output in bytes, as specified by the COSE hash algorithm definition.
+where hash_length denotes the output size in bytes of the EDHOC hash algorithm of the selected cipher suite.
 
 PRK_exporter MUST be derived anew if PRK_out is updated, in particular if EDHOC-KeyUpdate is used, see {{keyupdate}}.
 
@@ -789,7 +799,7 @@ To provide forward secrecy in an even more efficient way than re-running EDHOC, 
       PRK_out = EDHOC-KDF( PRK_out, 11, context, hash_length )
 ~~~~~~~~~~~
 
-where hash_length denotes the length of the hash function output in bytes, as specified by the COSE hash algorithm definition.
+where hash_length denotes the output size in bytes of the EDHOC hash algorithm of the selected cipher suite.
 
 The EDHOC-KeyUpdate takes a context as input to enable binding of the updated PRK_out to some event that triggered the keyUpdate. The Initiator and the Responder need to agree on the context, which can, e.g., be a counter or a pseudorandom number such as a hash. The Initiator and the Responder also need to cache the old PRK_out until it has verfied that the other endpoint has the correct new PRK_out. {{I-D.ietf-core-oscore-key-update}} describes key update for OSCORE using EDHOC-KeyUpdate.
 
@@ -907,7 +917,7 @@ The Responder SHALL compose message_2 as follows:
 * Compute the transcript hash TH_2 = H( G_Y, C_R, H(message_1) ) where H() is the EDHOC hash algorithm of the selected cipher suite. The transcript hash TH_2 is a CBOR encoded bstr and the input to the hash function is a CBOR Sequence. Note that H(message_1) can be computed and cached already in the processing of message_1.
 
 * Compute MAC_2 as in {{expand}} with context_2 = << ID_CRED_R, TH_2, CRED_R, ? EAD_2 >>
-   * If the Responder authenticates with a static Diffie-Hellman key (method equals 1 or 3), then mac_length_2 is the EDHOC MAC length given by the selected cipher suite. If the Responder authenticates with a signature key (method equals 0 or 2), then mac_length_2 is equal to the output size of the EDHOC hash algorithm given by the selected cipher suite.
+   * If the Responder authenticates with a static Diffie-Hellman key (method equals 1 or 3), then mac_length_2 is the EDHOC MAC length of the selected cipher suite. If the Responder authenticates with a signature key (method equals 0 or 2), then mac_length_2 is equal to the output size of the EDHOC hash algorithm of the selected cipher suite.
     * ID_CRED_R - identifier to facilitate the retrieval of CRED_R, see {{id_cred}}
     * CRED_R - CBOR item containing the authentication credential of the Responder, see {{auth-cred}}
     * EAD_2 - external authorization data, see {{AD}}
@@ -926,7 +936,7 @@ The Responder SHALL compose message_2 as follows:
 
       * If ID_CRED_R contains a single 'kid' parameter, i.e., ID_CRED_R = { 4 : kid_R }, then only the byte string kid_R is conveyed in the plaintext, represented as described in {{bstr-repr}}.
 
-      * PAD = 1*true is padding that may be used to hide the length of the unpadded plaintext
+      * PAD = 1* `true` (see {{CBOR}}) is padding that may be used to hide the length of the unpadded plaintext
 
    * Compute KEYSTREAM_2 as in {{expand}}, where plaintext_length is the length of PLAINTEXT_2.
 
@@ -950,7 +960,7 @@ The Initiator SHALL process message_2 as follows:
 
 * Verify Signature_or_MAC_2 using the algorithm in the selected cipher suite. The verification process depends on the method, see {{asym-msg2-proc}}.
 
-If any processing step fails, the Responder MUST send an EDHOC error message back, formatted as defined in {{error}}, and the session MUST be discontinued.
+If any processing step fails, the Initiator MUST send an EDHOC error message back, formatted as defined in {{error}}, and the session MUST be discontinued.
 
 
 ## EDHOC Message 3 {#m3}
@@ -973,7 +983,7 @@ The Initiator SHALL compose message_3 as follows:
 * Compute the transcript hash TH_3 = H(TH_2, PLAINTEXT_2) where H() is the EDHOC hash algorithm of the selected cipher suite. The transcript hash TH_3 is a CBOR encoded bstr and the input to the hash function is a CBOR Sequence. Note that H(TH_2, PLAINTEXT_2) can be computed and cached already in the processing of message_2.
 
 * Compute MAC_3 as in {{expand}}, with context_3 = << ID_CRED_I, TH_3, CRED_I, ? EAD_3 >>
-    * If the Initiator authenticates with a static Diffie-Hellman key (method equals 2 or 3), then mac_length_3 is the EDHOC MAC length given by the selected cipher suite.  If the Initiator authenticates with a signature key (method equals 0 or 1), then mac_length_3 is equal to the output size of the EDHOC hash algorithm given by the selected cipher suite.
+    * If the Initiator authenticates with a static Diffie-Hellman key (method equals 2 or 3), then mac_length_3 is the EDHOC MAC length of the selected cipher suite.  If the Initiator authenticates with a signature key (method equals 0 or 1), then mac_length_3 is equal to the output size of the EDHOC hash algorithm of the selected cipher suite.
     * ID_CRED_I - identifier to facilitate the retrieval of CRED_I, see {{id_cred}}
     * CRED_I - CBOR item containing the authentication credential of the Initiator, see {{auth-cred}}
     * EAD_3 - external authorization data, see {{AD}}
@@ -992,17 +1002,13 @@ The Initiator SHALL compose message_3 as follows:
    * protected = h''
    * external_aad = TH_3
 
-   * K_3 and IV_3 are defined in {{expand}}, with
-
-      * key_length - length of the encryption key of the EDHOC AEAD algorithm
-
-      * iv_length - length of the initialization vector of the EDHOC AEAD algorithm
+   * K_3 and IV_3 are defined in {{expand}}
 
    * PLAINTEXT_3 = ( ? PAD, ID_CRED_I / bstr / -24..23, Signature_or_MAC_3, ? EAD_3 )
 
        * If ID_CRED_I contains a single 'kid' parameter, i.e., ID_CRED_I = { 4 : kid_I }, then only the byte string kid_I is conveyed in the plaintext, represented as described in {{bstr-repr}}.
 
-       * PAD = 1*true is padding that may be used to hide the length of the unpadded plaintext
+       * PAD = 1* `true` (see {{CBOR}}) is padding that may be used to hide the length of the unpadded plaintext
 
    CIPHERTEXT_3 is the 'ciphertext' of COSE_Encrypt0.
 
@@ -1068,13 +1074,10 @@ The Responder SHALL compose message_4 as follows:
    * protected = h''
    * external_aad = TH_4
 
-   * K_4 and IV_4 are defined in {{expand}}, with
-
-      * key_length - length of the encryption key of the EDHOC AEAD algorithm
-      * iv_length - length of the initialization vector of the EDHOC AEAD algorithm
+   * K_4 and IV_4 are defined in {{expand}}
 
     * PLAINTEXT_4 = ( ? PAD, ? EAD_4 )
-      * PAD = 1*true is padding that may be used to hide the length of the unpadded plaintext.
+      * PAD = 1* `true` (see {{CBOR}}) is padding that may be used to hide the length of the unpadded plaintext.
       * EAD_4 - external authorization data, see {{AD}}.
 
   CIPHERTEXT_4 is the 'ciphertext' of COSE_Encrypt0.
@@ -1093,7 +1096,7 @@ The Initiator SHALL process message_4 as follows:
 
 * Make (if present) EAD_4 available to the application for EAD processing.
 
-If any processing step fails, the Responder MUST send an EDHOC error message back, formatted as defined in {{error}}, and the session MUST be discontinued.
+If any processing step fails, the Initiator MUST send an EDHOC error message back, formatted as defined in {{error}}, and the session MUST be discontinued.
 
 After verifying message_4, the Initiator is assured that the Responder has calculated the key PRK_out (key confirmation) and that no other party can derive the key.
 
@@ -1325,7 +1328,9 @@ If two nodes unintentionally initiate two simultaneous EDHOC message exchanges w
 
 If supported by the device, it is RECOMMENDED that at least the long-term private keys are stored in a Trusted Execution Environment (TEE) and that sensitive operations using these keys are performed inside the TEE.  To achieve even higher security it is RECOMMENDED that additional operations such as ephemeral key generation, all computations of shared secrets, and storage of the PRK keys can be done inside the TEE. The use of a TEE aims at preventing code within that environment to be tampered with, and preventing data used by such code to be read or tampered with by code outside that environment.
 
-Note that HKDF-Expand has a relatively small maximum output length of 255  * hash_length. This means that when SHA-256 is used as hash algorithm, message_2 cannot be longer than 8160 bytes.
+
+Note that HKDF-Expand has a relatively small maximum output length of 255 * hash_length, where hash_length is the output size in bytes of the EDHOC hash algorithm of the selected cipher suite. This means that when when SHA-256 is used as hash algorithm, message_2 cannot be longer than 8160 bytes.
+
 
 The sequence of transcript hashes in EHDOC (TH_2, TH_3, TH_4) do not make use of a so called running hash, this is a design choice as running hashes are often not supported on constrained platforms.
 
@@ -1658,7 +1663,7 @@ with response code 2.04 (Changed), in the latter
 
 In order for the server to correlate a message received from a client to a message previously sent in the same EDHOC session over CoAP, messages sent by the client are prepended with the CBOR serialization of the connection identifier which the server has chosen. This applies independently of if the CoAP server is Responder or Initiator.
 
-* For the default case when the server is Responder, message_3 is sent from the client prepended with the identifier C_R. In this case message_1 is also sent by the client, and to indicate that this is a new EDHOC session it is prepended with a dummy identifier, the CBOR simple value "true" (0xf5), since the server has not selected C_R yet. See {{fig-coap1}}.
+* For the default case when the server is Responder, message_3 is sent from the client prepended with the identifier C_R. In this case message_1 is also sent by the client, and to indicate that this is a new EDHOC session it is prepended with a dummy identifier, the CBOR simple value `true` (0xf5), since the server has not selected C_R yet. See {{fig-coap1}}.
 
 * In the case when the server is Initiator, message_2 (and, if present, message_4) is sent from the client prepended with the identifier C_I. See {{fig-coap2}}.
 
@@ -1757,7 +1762,7 @@ The Concise Binary Object Representation (CBOR) {{RFC8949}} is a data format des
 
 CBOR data items are encoded to or decoded from byte strings using a type-length-value encoding scheme, where the three highest order bits of the initial byte contain information about the major type. CBOR supports several different types of data items, in addition to integers (int, uint), simple values, byte strings (bstr), and text strings (tstr), CBOR also supports arrays \[\]  of data items, maps {} of pairs of data items, and sequences {{RFC8742}} of data items. Some examples are given below.
 
-The EDHOC specification sometimes use CDDL names in CBOR diagnostic notation as in e.g., << ID_CRED_R, ? EAD_2 >>. This means that EAD_2 is optional and that ID_CRED_R and EAD_2 should be substituted with their values before evaluation. I.e., if ID_CRED_R = { 4 : h'' } and EAD_2 is omitted then << ID_CRED_R, ? EAD_2 >> = << { 4 : h'' } >>, which encodes to 0x43a10440.
+The EDHOC specification sometimes use CDDL names in CBOR diagnostic notation as in e.g., << ID_CRED_R, ? EAD_2 >>. This means that EAD_2 is optional and that ID_CRED_R and EAD_2 should be substituted with their values before evaluation. I.e., if ID_CRED_R = { 4 : h'' } and EAD_2 is omitted then << ID_CRED_R, ? EAD_2 >> = << { 4 : h'' } >>, which encodes to 0x43a10440. We also make use of the occurrance symbol "\*", like in e.g.,  2* int, meaning two or more CBOR integers.
 
 For a complete specification and more examples, see {{RFC8949}} and {{RFC8610}}. We recommend implementors to get used to CBOR by using the CBOR playground {{CborMe}}.
 
@@ -1994,7 +1999,7 @@ The previous message or protocol state MUST NOT be kept longer than what is requ
 Protocols that do not natively provide full correlation between a series of messages can send the C_I and C_R identifiers along as needed.
 
 The transport over CoAP ({{coap}}) can serve as a blueprint for other server-client protocols:
-The client prepends the C_x which the server selected (or, for message_1, the CBOR simple value 'true' which is not a valid C_x) to any request message it sends.
+The client prepends the C_x which the server selected (or, for message_1, the CBOR simple value `true` which is not a valid C_x) to any request message it sends.
 The server does not send any such indicator, as responses are matched to request by the client-server protocol design.
 
 Protocols that do not provide any correlation at all can prescribe prepending of the peer's chosen C_x to all messages.
