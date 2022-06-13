@@ -783,9 +783,9 @@ PRK_exporter  = EDHOC-KDF( PRK_out, 10, h'', hash_length )
 
 where hash_length denotes the output size in bytes of the EDHOC hash algorithm of the selected cipher suite.
 
-PRK_exporter MUST be derived anew if PRK_out is updated, in particular if EDHOC-KeyUpdate is used, see {{keyupdate}}.
+PRK_exporter MUST be derived anew from PRK_out if EDHOC-KeyUpdate is used, see {{keyupdate}}.
 
-The (label, context) pair must be unique, i.e., a (label, context) MUST NOT be used for two different purposes. However an application can re-derive the same key several times as long as it is done in a secure way. For example, in most encryption algorithms the same key can be reused with different nonces. The context can for example be the empty CBOR byte string.
+The (label, context) pair used in EDHOC-Exporter must be unique, i.e., a (label, context) MUST NOT be used for two different purposes. However an application can re-derive the same key several times as long as it is done in a secure way. For example, in most encryption algorithms the same key can be reused with different nonces. The context can for example be the empty CBOR byte string.
 
 Examples of use of the EDHOC-Exporter are given in {{transfer}}.
 
