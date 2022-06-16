@@ -2009,6 +2009,41 @@ Protocols that can provide all the necessary correlation but do not have any sho
 may need ... no, they don't need anything special: after an error, the next thing is a message 1 again.
 -->
 
+# Large message_2
+
+By design of encryption of message_2, if the EDHOC hash algorithm is SHA-2 then HKDF-Expand is used which limits the size of plaintext that can be encrypted to 255 * hash_length, where hash_length is the length of the output of the EDHOC hash algorithm given by the cipher suite. For example, with SHA-256 as EDHOC hash algorithm the length of the hash output is 32 bytes and the maximum length of PLAINTEXT_2 is 255 * 32 = 8160 bytes.
+
+While message_2 is expected to be much smaller than 8 kB for the intended use cases, it seems nevertheless prudent to provide alternative solutions for the event that this should turn out to be a limitation.
+
+One simple solution is to use a cipher suite with a different hash function. In particular, the use of KMAC removes all practical limitations in this respect.
+
+Another solution is make use of multiple invocations of HKDF-Expand, as specified in the remainder of this section:
+
+Split PLAINTEXT_2 in parts P(i) of size equal to M = 255 \* hash_length, except the last part P(last) which has size \<= M.
+
+~~~~~~~~~~~
+PLAINTEXT_2 = P(0) | P(1) | ... | P(last)
+~~~~~~~~~~~
+
+where \| indicates concatenation. Define a matching keystream
+
+~~~~~~~~~~~
+KEYSTREAM_2 = OKM(0) | OKM(1)  | ... | OKM(last)
+~~~~~~~~~~~
+
+where
+
+~~~~~~~~~~~
+OKM(i) = EDHOC-KDF( PRK_2e, -i, TH_2, length(P(i)) )
+~~~~~~~~~~~
+
+Note that if PLAINTEXT_2 \<= M then P(0) = PLAINTEXT_2 and the definition of KEYSTREAM_2 = OKM(0) coincides with {{fig-edhoc-kdf}}.
+
+An application profile may specify if it supports this method to handle large message_2.
+
+Editor's note: This variant requires the type of KDF label to be changed from uint to int.
+
+
 # Change Log
 
 RFC Editor: Please remove this appendix.
