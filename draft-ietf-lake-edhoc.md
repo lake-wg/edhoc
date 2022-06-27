@@ -1930,8 +1930,9 @@ The application may need to verify that the credentials are not revoked, see {{i
 ## Unauthenticated Operation {#tofu}
 
 EDHOC might be used without authentication by allowing the Initiator or Responder to communicate with any identity except its own. Note that EDHOC without mutual authentication is vulnerable to man-in-the-middle attacks and therefore unsafe for general use. However, it is possible to later establish a trust relationship with an unknown or not-yet-trusted endpoint. Some examples:
-* The EDHOC authentication credential can be verified out-of-band, using External Authorization Data, or at a later stage
-* the EDHOC session key can be bound to an identity out-of-band, using External Authorization Data, or at a later state
+
+* The EDHOC authentication credential can be verified out-of-band at a later stage.
+* The EDHOC session key can be bound to an identity out-of-band at a later state.
 * Trust on first use (TOFU) can be used to verify that several EDHOC connections are made to the same identity. TOFU combined with proximity is a common IoT deployment model which provides good security if done correctly. Note that secure proximity based on short range wireless technology requires very low signal strength or very low latency.
 
 # Use of External Authorization Data {#ead-appendix}
