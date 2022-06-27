@@ -83,6 +83,7 @@ informative:
   RFC9000:
   RFC9147:
   RFC9176:
+  I-D.ietf-rats-eat:
   I-D.ietf-lake-reqs:
   I-D.ietf-lake-traces:
   I-D.ietf-core-oscore-edhoc:
@@ -93,7 +94,6 @@ informative:
   I-D.selander-ace-ake-authz:
   I-D.mattsson-cfrg-det-sigs-with-noise:
   I-D.arkko-arch-internet-threat-model-guidance:
-  I-D.ietf-rats-eat:
 
   SP-800-56A:
     target: https://doi.org/10.6028/NIST.SP.800-56Ar3
