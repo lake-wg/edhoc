@@ -572,11 +572,11 @@ The ephemeral public keys in EDHOC (G_X and G_Y) use compact representation of e
 
 ## External Authorization Data (EAD) {#AD}
 
-In order to reduce round trips and the number of messages or to simplify processing, external security applications may be integrated into EDHOC by transporting authorization related data in the messages.
+In order to reduce round trips and the number of messages, or to simplify processing, external security applications may be integrated into EDHOC by transporting authorization related data in the messages.
 
-EDHOC allows opaque external authorization data (EAD) to be sent in each of the four EDHOC messages (EAD_1, EAD_2, EAD_3, EAD_4).
+EDHOC allows opaque external authorization data (EAD) to be defined in a separate specification, and sent in dedicated fields of the four EDHOC messages (EAD_1, EAD_2, EAD_3, EAD_4).
 
-External authorization data is a CBOR sequence (see {{CBOR}}) consisting of one or more (ead_label, ead_value) pairs as defined below:
+Each EAD field is a CBOR sequence (see {{CBOR}}) consisting of one or more (ead_label, ead_value) pairs as defined below:
 
 ~~~~~~~~~~~ CDDL
 ead = 1* (
@@ -585,7 +585,11 @@ ead = 1* (
 )
 ~~~~~~~~~~~
 
-A security application using external authorization data need to register an ead_label, specify the ead_value format for each message (see {{iana-ead}}), and describe processing and security considerations.
+A security application using external authorization data need to register an ead_label, specify the ead_value formatting for each message (see {{iana-ead}}), and describe processing and security considerations.
+
+An EAD field can be either critical or non-critical, determined by the sign of ead_label: negative means critical; non-negative means non-critical. If an endpoint does not support a received critical EAD field, the EDHOC protocol MUST be discontinued.
+
+The EAD specification describes if an EAD field is always critical, always non-critical, or if it can be decided by the application in the sending endpoint. In the latter case, one negative and one non-negative instance of ead_label need to be registered.
 
 The EAD fields of EDHOC must not be used for generic application data. Examples of the use of EAD is provided in {{ead-appendix}}.
 
@@ -1465,7 +1469,7 @@ IANA has created a new registry entitled "EDHOC Error Codes" under the new group
 
 ## EDHOC External Authorization Data Registry {#iana-ead}
 
-IANA has created a new registry entitled "EDHOC External Authorization Data" under the new group name "Ephemeral Diffie-Hellman Over COSE (EDHOC)". The registration procedure is "Specification Required". The columns of the registry are Label, Message, Description, and Reference, where Label is an integer and the other columns are text strings.
+IANA has created a new registry entitled "EDHOC External Authorization Data" under the new group name "Ephemeral Diffie-Hellman Over COSE (EDHOC)". The registration procedure is "Specification Required". The columns of the registry are Label, Description, and Reference, where Label is an integer and the other columns are text strings.
 
 ## COSE Header Parameters Registry {#cwt-header-param}
 
