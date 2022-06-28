@@ -301,7 +301,7 @@ In order to create a "full-fledged" protocol some additional protocol elements a
 
 * Verification of the selected cipher suite.
 
-* Method types and error handling.
+* Method types, error handling, and padding.
 
 * Selection of connection identifiers C_I and C_R which may be used in EDHOC to identify protocol state.
 
@@ -317,7 +317,7 @@ To simplify for implementors, the use of CBOR and COSE in EDHOC is summarized in
 
 The EDHOC protocol consists of three mandatory messages (message_1, message_2, message_3) between Initiator and Responder, an optional fourth message (message_4), and an error message. All EDHOC messages are CBOR Sequences {{RFC8742}}, and are deterministically encoded. {{fig-flow}} illustrates an EDHOC message flow with the optional fourth message as well as the content of each message. The protocol elements in the figure are introduced in {{overview}} and {{asym}}. Message formatting and processing are specified in {{asym}} and {{error}}.
 
-Application data may be protected using the agreed application algorithms (AEAD, hash) in the selected cipher suite (see {{cs}}) and the application can make use of the established connection identifiers C_I and C_R (see {{ci}}). EDHOC may be used with the media type application/edhoc+cbor-seq defined in {{media-type}}.
+Application data may be protected using the agreed application algorithms (AEAD, hash) in the selected cipher suite (see {{cs}}) and the application can make use of the established connection identifiers C_I and C_R (see {{ci}}). Media types that may be used for EDHOC are defined in {{media-type}}.
 
 The Initiator can derive symmetric application keys after creating EDHOC message_3, see {{exporter}}. Protected application data can therefore be sent in parallel or together with EDHOC message_3. EDHOC message_4 is typically not sent.
 
