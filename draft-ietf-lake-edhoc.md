@@ -307,7 +307,7 @@ In order to create a "full-fledged" protocol some additional protocol elements a
 
 * Transport of external authorization data.
 
-EDHOC is designed to encrypt and integrity protect as much information as possible, and all symmetric keys are derived using as much previous information as possible. EDHOC is furthermore designed to be as compact and lightweight as possible, in terms of message sizes, processing, and the ability to reuse already existing CBOR, COSE, and CoAP libraries.
+EDHOC is designed to encrypt and integrity protect as much information as possible, and all symmetric keys are derived using as much previous information as possible. EDHOC is furthermore designed to be as compact and lightweight as possible, in terms of message sizes, processing, and the ability to reuse already existing CBOR, COSE, and CoAP libraries. Like (D)TLS, authentication is the responsibility of the application, EDHOC identifies (and optionally transports) authentication credentials, and provides proof-of-possession of the private authentication key.
 
 To simplify for implementors, the use of CBOR and COSE in EDHOC is summarized in {{CBORandCOSE}}. Test vectors including CBOR diagnostic notation are provided in {{I-D.ietf-lake-traces}}.
 
@@ -1284,7 +1284,7 @@ Requirements for how to securely generate, validate, and process the ephemeral p
 
 As noted in Section 12 of {{I-D.ietf-cose-rfc8152bis-struct}} the use of a single key for multiple algorithms is strongly discouraged unless proven secure by a dedicated cryptographic analysis. In particular this recommendation applies to using the same private key for static Diffie-Hellman authentication and digital signature authentication. A preliminary conjecture is that a minor change to EDHOC may be sufficient to fit the analysis of secure shared signature and ECDH key usage in {{Degabriele11}} and {{Thormarker21}}.
 
-So-called selfie attacks are mitigated as long as the Initiator does not have its own identity in the set of Responder identities it is allowed to communicate with. In trust on first use (TOFU) use cases the Initiator should verify that the Responder's identity is not equal to its own. Any future EHDOC methods using e.g., pre-shared keys might need to mitigate this in other ways.
+So-called selfie attacks are mitigated as long as the Initiator does not have its own identity in the set of Responder identities it is allowed to communicate with. In Trust on first use (TOFU) use cases, see {{tofu}}, the Initiator should verify that the Responder's identity is not equal to its own. Any future EHDOC methods using e.g., pre-shared keys might need to mitigate this in other ways.
 
 ## Cipher Suites and Cryptographic Algorithms {#sec_algs}
 
@@ -1886,7 +1886,7 @@ ID_CRED_x MAY also identify the credential by value. For example, a certificate 
 
 EDHOC performs certain authentication related operations, see {{auth-key-id}}, but in general it is necessary to make additional verifications beyond EDHOC message processing. What verifications are needed depend on the deployment, in particular the trust model and the security policies, but most commonly it can be expressed in terms of verifications of credential content.
 
- EDHOC assumes the existence of mechanisms (certification authority or other trusted third party, pre-provisioning, etc.) for generating and distributing authentication credentials and other credentials, as well as the existence of trust anchors (CA certificates, trusted public keys, etc.). For example, a public key certificate or CWT may rely on a trusted third party whose public key is pre-provisioned, whereas a CCS or a self-signed certificate/CWT may be used when trust in the public key can be achieved by other means, or in the case of trust-on-first-use, see {{tofu}}.
+ EDHOC assumes the existence of mechanisms (certification authority or other trusted third party, pre-provisioning, etc.) for generating and distributing authentication credentials and other credentials, as well as the existence of trust anchors (CA certificates, trusted public keys, etc.). For example, a public key certificate or CWT may rely on a trusted third party whose public key is pre-provisioned, whereas a CCS or a self-signed certificate/CWT may be used when trust in the public key can be achieved by other means, or in the case of Trust on first use, see {{tofu}}.
 
 In this section we provide some examples of such verifications. These verifications are the responsibility of the application but may be implemented as part of an EDHOC library.
 
@@ -1903,7 +1903,7 @@ The authentication credential may contain, in addition to the authentication key
 
 ## Identities {#identities}
 
-The application must decide on allowing a connection or not depending on the intended endpoint, and in particular whether it is a specific identity or a set of identities. To prevent misbinding attacks, the identity of the endpoint is included in a MAC verified through the protocol. More details and examples are provided in this section.
+The application must decide on allowing a connection or not depending on the intended endpoint, and in particular whether it is a specific identity or in a set of identities. To prevent misbinding attacks, the identity of the endpoint is included in a MAC verified through the protocol. More details and examples are provided in this section.
 
 Policies for what connections to allow are typically set based on the identity of the other endpoint, and endpoints typically only allow connections from a specific identity or a small restricted set of identities. For example, in the case of a device connecting to a network, the network may only allow connections from devices which authenticate with certificates having a particular range of serial numbers and signed by a particular CA. Conversely, a device may only be allowed to connect to a network which authenticates with a particular public key.
 
@@ -1935,10 +1935,13 @@ When PKI is not used (CCS, self-signed certificate/CWT), the trust anchor is the
 The application may need to verify that the credentials are not revoked, see {{impl-cons}}. Some use cases may be served by short-lived credentials, for example, where the validity of the credential is on par with the interval between revocation checks. But, in general, credential lifetime and revocation checking are complementary measures to control credential status. Revocation information may be transported as External Authentication Data (EAD), see {{ead-appendix}}.
 
 
-## Trust-on-first-use {#tofu}
+## Unauthenticated Operation {#tofu}
 
-TBD
+EDHOC might be used without authentication by allowing the Initiator or Responder to communicate with any identity except its own. Note that EDHOC without mutual authentication is vulnerable to man-in-the-middle attacks and therefore unsafe for general use. However, it is possible to later establish a trust relationship with an unknown or not-yet-trusted endpoint. Some examples:
 
+* The EDHOC authentication credential can be verified out-of-band at a later stage.
+* The EDHOC session key can be bound to an identity out-of-band at a later state.
+* Trust on first use (TOFU) can be used to verify that several EDHOC connections are made to the same identity. TOFU combined with proximity is a common IoT deployment model which provides good security if done correctly. Note that secure proximity based on short range wireless technology requires very low signal strength or very low latency.
 
 # Use of External Authorization Data {#ead-appendix}
 
