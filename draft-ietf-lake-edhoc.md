@@ -301,13 +301,13 @@ In order to create a "full-fledged" protocol some additional protocol elements a
 
 * Verification of the selected cipher suite.
 
-* Method types and error handling.
+* Method types, error handling, and padding.
 
 * Selection of connection identifiers C_I and C_R which may be used in EDHOC to identify protocol state.
 
 * Transport of external authorization data.
 
-EDHOC is designed to encrypt and integrity protect as much information as possible, and all symmetric keys are derived using as much previous information as possible. EDHOC is furthermore designed to be as compact and lightweight as possible, in terms of message sizes, processing, and the ability to reuse already existing CBOR, COSE, and CoAP libraries.
+EDHOC is designed to encrypt and integrity protect as much information as possible, and all symmetric keys are derived using as much previous information as possible. EDHOC is furthermore designed to be as compact and lightweight as possible, in terms of message sizes, processing, and the ability to reuse already existing CBOR, COSE, and CoAP libraries. Like (D)TLS, authentication is the responsibility of the application, EDHOC identifies (and optionally transports) authentication credentials, and provides proof-of-possession of the private authentication key.
 
 To simplify for implementors, the use of CBOR and COSE in EDHOC is summarized in {{CBORandCOSE}}. Test vectors including CBOR diagnostic notation are provided in {{I-D.ietf-lake-traces}}.
 
@@ -317,7 +317,7 @@ To simplify for implementors, the use of CBOR and COSE in EDHOC is summarized in
 
 The EDHOC protocol consists of three mandatory messages (message_1, message_2, message_3) between Initiator and Responder, an optional fourth message (message_4), and an error message. All EDHOC messages are CBOR Sequences {{RFC8742}}, and are deterministically encoded. {{fig-flow}} illustrates an EDHOC message flow with the optional fourth message as well as the content of each message. The protocol elements in the figure are introduced in {{overview}} and {{asym}}. Message formatting and processing are specified in {{asym}} and {{error}}.
 
-Application data may be protected using the agreed application algorithms (AEAD, hash) in the selected cipher suite (see {{cs}}) and the application can make use of the established connection identifiers C_I and C_R (see {{ci}}). EDHOC may be used with the media type application/edhoc+cbor-seq defined in {{media-type}}.
+Application data may be protected using the agreed application algorithms (AEAD, hash) in the selected cipher suite (see {{cs}}) and the application can make use of the established connection identifiers C_I and C_R (see {{ci}}). Media types that may be used for EDHOC are defined in {{media-type}}.
 
 The Initiator can derive symmetric application keys after creating EDHOC message_3, see {{exporter}}. Protected application data can therefore be sent in parallel or together with EDHOC message_3. EDHOC message_4 is typically not sent.
 
@@ -518,9 +518,15 @@ Example: X.509 certificates can be identified by a hash value using the 'x5t' pa
 
 Example: CWT or CCS can be identified by a key identifier using the 'kid' parameter:
 
-* ID_CRED_x = { 4 : key_id_x }, where key_id_x : kid, for x = I or R.
+* ID_CRED_x = { 4 : kid_x }, where kid_x : kid, for x = I or R.
 
-The value of a COSE 'kid' parameter is a byte string. To allow one-byte encodings of ID_CRED_x with key identifiers 'kid', which is useful in scenarios with only a few keys, the integer representation of identifiers in {{bstr-repr}} MUST be applied. For details, see {{asym-msg2-proc}} and {{asym-msg3-proc}}.
+The value of a COSE 'kid' parameter is a CBOR byte string. For a more compact representation, the CBOR map is replaced by a byte string, see the definitions of plaintext in {{asym-msg2-proc}} and {{asym-msg3-proc}}. To allow one-byte encodings of ID_CRED_x with key identifiers 'kid' the integer representation of byte string identifiers in {{bstr-repr}} MUST be applied.
+
+Examples:
+
+* The CBOR map { 4 : h'FF' } is not encoded as 0xA10441FF but as the CBOR byte string h'FF', i.e. 0x41FF.
+
+* The CBOR map { 4 : h'21' } is neither encoded as 0xA1044121, nor as the CBOR byte string h'21', i.e. 0x4121, but as the CBOR integer 0x21.
 
 As stated in Section 3.1 of {{I-D.ietf-cose-rfc8152bis-struct}}, applications MUST NOT assume that 'kid' values are unique and several keys associated with a 'kid' may need to be checked before the correct one is found. Applications might use additional information such as 'kid context' or lower layers to determine which key to try first. Applications should strive to make ID_CRED_x as unique as possible, since the recipient may otherwise have to try several keys.
 
@@ -934,7 +940,7 @@ The Responder SHALL compose message_2 as follows:
 
    * PLAINTEXT_2 = ( ? PAD_2, ID_CRED_R / bstr / -24..23, Signature_or_MAC_2, ? EAD_2 )
 
-      * If ID_CRED_R contains a single 'kid' parameter, i.e., ID_CRED_R = { 4 : kid_R }, then only the byte string kid_R is conveyed in the plaintext, represented as described in {{bstr-repr}}.
+      * If ID_CRED_R contains a single 'kid' parameter, i.e., ID_CRED_R = { 4 : kid_R }, then only the byte string is included in the plaintext, represented as described in {{bstr-repr}}, see examples in {{id_cred}}.
 
       * PAD_2 = 1* `true` (see {{CBOR}}) is padding that may be used to hide the length of the unpadded plaintext
 
@@ -1006,7 +1012,7 @@ The Initiator SHALL compose message_3 as follows:
 
    * PLAINTEXT_3 = ( ? PAD_3, ID_CRED_I / bstr / -24..23, Signature_or_MAC_3, ? EAD_3 )
 
-       * If ID_CRED_I contains a single 'kid' parameter, i.e., ID_CRED_I = { 4 : kid_I }, then only the byte string kid_I is conveyed in the plaintext, represented as described in {{bstr-repr}}.
+       * If ID_CRED_I contains a single 'kid' parameter, i.e., ID_CRED_I = { 4 : kid_I }, then only the byte string is included in the plaintext, represented as described in {{bstr-repr}}, see examples in {{id_cred}}.
 
        * PAD_3 = 1* `true` (see {{CBOR}}) is padding that may be used to hide the length of the unpadded plaintext
 
@@ -1238,6 +1244,8 @@ EDHOC inherits its security properties from the theoretical SIGMA-I protocol {{S
 
 As described in {{SIGMA}}, different levels of identity protection are provided to the Initiator and the Responder. EDHOC provides identity protection of the Initiator against active attacks and identity protection of the Responder against passive attacks. An active attacker can get the credential identifier of the Responder by eavesdropping on the destination address used for transporting message_1 and send its own message_1 to the same address. The roles should be assigned to protect the most sensitive identity/identifier, typically that which is not possible to infer from routing information in the lower layers.
 
+EDHOC messages might change in transit due to a noisy channel or through modification by an attacker. Changes in message_1 and message_2 (except PAD_2) are detected when verifying Signature_or_MAC_2. Changes to PAD_2 and message_3 are detected when verifying CIPHERTEXT_3. Changes to message_4 are detected when verifying CIPHERTEXT_4.
+
 Compared to {{SIGMA}}, EDHOC adds an explicit method type and expands the message authentication coverage to additional elements such as algorithms, external authorization data, and previous plaintext messages. This protects against an attacker replaying messages or injecting messages from another session.
 
 EDHOC also adds selection of connection identifiers and downgrade protected negotiation of cryptographic parameters, i.e., an attacker cannot affect the negotiated parameters. A single session of EDHOC does not include negotiation of cipher suites, but it enables the Responder to verify that the selected cipher suite is the most preferred cipher suite by the Initiator which is supported by both the Initiator and the Responder.
@@ -1276,7 +1284,7 @@ Requirements for how to securely generate, validate, and process the ephemeral p
 
 As noted in Section 12 of {{I-D.ietf-cose-rfc8152bis-struct}} the use of a single key for multiple algorithms is strongly discouraged unless proven secure by a dedicated cryptographic analysis. In particular this recommendation applies to using the same private key for static Diffie-Hellman authentication and digital signature authentication. A preliminary conjecture is that a minor change to EDHOC may be sufficient to fit the analysis of secure shared signature and ECDH key usage in {{Degabriele11}} and {{Thormarker21}}.
 
-The property that a completed EDHOC exchange implies that another identity has been active is upheld as long as the Initiator does not have its own identity in the set of Responder identities it is allowed to communicate with. In trust on first use (TOFU) use cases the Initiator should verify that the Responder's identity is not equal to its own. Any future EHDOC methods using e.g., pre-shared keys might need to mitigate this in other ways. However, an active attacker can gain information about the set of identities an Initiator is willing to communicate with. If the Initiator is willing to communicate with all identities except its own an attacker can determine that a guessed Initiator identity is correct. To not leak any long-term identifiers, it is recommended to use a freshly generated authentication key as identity in each initial TOFU exchange.
+The property that a completed EDHOC exchange implies that another identity has been active is upheld as long as the Initiator does not have its own identity in the set of Responder identities it is allowed to communicate with. In Trust on first use (TOFU) use cases, see {{tofu}}, the Initiator should verify that the Responder's identity is not equal to its own. Any future EHDOC methods using e.g., pre-shared keys might need to mitigate this in other ways. However, an active attacker can gain information about the set of identities an Initiator is willing to communicate with. If the Initiator is willing to communicate with all identities except its own an attacker can determine that a guessed Initiator identity is correct. To not leak any long-term identifiers, it is recommended to use a freshly generated authentication key as identity in each initial TOFU exchange.
 
 ## Cipher Suites and Cryptographic Algorithms {#sec_algs}
 
@@ -1867,7 +1875,7 @@ Different header parameters to identify X.509 or C509 certificates by reference 
 
 When ID_CRED_x does not contain the actual credential, it may be very short, e.g., if the endpoints have agreed to use a key identifier parameter 'kid':
 
-* ID_CRED_x = { 4 : key_id_x }, where key_id_x : kid, for x = I or R.
+* ID_CRED_x = { 4 : kid_x }, where kid_x : kid, for x = I or R. For further optimization, see {{id_cred}}.
 
 Note that a COSE header map can contain several header parameters, for example { x5u, x5t } or { kid, kid_context }.
 
@@ -1878,7 +1886,7 @@ ID_CRED_x MAY also identify the credential by value. For example, a certificate 
 
 EDHOC performs certain authentication related operations, see {{auth-key-id}}, but in general it is necessary to make additional verifications beyond EDHOC message processing. What verifications are needed depend on the deployment, in particular the trust model and the security policies, but most commonly it can be expressed in terms of verifications of credential content.
 
- EDHOC assumes the existence of mechanisms (certification authority or other trusted third party, pre-provisioning, etc.) for generating and distributing authentication credentials and other credentials, as well as the existence of trust anchors (CA certificates, trusted public keys, etc.). For example, a public key certificate or CWT may rely on a trusted third party whose public key is pre-provisioned, whereas a CCS or a self-signed certificate/CWT may be used when trust in the public key can be achieved by other means, or in the case of trust-on-first-use, see {{tofu}}.
+ EDHOC assumes the existence of mechanisms (certification authority or other trusted third party, pre-provisioning, etc.) for generating and distributing authentication credentials and other credentials, as well as the existence of trust anchors (CA certificates, trusted public keys, etc.). For example, a public key certificate or CWT may rely on a trusted third party whose public key is pre-provisioned, whereas a CCS or a self-signed certificate/CWT may be used when trust in the public key can be achieved by other means, or in the case of Trust on first use, see {{tofu}}.
 
 In this section we provide some examples of such verifications. These verifications are the responsibility of the application but may be implemented as part of an EDHOC library.
 
@@ -1895,7 +1903,7 @@ The authentication credential may contain, in addition to the authentication key
 
 ## Identities {#identities}
 
-The application must decide on allowing a connection or not depending on the intended endpoint, and in particular whether it is a specific identity or a set of identities. To prevent misbinding attacks, the identity of the endpoint is included in a MAC verified through the protocol. More details and examples are provided in this section.
+The application must decide on allowing a connection or not depending on the intended endpoint, and in particular whether it is a specific identity or in a set of identities. To prevent misbinding attacks, the identity of the endpoint is included in a MAC verified through the protocol. More details and examples are provided in this section.
 
 Policies for what connections to allow are typically set based on the identity of the other endpoint, and endpoints typically only allow connections from a specific identity or a small restricted set of identities. For example, in the case of a device connecting to a network, the network may only allow connections from devices which authenticate with certificates having a particular range of serial numbers and signed by a particular CA. Conversely, a device may only be allowed to connect to a network which authenticates with a particular public key.
 
@@ -1927,10 +1935,13 @@ When PKI is not used (CCS, self-signed certificate/CWT), the trust anchor is the
 The application may need to verify that the credentials are not revoked, see {{impl-cons}}. Some use cases may be served by short-lived credentials, for example, where the validity of the credential is on par with the interval between revocation checks. But, in general, credential lifetime and revocation checking are complementary measures to control credential status. Revocation information may be transported as External Authentication Data (EAD), see {{ead-appendix}}.
 
 
-## Trust-on-first-use {#tofu}
+## Unauthenticated Operation {#tofu}
 
-TBD
+EDHOC might be used without authentication by allowing the Initiator or Responder to communicate with any identity except its own. Note that EDHOC without mutual authentication is vulnerable to man-in-the-middle attacks and therefore unsafe for general use. However, it is possible to later establish a trust relationship with an unknown or not-yet-trusted endpoint. Some examples:
 
+* The EDHOC authentication credential can be verified out-of-band at a later stage.
+* The EDHOC session key can be bound to an identity out-of-band at a later state.
+* Trust on first use (TOFU) can be used to verify that several EDHOC connections are made to the same identity. TOFU combined with proximity is a common IoT deployment model which provides good security if done correctly. Note that secure proximity based on short range wireless technology requires very low signal strength or very low latency.
 
 # Use of External Authorization Data {#ead-appendix}
 
