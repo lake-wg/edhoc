@@ -585,15 +585,15 @@ ead = 1* (
 )
 ~~~~~~~~~~~
 
-A security application using external authorization data need to register an ead_label, specify the ead_value formatting for each message (see {{iana-ead}}), and describe processing and security considerations.
+A security application using external authorization data need to register an non-negative ead_label, specify the ead_value formatting for each message (see {{iana-ead}}), and describe processing and security considerations.
 
-An EAD field can be either critical or non-critical, determined by the sign of ead_label: negative means critical; non-negative means non-critical. If an endpoint does not support a received critical EAD field, the EDHOC protocol MUST be discontinued.
+An EAD field can be either critical or non-critical, determined by the sign of ead_label: negative means critical; non-negative means non-critical. 
 
-The EAD specification describes if an EAD field is always critical, always non-critical, or if it can be decided by the application in the sending endpoint. In the latter case, one negative and one non-negative instance of ead_label need to be registered.
+If an endpoint receives a critical EAD field it does not recognize or a critical critical EAD field that contains information that it cannot process, the EDHOC protocol MUST be discontinued. A non-critical EAD field can be ignored.
+
+A specification registring a new EAD label MUST describe if the EAD field is always critical, always non-critical, or if it can be decided by the application in the sending endpoint.
 
 The EAD fields of EDHOC must not be used for generic application data. Examples of the use of EAD is provided in {{ead-appendix}}.
-
-
 
 ## Application Profile {#applicability}
 
@@ -1469,7 +1469,7 @@ IANA has created a new registry entitled "EDHOC Error Codes" under the new group
 
 ## EDHOC External Authorization Data Registry {#iana-ead}
 
-IANA has created a new registry entitled "EDHOC External Authorization Data" under the new group name "Ephemeral Diffie-Hellman Over COSE (EDHOC)". The registration procedure is "Specification Required". The columns of the registry are Label, Description, and Reference, where Label is an integer and the other columns are text strings.
+IANA has created a new registry entitled "EDHOC External Authorization Data" under the new group name "Ephemeral Diffie-Hellman Over COSE (EDHOC)". The registration procedure is "Specification Required". The columns of the registry are Label, Description, and Reference, where Label is a non-negative integer and the other columns are text strings.
 
 ## COSE Header Parameters Registry {#cwt-header-param}
 
