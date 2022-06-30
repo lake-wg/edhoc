@@ -576,7 +576,7 @@ In order to reduce round trips and the number of messages, or to simplify proces
 
 EDHOC allows opaque external authorization data (EAD) to be defined in a separate specification, and sent in dedicated fields of the four EDHOC messages (EAD_1, EAD_2, EAD_3, EAD_4).
 
-Each EAD field is a CBOR sequence (see {{CBOR}}) consisting of one or more (ead_label, ead_value) pairs as defined below:
+Each EAD field is a CBOR sequence (see {{CBOR}}) consisting of one or more EAD items (ead_label, ead_value) as defined below:
 
 ~~~~~~~~~~~ CDDL
 ead = 1* (
@@ -585,13 +585,13 @@ ead = 1* (
 )
 ~~~~~~~~~~~
 
-A security application using external authorization data need to register an non-negative ead_label, specify the ead_value formatting for each message (see {{iana-ead}}), and describe processing and security considerations.
+A security application using external authorization data need to register a positive ead_label, specify the ead_value formatting for each message (see {{iana-ead}}), and describe processing and security considerations.
 
-An EAD field can be either critical or non-critical, determined by the sign of ead_label: negative means critical; non-negative means non-critical. 
+An EAD item can be either critical or non-critical, determined by the sign of the ead_label. Using the registered positive value indicates that the EAD item is non-critical. The corresponding negative value indicates that the EAD item is critical. ead_label = 0 MUST NOT be used.
 
-If an endpoint receives a critical EAD field it does not recognize or a critical critical EAD field that contains information that it cannot process, the EDHOC protocol MUST be discontinued. A non-critical EAD field can be ignored.
+If an endpoint receives a critical EAD item it does not recognize or a critical EAD item that contains information that it cannot process, the EDHOC protocol MUST be discontinued. A non-critical EAD item can be ignored.
 
-A specification registring a new EAD label MUST describe if the EAD field is always critical, always non-critical, or if it can be decided by the application in the sending endpoint.
+A specification registring a new EAD label MUST describe if the EAD item is always critical, always non-critical, or if it can be decided by the application in the sending endpoint.
 
 The EAD fields of EDHOC must not be used for generic application data. Examples of the use of EAD is provided in {{ead-appendix}}.
 
@@ -1469,7 +1469,7 @@ IANA has created a new registry entitled "EDHOC Error Codes" under the new group
 
 ## EDHOC External Authorization Data Registry {#iana-ead}
 
-IANA has created a new registry entitled "EDHOC External Authorization Data" under the new group name "Ephemeral Diffie-Hellman Over COSE (EDHOC)". The registration procedure is "Specification Required". The columns of the registry are Label, Description, and Reference, where Label is a non-negative integer and the other columns are text strings.
+IANA has created a new registry entitled "EDHOC External Authorization Data" under the new group name "Ephemeral Diffie-Hellman Over COSE (EDHOC)". The registration procedure is "Specification Required". The columns of the registry are Label, Description, and Reference, where Label is a positive integer and the other columns are text strings.
 
 ## COSE Header Parameters Registry {#cwt-header-param}
 
@@ -1967,9 +1967,9 @@ Conversely, the security application may need to wait for EDHOC message verifica
 
 The security application may reuse EDHOC protocol fields which therefore need to be available to the application. For example, the security application may use the same crypto algorithms as in the EDHOC session and therefore needs access to the selected cipher suite (or the whole SUITES_I). The application may use the ephemeral public keys G_X and G_Y, as ephemeral keys or as nonces, see {{I-D.selander-ace-ake-authz}}.
 
-The processing of (ead_label, ead_value) by the security application needs to be described in the specification where the ead_label is registered, see {{iana-ead}}, including the ead_value for each message and actions in case of errors. An application may support multiple security applications that make use of EAD, which may result in multiple (ead_label, ead_value) pairs in one EAD field, see {{AD}}. Any dependencies on security applications with previously registered EAD fields needs to be documented, and the processing needs to consider their simultaneous use.
+The processing of the EAD item (ead_label, ead_value) by the security application needs to be described in the specification where the ead_label is registered, see {{iana-ead}}, including the ead_value for each message and actions in case of errors. An application may support multiple security applications that make use of EAD, which may result in multiple EAD items in one EAD field, see {{AD}}. Any dependencies on security applications with previously registered EAD items needs to be documented, and the processing needs to consider their simultaneous use.
 
-Since data carried in EAD may not be protected, or be processed by the application before the EDHOC message is verified, special considerations need to be made such that it does not violate security and privacy requirements of the service which uses this data, see {{unprot-data}}. The content in an EAD field may impact the security properties provided by EDHOC. Security applications making use of the EAD fields must perform the necessary security analysis.
+Since data carried in EAD may not be protected, or be processed by the application before the EDHOC message is verified, special considerations need to be made such that it does not violate security and privacy requirements of the service which uses this data, see {{unprot-data}}. The content in an EAD item may impact the security properties provided by EDHOC. Security applications making use of the EAD items must perform the necessary security analysis.
 
 
 # Application Profile Example {#appl-temp}
