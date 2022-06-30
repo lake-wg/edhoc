@@ -762,8 +762,8 @@ IV_4          = EDHOC-KDF( PRK_4e3m, 9, TH_4,      iv_length )
 
 ### PRK_out {#prkout}
 
- The pseudorandom key PRK_out, derived as shown in {{fig-edhoc-kdf}}, is the only secret key shared between Initiator and Responder that needs to be stored after a successful EDHOC exchange, see {{m3}}. Keys for applications are derived from PRK_out, see {{exporter}}.
-
+ The pseudorandom key PRK_out, derived as shown in {{fig-edhoc-kdf}} is the output of a successful EDHOC exchange. Keys for applications are derived from PRK_out, see {{exporter}}. An application using EDHOC-KeyUpdate needs to store PRK_out. If EDHOC-KeyUpdate is not used, an application only needs to store PRK_out or PRK_exporter as long as EDHOC-Exporter is used.
+ 
 ## Keys for EDHOC Applications
 
 This section defines EDHOC-Exporter and EDHOC-KeyUpdate in terms of EDHOC-KDF and PRK_out.
@@ -787,9 +787,7 @@ where
 PRK_exporter  = EDHOC-KDF( PRK_out, 10, h'', hash_length )
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-where hash_length denotes the output size in bytes of the EDHOC hash algorithm of the selected cipher suite.
-
-PRK_exporter MUST be derived anew from PRK_out if EDHOC-KeyUpdate is used, see {{keyupdate}}.
+where hash_length denotes the output size in bytes of the EDHOC hash algorithm of the selected cipher suite. Note that PRK_exporter changes everytime EDHOC-KeyUpdate is used, see {{keyupdate}}.
 
 The (label, context) pair used in EDHOC-Exporter must be unique, i.e., a (label, context) MUST NOT be used for two different purposes. However an application can re-derive the same key several times as long as it is done in a secure way. For example, in most encryption algorithms the same key can be reused with different nonces. The context can for example be the empty CBOR byte string.
 
@@ -798,16 +796,16 @@ Examples of use of the EDHOC-Exporter are given in {{transfer}}.
 
 ### EDHOC-KeyUpdate {#keyupdate}
 
-To provide forward secrecy in an even more efficient way than re-running EDHOC, EDHOC provides the function EDHOC-KeyUpdate. When EDHOC-KeyUpdate is called, the old PRK_out is deleted and the new PRK_out is calculated as a "hash" of the old key using the Expand function as illustrated by the following pseudocode:
+To provide forward secrecy in an even more efficient way than re-running EDHOC, EDHOC provides the optional function EDHOC-KeyUpdate. When EDHOC-KeyUpdate is called, a new PRK_out is calculated as a "hash" of the old PRK_out using the Expand function as illustrated by the following pseudocode:
 
 ~~~~~~~~~~~
    EDHOC-KeyUpdate( context ):
-      PRK_out = EDHOC-KDF( PRK_out, 11, context, hash_length )
+      new PRK_out = EDHOC-KDF( old PRK_out, 11, context, hash_length )
 ~~~~~~~~~~~
 
 where hash_length denotes the output size in bytes of the EDHOC hash algorithm of the selected cipher suite.
 
-The EDHOC-KeyUpdate takes a context as input to enable binding of the updated PRK_out to some event that triggered the keyUpdate. The Initiator and the Responder need to agree on the context, which can, e.g., be a counter or a pseudorandom number such as a hash. The Initiator and the Responder also need to cache the old PRK_out until it has verfied that the other endpoint has the correct new PRK_out. {{I-D.ietf-core-oscore-key-update}} describes key update for OSCORE using EDHOC-KeyUpdate.
+The EDHOC-KeyUpdate takes a context as input to enable binding of the updated PRK_out to some event that triggered the keyUpdate. The Initiator and the Responder need to agree on the context, which can, e.g., be a counter or a pseudorandom number such as a hash. To provide forward secrecy the old PRK_out needs to be deleted as soon as it is not needed. When to delete the old PRK_out and how to verify that it is not needed is up to the application. {{I-D.ietf-core-oscore-key-update}} describes key update for OSCORE using EDHOC-KeyUpdate.
 
 While this key update method provides forward secrecy it does not give as strong security properties as re-running EDHOC, see {{security}}.
 
