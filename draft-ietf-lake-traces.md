@@ -643,11 +643,12 @@ The transcript hash TH_3 is calculated using the EDHOC hash algorithm:
 TH_3 = H(TH_2, PLAINTEXT_2)
 
 ~~~~~~~~
-Input to calculate TH_3 (CBOR Sequence) (116 bytes)
-58203AB11700841FCE193C323911EDB317B046DCF24B9950FD624884F7F57CD98B07
-5850A11822822E4879F2A41B510C1F9B5840F373A7203EFA7DF0738C360EE080171A
-CA67FCB175F26D785D095B55EB1484655C39E03A3F5F9BDD87EF8C5F2EC3DFE6FBBA
-49B7B4625B126F27DE301767270C
+Input to calculate TH_3 (CBOR Sequence) (114 bytes)
+58 20 3a b1 17 00 84 1f ce 19 3c 32 39 11 ed b3 17 b0 46 dc f2 4b 99
+50 fd 62 48 84 f7 f5 7c d9 8b 07 a1 18 22 82 2e 48 79 f2 a4 1b 51 0c
+1f 9b 58 40 f3 73 a7 20 3e fa 7d f0 73 8c 36 0e e0 80 17 1a ca 67 fc
+b1 75 f2 6d 78 5d 09 5b 55 eb 14 84 65 5c 39 e0 3a 3f 5f 9b dd 87 ef
+8c 5f 2e c3 df e6 fb ba 49 b7 b4 62 5b 12 6f 27 de 30 17 67 27 0c
 ~~~~~~~~
 
 ~~~~~~~~
@@ -982,11 +983,12 @@ The transcript hash TH_4 is calculated using the EDHOC hash algorithm:
 TH_4 = H(TH_3, PLAINTEXT_3)
 
 ~~~~~~~~
-Input to calculate TH_4 (CBOR Sequence) (116 bytes)
-582077A51A1CF0EB60E4061BFC270887529C16B6F4B34D88A226E7065B60F4152671
-5850A11822822E48C24AB2FD7643C79F5840AB7EFD2D2F2D2B7FF4E1F16BF551A509
-F1F76D37E028B70C9C9832026C52C2372173819191C5955907B163C8860FBF7E6251
-B6719F761CB9449E1D475741C60B
+Input to calculate TH_4 (CBOR Sequence) (114 bytes)
+58 20 77 a5 1a 1c f0 eb 60 e4 06 1b fc 27 08 87 52 9c 16 b6 f4 b3 4d 88
+a2 26 e7 06 5b 60 f4 15 26 71 a1 18 22 82 2e 48 c2 4a b2 fd 76 43 c7 9f
+58 40 ab 7e fd 2d 2f 2d 2b 7f f4 e1 f1 6b f5 51 a5 09 f1 f7 6d 37 e0 28
+b7 0c 9c 98 32 02 6c 52 c2 37 21 73 81 91 91 c5 95 59 07 b1 63 c8 86 0f
+bf 7e 62 51 b6 71 9f 76 1c b9 44 9e 1d 47 57 41 c6 0b
 ~~~~~~~~
 
 ~~~~~~~~
@@ -2005,9 +2007,9 @@ The transcript hash TH_3 is calculated using the EDHOC hash algorithm:
 TH_3 = H( TH_2, PLAINTEXT_2 )
 
 ~~~~~~~~
-Input to calculate TH_3 (CBOR Sequence) (45 bytes)
-58209D2AF3A3D3FC06AEA8110F14BA12AD0B4FB7E5CDF59C7DF1CF2DFE9C2024439C4A
-3248AD01BC30C6911176
+Input to calculate TH_3 (CBOR Sequence) (44 bytes)
+58 20 9d 2a f3 a3 d3 fc 06 ae a8 11 0f 14 ba 12 ad 0b 4f b7 e5 cd f5 9c
+7d f1 cf 2d fe 9c 20 24 43 9c 32 48 ad 01 bc 30 c6 91 11 76
 ~~~~~~~~
 
 ~~~~~~~~
@@ -2341,9 +2343,9 @@ The transcript hash TH_4 is calculated using the EDHOC hash algorithm:
 TH_4 = H( TH_3, PLAINTEXT_3 )
 
 ~~~~~~~~
-Input to calculate TH_4 (CBOR Sequence) (45 bytes)
-5820085DE16D9C8235CBF57C46D06D16D456A6C0AD81AA4B448B6ABC98DCBA6125EB4A
-2B48354F0BC2741EEAC6
+Input to calculate TH_4 (CBOR Sequence) (44 bytes)
+58 20 08 5d e1 6d 9c 82 35 cb f5 7c 46 d0 6d 16 d4 56 a6 c0 ad 81 aa 4b
+44 8b 6a bc 98 dc ba 61 25 eb 2b 48 35 4f 0b c2 74 1e ea c6
 ~~~~~~~~
 
 ~~~~~~~~
