@@ -2028,6 +2028,26 @@ may need ... no, they don't need anything special: after an error, the next thin
 
 RFC Editor: Please remove this appendix.
 
+* From -14 to -15
+   * Connection identifiers and key identifiers are now byte strings
+      * Represented as CBOR bstr in the EDHOC message
+         * Unless they happen to encode a one-byte CBOR int
+      * More examples
+   * EAD updates and details
+     * Definition of EAD item
+     * Definition of critical / non-critical EAD item
+   * New section in Appendix D: Unauthenticated Operation
+   * Clarifications
+     * Lengths used in EDHOC-KDF
+     * Key derivation from PRK_out
+        * EDHOC-KeyUpdate and EDHOC-Exporter
+     * Padding
+   * Security considerations
+     * When a change in a message is detected
+     * Confidentiality in case of active attacks
+     * Connection identifiers should be unpredictable
+     * Maximum length of message_2
+   * Minor bugs
 
 * From -13 to -14
   * Merge of section 1.1 and 1.2
