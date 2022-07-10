@@ -80,7 +80,7 @@ The document contains two traces:
 
 * Section 4. Authentication with static Diffie-Hellman keys identified by short key identifiers labelling CWT Claim Sets (CCSs) {{RFC8392}}. The endpoints use NIST P-256 (FIPS PUB 186-4) for both ephemeral-ephemeral and static-ephemeral Diffie-Hellman key exchange. This trace also illustrates the cipher suite negotiation, and provides an example of low protocol overhead, with messages sizes of (39, 45, 19) bytes.
 
-The traces in this draft are valid for version -14 of {{I-D.ietf-lake-edhoc}}.
+The traces in this draft are valid for version -14 and -15 of {{I-D.ietf-lake-edhoc}}.
 
 Editor's note: update reference to test vectors below:
 
