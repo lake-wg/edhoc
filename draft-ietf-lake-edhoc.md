@@ -411,6 +411,7 @@ One way to view this representation of byte strings is as a transport encoding: 
 For OSCORE, the choice of connection identifier results in the endpoint selecting its Recipient ID, see Section 3.1 of {{RFC8613}}, for which certain uniqueness requirements apply, see Section 3.3 of {{RFC8613}}. Therefore, the Initiator and the Responder MUST NOT select connection identifiers such that it results in same OSCORE Recipient ID. Since the connection identifier is a byte string, it is converted to an OSCORE Recipient ID equal to the byte string.
 
 Examples:
+
    * A connection identifier 0xFF (represented in the EDHOC message as the CBOR byte string 0x41FF, see {{bstr-repr}}) is converted to the OSCORE Recipient ID 0xFF
    * A connection identifier 0x21 (represented in the EDHOC message as the CBOR int 0x21, see {{bstr-repr}}) is converted to the OSCORE Recipient ID 0x21.
 
