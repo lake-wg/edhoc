@@ -591,7 +591,7 @@ An EAD item can be either critical or non-critical, determined by the sign of th
 
 If an endpoint receives a critical EAD item it does not recognize or a critical EAD item that contains information that it cannot process, the EDHOC protocol MUST be discontinued. A non-critical EAD item can be ignored.
 
-The specification registring a new EAD label needs to describe under what conditions the EAD item is critical or non-critical.
+The specification registering a new EAD label needs to describe under what conditions the EAD item is critical or non-critical.
 
 The EAD fields of EDHOC must not be used for generic application data. Examples of the use of EAD are provided in {{ead-appendix}}.
 
