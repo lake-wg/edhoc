@@ -566,7 +566,8 @@ where the last value is the length of PLAINTEXT_2.
 
 ~~~~~~~~
 info for KEYSTREAM_2 (CBOR Sequence) (37 bytes)
-0058203AB11700841FCE193C323911EDB317B046DCF24B9950FD624884F7F57CD98B071850
+0058203AB11700841FCE193C323911EDB317B046DCF24B9950FD624884F7F57CD98B0718
+50
 ~~~~~~~~
 
 ~~~~~~~~
@@ -1132,7 +1133,8 @@ where the last value is the length of EDHOC hash algorithm.
 
 ~~~~~~~~
 info for PRK_out (CBOR Sequence) (37 bytes)
-075820DDCCC14E32330D2DA93D134B0C571E2E22A28E6208135E7CDA45231D850DCEC31820
+075820DDCCC14E32330D2DA93D134B0C571E2E22A28E6208135E7CDA45231D850DCEC3
+1820
 ~~~~~~~~
 
 ~~~~~~~~
@@ -1322,7 +1324,8 @@ d9 d0 dc 30 7f 10 fb 28
 
 The OSCORE Master Secret is derived with the updated PRK_exporter:
 
-    OSCORE Master Secret = HKDF-Expand(PRK_exporter, info, oscore_key_length)
+    OSCORE Master Secret =
+    = HKDF-Expand(PRK_exporter, info, oscore_key_length)
 
 where info and key_length are unchanged as in {{oscore-param}}.
 
@@ -1508,8 +1511,8 @@ I constructs message_1:
 
 ~~~~~~~~
 message_1 (CBOR Sequence) (37 bytes)
-03 06 58 20 74 1a 13 d7 ba 04 8f bb 61 5e 94 38 6a a3 b6 1b ea 5b 3d 8f 65
-f3 26 20 b7 49 be e8 d2 78 ef a9 0e
+03 06 58 20 74 1a 13 d7 ba 04 8f bb 61 5e 94 38 6a a3 b6 1b ea 5b 3d 8f
+65 f3 26 20 b7 49 be e8 d2 78 ef a9 0e
 ~~~~~~~~
 
 
@@ -2679,7 +2682,8 @@ cb 3f 94 ad 45 41 e6 a6
 
 The OSCORE Master Secret is derived with the updated PRK_exporter:
 
-    OSCORE Master Secret = HKDF-Expand(PRK_exporter, info, oscore_key_length)
+    OSCORE Master Secret =
+    = HKDF-Expand(PRK_exporter, info, oscore_key_length)
 
 where info and key_length are unchanged as in {{oscore-param}}.
 
