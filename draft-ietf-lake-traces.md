@@ -1266,7 +1266,7 @@ info for OSCORE Master Salt (CBOR Sequence) (3 bytes)
 
 ~~~~~~~~
 OSCORE Master Salt (Raw Value) (8 bytes)
-67 ec d7 d5 bb 49 46 17
+87 b3 eb bb e1 7e b4 b9
 ~~~~~~~~
 
 
@@ -1342,7 +1342,7 @@ where info and salt_length are unchanged as in {{oscore-param}}.
 
 ~~~~~~~~
 OSCORE Master Salt after KeyUpdate (Raw Value) (8 bytes)
-18 f5 7d c3 4e d5 49 17
+18 f3 23 ad 2e fc 69 29
 ~~~~~~~~
 
 
@@ -2625,7 +2625,7 @@ info for OSCORE Master Salt (CBOR Sequence) (3 bytes)
 
 ~~~~~~~~
 OSCORE Master Salt (Raw Value) (8 bytes)
-25 54 9b 72 55 ca fa 1d
+20 41 51 35 27 9a 4e e4
 ~~~~~~~~
 
 
@@ -2700,7 +2700,7 @@ where info and salt_length are unchanged as in {{oscore-param}}.
 
 ~~~~~~~~
 OSCORE Master Salt after KeyUpdate (Raw Value) (8 bytes)
-3a ef 12 c4 27 00 cb 60
+94 12 9c a9 a2 2f 1e fc
 ~~~~~~~~
 
 
