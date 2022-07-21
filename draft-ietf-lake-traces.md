@@ -2337,8 +2337,8 @@ c2 5c 84 20 03 67 64 46 2f 57 35 79 86 61 6c 8d 21 b0
 message_3 is the CBOR bstr encoding of CIPHERTEXT_3:
 
 ~~~~~~~~
-message_3 (CBOR Sequence) (20 bytes)
-27 52 c2 5c 84 20 03 67 64 46 2f 57 35 79 86 61 6c 8d 21 b0
+message_3 (CBOR Sequence) (19 bytes)
+52 c2 5c 84 20 03 67 64 46 2f 57 35 79 86 61 6c 8d 21 b0
 ~~~~~~~~
 
 The transcript hash TH_4 is calculated using the EDHOC hash algorithm:
