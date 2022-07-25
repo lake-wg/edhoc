@@ -527,13 +527,13 @@ df e6 fb ba 49 b7 b4 62 5b 12 6f 27 de 30 17 67 27 0c
 R constructs the plaintext without padding:
 
 ~~~~~~~~
-PAD (CBOR sequence of simple type) (0 bytes)
+PAD_2 (CBOR sequence of simple type) (0 bytes)
 ~~~~~~~~
 
 
     PLAINTEXT_2 =
     (
-     ? PAD,
+     ? PAD_2,
      ID_CRED_R / bstr / -24..23,
      Signature_or_MAC_2,
      ? EAD_2
@@ -867,12 +867,12 @@ bf 7e 62 51 b6 71 9f 76 1c b9 44 9e 1d 47 57 41 c6 0b
 I constructs the plaintext without padding:
 
 ~~~~~~~~
-PAD (CBOR sequence of simple type) (0 bytes)
+PAD_3 (CBOR sequence of simple type) (0 bytes)
 ~~~~~~~~
 
     PLAINTEXT_3 =
     (
-     ? PAD,
+     ? PAD_3,
      ID_CRED_I / bstr / -24..23,
      Signature_or_MAC_3,
      ? EAD_3
@@ -1929,12 +1929,12 @@ Signature_or_MAC_2 (CBOR Data Item) (9 bytes)
 R constructs PLAINTEXT_2 without padding:
 
 ~~~~~~~~
-PAD (CBOR sequence of simple type) (0 bytes)
+PAD_2 (CBOR sequence of simple type) (0 bytes)
 ~~~~~~~~
 
     PLAINTEXT_2 =
     (
-     ? PAD,
+     ? PAD_2,
      ID_CRED_R / bstr / -24..23,
      Signature_or_MAC_2,
      ? EAD_2
@@ -2237,13 +2237,13 @@ Signature_or_MAC_3 (CBOR Data Item) (9 bytes)
 I constructs PLAINTEXT_3 without padding:
 
 ~~~~~~~~
-PAD (CBOR sequence of simple type) (0 bytes)
+PAD_3 (CBOR sequence of simple type) (0 bytes)
 ~~~~~~~~
 
 
     PLAINTEXT_3 =
     (
-     ? PAD,
+     ? PAD_3,
      ID_CRED_I / bstr / -24..23,
      Signature_or_MAC_3,
      ? EAD_3
