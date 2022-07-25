@@ -2718,4 +2718,6 @@ There are no IANA considerations.
 # Acknowledgments
 {: numbered="no"}
 
+The authors want to thank all people verifying EDHOC test vectors and/or contributing to the interoperability testing including: Christian Amsüss, Timothy Claeys, Stefan Hristozov, Rikard Höglund, Christos Koulamas, Francesca Palombini, Lidia Pocero, Peter van der Stok, and Michel Veillette.
+
 --- fluff
