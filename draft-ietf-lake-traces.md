@@ -84,8 +84,7 @@ The traces in this draft are valid for version -14 and -15 of {{I-D.ietf-lake-ed
 
 Editor's note: update reference to test vectors below:
 
-A more extensive test vector suite and related code that was used to generate trace 1 can be found at: https://github.com/lake-wg/edhoc/tree/master/test-vectors-11.
-The test vector for trace 2 can be found at: https://github.com/lake-wg/edhoc/tree/master/test-vectors-11/p256.
+The test vector for trace 2 can be found at: https://github.com/lake-wg/edhoc/tree/master/test-vectors-15/
 
 # Setup
 
