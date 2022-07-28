@@ -752,16 +752,16 @@ Further details of the key derivation and how the output keying material is used
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 KEYSTREAM_2   = EDHOC-KDF( PRK_2e,   0, TH_2,      plaintext_length )
-KEYSTREAM_3A  = EDHOC-KDF( PRK_3e2m, TBD, TH_3,      plaintext_length )
-SALT_3e2m     = EDHOC-KDF( PRK_2e,   TBD, TH_2,      hash_length )
-SALT_4e3m     = EDHOC-KDF( PRK_3e2m, TBD, TH_3,      hash_length )
-K_3B          = EDHOC-KDF( PRK_4e3m, TBD, TH_3,      key_length )
-IV_3B         = EDHOC-KDF( PRK_4e3m, TBD, TH_3,      iv_length )
-MAC_2         = EDHOC-KDF( PRK_3e2m, TBD, context_2, mac_length_2 )
-MAC_3         = EDHOC-KDF( PRK_4e3m, TBD, context_3, mac_length_3 )
-PRK_out       = EDHOC-KDF( PRK_4e3m, TBD, TH_4,      hash_length )
-K_4           = EDHOC-KDF( PRK_4e3m, TBD, TH_4,      key_length )
-IV_4          = EDHOC-KDF( PRK_4e3m, TBD, TH_4,      iv_length )
+SALT_3e2m     = EDHOC-KDF( PRK_2e,   1, TH_2,      hash_length )
+MAC_2         = EDHOC-KDF( PRK_3e2m, 2, context_2, mac_length_2 )
+KEYSTREAM_3A  = EDHOC-KDF( PRK_3e2m, TBD, TH_3,    plaintext_length )
+K_3B          = EDHOC-KDF( PRK_4e3m, 3, TH_3,      key_length )
+IV_3B         = EDHOC-KDF( PRK_4e3m, 4, TH_3,      iv_length )
+SALT_4e3m     = EDHOC-KDF( PRK_3e2m, 5, TH_3,      hash_length )
+MAC_3         = EDHOC-KDF( PRK_4e3m, 6, context_3, mac_length_3 )
+PRK_out       = EDHOC-KDF( PRK_4e3m, 7, TH_4,      hash_length )
+K_4           = EDHOC-KDF( PRK_4e3m, 8, TH_4,      key_length )
+IV_4          = EDHOC-KDF( PRK_4e3m, 9, TH_4,      iv_length )
 ~~~~~~~~~~~~~~~~~~~~~~~
 {: #fig-edhoc-kdf title="Key derivations using EDHOC-KDF."}
 {: artwork-align="center"}
