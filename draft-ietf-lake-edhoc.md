@@ -752,15 +752,16 @@ Further details of the key derivation and how the output keying material is used
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 KEYSTREAM_2   = EDHOC-KDF( PRK_2e,   0, TH_2,      plaintext_length )
-SALT_3e2m     = EDHOC-KDF( PRK_2e,   1, TH_2,      hash_length )
-MAC_2         = EDHOC-KDF( PRK_3e2m, 2, context_2, mac_length_2 )
-K_3           = EDHOC-KDF( PRK_3e2m, 3, TH_3,      key_length )
-IV_3          = EDHOC-KDF( PRK_3e2m, 4, TH_3,      iv_length )
-SALT_4e3m     = EDHOC-KDF( PRK_3e2m, 5, TH_3,      hash_length )
-MAC_3         = EDHOC-KDF( PRK_4e3m, 6, context_3, mac_length_3 )
-PRK_out       = EDHOC-KDF( PRK_4e3m, 7, TH_4,      hash_length )
-K_4           = EDHOC-KDF( PRK_4e3m, 8, TH_4,      key_length )
-IV_4          = EDHOC-KDF( PRK_4e3m, 9, TH_4,      iv_length )
+KEYSTREAM_3A  = EDHOC-KDF( PRK_3e2m, TBD, TH_3,      plaintext_length )
+SALT_3e2m     = EDHOC-KDF( PRK_2e,   TBD, TH_2,      hash_length )
+SALT_4e3m     = EDHOC-KDF( PRK_3e2m, TBD, TH_3,      hash_length )
+K_3B          = EDHOC-KDF( PRK_4e3m, TBD, TH_3,      key_length )
+IV_3B         = EDHOC-KDF( PRK_4e3m, TBD, TH_3,      iv_length )
+MAC_2         = EDHOC-KDF( PRK_3e2m, TBD, context_2, mac_length_2 )
+MAC_3         = EDHOC-KDF( PRK_4e3m, TBD, context_3, mac_length_3 )
+PRK_out       = EDHOC-KDF( PRK_4e3m, TBD, TH_4,      hash_length )
+K_4           = EDHOC-KDF( PRK_4e3m, TBD, TH_4,      key_length )
+IV_4          = EDHOC-KDF( PRK_4e3m, TBD, TH_4,      iv_length )
 ~~~~~~~~~~~~~~~~~~~~~~~
 {: #fig-edhoc-kdf title="Key derivations using EDHOC-KDF."}
 {: artwork-align="center"}
@@ -981,7 +982,8 @@ message_3 SHALL be a CBOR Sequence (see {{CBOR}}) as defined below
 
 ~~~~~~~~~~~ CDDL
 message_3 = (
-  CIPHERTEXT_3 : bstr,
+  CIPHERTEXT_3A : bstr,
+  CIPHERTEXT_3B : bstr,
 )
 ~~~~~~~~~~~
 
@@ -1007,20 +1009,30 @@ The Initiator SHALL compose message_3 as follows:
 
    * payload = MAC_3
 
-* Compute a COSE_Encrypt0 object as defined in Sections 5.2 and 5.3 of {{I-D.ietf-cose-rfc8152bis-struct}}, with the EDHOC AEAD algorithm of the selected cipher suite, using the encryption key K_3, the initialization vector IV_3 (if used by the AEAD algorithm), the plaintext PLAINTEXT_3, and the following parameters as input (see {{COSE}}):
+* CIPHERTEXT_3A is calculated by using the Expand function as a binary additive stream cipher over the following plaintext:
 
-   * protected = h''
-   * external_aad = TH_3
-
-   * K_3 and IV_3 are defined in {{expand}}
-
-   * PLAINTEXT_3 = ( ? PAD_3, ID_CRED_I / bstr / -24..23, Signature_or_MAC_3, ? EAD_3 )
+   * PLAINTEXT_3A = ( ? PAD_3, ID_CRED_I / bstr / -24..23, ? EAD_3 )
 
        * If ID_CRED_I contains a single 'kid' parameter, i.e., ID_CRED_I = { 4 : kid_I }, then only the byte string is included in the plaintext, represented as described in {{bstr-repr}}, see examples in {{id_cred}}.
 
        * PAD_3 = 1* `true` (see {{CBOR}}) is padding that may be used to hide the length of the unpadded plaintext
 
-   CIPHERTEXT_3 is the 'ciphertext' of COSE_Encrypt0.
+   * Compute KEYSTREAM_3A as in {{expand}}, where plaintext_length is the length of PLAINTEXT_3A.
+
+   * CIPHERTEXT_3A = PLAINTEXT_3A XOR KEYSTREAM_3A
+
+* Compute a COSE_Encrypt0 object as defined in Sections 5.2 and 5.3 of {{I-D.ietf-cose-rfc8152bis-struct}}, with the EDHOC AEAD algorithm of the selected cipher suite, using the encryption key K_3B, the initialization vector IV_3B (if used by the AEAD algorithm), the plaintext PLAINTEXT_3B, and the following parameters as input (see {{COSE}}):
+
+   * protected = h''
+   * external_aad = TH_3   Editor's note: verify this
+
+   * K_3B and IV_3B are defined in {{expand}}
+
+  * PLAINTEXT_3B = Signature_or_MAC_3
+
+* CIPHERTEXT_3B is the 'ciphertext' of COSE_Encrypt0.
+
+PLAINTEXT_3 is the CBOR sequence resulting from the concatenation PLAINTEXT_3A and PLAINTEXT_3B
 
 * Compute the transcript hash TH_4 = H(TH_3, PLAINTEXT_3) where H() is the EDHOC hash algorithm of the selected cipher suite. The transcript hash TH_4 is a CBOR encoded bstr and the input to the hash function is a CBOR Sequence.
 
@@ -1041,11 +1053,13 @@ The Responder SHALL process message_3 as follows:
 
 * Retrieve the protocol state using the message correlation provided by the transport (e.g., the CoAP Token, the 5-tuple, or the prepended C_R, see {{coap}}).
 
-* Decrypt and verify the COSE_Encrypt0 as defined in Sections 5.2 and 5.3 of {{I-D.ietf-cose-rfc8152bis-struct}}, with the EDHOC AEAD algorithm in the selected cipher suite, and the parameters defined in {{asym-msg3-proc}}. Discard the padding PAD_3, if present.
+* Decrypt CIPHERTEXT_3A, see {{asym-msg2-proc}}, and, if present, discard the padding PAD_3.
 
 * Make ID_CRED_I and (if present) EAD_3 available to the application for authentication- and EAD processing.
 
 * Obtain the authentication credential (CRED_I) and the authentication key of I from the application (or by other means).
+
+* Decrypt and verify the COSE_Encrypt0 as defined in Sections 5.2 and 5.3 of {{I-D.ietf-cose-rfc8152bis-struct}}, with the EDHOC AEAD algorithm in the selected cipher suite, and the parameters defined in {{asym-msg3-proc}}.
 
 * Verify Signature_or_MAC_3 using the algorithm in the selected cipher suite. The verification process depends on the method, see {{asym-msg3-proc}}.
 
@@ -1249,6 +1263,8 @@ EDHOC inherits its security properties from the theoretical SIGMA-I protocol {{S
 As described in {{SIGMA}}, different levels of identity protection are provided to the Initiator and the Responder. EDHOC provides identity protection of the Initiator against active attacks and identity protection of the Responder against passive attacks. An active attacker can get the credential identifier of the Responder by eavesdropping on the destination address used for transporting message_1 and send its own message_1 to the same address. The roles should be assigned to protect the most sensitive identity/identifier, typically that which is not possible to infer from routing information in the lower layers.
 
 EDHOC messages might change in transit due to a noisy channel or through modification by an attacker. Changes in message_1 and message_2 (except PAD_2) are detected when verifying Signature_or_MAC_2. Changes to PAD_2 and message_3 are detected when verifying CIPHERTEXT_3. Changes to message_4 are detected when verifying CIPHERTEXT_4.
+
+Editor's note: Text about CIPHERTEXT_3 needs to be replaced with CIPHERTEXT_3A and CIPHERTEXT_3B.
 
 Compared to {{SIGMA}}, EDHOC adds an explicit method type and expands the message authentication coverage to additional elements such as algorithms, external authorization data, and previous plaintext messages. This protects against an attacker replaying messages or injecting messages from another session.
 
@@ -1825,7 +1841,8 @@ message_2 = (
 )
 
 message_3 = (
-  CIPHERTEXT_3 : bstr,
+  CIPHERTEXT_3A : bstr,
+  CIPHERTEXT_3B : bstr,
 )
 
 message_4 = (
