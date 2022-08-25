@@ -180,7 +180,7 @@ informative:
     date: September 2020
 
   Bruni18:
-    target: https://www.springerprofessional.de/en/formal-verification-of-ephemeral-diffie-hellman-over-cose-LAKE/16284348
+    target: https://www.springerprofessional.de/en/formal-verification-of-ephemeral-diffie-hellman-over-cose-edhoc/16284348
     title: Formal Verification of Ephemeral Diffie-Hellman Over COSE (EDHOC)
     author:
       -
