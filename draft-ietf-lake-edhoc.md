@@ -405,6 +405,7 @@ For example:
 
 One way to view this representation of byte strings is as a transport encoding: A byte string which parses as a CBOR int in the range -24, ..., 23 is just copied directly into the message, a byte string which doesn't is encoded as a CBOR bstr during transport.
 
+Implementation Note: For implementing the byte string identifier representation, it can in some programming languages help to define a new type, which (in its user facing API) behaves like a byte string, but when serializing / deserializing to CBOR produces a byte string or an integer, depending on its value. When implementing it that way, it can be practical to the encoded CBOR item inside instances, to report the first byte as user facing byte string if it is integer-valued, and report the later bytes if the first byte indicates a byte string.
 
 ### Use of Connection Identifiers with OSCORE {#ci-oscore}
 
