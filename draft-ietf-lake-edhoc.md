@@ -662,7 +662,7 @@ The rest of the section defines the pseudorandom keys PRK_2e, PRK_3e2m and PRK_4
 
 The pseudorandom key PRK_2e is derived with the following input:
 
-* The salt SHALL be a zero-length byte string. Note that {{RFC5869}} specifies that if the salt is not provided, it is set to a string of zeros (see Section 2.2 of {{RFC5869}}). For implementation purposes, not providing the salt is the same as setting the salt to the zero-length byte string (0x).
+* The salt SHALL be TH_2.
 
 * The IKM SHALL be the ephemeral-ephemeral ECDH shared secret G_XY (calculated from G_X and Y or G_Y and X) as defined in Section 6.3.1 of {{I-D.ietf-cose-rfc8152bis-algs}}. The use of G_XY gives forward secrecy, in the sense that compromise of the private authentication keys does not compromise past session keys.
 
@@ -675,10 +675,8 @@ Example: Assuming the use of curve25519, the ECDH shared secret G_XY is the outp
 Example: Assuming the use of SHA-256 the extract phase of HKDF produces PRK_2e as follows:
 
 ~~~~~~~~~~~~~~~~~~~~~~~
-   PRK_2e = HMAC-SHA-256( salt, G_XY )
+   PRK_2e = HMAC-SHA-256( TH_2, G_XY )
 ~~~~~~~~~~~~~~~~~~~~~~~
-
-where salt = 0x (zero-length byte string).
 
 #### PRK_3e2m
 
