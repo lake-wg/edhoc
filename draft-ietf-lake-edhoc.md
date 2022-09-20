@@ -2039,7 +2039,7 @@ OKM(i) = EDHOC-KDF( PRK_2e, -i, TH_2, length(P(i)) )
 
 Note that if PLAINTEXT_2 \<= M then P(0) = PLAINTEXT_2 and the definition of KEYSTREAM_2 = OKM(0) coincides with {{fig-edhoc-kdf}}.
 
-An application profile may specify if it supports or not this method to handle large message_2.
+An application profile may specify if it supports or not the method described in this appendix.
 
 
 # Change Log
