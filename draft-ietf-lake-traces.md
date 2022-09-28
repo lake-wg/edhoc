@@ -1,10 +1,16 @@
 ---
+v: 3
+
 title: Traces of EDHOC
 docname: draft-ietf-lake-traces-latest
 abbrev:
 
 ipr: trust200902
+area: Security
+wg: LAKE Working Group
+kw: Internet-Draft
 cat: info
+submissiontype: IETF
 
 coding: utf-8
 pi: # can use array (if all yes) or hash here
@@ -76,15 +82,15 @@ EDHOC {{I-D.ietf-lake-edhoc}} is a lightweight authenticated key exchange protoc
 
 The document contains two traces:
 
-* Section 3. Authentication with signature keys identified by the hash value of the X.509 certificates (provided in {{certs}}). The endpoints use EdDSA {{RFC8032}} for authentication and X25519 {{RFC7748}} for ephemeral-ephemeral Diffie-Hellman key exchange.
+* Section {{sec-trace-1}}. Authentication with signature keys identified by the hash value of the X.509 certificates (provided in {{certs}}). The endpoints use EdDSA {{RFC8032}} for authentication and X25519 {{RFC7748}} for ephemeral-ephemeral Diffie-Hellman key exchange.
 
-* Section 4. Authentication with static Diffie-Hellman keys identified by short key identifiers labelling CWT Claim Sets (CCSs) {{RFC8392}}. The endpoints use NIST P-256 (FIPS PUB 186-4) for both ephemeral-ephemeral and static-ephemeral Diffie-Hellman key exchange. This trace also illustrates the cipher suite negotiation, and provides an example of low protocol overhead, with messages sizes of (39, 45, 19) bytes.
+* Section 4 {{sec-trace-2}}. Authentication with static Diffie-Hellman keys identified by short key identifiers labelling CWT Claim Sets (CCSs) {{RFC8392}}. The endpoints use NIST P-256 (FIPS PUB 186-4) for both ephemeral-ephemeral and static-ephemeral Diffie-Hellman key exchange. This trace also illustrates the cipher suite negotiation, and provides an example of low protocol overhead, with messages sizes of (39, 45, 19) bytes.
 
-The traces in this draft are valid for version -14 and -15 of {{I-D.ietf-lake-edhoc}}.
+The traces in this draft are valid for version -16 of {{I-D.ietf-lake-edhoc}}.
 
 Editor's note: update reference to test vectors below:
 
-The test vector for trace 2 can be found at: https://github.com/lake-wg/edhoc/tree/master/test-vectors-15/
+The test vectors for trace 2 can be found at: TBD (For v -15, see https://github.com/lake-wg/edhoc/tree/master/test-vectors-15/ )
 
 # Setup
 
@@ -96,10 +102,10 @@ NOTE 1. The same name is used for hexadecimal byte strings and their CBOR encodi
 
 NOTE 2. If not clear from the context, remember that CBOR sequences and CBOR arrays assume CBOR encoded data items as elements.
 
-NOTE 3. When the protocol transporting EDHOC messages does not inherently provide correlation across all messages, like CoAP, then some messages typically are prepended with connection identifiers and potentially a message_1 indicator (see Section 3.4.1 and Appendix A.3 of {{I-D.ietf-lake-edhoc}}). Those bytes are not included in the traces in this document.
+NOTE 3. When the protocol transporting EDHOC messages does not inherently provide correlation across all messages, like CoAP, then some messages typically are prepended with connection identifiers and potentially a message_1 indicator (see Section 3.4.1 and Appendix A.2 of {{I-D.ietf-lake-edhoc}}). Those bytes are not included in the traces in this document.
 
 
-# Authentication with signatures, X.509 certificates identified by 'x5t'
+# Authentication with signatures, X.509 certificates identified by 'x5t' # {#sec-trace-1}
 
 In this example the Initiator (I) and Responder (R) are authenticated with digital signatures (METHOD = 0). Both I and R support cipher suite 0, which determines the algorithms:
 
@@ -1429,7 +1435,7 @@ OSCORE Master Salt after KeyUpdate (Raw Value) (8 bytes)
 
 
 
-# Authentication with static DH, CCS identified by 'kid'
+# Authentication with static DH, CCS identified by 'kid' # {#sec-trace-2}
 
 In this example I and R are authenticated with ephemeral-static Diffie-Hellman (METHOD = 3). I supports cipher suites 6 and 2 (in order of preference) and R only supports cipher suite 2. After an initial negotiation message exchange cipher suite 2 is used, which determines the algorithms:
 
