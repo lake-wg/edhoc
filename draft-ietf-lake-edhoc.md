@@ -707,7 +707,7 @@ else PRK_4e3m = PRK_3e2m.
 The output keying material (OKM) - including keys, IVs, and salts - are derived from the PRKs using the EDHOC-KDF, which is defined through Expand:
 
 ~~~~~~~~~~~~~~~~~~~~~~~
-   OKM = EDHOC-KDF( PRK, label, context, length )
+   OKM = EDHOC-KDF( PRK, info_label, context, length )
        = Expand( PRK, info, length )
 ~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -715,7 +715,7 @@ where info is encoded as the CBOR sequence
 
 ~~~~~~~~~~~ CDDL
 info = (
-  label : uint,
+  info_label : int,
   context : bstr,
   length : uint,
 )
@@ -723,7 +723,7 @@ info = (
 
 where
 
-  + label is a uint
+  + info_label is an int
 
   + context is a bstr
 
@@ -777,12 +777,12 @@ This section defines EDHOC-Exporter and EDHOC-KeyUpdate in terms of EDHOC-KDF an
 Keying material for the application can be derived using the EDHOC-Exporter interface defined as:
 
 ~~~~~~~~~~~
-   EDHOC-Exporter(label, context, length)
-     = EDHOC-KDF(PRK_exporter, label, context, length)
+   EDHOC-Exporter(exporter_label, context, length)
+     = EDHOC-KDF(PRK_exporter, exporter_label, context, length)
 ~~~~~~~~~~~
 where
 
-* label is a registered uint from the EDHOC Exporter Label registry ({{exporter-label}})
+* exporter_label is a registered uint from the EDHOC Exporter Label registry ({{exporter-label}})
 * context is a bstr defined by the application
 * length is a uint defined by the application
 * PRK_exporter is derived from PRK_out:
@@ -793,7 +793,7 @@ PRK_exporter  = EDHOC-KDF( PRK_out, 10, h'', hash_length )
 
 where hash_length denotes the output size in bytes of the EDHOC hash algorithm of the selected cipher suite. Note that PRK_exporter changes every time EDHOC-KeyUpdate is used, see {{keyupdate}}.
 
-The (label, context) pair used in EDHOC-Exporter must be unique, i.e., a (label, context) MUST NOT be used for two different purposes. However an application can re-derive the same key several times as long as it is done in a secure way. For example, in most encryption algorithms the same key can be reused with different nonces. The context can for example be the empty CBOR byte string.
+The (exporter_label, context) pair used in EDHOC-Exporter must be unique, i.e., an (exporter_label, context) MUST NOT be used for two different purposes. However an application can re-derive the same key several times as long as it is done in a secure way. For example, in most encryption algorithms the same key can be reused with different nonces. The context can for example be the empty CBOR byte string.
 
 Examples of use of the EDHOC-Exporter are given in {{transfer}}.
 
@@ -1843,7 +1843,7 @@ error = (
 )
 
 info = (
-  label : tstr,
+  info_label : int,
   context : bstr,
   length : uint,
 )
@@ -2028,6 +2028,39 @@ Protocols that do not provide any correlation at all can prescribe prepending of
 Protocols that can provide all the necessary correlation but do not have any short-lived component to it
 may need ... no, they don't need anything special: after an error, the next thing is a message 1 again.
 -->
+
+# Large message_2
+
+By design of encryption of message_2, if the EDHOC hash algorithm is SHA-2 then HKDF-Expand is used which limits the size of plaintext that can be encrypted to 255 * hash_length, where hash_length is the length of the output of the EDHOC hash algorithm given by the cipher suite. For example, with SHA-256 as EDHOC hash algorithm the length of the hash output is 32 bytes and the maximum length of PLAINTEXT_2 is 255 * 32 = 8160 bytes.
+
+While message_2 is expected to be much smaller than 8 kB for the intended use cases, it seems nevertheless prudent to provide alternative solutions for the event that this should turn out to be a limitation.
+
+One simple solution is to use a cipher suite with a different hash function. In particular, the use of KMAC removes all practical limitations in this respect.
+
+Another solution is make use of multiple invocations of HKDF-Expand and negative values of info_label, as specified in the remainder of this section:
+
+Split PLAINTEXT_2 in parts P(i) of size equal to M = 255 \* hash_length, except the last part P(last) which has size \<= M.
+
+~~~~~~~~~~~
+PLAINTEXT_2 = P(0) | P(1) | ... | P(last)
+~~~~~~~~~~~
+
+where \| indicates concatenation. Define a matching keystream
+
+~~~~~~~~~~~
+KEYSTREAM_2 = OKM(0) | OKM(1)  | ... | OKM(last)
+~~~~~~~~~~~
+
+where
+
+~~~~~~~~~~~
+OKM(i) = EDHOC-KDF( PRK_2e, -i, TH_2, length(P(i)) )
+~~~~~~~~~~~
+
+Note that if PLAINTEXT_2 \<= M then P(0) = PLAINTEXT_2 and the definition of KEYSTREAM_2 = OKM(0) coincides with {{fig-edhoc-kdf}}.
+
+An application profile may specify if it supports or not the method described in this appendix.
+
 
 # Change Log
 
