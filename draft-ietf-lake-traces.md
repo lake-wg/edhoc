@@ -125,7 +125,7 @@ The public keys are represented with X.509 certificates identified by the COSE h
 Both endpoints are authenticated with signatures, i.e. METHOD = 0:
 
 ~~~~~~~~
-METHOD (CBOR Data Item) (1 bytes)
+METHOD (CBOR Data Item) (1 byte)
 00
 ~~~~~~~~
 {: artwork-align="left"}
@@ -1276,7 +1276,7 @@ The mapping from EDHOC connection identifiers to OSCORE Sender/Recipient IDs is 
 C_R is mapped to the Recipient ID of the server, i.e., the Sender ID of the client. The byte string 0x18, which as C_R is encoded as the CBOR byte string 0x4118, is converted to the server Recipient ID 0x18.
 
 ~~~~~~~~
-Client's OSCORE Sender ID (Raw Value) (1 bytes)
+Client's OSCORE Sender ID (Raw Value) (1 byte)
 18
 ~~~~~~~~
 
@@ -1284,7 +1284,7 @@ C_I is mapped to the Recipient ID of the client, i.e., the Sender ID of the serv
 
 
 ~~~~~~~~
-Server's OSCORE Sender ID (Raw Value) (1 bytes)
+Server's OSCORE Sender ID (Raw Value) (1 byte)
 2d
 ~~~~~~~~
 
