@@ -2066,6 +2066,18 @@ An application profile may specify if it supports or not the method described in
 
 RFC Editor: Please remove this appendix.
 
+* From -15 to -16
+
+   * TH_2 used as salt in the derivation of PRK_2e
+   * CRED_R/CRED_I included in TH_3/TH_4
+   * Distinguish label used in info, exporter or elsewhere
+   * New appendix for optional handling arbitrarily large message_2
+        * info_label type changed to int to support this
+   * Updated security considerations
+   * Implementation note about identifiers which are bstr/int
+   * Clarifications, especifically about compact representation
+   * Type bug fix in CDDL section
+
 * From -14 to -15
    * Connection identifiers and key identifiers are now byte strings
       * Represented as CBOR bstr in the EDHOC message
