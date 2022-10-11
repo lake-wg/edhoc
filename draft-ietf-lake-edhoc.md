@@ -766,11 +766,11 @@ IV_4          = EDHOC-KDF( PRK_4e3m, 9, TH_4,      iv_length )
 
 ### PRK_out {#prkout}
 
- The pseudorandom key PRK_out, derived as shown in {{fig-edhoc-kdf}} is the output of a successful EDHOC exchange. Keys for applications are derived from PRK_out, see {{exporter}}. An application using EDHOC-KeyUpdate needs to store PRK_out. If EDHOC-KeyUpdate is not used, an application only needs to store PRK_out or PRK_exporter as long as EDHOC-Exporter is used. (Note that the word "store" used here does not imply that the application has access to the plaintext PRK_out since that may be reserved for code within a TEE, see {{impl-cons}}).
+ The pseudorandom key PRK_out, derived as shown in {{fig-edhoc-kdf}} is the output of a successful EDHOC exchange. Keys for applications are derived from PRK_out, see {{exporter}}. For the purpose of using EDHOC-Exporter, an application only needs to store PRK_out or PRK_exporter. (Note that the word "store" used here does not imply that the application has access to the plaintext PRK_out since that may be reserved for code within a TEE, see {{impl-cons}}).
 
 ## Keys for EDHOC Applications
 
-This section defines EDHOC-Exporter and EDHOC-KeyUpdate in terms of EDHOC-KDF and PRK_out.
+This section defines EDHOC-Exporter in terms of EDHOC-KDF and PRK_out.
 
 ### EDHOC-Exporter {#exporter}
 
@@ -791,28 +791,12 @@ where
 PRK_exporter  = EDHOC-KDF( PRK_out, 10, h'', hash_length )
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-where hash_length denotes the output size in bytes of the EDHOC hash algorithm of the selected cipher suite. Note that PRK_exporter changes every time EDHOC-KeyUpdate is used, see {{keyupdate}}.
+where hash_length denotes the output size in bytes of the EDHOC hash algorithm of the selected cipher suite.
 
 The (exporter_label, context) pair used in EDHOC-Exporter must be unique, i.e., an (exporter_label, context) MUST NOT be used for two different purposes. However an application can re-derive the same key several times as long as it is done in a secure way. For example, in most encryption algorithms the same key can be reused with different nonces. The context can for example be the empty CBOR byte string.
 
 Examples of use of the EDHOC-Exporter are given in {{transfer}}.
 
-
-### EDHOC-KeyUpdate {#keyupdate}
-
-To provide forward secrecy in an even more efficient way than re-running EDHOC, EDHOC provides the optional function EDHOC-KeyUpdate. When EDHOC-KeyUpdate is called, a new PRK_out is calculated as a "hash" of the old PRK_out using the Expand function as illustrated by the following pseudocode. The change of PRK_out causes a change to PRK_exporter and derived keys using EDHOC-Exporter.
-
-~~~~~~~~~~~
-   EDHOC-KeyUpdate( context ):
-      new PRK_out = EDHOC-KDF( old PRK_out, 11, context, hash_length )
-      new PRK_exporter = EDHOC-KDF( new PRK_out, 10, h'', hash_length )
-~~~~~~~~~~~
-
-where hash_length denotes the output size in bytes of the EDHOC hash algorithm of the selected cipher suite.
-
-The EDHOC-KeyUpdate takes a context as input to enable binding of the updated PRK_out to some event that triggered the keyUpdate. The Initiator and the Responder need to agree on the context, which can, e.g., be a counter or a pseudorandom number such as a hash. To provide forward secrecy the old PRK_out and derived keys must be deleted as soon as they are not needed. When to delete the old keys and how to verify that they are not needed is up to the application. {{I-D.ietf-core-oscore-key-update}} describes key update for OSCORE using EDHOC-KeyUpdate.
-
-While this key update method provides forward secrecy it does not give as strong security properties as re-running EDHOC, see {{security}}.
 
 # Message Formatting and Processing {#asym}
 
@@ -1229,7 +1213,7 @@ Implementations MUST support 'kid' parameters. None of the other COSE header par
 
 An implementation MAY support only a single credential type (CCS, CWT, X.509, C509). None of the credential types are mandatory-to-implement.
 
-Implementations MUST support the EDHOC-Exporter. Implementations SHOULD support EDHOC-KeyUpdate.
+Implementations MUST support the EDHOC-Exporter.
 
 Implementations MAY support message_4. Error codes (ERR_CODE) 1 and 2 MUST be supported.
 
@@ -1253,13 +1237,11 @@ Compared to {{SIGMA}}, EDHOC adds an explicit method type and expands the messag
 
 EDHOC also adds selection of connection identifiers and downgrade protected negotiation of cryptographic parameters, i.e., an attacker cannot affect the negotiated parameters. A single session of EDHOC does not include negotiation of cipher suites, but it enables the Responder to verify that the selected cipher suite is the most preferred cipher suite by the Initiator which is supported by both the Initiator and the Responder.
 
-As required by {{RFC7258}}, IETF protocols need to mitigate pervasive monitoring when possible. EDHOC therefore only supports methods with ephemeral Diffie-Hellman and provides a KeyUpdate function for lightweight application protocol rekeying with forward secrecy, in the sense that compromise of the private authentication keys does not compromise past session keys, and compromise of a session key does not compromise past session keys.
-
-While the KeyUpdate method can be used to meet cryptographic limits and provide partial protection against key leakage, it provides significantly weaker security properties than re-running EDHOC with ephemeral Diffie-Hellman. Even with frequent use of KeyUpdate, compromise of one session key compromises all future session keys, and an attacker therefore only needs to perform static key exfiltration {{RFC7624}}. Frequently re-running EDHOC with ephemeral Diffie-Hellman forces attackers to perform dynamic key exfiltration instead of static key exfiltration {{RFC7624}}. In the dynamic case, the attacker must have continuous interactions with the collaborator, which is more complicated and has a higher risk profile than the static case.
+As required by {{RFC7258}}, IETF protocols need to mitigate pervasive monitoring when possible. EDHOC therefore only supports methods with ephemeral Diffie-Hellman. This provides forward secrecy, in the sense that compromise of the private authentication keys does not compromise past session keys, and compromise of a session key does not compromise past session keys. Frequently re-running EDHOC forces attackers to perform dynamic key exfiltration where the attacker must have continuous interactions with the collaborator, which is a significant complication.
 
 To limit the effect of breaches, it is important to limit the use of symmetrical group keys for bootstrapping. EDHOC therefore strives to make the additional cost of using raw public keys and self-signed certificates as small as possible. Raw public keys and self-signed certificates are not a replacement for a public key infrastructure but SHOULD be used instead of symmetrical group keys for bootstrapping.
 
-Compromise of the long-term keys (private signature or static DH keys) does not compromise the security of completed EDHOC exchanges. Compromising the private authentication keys of one party lets an active attacker impersonate that compromised party in EDHOC exchanges with other parties but does not let the attacker impersonate other parties in EDHOC exchanges with the compromised party. Compromise of the long-term keys does not enable a passive attacker to compromise future session keys. Compromise of the HDKF input parameters (ECDH shared secret) leads to compromise of all session keys derived from that compromised shared secret. Compromise of one session key does not compromise other session keys. Compromise of PRK_out leads to compromise of all keying material derived with the EDHOC-Exporter since the last invocation (if any) of the EDHOC-KeyUpdate function.
+Compromise of the long-term keys (private signature or static DH keys) does not compromise the security of completed EDHOC exchanges. Compromising the private authentication keys of one party lets an active attacker impersonate that compromised party in EDHOC exchanges with other parties but does not let the attacker impersonate other parties in EDHOC exchanges with the compromised party. Compromise of the long-term keys does not enable a passive attacker to compromise future session keys. Compromise of the HDKF input parameters (ECDH shared secret) leads to compromise of all session keys derived from that compromised shared secret. Compromise of one session key does not compromise other session keys. Compromise of PRK_out leads to compromise of all keying material derived with the EDHOC-Exporter.
 
 Based on the cryptographic algorithms requirements {{sec_algs}}, EDHOC provides a minimum of 64-bit security against online brute force attacks and a minimum of 128-bit security against offline brute force attacks. To break 64-bit security against online brute force an attacker would on average have to send 4.3 billion messages per second for 68 years, which is infeasible in constrained IoT radio technologies. A forgery against a 64-bit MAC in EDHOC breaks the security of all future application data, while a forgery against a 64-bit MAC in the subsequent application protocol (e.g., OSCORE {{RFC8613}}) typically only breaks the security of the data in the forged packet.
 
@@ -2071,6 +2053,28 @@ This describes the processing of the Responder when sending message_2. The Initi
 
 An application profile may specify if it supports or not the method described in this appendix.
 
+
+# EDHOC-KeyUpdate {#keyupdate}
+
+To provide forward secrecy in an even more efficient way than re-running EDHOC, this section specifies the optional function EDHOC-KeyUpdate in terms of EDHOC-KDF and PRK_out.
+
+When EDHOC-KeyUpdate is called, a new PRK_out is calculated as a "hash" of the old PRK_out using the Expand function as illustrated by the following pseudocode. The change of PRK_out causes a change to PRK_exporter and keys derived using EDHOC-Exporter.
+
+~~~~~~~~~~~
+   EDHOC-KeyUpdate( context ):
+      new PRK_out = EDHOC-KDF( old PRK_out, 11, context, hash_length )
+      new PRK_exporter = EDHOC-KDF( new PRK_out, 10, h'', hash_length )
+~~~~~~~~~~~
+
+where hash_length denotes the output size in bytes of the EDHOC hash algorithm of the selected cipher suite.
+
+The EDHOC-KeyUpdate takes a context as input to enable binding of the updated PRK_out to some event that triggered the key update. The Initiator and the Responder need to agree on the context, which can, e.g., be a counter or a pseudorandom number such as a hash. To provide forward secrecy the old PRK_out and derived keys must be deleted as soon as they are not needed. When to delete the old keys and how to verify that they are not needed is up to the application.
+
+An application using EDHOC-KeyUpdate needs to store PRK_out. Compromise of PRK_out leads to compromise of all keying material derived with the EDHOC-Exporter since the last invocation of the EDHOC-KeyUpdate function.
+
+While this key update method provides forward secrecy it does not give as strong security properties as re-running EDHOC. EDHOC-KeyUpdate can be used to meet cryptographic limits and provide partial protection against key leakage, but it provides significantly weaker security properties than re-running EDHOC with ephemeral Diffie-Hellman. Even with frequent use of EDHOC-KeyUpdate, compromise of one session key compromises all future session keys, and an attacker therefore only needs to perform static key exfiltration {{RFC7624}}, which is less complicated and has a lower risk profile than the dynamic case, see {{sec-prop}}.
+
+ A similar method to do key update for OSCORE is KUDOS, see {{I-D.ietf-core-oscore-key-update}}.
 
 # Change Log
 
