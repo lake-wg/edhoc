@@ -7,6 +7,7 @@ ipr: trust200902
 area: SEC
 workgroup: LAKE Working Group
 cat: std
+submissiontype: IETF
 consensus: true
 
 coding: utf-8
