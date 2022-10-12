@@ -2082,6 +2082,14 @@ While this key update method provides forward secrecy it does not give as strong
 
 RFC Editor: Please remove this appendix.
 
+* From -16 to -17
+
+  * EDHOC-KeyUpdate moved to appendix
+  * Updated peer awareness properties based on SIGMA
+  * Clarify use of random connection identifiers
+  * Editorials related to appendix about messages with long PLAINTEXT_2
+  * Updated acknowledgments (have we forgotten someone else? please send email)
+
 * From -15 to -16
 
    * TH_2 used as salt in the derivation of PRK_2e
