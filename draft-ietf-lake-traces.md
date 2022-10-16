@@ -86,7 +86,7 @@ The document contains two traces:
 
 * Section 4 {{sec-trace-2}}. Authentication with static Diffie-Hellman keys identified by short key identifiers labelling CWT Claim Sets (CCSs) {{RFC8392}}. The endpoints use NIST P-256 (FIPS PUB 186-4) for both ephemeral-ephemeral and static-ephemeral Diffie-Hellman key exchange. This trace also illustrates the cipher suite negotiation, and provides an example of low protocol overhead, with messages sizes of (39, 45, 19) bytes.
 
-The traces in this draft are valid for version -16 of {{I-D.ietf-lake-edhoc}}.
+The traces in this draft are valid for version -17 of {{I-D.ietf-lake-edhoc}}.
 
 Editor's note: update reference to test vectors below:
 
@@ -1792,12 +1792,15 @@ Then, PRK_2e is calculated using Extract() determined by the EDHOC hash algorith
 where salt is TH_2:
 
 ~~~~~~~~
-salt (Raw Value) (0 bytes)
-~~~~~~~~
-~~~~~~~~
-PRK_2e (Raw Value) (32 bytes)
+salt (Raw Value) (32 bytes)
 9d 2a f3 a3 d3 fc 06 ae a8 11 0f 14 ba 12 ad 0b 4f b7 e5 cd f5 9c 7d
 f1 cf 2d fe 9c 20 24 43 9c
+~~~~~~~~
+
+~~~~~~~~
+PRK_2e (Raw Value) (32 bytes)
+e0 1f a1 4d d5 6e 30 82 67 a1 a8 12 a9 d0 b9 53 41 e3 94 ab c7 c5 c3
+9d d7 18 85 f7 d4 cd 5b f3
 ~~~~~~~~
 
 Since METHOD = 3, R authenticates using static DH. The EDHOC key exchange algorithm is based on the same curve as for the ephemeral keys, which is P-256, since the selected cipher suite is 2.
