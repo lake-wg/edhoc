@@ -82,9 +82,9 @@ EDHOC {{I-D.ietf-lake-edhoc}} is a lightweight authenticated key exchange protoc
 
 The document contains two traces:
 
-* Section {{sec-trace-1}}. Authentication with signature keys identified by the hash value of the X.509 certificates (provided in {{certs}}). The endpoints use EdDSA {{RFC8032}} for authentication and X25519 {{RFC7748}} for ephemeral-ephemeral Diffie-Hellman key exchange.
+* {{sec-trace-1}} - Authentication with signature keys identified by the hash value of the X.509 certificates (provided in {{certs}}). The endpoints use EdDSA {{RFC8032}} for authentication and X25519 {{RFC7748}} for ephemeral-ephemeral Diffie-Hellman key exchange.
 
-* Section 4 {{sec-trace-2}}. Authentication with static Diffie-Hellman keys identified by short key identifiers labelling CWT Claim Sets (CCSs) {{RFC8392}}. The endpoints use NIST P-256 (FIPS PUB 186-4) for both ephemeral-ephemeral and static-ephemeral Diffie-Hellman key exchange. This trace also illustrates the cipher suite negotiation, and provides an example of low protocol overhead, with messages sizes of (39, 45, 19) bytes.
+* {{sec-trace-2}} - Authentication with static Diffie-Hellman keys identified by short key identifiers labelling CWT Claim Sets (CCSs) {{RFC8392}}. The endpoints use NIST P-256 (FIPS PUB 186-4) for both ephemeral-ephemeral and static-ephemeral Diffie-Hellman key exchange. This trace also illustrates the cipher suite negotiation, and provides an example of low protocol overhead, with messages sizes of (39, 45, 19) bytes.
 
 The traces in this draft are valid for version -17 of {{I-D.ietf-lake-edhoc}}.
 
@@ -102,7 +102,7 @@ NOTE 1. The same name is used for hexadecimal byte strings and their CBOR encodi
 
 NOTE 2. If not clear from the context, remember that CBOR sequences and CBOR arrays assume CBOR encoded data items as elements.
 
-NOTE 3. When the protocol transporting EDHOC messages does not inherently provide correlation across all messages, like CoAP, then some messages typically are prepended with connection identifiers and potentially a message_1 indicator (see Section 3.4.1 and Appendix A.2 of {{I-D.ietf-lake-edhoc}}). Those bytes are not included in the traces in this document.
+NOTE 3. When the protocol transporting EDHOC messages does not inherently provide correlation across all messages, like CoAP, then some messages typically are prepended with connection identifiers and potentially a message_1 indicator (see {{Sections 3.4.1 and A.2 of I-D.ietf-lake-edhoc}}). Those bytes are not included in the traces in this document.
 
 
 # Authentication with signatures, X.509 certificates identified by 'x5t' # {#sec-trace-1}
@@ -272,7 +272,7 @@ TH_2 (CBOR Data Item) (34 bytes)
 ~~~~~~~~
 
 
-PRK_2e is specified in Section 4.1.1.1 of {{I-D.ietf-lake-edhoc}}.
+PRK_2e is specified in {{Section 4.1.1.1 of I-D.ietf-lake-edhoc}}.
 
 First, the ECDH shared secret G_XY is computed from G_X and Y, or G_Y and X:
 
@@ -318,7 +318,7 @@ a1 db 47 b9 51 84 85 4a d1 2a 0c 1a 35 4e 41 8a ac e3 3a a0 f2 c6 62
 c0 0b 3a c5 5d e9 2f 93 59
 ~~~~~~~~
 
-PRK_3e2m is specified in Section 4.1.1.2 of {{I-D.ietf-lake-edhoc}}.
+PRK_3e2m is specified in {{Section 4.1.1.2 of I-D.ietf-lake-edhoc}}.
 
 Since R authenticates with signatures PRK_3e2m = PRK_2e.
 
@@ -424,7 +424,7 @@ b7 23 bc 01 ea b0 92 8e 8b 2b 6c 98 de 19 cc 38 23 d4 6e 7d 69 87 b0
 ~~~~~~~~
 
 
-MAC_2 is computed through Expand() using the EDHOC hash algorithm, see Section 4.1.2 of {{I-D.ietf-lake-edhoc}}:
+MAC_2 is computed through Expand() using the EDHOC hash algorithm, see {{Section 4.1.2 of I-D.ietf-lake-edhoc}}:
 
 MAC_2 = HKDF-Expand(PRK_3e2m, info, mac_length_2), where
 
@@ -570,8 +570,7 @@ a1 18 22 82 2e 48 79 f2 a4 1b 51 0c 1f 9b 58 40 af 73 81 f1 9a e1 fe
 08 49 58 db 0f 20 89 c2 1c 52 02
 ~~~~~~~~
 
-The input needed to calculate KEYSTREAM_2 is defined in Section 4.1.2 of
-{{I-D.ietf-lake-edhoc}}, using Expand() with the EDHOC hash algorithm:
+The input needed to calculate KEYSTREAM_2 is defined in {{Section 4.1.2 of I-D.ietf-lake-edhoc}}, using Expand() with the EDHOC hash algorithm:
 
     KEYSTREAM_2 = EDHOC-KDF( PRK_2e, 0, TH_2, plaintext_length ) =
                 = HKDF-Expand( PRK_2e, info, plaintext_length )
@@ -654,7 +653,7 @@ ed 06 a8 ae 61 a8 29 ba 5f a5 45 25 c9 d0 7f 48 dd 44 a3 02 f4 3e 0f
 23 d8 cc 20 b7 30 85 14 1e
 ~~~~~~~~
 
-PRK_4e3m is specified in Section 4.1.1.3 of {{I-D.ietf-lake-edhoc}}.
+PRK_4e3m is specified in {{Section 4.1.1.3 of I-D.ietf-lake-edhoc}}.
 
 Since I authenticates with signatures PRK_4e3m = PRK_3e2m.
 
@@ -797,8 +796,7 @@ a0 30 05 06 03 2b 65 70 30 1d 31 1b 30 19 06 03 55 04 03 0c 12 45 44
 67 dd 05 ee ff 27 b9 e7 a8 13 fa 57 4b 72 a0 0b 43 0b
 ~~~~~~~~
 
-MAC_3 is computed through Expand() using the
-EDHOC hash algorithm, see Section 4.1.2 of {{I-D.ietf-lake-edhoc}}:
+MAC_3 is computed through Expand() using the EDHOC hash algorithm, see {{Section 4.1.2 of I-D.ietf-lake-edhoc}}:
 
     MAC_3 = HKDF-Expand(PRK_4e3m, info, mac_length_3), where
 
@@ -962,7 +960,7 @@ A_3 (CBOR Data Item) (45 bytes)
 f5 00 13 e0 64 e6 b4 6d cb 3f a8 40 d8 55 04 5e 33 c0 21 d7 f6 91
 ~~~~~~~~
 
-I constructs the input needed to derive the key K_3, see Section 4.1.2 of {{I-D.ietf-lake-edhoc}}, using the EDHOC hash algorithm:
+I constructs the input needed to derive the key K_3, see {{Section 4.1.2 of I-D.ietf-lake-edhoc}}, using the EDHOC hash algorithm:
 
     K_3 = EDHOC-KDF( PRK_3e2m, 3, TH_3, key_length )
         = HKDF-Expand( PRK_3e2m, info, key_length ),
@@ -992,7 +990,7 @@ K_3 (Raw Value) (16 bytes)
 50 b9 cb 0b ba 0c 75 88 0b 54 27 86 be 62 77 fa
 ~~~~~~~~
 
-I constructs the input needed to derive the nonce IV_3, see Section 4.1.2 of {{I-D.ietf-lake-edhoc}}, using the EDHOC hash algorithm:
+I constructs the input needed to derive the nonce IV_3, see {{Section 4.1.2 of I-D.ietf-lake-edhoc}}, using the EDHOC hash algorithm:
 
     IV_3 = EDHOC-KDF( PRK_3e2m, 4, TH_3, iv_length )
          = HKDF-Expand( PRK_3e2m, info, iv_length ),
@@ -1114,8 +1112,7 @@ A_4 (CBOR Data Item) (45 bytes)
 14 c0 5b 51 ef 0a a3 8b db 36 07 4f 98 12 39 e6 47 4d 9c cc dd c8
 ~~~~~~~~
 
-R constructs the input needed to derive the EDHOC message_4 key, see
-Section 4.1.2 of {{I-D.ietf-lake-edhoc}}, using the EDHOC hash algorithm:
+R constructs the input needed to derive the EDHOC message_4 key, see {{Section 4.1.2 of I-D.ietf-lake-edhoc}}, using the EDHOC hash algorithm:
 
     K_4   = EDHOC-KDF( PRK_4e3m, 8, TH_4, key_length )
           = HKDF-Expand( PRK_4x3m, info, key_length )
@@ -1144,7 +1141,7 @@ K_4 (Raw Value) (16 bytes)
 3d e5 c1 6f 9f 7e f0 0c 46 4b e8 d7 7b de f7 30
 ~~~~~~~~
 
-R constructs the input needed to derive the EDHOC message_4 nonce, see Section 4.1.2 of {{I-D.ietf-lake-edhoc}}, using the EDHOC hash algorithm:
+R constructs the input needed to derive the EDHOC message_4 nonce, see {{Section 4.1.2 of I-D.ietf-lake-edhoc}}, using the EDHOC hash algorithm:
 
           IV_4 = EDHOC-KDF( PRK_4e3m, 9, TH_4, iv_length )
                = HKDF-Expand( PRK_4x3m, info, iv_length )
@@ -1192,7 +1189,7 @@ message_4 (CBOR Sequence) (9 bytes)
 
 ## PRK_out and PRK_exporter {#out-and-exporter1}
 
-PRK_out is specified in Section 4.1.2 of {{I-D.ietf-lake-edhoc}}.
+PRK_out is specified in {{Section 4.1.3 of I-D.ietf-lake-edhoc}}.
 
     PRK_out = EDHOC-KDF( PRK_4e3m, 7, TH_4, hash_length ) =
             = HKDF-Expand( PRK_4e3m, info,  hash_length )
@@ -1271,7 +1268,7 @@ Application Hash Algorithm (int)
 -16
 ~~~~~~~~
 
-The mapping from EDHOC connection identifiers to OSCORE Sender/Recipient IDs is defined in Section 3.3.3 of {{I-D.ietf-lake-edhoc}}.
+The mapping from EDHOC connection identifiers to OSCORE Sender/Recipient IDs is defined in {{Section 3.3.3 of I-D.ietf-lake-edhoc}}.
 
 C_R is mapped to the Recipient ID of the server, i.e., the Sender ID of the client. The byte string 0x18, which as C_R is encoded as the CBOR byte string 0x4118, is converted to the server Recipient ID 0x18.
 
@@ -1320,7 +1317,7 @@ OSCORE Master Secret (Raw Value) (16 bytes)
 09 c3 66 61 cf 68 f8 c3 ad 21 64 43 cf 62 91 e6
 ~~~~~~~~
 
-The OSCORE Master Salt is computed through Expand() using the Application hash algorithm, see Section 4.2 of {{I-D.ietf-lake-edhoc}}:
+The OSCORE Master Salt is computed through Expand() using the Application hash algorithm, see {{Section 4.2 of I-D.ietf-lake-edhoc}}:
 
     OSCORE Master Salt = EDHOC-Exporter( 1, h'', oscore_salt_length )
     = EDHOC-KDF( PRK_exporter, 1, h'', oscore_salt_length )
@@ -1350,7 +1347,7 @@ OSCORE Master Salt (Raw Value) (8 bytes)
 
 ## Key Update
 
-Key update is defined in Section 4.2.2 of {{I-D.ietf-lake-edhoc}}.
+Key update is defined in {{Section J of I-D.ietf-lake-edhoc}}.
 
     EDHOC-KeyUpdate( context ):
     PRK_out = EDHOC-KDF( PRK_out, 11, context, hash_length )
@@ -1774,7 +1771,7 @@ TH_2 (CBOR Data Item) (34 bytes)
 ~~~~~~~~
 
 
-PRK_2e is specified in Section 4.1.1.1 of {{I-D.ietf-lake-edhoc}}.
+PRK_2e is specified in {{Section 4.1.1.1 of I-D.ietf-lake-edhoc}}.
 
 First, the ECDH shared secret G_XY is computed from G_X and Y, or G_Y and X:
 
@@ -1831,7 +1828,7 @@ Responder's public authentication key, 'y'-coordinate
 Since R authenticates with static DH (METHOD = 3), PRK_3e2m is derived
 from SALT_3e2m and G_RX.
 
-The input needed to calculate SALT_3e2m is defined in Section 4.1.2 of {{I-D.ietf-lake-edhoc}}, using Expand() with the EDHOC hash algorithm:.
+The input needed to calculate SALT_3e2m is defined in {{Section 4.1.2 of I-D.ietf-lake-edhoc}}, using Expand() with the EDHOC hash algorithm:.
 
     SALT_3e2m  = EDHOC-KDF( PRK_2e, 1, TH_2, hash_length ) =
                = HKDF-Expand( PRK_2e, info, hash_length )
@@ -1860,7 +1857,7 @@ a7 ce 8f 37 c9 53 66 d8 d1
 ~~~~~~~~
 
 
-PRK_3e2m is specified in Section 4.1.1.2 of {{I-D.ietf-lake-edhoc}}.
+PRK_3e2m is specified in {{Section 4.1.1.2 of I-D.ietf-lake-edhoc}}.
 
 PRK_3e2m is derived from G_RX using Extract() with the EDHOC hash algorithm:
 
@@ -1956,7 +1953,7 @@ ac 93 62 20 46 dd 44 f0 22 58 20 45 19 e2 57 23 6b 2a 0c e2 02 3f 09
 
 
 
-MAC_2 is computed through Expand() using the EDHOC hash algorithm, see Section 4.1.2 of {{I-D.ietf-lake-edhoc}}:
+MAC_2 is computed through Expand() using the EDHOC hash algorithm, see {{Section 4.1.2 of I-D.ietf-lake-edhoc}}:
 
 MAC_2 = HKDF-Expand(PRK_3e2m, info, mac_length_2), where
 
@@ -2026,7 +2023,7 @@ PAD_2 (CBOR sequence of simple type) (0 bytes)
      ? EAD_2
     )
 
-Since ID_CRED_R contains a single 'kid' parameter, only the byte string value is included in the plaintext, represented as described in Section 3.3.2 of {{I-D.ietf-lake-edhoc}}. The CBOR map { 4 : h'32' } is thus replaced, not by the CBOR byte string 0x4132, but by the CBOR int 0x32, since that is a one byte encoding of a CBOR integer (-19).
+Since ID_CRED_R contains a single 'kid' parameter, only the byte string value is included in the plaintext, represented as described in {{Section 3.3.2 of I-D.ietf-lake-edhoc}}. The CBOR map { 4 : h'32' } is thus replaced, not by the CBOR byte string 0x4132, but by the CBOR int 0x32, since that is a one byte encoding of a CBOR integer (-19).
 
 
 ~~~~~~~~
@@ -2034,8 +2031,7 @@ PLAINTEXT_2 (CBOR Sequence) (10 bytes)
 32 48 d0 d1 a5 94 79 7d 0a af
 ~~~~~~~~
 
-The input needed to calculate KEYSTREAM_2 is defined in Section 4.1.2 of
-{{I-D.ietf-lake-edhoc}}, using Expand() with the EDHOC hash algorithm:
+The input needed to calculate KEYSTREAM_2 is defined in {{Section 4.1.2 of I-D.ietf-lake-edhoc}}, using Expand() with the EDHOC hash algorithm:
 
     KEYSTREAM_2 = EDHOC-KDF( PRK_2e, 0, TH_2, plaintext_length ) =
                 = HKDF-Expand( PRK_2e, info, plaintext_length )
@@ -2148,7 +2144,7 @@ Initiator's public authentication key, 'y'-coordinate
 Since I authenticates with static DH (METHOD = 3), PRK_4e3m is derived
 from SALT_4e3m and G_IY.
 
-The input needed to calculate SALT_4e3m is defined in Section 4.1.2 of {{I-D.ietf-lake-edhoc}}, using Expand() with the EDHOC hash algorithm:.
+The input needed to calculate SALT_4e3m is defined in {{Section 4.1.2 of I-D.ietf-lake-edhoc}}, using Expand() with the EDHOC hash algorithm:.
 
     SALT_4e3m  = EDHOC-KDF( PRK_3e2m, 5, TH_3, hash_length ) =
                = HKDF-Expand( PRK_3e2m, info, hash_length )
@@ -2176,9 +2172,8 @@ d1 81 53 ff c3 59 5c 17 ba
 ~~~~~~~~
 
 
-PRK_4e3m is specified in Section 4.1.1.3 of {{I-D.ietf-lake-edhoc}}.
+PRK_4e3m is specified in {{Section 4.1.1.3 of I-D.ietf-lake-edhoc}}.
 
-PRK_4e3m is derived as specified in Section 4.1.3 of {{I-D.ietf-lake-edhoc}}.
 Since I authenticates with static DH (METHOD = 3), PRK_4e3m is derived
 from G_IY using Extract() with the EDHOC hash algorithm:
 
@@ -2276,8 +2271,7 @@ a5 01 02 02 41 2b 20 01 21 58 20 ac 75 e9 ec e3 e5 0b fc 8e d6 03 99
 ~~~~~~~~
 
 
-MAC_3 is computed through Expand() using the EDHOC hash algorithm, see
-Section 4.1.2 of {{I-D.ietf-lake-edhoc}}:
+MAC_3 is computed through Expand() using the EDHOC hash algorithm, see {{Section 4.1.2 of I-D.ietf-lake-edhoc}}:
 
 
     MAC_3 = HKDF-Expand(PRK_4e3m, info, mac_length_3), where
@@ -2353,7 +2347,7 @@ PAD_3 (CBOR sequence of simple type) (0 bytes)
      ? EAD_3
     )
 
-Since ID_CRED_I contains a single 'kid' parameter, only the byte string value is included in the plaintext, represented as described in Section 3.3.2 of {{I-D.ietf-lake-edhoc}}. The CBOR map { 4 : h'2b' } is thus replaced, not by the CBOR byte string 0x412b, but by the CBOR int 0x2b, since that is a one byte encoding of a CBOR integer (-12).
+Since ID_CRED_I contains a single 'kid' parameter, only the byte string value is included in the plaintext, represented as described in {{Section 3.3.2 of I-D.ietf-lake-edhoc}}. The CBOR map { 4 : h'2b' } is thus replaced, not by the CBOR byte string 0x412b, but by the CBOR int 0x2b, since that is a one byte encoding of a CBOR integer (-12).
 
 
 ~~~~~~~~
@@ -2377,7 +2371,7 @@ A_3 (CBOR Data Item) (45 bytes)
 a6 51 1b 9d e2 85 be df 6e ab 3e 9e d1 2d fe 22 a5 3e ed a7 de 48
 ~~~~~~~~
 
-I constructs the input needed to derive the key K_3, see Section 4.1.2 of {{I-D.ietf-lake-edhoc}}, using the EDHOC hash algorithm:
+I constructs the input needed to derive the key K_3, see {{Section 4.1.2 of I-D.ietf-lake-edhoc}}, using the EDHOC hash algorithm:
 
     K_3 = EDHOC-KDF( PRK_3e2m, 3, TH_3, key_length )
         = HKDF-Expand( PRK_3e2m, info, key_length ),
@@ -2404,8 +2398,7 @@ K_3 (Raw Value) (16 bytes)
 2f 10 8b ef ff 80 6f 5f c8 1b f0 a2 d5 f4 24 1f
 ~~~~~~~~
 
-I constructs the input needed to derive the nonce IV_3, see Section 4.1.2 of
-{{I-D.ietf-lake-edhoc}}, using the EDHOC hash algorithm:
+I constructs the input needed to derive the nonce IV_3, see {{Section 4.1.2 of I-D.ietf-lake-edhoc}}, using the EDHOC hash algorithm:
 
     IV_3 = EDHOC-KDF( PRK_3e2m, 4, TH_3, iv_length )
          = HKDF-Expand( PRK_3e2m, info, iv_length ),
@@ -2508,8 +2501,7 @@ A_4 (CBOR Data Item) (45 bytes)
 84 0c 9b 10 77 c1 d4 c4 7d b2 43 a8 b4 13 60 a9 8e c4 cb 70 6b 70
 ~~~~~~~~
 
-R constructs the input needed to derive the EDHOC message_4 key, see
-Section 4.1.2 of {{I-D.ietf-lake-edhoc}}, using the EDHOC hash algorithm:
+R constructs the input needed to derive the EDHOC message_4 key, see {{Section 4.1.2 of I-D.ietf-lake-edhoc}}, using the EDHOC hash algorithm:
 
     K_4   = EDHOC-KDF( PRK_4e3m, 8, TH_4, key_length )
           = HKDF-Expand( PRK_4e3m, info, key_length )
@@ -2537,7 +2529,7 @@ K_4 (Raw Value) (16 bytes)
 de 02 dc 03 6c b6 81 cd 53 80 d7 83 e8 53 14 2f
 ~~~~~~~~
 
-R constructs the input needed to derive the EDHOC message_4 nonce, see Section 4.1.2 of {{I-D.ietf-lake-edhoc}}, using the EDHOC hash algorithm:
+R constructs the input needed to derive the EDHOC message_4 nonce, see {{Section 4.1.2 of I-D.ietf-lake-edhoc}}, using the EDHOC hash algorithm:
 
           IV_4 = EDHOC-KDF( PRK_4e3m, 9, TH_4, iv_length )
                = HKDF-Expand( PRK_4e3m, info, iv_length )
@@ -2585,7 +2577,7 @@ message_4 (CBOR Sequence) (9 bytes)
 
 ## PRK_out and PRK_exporter {#out-and-exporter2}
 
-PRK_out is specified in Section 4.1.2 of {{I-D.ietf-lake-edhoc}}.
+PRK_out is specified in {{Section 4.1.3 of I-D.ietf-lake-edhoc}}.
 
     PRK_out = EDHOC-KDF( PRK_4e3m, 7, TH_4, hash_length ) =
             = HKDF-Expand( PRK_4e3m, info,  hash_length )
@@ -2668,7 +2660,7 @@ Application Hash Algorithm (int)
 ~~~~~~~~
 
 The mapping from EDHOC connection identifiers to OSCORE Sender/Recipient IDs
-is defined in Section 3.3.3 of {{I-D.ietf-lake-edhoc}}.
+is defined in {{Section 3.3.3 of I-D.ietf-lake-edhoc}}.
 
 C_R is mapped to the Recipient ID of the server, i.e., the Sender ID of the client. The byte string 0x27, which as C_R is encoded as the CBOR integer 0x27, is converted to the server Recipient ID 0x27.
 
@@ -2716,7 +2708,7 @@ OSCORE Master Secret (Raw Value) (16 bytes)
 07 ce 22 f2 63 8f ca 40 4d de d7 2a 25 fa 45 f4
 ~~~~~~~~
 
-The OSCORE Master Salt is computed through Expand() using the Application hash algorithm, see Section 4.2 of {{I-D.ietf-lake-edhoc}}:
+The OSCORE Master Salt is computed through Expand() using the Application hash algorithm, see {{Section 4.2 of I-D.ietf-lake-edhoc}}:
 
     OSCORE Master Salt = EDHOC-Exporter( 1, h'', oscore_salt_length )
     = EDHOC-KDF( PRK_exporter, 1, h'', oscore_salt_length )
@@ -2748,7 +2740,7 @@ OSCORE Master Salt (Raw Value) (8 bytes)
 
 ## Key Update
 
-ey update is defined in Section 4.2.2 of {{I-D.ietf-lake-edhoc}}.
+Key update is defined in {{Section J of I-D.ietf-lake-edhoc}}.
 
     EDHOC-KeyUpdate( context ):
     PRK_out = EDHOC-KDF( PRK_out, 11, context, hash_length )
@@ -2835,6 +2827,6 @@ There are no IANA considerations.
 # Acknowledgments
 {: numbered="no"}
 
-The authors want to thank all people verifying EDHOC test vectors and/or contributing to the interoperability testing including: Christian Amsüss, Timothy Claeys, Stefan Hristozov, Rikard Höglund, Christos Koulamas, Francesca Palombini, Lidia Pocero, Peter van der Stok, and Michel Veillette.
+The authors want to thank all people verifying EDHOC test vectors and/or contributing to the interoperability testing including: {{{Christian Amsüss}}}, {{{Timothy Claeys}}}, {{{Stefan Hristozov}}}, {{{Rikard Höglund}}}, {{{Christos Koulamas}}}, {{{Francesca Palombini}}}, {{{Lidia Pocero}}}, {{{Peter van der Stok}}}, {{{Michel Veillette}}} and {{{Mališa Vučinić}}}.
 
 --- fluff
