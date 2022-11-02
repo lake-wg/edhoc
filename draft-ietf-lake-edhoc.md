@@ -974,7 +974,7 @@ message_3 = (
 
 The Initiator SHALL compose message_3 as follows:
 
-* Compute the transcript hash TH_3 = H(TH_2, PLAINTEXT_2, CRED_R) where H() is the EDHOC hash algorithm of the selected cipher suite. The transcript hash TH_3 is a CBOR encoded bstr and the input to the hash function is a CBOR Sequence. Note that H(TH_2, PLAINTEXT_2) can be computed and cached already in the processing of message_2.
+* Compute the transcript hash TH_3 = H(TH_2, PLAINTEXT_2, CRED_R) where H() is the EDHOC hash algorithm of the selected cipher suite. The transcript hash TH_3 is a CBOR encoded bstr and the input to the hash function is a CBOR Sequence. Note that TH_3 can be computed and cached already in the processing of message_2.
 
 * Compute MAC_3 as in {{expand}}, with context_3 = << ID_CRED_I, TH_3, CRED_I, ? EAD_3 >>
     * If the Initiator authenticates with a static Diffie-Hellman key (method equals 2 or 3), then mac_length_3 is the EDHOC MAC length of the selected cipher suite.  If the Initiator authenticates with a signature key (method equals 0 or 1), then mac_length_3 is equal to the output size of the EDHOC hash algorithm of the selected cipher suite.
@@ -1006,7 +1006,7 @@ The Initiator SHALL compose message_3 as follows:
 
    CIPHERTEXT_3 is the 'ciphertext' of COSE_Encrypt0.
 
-* Compute the transcript hash TH_4 = H(TH_3, PLAINTEXT_3, CRED_I) where H() is the EDHOC hash algorithm of the selected cipher suite. The transcript hash TH_4 is a CBOR encoded bstr and the input to the hash function is a CBOR Sequence.
+* Compute the transcript hash TH_4 = H(TH_3, PLAINTEXT_3, CRED_I) where H() is the EDHOC hash algorithm of the selected cipher suite. The transcript hash TH_4 is a CBOR encoded bstr and the input to the hash function is a CBOR Sequence. Note that TH_4 can be computed and cached already in the processing of message_3.
 
 * Calculate PRK_out as defined in {{fig-edhoc-kdf}}. The Initiator can now derive application keys using the EDHOC-Exporter interface, see {{exporter}}.
 
