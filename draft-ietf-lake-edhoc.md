@@ -839,6 +839,7 @@ message_1 = (
   SUITES_I : suites,
   G_X : bstr,
   C_I : bstr / -24..23,
+  ? PAD_1 : 1* true,
   ? EAD_1 : ead,
 )
 
@@ -851,6 +852,7 @@ where:
 * SUITES_I - array of cipher suites which the Initiator supports in order of preference, the first cipher suite in network byte order is the most preferred by I, the last is the one selected by I for this session. If the most preferred cipher suite is selected then SUITES_I contains only that cipher suite and is encoded as an int. The processing steps are detailed below and in {{wrong-selected}}.
 * G_X - the ephemeral public key of the Initiator
 * C_I - variable length connection identifier. Note that connection identifiers are byte strings but certain values are represented as integers in the message, see {{bstr-repr}}.
+* PAD_1 - padding that may be used to increase message_1 for reducing amplification factor
 * EAD_1 - external authorization data, see {{AD}}.
 
 ### Initiator Processing of Message 1 {#init-proc-msg1}
