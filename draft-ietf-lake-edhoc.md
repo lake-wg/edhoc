@@ -1358,25 +1358,25 @@ IANA has created a new registry titled "EDHOC Cipher Suites" under the new group
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 Value: -24
-Algorithms: N/A
+Array: N/A
 Desc: Reserved for Private Use
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 Value: -23
-Algorithms: N/A
+Array: N/A
 Desc: Reserved for Private Use
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 Value: -22
-Algorithms: N/A
+Array: N/A
 Desc: Reserved for Private Use
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 Value: -21
-Algorithms: N/A
+Array: N/A
 Desc: Reserved for Private Use
 ~~~~~~~~~~~~~~~~~~~~~~~
 
