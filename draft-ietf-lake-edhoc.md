@@ -878,6 +878,8 @@ The Responder SHALL process message_1 as follows:
 
 * Decode message_1 (see {{CBOR}}).
 
+* Discard the padding PAD_1, if present.
+
 * Verify that the selected cipher suite is supported and that no prior cipher suite in SUITES_I is supported.
 
 * If EAD_1 is present then make it available to the application for EAD processing.
@@ -1222,7 +1224,7 @@ Implementations MAY support message_4. Error codes (ERR_CODE) 1 and 2 MUST be su
 
 Implementations MAY support EAD.
 
-Implementations MAY support padding of plaintext when sending messages. Implementations MUST support padding of plaintext when receiving messages, i.e., MUST be able to parse padded messages.
+Implementations MAY support padding when sending messages. Implementations MUST support padding when receiving messages, i.e., MUST be able to parse padded messages.
 
 Implementations MUST support cipher suite 2 and 3. Cipher suites 2 (AES-CCM-16-64-128, SHA-256, 8, P-256, ES256, AES-CCM-16-64-128, SHA-256) and 3 (AES-CCM-16-128-128, SHA-256, 16, P-256, ES256, AES-CCM-16-64-128, SHA-256) only differ in size of the MAC length, so supporting one or both of these is no essential difference. Implementations only need to implement the algorithms needed for their supported methods.
 
