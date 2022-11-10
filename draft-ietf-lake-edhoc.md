@@ -1635,7 +1635,18 @@ After successful processing of EDHOC message_3, Client and Server derive Securit
 
 * The HKDF Algorithm is the one based on the application hash algorithm of the selected cipher suite for the EDHOC session. For example, if SHA-256 is the application hash algorithm of the selected cipher suite, HKDF SHA-256 is used as HKDF Algorithm in the OSCORE Security Context.
 
-* In case the Client is Initiator and the Server is Responder, the Client's OSCORE Sender ID and the Server's OSCORE Sender ID are determined from the EDHOC connection identifiers C_R and C_I for the EDHOC session, respectively, by applying the conversion in {{ci-oscore}}. The reverse applies in case the Client is the Responder and the Server is the Initiator.
+* The OSCORE Sender ID and the OSCORE Recipient ID of the Client and the Server are determined from the EDHOC connection identifiers C_R and C_I for the EDHOC session according to the table {{fig-edhoc-oscore-id-mapping}} below.
+
+~~~~~~~~~~~
++------------+-----------+--------------+
+| EDHOC Role | Sender ID | Recipient ID |
++------------+-----------+--------------+
+| Initiator  |  C_R      |  C_I         |
++------------+-----------+--------------+
+| Responder  |  C_I      |  C_R         |
++------------+-----------+--------------+
+~~~~~~~~~~~
+{: #fig-edhoc-oscore-id-mapping title="Usage of connection identifiers in OSCORE" artwork-align="center"}
 
 Client and Server use the parameters above to establish an OSCORE Security Context, as per Section 3.2.1 of {{RFC8613}}.
 
