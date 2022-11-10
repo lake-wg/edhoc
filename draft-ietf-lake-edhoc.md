@@ -852,7 +852,7 @@ where:
 * SUITES_I - array of cipher suites which the Initiator supports in order of preference, the first cipher suite in network byte order is the most preferred by I, the last is the one selected by I for this session. If the most preferred cipher suite is selected then SUITES_I contains only that cipher suite and is encoded as an int. The processing steps are detailed below and in {{wrong-selected}}.
 * G_X - the ephemeral public key of the Initiator
 * C_I - variable length connection identifier. Note that connection identifiers are byte strings but certain values are represented as integers in the message, see {{bstr-repr}}.
-* PAD_1 - padding that may be used to increase message_1 for reducing amplification factor
+* PAD_1 - padding that may be used to reduce the amplification factor
 * EAD_1 - external authorization data, see {{AD}}.
 
 ### Initiator Processing of Message 1 {#init-proc-msg1}
@@ -1304,7 +1304,7 @@ The fields ID_CRED_I, ID_CRED_R, EAD_2, EAD_3, and EAD_4 have variable length an
 
 ## Denial-of-Service {#dos}
 
-EDHOC itself does not provide countermeasures against Denial-of-Service attacks. In particular, by sending a number of new or replayed message_1 an attacker may cause the Responder to allocate state, perform cryptographic operations, and amplify messages. To mitigate such attacks, an implementation SHOULD rely on lower layer mechanisms. For instance, when EDHOC is transferred as an exchange of CoAP messages, the CoAP server can use the Echo option defined in {{RFC9175}} which forces the CoAP client to demonstrate reachability at its apparent network address.
+EDHOC itself does not provide countermeasures against Denial-of-Service attacks. In particular, by sending a number of new or replayed message_1 an attacker may cause the Responder to allocate state, perform cryptographic operations, and amplify messages. To mitigate such attacks, an implementation SHOULD rely on lower layer mechanisms. For instance, when EDHOC is transferred as an exchange of CoAP messages, the CoAP server can use the Echo option defined in {{RFC9175}} which forces the CoAP client to demonstrate reachability at its apparent network address. To avoid an additional roundtrip the Initiator can reduce the amplification factor by padding message_1.
 
 An attacker can also send faked message_2, message_3, message_4, or error in an attempt to trick the receiving party to send an error message and discontinue the session. EDHOC implementations MAY evaluate if a received message is likely to have been forged by an attacker and ignore it without sending an error message or discontinuing the session.
 
