@@ -579,24 +579,39 @@ In order to reduce round trips and the number of messages, or to simplify proces
 
 EDHOC allows processing of external authorization data (EAD) to be defined in a separate specification, and sent in dedicated fields of the four EDHOC messages (EAD_1, EAD_2, EAD_3, EAD_4). EAD is opaque data to EDHOC.
 
-Each EAD field is a CBOR sequence (see {{CBOR}}) consisting of one or more EAD items (ead_label, ead_value) as defined below:
+Each EAD field is a CBOR sequence (see {{CBOR}}) consisting of one or more EAD items (ead_label, ? ead_value) as defined below:
 
 ~~~~~~~~~~~ CDDL
-ead = 1* (
+EAD_x = 1* ead
+
+ead = (
   ead_label : int,
-  ead_value : bstr,
+  ? ead_value : bstr,
 )
 ~~~~~~~~~~~
 
-A security application using external authorization data need to register a positive ead_label and the associated ead_value format for each EAD item it uses (see {{iana-ead}}), and describe processing and security considerations. Each application registers their own EAD items and defines associated operations. The application may define multiple uses of certain EAD items, e.g., the same EAD item may be used in different EDHOC messages with the same application.
+A security application using external authorization data needs to register a positive ead_label and an associated optional ead_value format for each EAD item it uses (see {{iana-ead}}), and describe the processing and the security considerations. Each application registers its own EAD items and defines the associated operations. The application may define multiple uses of certain EAD items, e.g., the same EAD item may be used in different EDHOC messages with the same application.
 
-An EAD item can be either critical or non-critical, determined by the sign of the ead_label in the transported EAD item included in the EDHOC message. Using the registered positive value indicates that the EAD item is non-critical. The corresponding negative value indicates that the EAD item is critical. ead_label = 0 MUST NOT be used.
+An EAD item can be either critical or non-critical, determined by the sign of the ead_label in the transported EAD item included in the EDHOC message. Using the registered positive value indicates that the EAD item is non-critical. The corresponding negative value indicates that this EAD item is critical. ead_label = 0 is also critical and reserved for padding, see {{padding}}.
 
 If an endpoint receives a critical EAD item it does not recognize or a critical EAD item that contains information that it cannot process, the EDHOC protocol MUST be discontinued. A non-critical EAD item can be ignored.
 
 The specification registering a new EAD label needs to describe under what conditions the EAD item is critical or non-critical.
 
 The EAD fields of EDHOC must not be used for generic application data. Examples of the use of EAD are provided in {{ead-appendix}}.
+
+### Padding {#padding}
+
+EDHOC message_1 and the plaintext of message_2, message_3 and message_4 can be padded with the use of EAD fields. Padding is obtained by using the EAD item with ead_label = 0 and a random byte string of appropriate length as ead_value, noting that the ead_label and the CBOR encoding of ead_value also adds bytes.
+
+* One byte padding is achieved by omitting the ead_value.
+   * EAD_x = 0x00
+* Two byte padding is achieved with the empty byte string as ead_value.
+   * ead_value = 0x40
+   * EAD_x = 0x0040
+
+An EAD item with ead_label = 0 is intended to be discarded by the receiving application.
+
 
 ## Application Profile {#applicability}
 
@@ -839,7 +854,7 @@ message_1 = (
   SUITES_I : suites,
   G_X : bstr,
   C_I : bstr / -24..23,
-  ? EAD_1 : ead,
+  ? EAD_1,
 )
 
 suites = [ 2* int ] / int
@@ -979,7 +994,6 @@ The Initiator SHALL compose message_3 as follows:
     * ID_CRED_I - identifier to facilitate the retrieval of CRED_I, see {{id_cred}}
     * CRED_I - CBOR item containing the authentication credential of the Initiator, see {{auth-cred}}
     * EAD_3 - external authorization data, see {{AD}}
-
 
 * If the Initiator authenticates with a static Diffie-Hellman key (method equals 2 or 3), then Signature_or_MAC_3 is MAC_3. If the Initiator authenticates with a signature key (method equals 0 or 1), then Signature_or_MAC_3 is the 'signature' field of a COSE_Sign1 object, computed as specified in Section 4.4 of {{RFC9052}} using the signature algorithm of the selected cipher suite, the private authentication key of the Initiator, and the following parameters as input (see {{COSE}}):
 
@@ -1289,7 +1303,7 @@ An attacker observing network traffic may use connection identifiers sent in cle
 
 Since the publication of {{RFC3552}} there has been an increased awareness of the need to protect against endpoints that are compromised, malicious, or whose interests simply do not align with the interests of users {{I-D.arkko-arch-internet-threat-model-guidance}}. {{RFC7624}} describes an updated threat model for Internet confidentiality, see {{sec-prop}}. {{I-D.arkko-arch-internet-threat-model-guidance}} further expands the threat model. Implementations and users SHOULD consider these threat models. In particular, even data sent protected to the other endpoint such as ID_CRED and EAD can be used for tracking, see Section 2.7 of {{I-D.arkko-arch-internet-threat-model-guidance}}.
 
-The fields ID_CRED_I, ID_CRED_R, EAD_2, EAD_3, and EAD_4 have variable length and information regarding the length may leak to an attacker. An passive attacker may e.g., be able to differentiating endpoints using identifiers of different length. To mitigate this information leakage an implementation may ensure that the fields have fixed length or use padding. An implementation may e.g., only use fix length identifiers like 'kid' of length 1. Alternatively padding may be used to hide the true length of e.g., certificates by value in 'x5chain' or 'c5c'. Padding in EDHOC is achieved by using the non-critical EAD item with EAD label TDB and a random bytestring as EAD value.
+The fields ID_CRED_I, ID_CRED_R, EAD_2, EAD_3, and EAD_4 have variable length, and information regarding the length may leak to an attacker. A passive attacker may, e.g., be able to differentiate endpoints using identifiers of different length. To mitigate this information leakage an implementation may ensure that the fields have fixed length or use padding. An implementation may, e.g., only use fixed length identifiers like 'kid' of length 1. Alternatively, padding may be used to hide the true length of, e.g., certificates by value in 'x5chain' or 'c5c'. Padding is achieved by using the EAD item with ead_label = 0, see {{padding}}.
 
 ## Denial-of-Service {#dos}
 
@@ -1789,10 +1803,15 @@ This sections compiles the CDDL definitions for ease of reference.
 ~~~~~~~~~~~ CDDL
 suites = [ 2* int ] / int
 
-ead = 1* (
+ead = (
   ead_label : int,
-  ead_value : bstr,
+  ? ead_value : bstr,
 )
+
+EAD_1 = 1* ead
+EAD_2 = 1* ead
+EAD_3 = 1* ead
+EAD_4 = 1* ead
 
 message_1 = (
   METHOD : int,
