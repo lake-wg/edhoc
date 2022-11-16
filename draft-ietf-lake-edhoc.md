@@ -1747,12 +1747,12 @@ In EDHOC, compact representation is used for the ephemeral public keys (G_X and 
 
 The encoding of the point at infinity is not supported.
 
-Compact representation does not change any requirements on validation, see {{crypto}}. The following may be needed for validation or compatibility with APIs that do not support compact representation or do not support the full {{SECG}} format:
+Compact representation does not change any requirements on validation, see {{crypto}}. Using compact representation has some security benefits. An implementation does not need to check that the point is not the point at infinity (the identity element). Similarly, as not even the sign of the y-coordinate is encoded, compact representation trivially avoids so called "benign malleability" attacks where an attacker changes the sign, see {{SECG}}.
+
+The following may be needed for validation or compatibility with APIs that do not support compact representation or do not support the full {{SECG}} format:
 
 * If a compressed y-coordinate is required, then the value ~yp set to zero can be used. The compact representation described above can in such a case be transformed into the SECG point compressed format by prepending it with the single byte 0x02 (i.e., M = 0x02 \|\| X).
 * If a uncompressed y-coordinate is required, then a y-coordinate has to be calculated following Section 2.3.4 of {{SECG}}. Any of the square roots can be used.
-
-Using compact representation has some security benefits. An implementation does not need to check that the point is not the point at infinity (the identity element). Similarly, as not even the sign of the y-coordinate is encoded, compact representation trivially avoids so called "benign malleability" attacks where an attacker changes the sign, see {{SECG}}.
 
 For example: The curve P-256 has the parameters
 
