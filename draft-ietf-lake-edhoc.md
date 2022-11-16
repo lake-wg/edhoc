@@ -1752,25 +1752,21 @@ Compact representation does not change any requirements on validation, see {{cry
 The following may be needed for validation or compatibility with APIs that do not support compact representation or do not support the full {{SECG}} format:
 
 * If a compressed y-coordinate is required, then the value ~yp set to zero can be used. The compact representation described above can in such a case be transformed into the SECG point compressed format by prepending it with the single byte 0x02 (i.e., M = 0x02 \|\| X).
-* If a uncompressed y-coordinate is required, then a y-coordinate has to be calculated following Section 2.3.4 of {{SECG}}. Any of the square roots can be used.
+* If a uncompressed y-coordinate is required, then a y-coordinate has to be calculated following Section 2.3.4 of {{SECG}} or Appendix C of {{RFC6090}}. Any of the square roots can be used.
 
-For example: The curve P-256 has the parameters
+For example: The curve P-256 has the parameters (using the notation in {{RFC6090}})
 
-* q = p = 2^256 − 2^224 + 2^192 + 2^96 − 1
+* p = 2^256 − 2^224 + 2^192 + 2^96 − 1
 * a = -3
 * b = 41058363725152142129326129780047268409114441015993725554835256314039467401291
 
-Given an example X
+Given an example x
 
-* X = 115792089183396302095546807154740558443406795108653336398970697772788799766525
+* x = 115792089183396302095546807154740558443406795108653336398970697772788799766525
 
-we can calculate alpha = X^3 + a * X + b (mod p)
+we can calculate y = w = (X^3 + a * X + b)^((p + 1)/4) (mod p)
 
-* alpha = 41058362296274968280728285181229733297639426609815013228296197241645663674467
-
-and given that p = 3 (mod 4) and that any of the square roots can be used we can calculate Y = beta = alpha^((p + 1)/4) (mod p)
-
-* Y = 8343871800701928068200758649186260052814512599640157541663252294059586027685
+* y = 8343871800701928068200758649186260052814512599640157541663252294059586027685
 
 # Use of CBOR, CDDL, and COSE in EDHOC {#CBORandCOSE}
 
