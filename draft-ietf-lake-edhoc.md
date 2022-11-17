@@ -93,7 +93,7 @@ informative:
   I-D.ietf-lwig-curve-representations:
   I-D.ietf-lwig-security-protocol-comparison:
   I-D.irtf-cfrg-det-sigs-with-noise:
-  I-D.selander-ace-ake-authz:
+  I-D.selander-lake-authz:
   I-D.arkko-arch-internet-threat-model-guidance:
 
   SP-800-56A:
@@ -1957,7 +1957,7 @@ In order to reduce the number of messages and round trips, or to simplify proces
 
 The EAD format is specified in {{AD}}, this section contains examples and further details of how EAD may be used with an appropriate accompanying specification.
 
-* One example is third party assisted authorization, requested with EAD_1, and an authorization artifact (“voucher”, cf. {{RFC8366}}) returned in EAD_2, see {{I-D.selander-ace-ake-authz}}.
+* One example is third party assisted authorization, requested with EAD_1, and an authorization artifact (“voucher”, cf. {{RFC8366}}) returned in EAD_2, see {{I-D.selander-lake-authz}}.
 
 * Another example is remote attestation, requested in EAD_2, and an Entity Attestation Token (EAT, {{I-D.ietf-rats-eat}}) returned in EAD_3.
 
@@ -1969,7 +1969,7 @@ The content of the EAD field may be used in the EDHOC processing of the message 
 
 Conversely, the security application may need to wait for EDHOC message verification to complete. In the third example above, the validation of a CSR carried in EAD_3 is not started by the Responder before EDHOC has successfully verified message_3 and proven the possession of the private key of the Initiator.
 
-The security application may reuse EDHOC protocol fields which therefore need to be available to the application. For example, the security application may use the same crypto algorithms as in the EDHOC session and therefore needs access to the selected cipher suite (or the whole SUITES_I). The application may use the ephemeral public keys G_X and G_Y, as ephemeral keys or as nonces, see {{I-D.selander-ace-ake-authz}}.
+The security application may reuse EDHOC protocol fields which therefore need to be available to the application. For example, the security application may use the same crypto algorithms as in the EDHOC session and therefore needs access to the selected cipher suite (or the whole SUITES_I). The application may use the ephemeral public keys G_X and G_Y, as ephemeral keys or as nonces, see {{I-D.selander-lake-authz}}.
 
 The processing of the EAD item (ead_label, ead_value) by the security application needs to be described in the specification where the ead_label is registered, see {{iana-ead}}, including the ead_value for each message and actions in case of errors. An application may support multiple security applications that make use of EAD, which may result in multiple EAD items in one EAD field, see {{AD}}. Any dependencies on security applications with previously registered EAD items needs to be documented, and the processing needs to consider their simultaneous use.
 
@@ -1990,7 +1990,7 @@ For use of EDHOC with application X the following assumptions are made:
 4. CRED_R is a CCS of type OKP as specified in {{auth-cred}}.
    * The CBOR map has parameters 1 (kty), -1 (crv), and -2 (x-coordinate).
    * ID_CRED_R is {TBD2 : CCS}.   Editor's note: TBD2 is the COSE header parameter value of 'kccs', see {{cwt-header-param}}
-5. External authorization data is defined and processed as specified in {{I-D.selander-ace-ake-authz}}.
+5. External authorization data is defined and processed as specified in {{I-D.selander-lake-authz}}.
 6. EUI-64 is used as the identity of the endpoint (see example in {{auth-cred}}).
 7. No use of message_4: the application sends protected messages from R to I.
 
