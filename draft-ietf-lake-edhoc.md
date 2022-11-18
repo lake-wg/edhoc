@@ -592,7 +592,7 @@ ead = (
 
 A security application using external authorization data needs to register a positive ead_label and an associated optional ead_value format for each EAD item it uses (see {{iana-ead}}), and specify the processing and the security considerations. Each application registers its own EAD items and defines the associated operations. The application may define multiple uses of certain EAD items, e.g., the same EAD item may be used in different EDHOC messages with the same application. Multiple occurances of an EAD item in one EAD field may also be specified.
 
-An EAD item can be either critical or non-critical, determined by the sign of the ead_label in the transported EAD item included in the EDHOC message. Using the registered positive value indicates that the EAD item is non-critical. The corresponding negative value indicates that this EAD item is critical. ead_label = 0 is also critical and reserved for padding, see {{padding}}.
+An EAD item can be either critical or non-critical, determined by the sign of the ead_label in the transported EAD item included in the EDHOC message. Using the registered positive value indicates that the EAD item is non-critical. The corresponding negative value indicates that this EAD item is critical. ead_label = 0 is non-critical and reserved for padding, see {{padding}}.
 
 If an endpoint receives a critical EAD item it does not recognize or a critical EAD item that contains information that it cannot process, the EDHOC protocol MUST be discontinued. A non-critical EAD item can be ignored.
 
