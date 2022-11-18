@@ -590,7 +590,7 @@ ead = (
 )
 ~~~~~~~~~~~
 
-A security application using external authorization data needs to register a positive ead_label and an associated optional ead_value format for each EAD item it uses (see {{iana-ead}}), and describe the processing and the security considerations. Each application registers its own EAD items and defines the associated operations. The application may define multiple uses of certain EAD items, e.g., the same EAD item may be used in different EDHOC messages with the same application.
+A security application using external authorization data needs to register a positive ead_label and an associated optional ead_value format for each EAD item it uses (see {{iana-ead}}), and specify the processing and the security considerations. Each application registers its own EAD items and defines the associated operations. The application may define multiple uses of certain EAD items, e.g., the same EAD item may be used in different EDHOC messages with the same application. Multiple occurances of an EAD item in one EAD field may also be specified.
 
 An EAD item can be either critical or non-critical, determined by the sign of the ead_label in the transported EAD item included in the EDHOC message. Using the registered positive value indicates that the EAD item is non-critical. The corresponding negative value indicates that this EAD item is critical. ead_label = 0 is also critical and reserved for padding, see {{padding}}.
 
@@ -602,15 +602,15 @@ The EAD fields of EDHOC must not be used for generic application data. Examples 
 
 ### Padding {#padding}
 
-EDHOC message_1 and the plaintext of message_2, message_3 and message_4 can be padded with the use of EAD fields. Padding is obtained by using the EAD item with ead_label = 0 and a random byte string of appropriate length as ead_value, noting that the ead_label and the CBOR encoding of ead_value also adds bytes.
+EDHOC message_1 and the plaintext of message_2, message_3 and message_4 can be padded with the use of the corresponding EAD_x field, for x  = 1, 2, 3, 4. Padding is obtained by using an EAD item with ead_label = 0 and a random byte string of appropriate length as ead_value, noting that the ead_label and the CBOR encoding of ead_value also adds bytes. For example:
 
-* One byte padding is achieved by omitting the ead_value.
+* One byte padding is achieved by omitting the ead_value:
    * EAD_x = 0x00
-* Two byte padding is achieved with the empty byte string as ead_value.
+* Two byte padding is achieved with the empty byte string as ead_value:
    * ead_value = 0x40
    * EAD_x = 0x0040
 
-An EAD item with ead_label = 0 is intended to be discarded by the receiving application.
+Multiple occurances of EAD items with ead_label = 0 are allowed. Certain padding lengths require the use of at least two such EAD items. An EAD item with ead_label = 0 is intended to be discarded by the receiving application.
 
 
 ## Application Profile {#applicability}
