@@ -571,7 +571,7 @@ The Initiator needs to have a list of cipher suites it supports in order of pref
 
 ## Ephemeral Public Keys {#cose_key}
 
-The ephemeral public keys in EDHOC (G_X and G_Y) use compact representation of elliptic curve points, see {{comrep}}. In COSE compact representation is achieved by formatting the ECDH ephemeral public keys as COSE_Keys of type EC2 or OKP according to Sections 7.1 and 7.2 of {{RFC9053}}, but only including the 'x' parameter in G_X and G_Y. For Elliptic Curve Keys of type EC2, compact representation MAY be used also in the COSE_Key. COSE always use compact output for Elliptic Curve Keys of type EC2. If the COSE implementation requires a 'y' parameter, the value y = false or a calculated y-coordinate can be used, see {{comrep}}.
+The ephemeral public keys in EDHOC (G_X and G_Y) use compact representation of elliptic curve points, see {{comrep}}. In COSE compact representation is achieved by formatting the ECDH ephemeral public keys as COSE_Keys of type EC2 or OKP according to Sections 7.1 and 7.2 of {{RFC9053}}, but only including the 'x' parameter in G_X and G_Y. For Elliptic Curve Keys of type EC2, compact representation MAY be used also in the COSE_Key. COSE always uses compact output for Elliptic Curve Keys of type EC2. If the COSE implementation requires a 'y' parameter, the value y = false or a calculated y-coordinate can be used, see {{comrep}}.
 
 ## External Authorization Data (EAD) {#AD}
 
