@@ -1816,7 +1816,7 @@ message_1 = (
   SUITES_I : suites,
   G_X : bstr,
   C_I : bstr / -24..23,
-  ? EAD_1 : ead,
+  ? EAD_1,
 )
 
 message_2 = (
