@@ -425,7 +425,7 @@ Cryptographically, EDHOC does not put requirements on the lower layers. EDHOC is
 * message loss,
 * message reordering,
 * message duplication,
-* fragmentation,
+* fragmentation and reassembly,
 * demultiplex EDHOC messages from other types of messages,
 * denial-of-service protection,
 * message correlation.
