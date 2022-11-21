@@ -1806,10 +1806,7 @@ ead = (
   ? ead_value : bstr,
 )
 
-EAD_1 = 1* ead
-EAD_2 = 1* ead
-EAD_3 = 1* ead
-EAD_4 = 1* ead
+EAD_x = 1* ead
 
 message_1 = (
   METHOD : int,
@@ -1967,7 +1964,7 @@ Conversely, the security application may need to wait for EDHOC message verifica
 
 The security application may reuse EDHOC protocol fields which therefore need to be available to the application. For example, the security application may use the same crypto algorithms as in the EDHOC session and therefore needs access to the selected cipher suite (or the whole SUITES_I). The application may use the ephemeral public keys G_X and G_Y, as ephemeral keys or as nonces, see {{I-D.selander-ace-ake-authz}}.
 
-The processing of the EAD item (ead_label, ead_value) by the security application needs to be described in the specification where the ead_label is registered, see {{iana-ead}}, including the ead_value for each message and actions in case of errors. An application may support multiple security applications that make use of EAD, which may result in multiple EAD items in one EAD field, see {{AD}}. Any dependencies on security applications with previously registered EAD items needs to be documented, and the processing needs to consider their simultaneous use.
+The processing of the EAD item (ead_label, ? ead_value) by the security application needs to be described in the specification where the ead_label is registered, see {{iana-ead}}, including the optional ead_value for each message and actions in case of errors. An application may support multiple security applications that make use of EAD, which may result in multiple EAD items in one EAD field, see {{AD}}. Any dependencies on security applications with previously registered EAD items needs to be documented, and the processing needs to consider their simultaneous use.
 
 Since data carried in EAD may not be protected, or be processed by the application before the EDHOC message is verified, special considerations need to be made such that it does not violate security and privacy requirements of the service which uses this data, see {{unprot-data}}. The content in an EAD item may impact the security properties provided by EDHOC. Security applications making use of the EAD items must perform the necessary security analysis.
 
