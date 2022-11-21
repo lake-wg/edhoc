@@ -457,7 +457,7 @@ Note that the type of authentication key, authentication credential, and the ide
 
 The authentication key (i.e., the public key used for authentication) MUST be a signature key or static Diffie-Hellman key. The Initiator and the Responder MAY use different types of authentication keys, e.g., one uses a signature key and the other uses a static Diffie-Hellman key.
 
-The authentication key algorithm needs to be compatible with the method and the cipher suite (see {{cs}}). The authentication key algorithm needs to be compatible with the EDHOC key exchange algorithm when static Diffie-Hellman authentication is used, and compatible with the EDHOC signature algorithm when signature authentication is used.
+The authentication key algorithm needs to be compatible with the method and the selected cipher suite (see {{cs}}). The authentication key algorithm needs to be compatible with the EDHOC key exchange algorithm when static Diffie-Hellman authentication is used, and compatible with the EDHOC signature algorithm when signature authentication is used.
 
 Note that for most signature algorithms, the signature is determined by the signature algorithm and the authentication key algorithm together. When using static Diffie-Hellman keys the Initiator's and Responder's private authentication keys are denoted I and R, respectively, and the public authentication keys are denoted G_I and G_R, respectively.
 
@@ -470,14 +470,14 @@ The authentication credentials, CRED_I and CRED_R, contain the public authentica
 
 EDHOC relies on COSE for identification of credentials (see {{id_cred}}), for example X.509 certificates {{RFC5280}}, C509 certificates {{I-D.ietf-cose-cbor-encoded-cert}}, CWTs {{RFC8392}} and CWT Claims Sets (CCS) {{RFC8392}}. When the identified credential is a chain or a bag, the authentication credential CRED_x is just the end entity X.509 or C509 certificate / CWT.
 
-Since CRED_R is used in the integrity verification, see {{asym-msg2-proc}}, it needs to be specified such that it is identical when used by Initiator or Responder. Similarly for CRED_I, see {{asym-msg3-proc}}. The Initiator and Responder are expected to agree on a specific encoding of the credential, see {{applicability}}.
+Since CRED_R is used in the integrity verification, see {{asym-msg2-proc}}, it needs to be specified such that it is identical when used by Initiator or Responder. Similarly for CRED_I, see {{asym-msg3-proc}}. The Initiator and Responder are expected to agree on the specific encoding of the credentials, see {{applicability}}.
 
 It is RECOMMENDED that the COSE 'kid' parameter, when used to identify the authentication credential, refers to a specific encoding. The Initiator and Responder SHOULD use an available authentication credential (transported in EDHOC or otherwise provisioned) without re-encoding. If for some reason re-encoding of the authentication credential may occur, then a potential common encoding for CBOR based credentials is bytewise lexicographic order of their deterministic encodings as specified in Section 4.2.1 of {{RFC8949}}.
 
 * When the authentication credential is an X.509 certificate, CRED_x SHALL be the DER encoded certificate, encoded as a bstr {{I-D.ietf-cose-x509}}.
 * When the authentication credential is a C509 certificate, CRED_x SHALL be the C509Certificate {{I-D.ietf-cose-cbor-encoded-cert}}.
-* When the authentication credential is a COSE_Key in a CWT, CRED_x SHALL be the untagged CWT.
-* When the authentication credential is a COSE_Key but not in a CWT, CRED_x SHALL be an untagged CCS.
+* When the authentication credential is a CWT including a COSE_Key, then CRED_x SHALL be the untagged CWT.
+* When the authentication credential includes a COSE_Key but is not in a CWT, CRED_x SHALL be an untagged CCS.
    * Naked COSE_Keys are thus dressed as CCS when used in EDHOC, which is done by prefixing the COSE_Key with 0xA108A101.
 
 An example of a CRED_x is shown below:
@@ -513,7 +513,7 @@ EDHOC relies on COSE for identification of credentials and supports all credenti
 
 ID_CRED_I and ID_CRED_R are COSE header maps and contains one or more COSE header parameters. ID_CRED_I and ID_CRED_R MAY contain different header parameters. The header parameters typically provide some information about the format of the credential.
 
-Note that COSE header parameters in ID_CRED_x are used to identify the sender's credential. There is therefore no reason to use the "-sender" header parameters, such as x5t-sender, defined in Section 3 of {{I-D.ietf-cose-x509}}. Instead, the corresponding parameter without "-sender", such as x5t, SHOULD be used.
+Note that COSE header parameters in ID_CRED_x are used to identify the message sender's credential. There is therefore no reason to use the "-sender" header parameters, such as x5t-sender, defined in Section 3 of {{I-D.ietf-cose-x509}}. Instead, the corresponding parameter without "-sender", such as x5t, SHOULD be used.
 
 Example: X.509 certificates can be identified by a hash value using the 'x5t' parameter:
 
@@ -523,7 +523,7 @@ Example: CWT or CCS can be identified by a key identifier using the 'kid' parame
 
 * ID_CRED_x = { 4 : kid_x }, where kid_x : kid, for x = I or R.
 
-The value of a COSE 'kid' parameter is a CBOR byte string. For a more compact representation, the CBOR map is replaced by a byte string, see the definitions of plaintext in {{asym-msg2-proc}} and {{asym-msg3-proc}}. To allow one-byte encodings of ID_CRED_x with key identifiers 'kid' the integer representation of byte string identifiers in {{bstr-repr}} MUST be applied.
+The value of a COSE 'kid' parameter is a CBOR byte string. For a more compact representation, the CBOR map is replaced by a byte string, see the definitions of plaintext in {{asym-msg2-proc}} and {{asym-msg3-proc}}. To allow one-byte encodings of ID_CRED_x with key identifiers 'kid', the same representation used for EDHOC connection identifiers and defined in {{bstr-repr}} MUST be applied.
 
 Examples:
 
