@@ -1752,7 +1752,7 @@ Compact representation does not change any requirements on validation, see {{cry
 The following may be needed for validation or compatibility with APIs that do not support compact representation or do not support the full {{SECG}} format:
 
 * If a compressed y-coordinate is required, then the value ~yp set to zero can be used. The compact representation described above can in such a case be transformed into the SECG point compressed format by prepending it with the single byte 0x02 (i.e., M = 0x02 \|\| X).
-* If a uncompressed y-coordinate is required, then a y-coordinate has to be calculated following Section 2.3.4 of {{SECG}} or Appendix C of {{RFC6090}}. Any of the square roots can be used.
+* If a uncompressed y-coordinate is required, then a y-coordinate has to be calculated following Section 2.3.4 of {{SECG}} or Appendix C of {{RFC6090}}. Any of the square roots (see {{SECG}} or {{RFC6090}}) can be used.
 
 For example: The curve P-256 has the parameters (using the notation in {{RFC6090}})
 
@@ -1764,7 +1764,7 @@ Given an example x
 
 * x = 115792089183396302095546807154740558443406795108653336398970697772788799766525
 
-we can calculate y = w = (x^3 + a * x + b)^((p + 1)/4) (mod p)
+we can calculate y as the square root w = (x^3 + a * x + b)^((p + 1)/4) (mod p)
 
 * y = 83438718007019280682007586491862600528145125996401575416632522940595860276856
 
