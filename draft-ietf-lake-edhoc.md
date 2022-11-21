@@ -590,7 +590,7 @@ ead = (
 )
 ~~~~~~~~~~~
 
-A security application using external authorization data needs to register a positive ead_label and optionally an associated ead_value format, for each EAD item it uses (see {{iana-ead}}). Each application registers its own EAD items and specifies the associated processing and security considerations. The application may define multiple uses of certain EAD items, e.g., the same EAD item may be used in different EDHOC messages with the same application. Multiple occurances of an EAD item in one EAD field may also be specified.
+A security application using external authorization data needs to register a positive ead_label and optionally an associated ead_value format, for each EAD item it uses (see {{iana-ead}}). Each application registers its own EAD items and specifies the associated processing and security considerations. The application may define multiple uses of certain EAD items, e.g., the same EAD item may be used in different EDHOC messages with the same application. Multiple occurrences of an EAD item in one EAD field may also be specified.
 
 An EAD item can be either critical or non-critical, determined by the sign of the ead_label in the EAD item transported in the EDHOC message. A negative value indicates that the EAD item is critical and a non-negative value indicates that this EAD item is non-critical. The specification registering a new EAD label needs to describe under what conditions the EAD item is critical or non-critical, and thus whether the ead_label is used with negative or positive sign. ead_label = 0 is used for padding, see {{padding}}.
 
@@ -610,7 +610,7 @@ Padding is obtained by using an EAD item with ead_label = 0 and a random byte st
    * ead_value = 0x40
    * EAD_x = 0x0040
 
-Multiple occurances of EAD items with ead_label = 0 are allowed. Certain padding lengths require the use of at least two such EAD items.
+Multiple occurrences of EAD items with ead_label = 0 are allowed. Certain padding lengths require the use of at least two such EAD items.
 
 ## Application Profile {#applicability}
 
@@ -1770,7 +1770,7 @@ The Concise Binary Object Representation (CBOR) {{RFC8949}} is a data format des
 
 CBOR data items are encoded to or decoded from byte strings using a type-length-value encoding scheme, where the three highest order bits of the initial byte contain information about the major type. CBOR supports several different types of data items, in addition to integers (int, uint), simple values, byte strings (bstr), and text strings (tstr), CBOR also supports arrays \[\]  of data items, maps {} of pairs of data items, and sequences {{RFC8742}} of data items. Some examples are given below.
 
-The EDHOC specification sometimes use CDDL names in CBOR diagnostic notation as in e.g., << ID_CRED_R, ? EAD_2 >>. This means that EAD_2 is optional and that ID_CRED_R and EAD_2 should be substituted with their values before evaluation. I.e., if ID_CRED_R = { 4 : h'' } and EAD_2 is omitted then << ID_CRED_R, ? EAD_2 >> = << { 4 : h'' } >>, which encodes to 0x43a10440. We also make use of the occurrance symbol "\*", like in e.g.,  2* int, meaning two or more CBOR integers.
+The EDHOC specification sometimes use CDDL names in CBOR diagnostic notation as in e.g., << ID_CRED_R, ? EAD_2 >>. This means that EAD_2 is optional and that ID_CRED_R and EAD_2 should be substituted with their values before evaluation. I.e., if ID_CRED_R = { 4 : h'' } and EAD_2 is omitted then << ID_CRED_R, ? EAD_2 >> = << { 4 : h'' } >>, which encodes to 0x43a10440. We also make use of the occurrence symbol "\*", like in e.g.,  2* int, meaning two or more CBOR integers.
 
 For a complete specification and more examples, see {{RFC8949}} and {{RFC8610}}. We recommend implementors to get used to CBOR by using the CBOR playground {{CborMe}}.
 
