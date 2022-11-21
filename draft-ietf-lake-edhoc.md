@@ -571,7 +571,7 @@ The Initiator needs to have a list of cipher suites it supports in order of pref
 
 ## Ephemeral Public Keys {#cose_key}
 
-The ephemeral public keys in EDHOC (G_X and G_Y) use compact representation of elliptic curve points, see {{comrep}}. In COSE compact representation is achieved by formatting the ECDH ephemeral public keys as COSE_Keys of type EC2 or OKP according to Sections 7.1 and 7.2 of {{RFC9053}}, but only including the 'x' parameter in G_X and G_Y. For Elliptic Curve Keys of type EC2, compact representation MAY be used also in the COSE_Key.  If the COSE implementation requires a 'y' parameter, the value y = false SHALL be used. COSE always use compact output for Elliptic Curve Keys of type EC2.
+The ephemeral public keys in EDHOC (G_X and G_Y) use compact representation of elliptic curve points, see {{comrep}}. In COSE compact representation is achieved by formatting the ECDH ephemeral public keys as COSE_Keys of type EC2 or OKP according to Sections 7.1 and 7.2 of {{RFC9053}}, but only including the 'x' parameter in G_X and G_Y. For Elliptic Curve Keys of type EC2, compact representation MAY be used also in the COSE_Key. COSE always uses compact output for Elliptic Curve Keys of type EC2. If the COSE implementation requires a 'y' parameter, the value y = false or a calculated y-coordinate can be used, see {{comrep}}.
 
 ## External Authorization Data (EAD) {#AD}
 
@@ -1758,12 +1758,26 @@ In EDHOC, compact representation is used for the ephemeral public keys (G_X and 
 
 The encoding of the point at infinity is not supported.
 
-Compact representation does not change any requirements on validation, see {{crypto}}. The following may be needed for validation or compatibility with APIs:
+Compact representation does not change any requirements on validation, see {{crypto}}. Using compact representation has some security benefits. An implementation does not need to check that the point is not the point at infinity (the identity element). Similarly, as not even the sign of the y-coordinate is encoded, compact representation trivially avoids so called "benign malleability" attacks where an attacker changes the sign, see {{SECG}}.
 
-* If a y-coordinate is required then the value ~yp SHALL be set to zero
-* The compact representation described above can in such a case be transformed into the SECG point compressed format by prepending it with the single byte 0x02 (i.e., M = 0x02 \|\| X).
+The following may be needed for validation or compatibility with APIs that do not support compact representation or do not support the full {{SECG}} format:
 
-Using compact representation has some security benefits. An implementation does not need to check that the point is not the point at infinity (the identity element). Similarly, as not even the sign of the y-coordinate is encoded, compact representation trivially avoids so called "benign malleability" attacks where an attacker changes the sign, see {{SECG}}.
+* If a compressed y-coordinate is required, then the value ~yp set to zero can be used. The compact representation described above can in such a case be transformed into the SECG point compressed format by prepending it with the single byte 0x02 (i.e., M = 0x02 \|\| X).
+* If a uncompressed y-coordinate is required, then a y-coordinate has to be calculated following Section 2.3.4 of {{SECG}} or Appendix C of {{RFC6090}}. Any of the square roots (see {{SECG}} or {{RFC6090}}) can be used.
+
+For example: The curve P-256 has the parameters (using the notation in {{RFC6090}})
+
+* p = 2^256 − 2^224 + 2^192 + 2^96 − 1
+* a = -3
+* b = 41058363725152142129326129780047268409114441015993725554835256314039467401291
+
+Given an example x
+
+* x = 115792089183396302095546807154740558443406795108653336398970697772788799766525
+
+we can calculate y as the square root w = (x^3 + a * x + b)^((p + 1)/4) (mod p)
+
+* y = 83438718007019280682007586491862600528145125996401575416632522940595860276856
 
 # Use of CBOR, CDDL, and COSE in EDHOC {#CBORandCOSE}
 
