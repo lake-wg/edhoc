@@ -385,7 +385,7 @@ If connection identifiers are used by an application protocol for which EDHOC es
 
 To allow identifiers with minimal overhead on the wire, certain byte strings are defined to have integer representations.
 
-The integers with one-byte CBOR encoding are -24, ..., 23, see {{fig-int-one-byte}}. This correspondence between integers and byte strings is a natural mapping between the byte strings with CBOR diagnostic notation h'00', h'01', ..., h'37' (except h'18', h'19', ..., h'1F') and integers which are CBOR encoded as one byte.
+The integers with one-byte CBOR encoding are -24, ..., 23, see {{fig-int-one-byte}}.
 
 ~~~~~~~~~~~
 Integer:                -24  -23   ...   -2   -1    0    1   ...   23
@@ -394,19 +394,19 @@ CBOR encoding (1 byte):  37   36   ...   21   20   00   01   ...   17
 {: #fig-int-one-byte title="One-Byte CBOR Encoded Integers"}
 {: artwork-align="center"}
 
-The byte strings which coincide with a one-byte CBOR encoding of an integer MUST be represented by the CBOR encoding of that integer. Other byte strings are encoded as normal CBOR byte strings.
+The byte strings which coincide with a one-byte CBOR encoding of an integer MUST be represented by the CBOR encoding of that integer. Other byte strings are simply encoded as CBOR byte strings.
 
 For example:
 
-* h'21' is represented by 0x21 (CBOR encoding of the integer -2), not by 0x4121.
-* h'0D' is represented by 0x0D (CBOR encoding of the integer 13), not by 0x410D.
-* h'18' is represented by 0x4118.
-* h'38' is represented by 0x4138.
-* h'ABCD' is represented by 0x42ABCD.
+* 0x21 is represented by 0x21 (CBOR encoding of the integer -2), not by 0x4121 (CBOR encoding of the byte string 0x21).
+* 0x0D is represented by 0x0D (CBOR encoding of the integer 13), not by 0x410D (CBOR encoding of the byte string 0x0D).
+* 0x18 is represented by 0x4118 (CBOR encoding of the byte string 0x18).
+* 0x38 is represented by 0x4138 (CBOR encoding of the byte string 0x38).
+* 0xABCD is represented by 0x42ABCD (CBOR encoding of the byte string 0xABCD).
 
-One way to view this representation of byte strings is as a transport encoding: A byte string which parses as a CBOR int in the range -24, ..., 23 is just copied directly into the message, a byte string which doesn't is encoded as a CBOR bstr during transport.
+One way to view this representation of byte strings as a transport encoding: A byte string which parses as the one-byte CBOR encoding of an integer (i.e. integer in the interval -24, ..., 23) is just copied directly into the message, a byte string which doesn't is encoded as a CBOR byte string during transport.
 
-Implementation Note: When implementing the byte string identifier representation it can in some programming languages help to define a new type, or other data structure, which (in its user facing API) behaves like a byte string, but when serializing to CBOR produces a byte string or an integer depending on its value.
+Implementation Note: When implementing the byte string identifier representation it can in some programming languages help to define a new type, or other data structure, which (in its user facing API) behaves like a byte string, but when serializing to CBOR produces a CBOR byte string or a CBOR integer depending on its value.
 
 ### Use of Connection Identifiers with OSCORE {#ci-oscore}
 
