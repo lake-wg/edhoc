@@ -590,13 +590,11 @@ ead = (
 )
 ~~~~~~~~~~~
 
-A security application using external authorization data needs to register a ead_label and an associated optional ead_value format for each EAD item it uses (see {{iana-ead}}), and specify the processing and the security considerations. Each application registers its own EAD items and defines the associated operations. The application may define multiple uses of certain EAD items, e.g., the same EAD item may be used in different EDHOC messages with the same application. Multiple occurances of an EAD item in one EAD field may also be specified.
+A security application using external authorization data needs to register a positive ead_label and optionally an associated ead_value format, for each EAD item it uses (see {{iana-ead}}). Each application registers its own EAD items and specifies the associated processing and security considerations. The application may define multiple uses of certain EAD items, e.g., the same EAD item may be used in different EDHOC messages with the same application. Multiple occurances of an EAD item in one EAD field may also be specified.
 
-An EAD item can be either critical or non-critical, determined by the sign of the ead_label in the transported EAD item included in the EDHOC message. A negative value indicates that the EAD item is critical and a non-negative value indicates that this EAD item is non-critical. ead_label = 0 is used for padding, see {{padding}}.
+An EAD item can be either critical or non-critical, determined by the sign of the ead_label in the EAD item transported in the EDHOC message. A negative value indicates that the EAD item is critical and a non-negative value indicates that this EAD item is non-critical. The specification registering a new EAD label needs to describe under what conditions the EAD item is critical or non-critical, and thus whether the ead_label is used with negative or positive sign. ead_label = 0 is used for padding, see {{padding}}.
 
 If an endpoint receives a critical EAD item it does not recognize or a critical EAD item that contains information that it cannot process, the EDHOC protocol MUST be discontinued. A non-critical EAD item can be ignored.
-
-The specification registering a new EAD label needs to describe under what conditions the EAD item is critical or non-critical.
 
 The EAD fields of EDHOC must not be used for generic application data. Examples of the use of EAD are provided in {{ead-appendix}}.
 
