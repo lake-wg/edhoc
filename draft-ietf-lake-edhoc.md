@@ -288,7 +288,7 @@ The parties exchanging messages are called Initiator (I) and Responder (R). They
 
 * Sig(I; . ) and Sig(R; . ) denote signatures made with the private authentication key of I and R, respectively.
 
-* Enc(), AEAD(), and MAC() denotes encryption, authenticated encryption with additional data, and message authentication code using keys derived from the shared secret.
+* Enc(), AEAD(), and MAC() denotes encryption, authenticated encryption with additional data, and message authentication code - crypto algorithms applied with keys derived from one or more shared secrets calculated during the protocol.
 
 In order to create a "full-fledged" protocol some additional protocol elements are needed. EDHOC adds:
 
@@ -372,7 +372,7 @@ EDHOC includes the selection of connection identifiers (C_I, C_R) identifying a 
 
 Connection identifiers may be used to correlate EDHOC messages and facilitate the retrieval of protocol state during EDHOC execution (see {{transport}}) or in subsequent applications of  EDHOC, e.g., in OSCORE (see {{ci-oscore}}). The connection identifiers do not have any cryptographic purpose in EDHOC except facilitating the retrieval of security data associated to the protocol state.
 
-Connection identifiers in EDHOC are intrinsically byte strings. Most constrained devices only have a few connections for which short identifiers may be sufficient. In some cases minimum length identifiers are necessary to comply with overhead requirements. However, CBOR byte strings - with the exception of the empty byte string h’’ which encodes as one byte (0x40) - are encoded as two or more bytes. To enable one-byte encoding of certain byte strings while maintaining CBOR encoding, EDHOC represents certain byte string identifiers as CBOR ints on the wire, see {{bstr-repr}}.
+Connection identifiers in EDHOC are intrinsically byte strings. Most constrained devices only have a few connections for which short identifiers may be sufficient. In some cases minimum length identifiers are necessary to comply with overhead requirements. However, CBOR byte strings - with the exception of the empty byte string h’’ which encodes as one byte (0x40) - are encoded as two or more bytes. To enable one-byte encoding of certain byte strings while maintaining CBOR encoding, EDHOC represents certain identifiers as CBOR ints on the wire, see {{bstr-repr}}.
 
 
 ### Selection of Connection Identifiers
