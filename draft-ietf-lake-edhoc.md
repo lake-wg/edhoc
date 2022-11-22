@@ -744,9 +744,9 @@ where L = 8*length, the output length in bits.
 
 * hash_length - length of output size of the EDHOC hash algorithm of the selected cipher suite
 
-* key_length - length of the encryption key of the EDHOC AEAD algorithm
+* key_length - length of the encryption key of the EDHOC AEAD algorithm of the selected cipher suite
 
-* iv_length - length of the initialization vector of the EDHOC AEAD algorithm
+* iv_length - length of the initialization vector of the EDHOC AEAD algorithm of the selected cipher suite
 
 Further details of the key derivation and how the output keying material is used is specified in {{asym}}.
 
