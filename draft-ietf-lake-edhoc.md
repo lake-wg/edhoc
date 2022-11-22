@@ -932,7 +932,7 @@ The Responder SHALL compose message_2 as follows:
 
       * PAD_2 = 1* `true` (see {{CBOR}}) is padding that may be used to hide the length of the unpadded plaintext
 
-   * Compute KEYSTREAM_2 as in {{expand}}, where plaintext_length is the length of PLAINTEXT_2.
+   * Compute KEYSTREAM_2 as in {{expand}}, where plaintext_length is the length of PLAINTEXT_2. For the case of plaintext_length exceeding the EDHOC-KDF output size, see {{large-plaintext_2}}.
 
    * CIPHERTEXT_2 = PLAINTEXT_2 XOR KEYSTREAM_2
 
