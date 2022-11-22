@@ -2058,7 +2058,7 @@ An application profile may specify if it supports or not the method described in
 
 To provide forward secrecy in an even more efficient way than re-running EDHOC, this section specifies the optional function EDHOC-KeyUpdate in terms of EDHOC-KDF and PRK_out.
 
-When EDHOC-KeyUpdate is called, a new PRK_out is calculated as a "hash" of the old PRK_out using the Expand function as illustrated by the following pseudocode. The change of PRK_out causes a change to PRK_exporter and keys derived using EDHOC-Exporter.
+When EDHOC-KeyUpdate is called, a new PRK_out is calculated as a "hash" of the old PRK_out using the Expand function as illustrated by the following pseudocode. The change of PRK_out causes a change to PRK_exporter which enables the derivation of new application keys superseding the old ones, using EDHOC-Exporter, see {{exporter}}.
 
 ~~~~~~~~~~~
    EDHOC-KeyUpdate( context ):
@@ -2068,7 +2068,7 @@ When EDHOC-KeyUpdate is called, a new PRK_out is calculated as a "hash" of the o
 
 where hash_length denotes the output size in bytes of the EDHOC hash algorithm of the selected cipher suite.
 
-The EDHOC-KeyUpdate takes a context as input to enable binding of the updated PRK_out to some event that triggered the key update. The Initiator and the Responder need to agree on the context, which can, e.g., be a counter or a pseudorandom number such as a hash. To provide forward secrecy the old PRK_out and derived keys must be deleted as soon as they are not needed. When to delete the old keys and how to verify that they are not needed is up to the application.
+The EDHOC-KeyUpdate takes a context as input to enable binding of the updated PRK_out to some event that triggered the key update. The Initiator and the Responder need to agree on the context, which can, e.g., be a counter or a pseudorandom number such as a hash. To provide forward secrecy the old PRK_out and keys derived from it (old PRK_exporter and old application keys) must be deleted as soon as they are not needed. When to delete the old keys and how to verify that they are not needed is up to the application.
 
 An application using EDHOC-KeyUpdate needs to store PRK_out. Compromise of PRK_out leads to compromise of all keying material derived with the EDHOC-Exporter since the last invocation of the EDHOC-KeyUpdate function.
 
