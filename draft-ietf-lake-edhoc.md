@@ -952,7 +952,7 @@ The Initiator SHALL process message_2 as follows:
 
 * Obtain the authentication credential (CRED_R) and the authentication key of R from the application (or by other means).
 
-* Verify Signature_or_MAC_2 using the algorithm in the selected cipher suite. The verification process depends on the method, see {{asym-msg2-proc}}.
+* Verify Signature_or_MAC_2 using the algorithm in the selected cipher suite. The verification process depends on the method, see {{asym-msg2-proc}}. Make the result of the verification available to the application.
 
 If any processing step fails, the Initiator MUST send an EDHOC error message back, formatted as defined in {{error}}, and the session MUST be discontinued.
 
@@ -1031,7 +1031,7 @@ The Responder SHALL process message_3 as follows:
 
 * Obtain the authentication credential (CRED_I) and the authentication key of I from the application (or by other means).
 
-* Verify Signature_or_MAC_3 using the algorithm in the selected cipher suite. The verification process depends on the method, see {{asym-msg3-proc}}.
+* Verify Signature_or_MAC_3 using the algorithm in the selected cipher suite. The verification process depends on the method, see {{asym-msg3-proc}}. Make the result of the verification available to the application.
 
 *  Make the connection identifiers (C_I, C_R) and the application algorithms in the selected cipher suite available to the application.
 
