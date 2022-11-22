@@ -601,12 +601,14 @@ The EAD fields of EDHOC must not be used for generic application data. Examples 
 
 EDHOC message_1 and the plaintext of message_2, message_3 and message_4 can be padded with the use of the corresponding EAD_x field, for x = 1, 2, 3, 4. Padding is intended to be discarded by the receiving application.
 
-Padding is obtained by using an EAD item with ead_label = 0 and a random byte string of appropriate length as ead_value, noting that the ead_label and the CBOR encoding of ead_value also add bytes. For example:
+Padding is obtained by using an EAD item with ead_label = 0 and a pseudorandom byte string of appropriate length as ead_value, noting that the ead_label and the CBOR encoding of ead_value also add bytes. Examples:
 
 * One byte padding is achieved by omitting the ead_value:
    * EAD_x = 0x00
-* Two byte padding is achieved with the empty byte string (0x40) as ead_value:
+* Two bytes padding using the empty byte string (0x40) as ead_value:
    * EAD_x = 0x0040
+* Three bytes padding constructed from the PRNG output 0xe9 encoded as ead_value:
+   * EAD_x = 0x0041e9
 
 Multiple occurrences of EAD items with ead_label = 0 are allowed. Certain padding lengths require the use of at least two such EAD items.
 
