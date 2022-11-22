@@ -1611,7 +1611,7 @@ Expert reviewers should take into consideration the following points:
 
 # Use with OSCORE and Transfer over CoAP {#transfer}
 
-This appendix describes how to derive an OSCORE security context when OSCORE is used with EDHOC, and how to transfer EDHOC messages over CoAP.
+This appendix describes how to derive an OSCORE security context when EDHOC is used to key OSCORE, and how to transfer EDHOC messages over CoAP.
 
 ## Deriving the OSCORE Security Context {#oscore-ctx-derivation}
 
@@ -1649,25 +1649,21 @@ This section specifies one instance for how EDHOC can be transferred as an excha
 By default, the CoAP client is the Initiator and the CoAP server is the Responder, but the roles SHOULD be chosen to protect the most sensitive identity, see {{security}}. Client applications can use the resource type "core.edhoc" to discover a server's EDHOC resource, i.e., where to send a request for executing the EDHOC protocol, see {{rt}}. According to this specification, EDHOC is transferred in POST requests and 2.04 (Changed) responses to the Uri-Path: "/.well-known/edhoc", see {{well-known}}. An application may define its own path that can be discovered, e.g., using a resource directory {{RFC9176}}.
 
 By default, the message flow is as follows:
-EDHOC message_1 is sent in the payload of a POST request from the client to the
-server's resource for EDHOC. EDHOC message_2 or the EDHOC error message is
-sent from the server to the client in the payload of the response, in the former case
-with response code 2.04 (Changed), in the latter
-   with response code as specified in {{edhoc-oscore-over-coap}}.
-   EDHOC message_3 or the EDHOC error message is sent from
-   the client to the server's resource in the payload of a POST request.
-   If EDHOC message_4 is used, or in case of an error message, it is sent from the server to the client in the payload of the response, with response codes analogously to message_2. In case of an error message in response to message_4, it is sent analogously to errors in response to message_2.
+
+* EDHOC message_1 is sent in the payload of a POST request from the client to the server's resource for EDHOC.
+* EDHOC message_2 or the EDHOC error message is sent from the server to the client in the payload of the response, in the former case with response code 2.04 (Changed), in the latter with response code as specified in {{edhoc-oscore-over-coap}}.
+* EDHOC message_3 or the EDHOC error message is sent from the client to the server's resource in the payload of a POST request.
+* If EDHOC message_4 is used, or in case of an error message, it is sent from the server to the client in the payload of the response, with response codes analogously to message_2. In case of an error message sent in response to message_4, it is sent analogously to error message sent in response to message_2.
 
 In order for the server to correlate a message received from a client to a message previously sent in the same EDHOC session over CoAP, messages sent by the client are prepended with the CBOR serialization of the connection identifier which the server has chosen. This applies independently of if the CoAP server is Responder or Initiator.
 
-* For the default case when the server is Responder, message_3 is sent from the client prepended with the identifier C_R. In this case message_1 is also sent by the client, and to indicate that this is a new EDHOC session it is prepended with a dummy identifier, the CBOR simple value `true` (0xf5), since the server has not selected C_R yet. See {{fig-coap1}}.
+* For the default case when the server is Responder, message_3 is sent from the client prepended with the identifier C_R. In this case message_1 is also sent by the client, and to indicate that this is a new EDHOC session it is prepended with a dummy identifier, the CBOR simple value `true` (0xf5), since the server has not selected C_R yet. See {{fig-coap1}} for an example.
 
-* In the case when the server is Initiator, message_2 (and, if present, message_4) is sent from the client prepended with the identifier C_I. See {{fig-coap2}}.
+* In the case when the server is Initiator, message_2 (and, if present, message_4) is sent from the client prepended with the identifier C_I. See {{fig-coap2}} for an example.
 
 The prepended identifiers are encoded in CBOR and thus self-delimiting. The integer representation of identifiers described in {{bstr-repr}} is used, when applicable. They are sent in front of the actual EDHOC message to keep track of messages in an EDHOC session, and only the part of the body following the identifier is used for EDHOC processing. In particular, the connection identifiers within the EDHOC messages are not impacted by the prepended identifiers.
 
-The application/edhoc+cbor-seq media type does not apply to these messages;
-their media type is application/cid-edhoc+cbor-seq.
+The application/edhoc+cbor-seq media type does not apply to a CoAP message that transports an EDHOC message prepended by a connection identifier; its media type is application/cid-edhoc+cbor-seq.
 
 An example of a successful EDHOC exchange using CoAP is shown in {{fig-coap1}}. In this case the CoAP Token enables correlation on the Initiator side, and the prepended C_R enables correlation on the Responder (server) side.
 
@@ -1729,7 +1725,7 @@ EDHOC does not restrict how error messages are transported with CoAP, as long as
 
 ### Transferring EDHOC and OSCORE over CoAP {#edhoc-oscore-over-coap}
 
-When using EDHOC over CoAP for establishing an OSCORE Security Context, EDHOC error messages sent as CoAP responses MUST be sent in the payload of error responses, i.e., they MUST specify a CoAP error response code. In particular, it is RECOMMENDED that such error responses have response code either 4.00 (Bad Request) in case of client error (e.g., due to a malformed EDHOC message), or 5.00 (Internal Server Error) in case of server error (e.g., due to failure in deriving EDHOC keying material). The Content-Format of the error response MUST be set to application/edhoc+cbor-seq, see {{content-format}}.
+When using EDHOC over CoAP, EDHOC error messages sent as CoAP responses MUST be sent in the payload of error responses, i.e., they MUST specify a CoAP error response code. In particular, it is RECOMMENDED that such error responses have response code either 4.00 (Bad Request) in case of client error (e.g., due to a malformed EDHOC message), or 5.00 (Internal Server Error) in case of server error (e.g., due to failure in deriving EDHOC keying material). The Content-Format of the error response MUST be set to application/edhoc+cbor-seq, see {{content-format}}.
 
 A method for combining EDHOC and OSCORE protocols in two round-trips is specified in {{I-D.ietf-core-oscore-edhoc}}. That specification also contains conversion from OSCORE Sender/Recipient IDs to EDHOC connection identifiers, web-linking and target attributes for discovering of EDHOC resources.
 
