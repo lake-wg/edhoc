@@ -579,16 +579,15 @@ In order to reduce round trips and the number of messages, or to simplify proces
 
 EDHOC allows processing of external authorization data (EAD) to be defined in a separate specification, and sent in dedicated fields of the four EDHOC messages (EAD_1, EAD_2, EAD_3, EAD_4). EAD is opaque data to EDHOC.
 
-Each EAD field is a CBOR sequence (see {{CBOR}}) consisting of one or more EAD items (ead_label, ? ead_value) as defined below:
+Each EAD field, EAD_x for x = 1, 2, 3 or 4, is a CBOR sequence (see {{CBOR}}) of one or more EAD items ead defined in {{fig-ead-item}}. See {{CDDL}} for the CDDL definitions.
 
 ~~~~~~~~~~~ CDDL
-EAD_x = 1* ead
-
 ead = (
   ead_label : int,
   ? ead_value : bstr,
 )
 ~~~~~~~~~~~
+{: #fig-ead-item title="Definition of EAD item."}
 
 A security application using external authorization data needs to register a positive ead_label and optionally an associated ead_value format, for each EAD item it uses (see {{iana-ead}}). Each application registers its own EAD items and describes the associated processing and security considerations. The application may define multiple uses of certain EAD items, e.g., the same EAD item may be used in different EDHOC messages with the same application. Multiple occurrences of an EAD item in one EAD field may also be specified.
 
@@ -600,7 +599,7 @@ The EAD fields of EDHOC must not be used for generic application data. Examples 
 
 ### Padding {#padding}
 
-EDHOC message_1 and the plaintext of message_2, message_3 and message_4 can be padded with the use of the corresponding EAD_x field, for x  = 1, 2, 3, 4. Padding is intended to be discarded by the receiving application.
+EDHOC message_1 and the plaintext of message_2, message_3 and message_4 can be padded with the use of the corresponding EAD_x field, for x = 1, 2, 3, 4. Padding is intended to be discarded by the receiving application.
 
 Padding is obtained by using an EAD item with ead_label = 0 and a random byte string of appropriate length as ead_value, noting that the ead_label and the CBOR encoding of ead_value also add bytes. For example:
 
@@ -856,6 +855,7 @@ message_1 = (
 )
 
 suites = [ 2* int ] / int
+EAD_1 = 1* ead
 ~~~~~~~~~~~
 
 where:
@@ -1794,7 +1794,7 @@ h'12cd'             0x4212cd             byte string
 ~~~~~~~~~~~~~~~~~~~~~~~
 {: artwork-align="center"}
 
-## CDDL Definitions
+## CDDL Definitions {#CDDL}
 
 This sections compiles the CDDL definitions for ease of reference.
 
@@ -1806,7 +1806,10 @@ ead = (
   ? ead_value : bstr,
 )
 
-EAD_x = 1* ead
+EAD_1 = 1* ead
+EAD_2 = 1* ead
+EAD_3 = 1* ead
+EAD_4 = 1* ead
 
 message_1 = (
   METHOD : int,
