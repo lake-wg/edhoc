@@ -56,6 +56,7 @@ normative:
   RFC7624:
   RFC7748:
   RFC7959:
+  RFC8126:
   RFC8174:
   RFC8376:
   RFC8392:
@@ -1337,7 +1338,7 @@ When parsing a received EDHOC message, implementations MUST terminate the protoc
 
 ## EDHOC Exporter Label Registry {#exporter-label}
 
-IANA has created a new registry titled "EDHOC Exporter Label" under the new group name "Ephemeral Diffie-Hellman Over COSE (EDHOC)". The registration procedure is "Expert Review". The columns of the registry are Label and Description. Label is a uint. Description is a text string. The initial contents of the registry are:
+IANA has created a new registry titled "EDHOC Exporter Label" under the new registry group "Ephemeral Diffie-Hellman Over COSE (EDHOC)". The registration procedure is "Expert Review" {{RFC8126}}. The columns of the registry are Label and Description. Label is a uint. Description is a text string. The initial contents of the registry are:
 
 <!-- TBD Labels for private use? -->
 
@@ -1354,7 +1355,7 @@ Description: Derived OSCORE Master Salt
 
 ## EDHOC Cipher Suites Registry {#suites-registry}
 
-IANA has created a new registry titled "EDHOC Cipher Suites" under the new group name "Ephemeral Diffie-Hellman Over COSE (EDHOC)". The registration procedure is "Expert Review". The columns of the registry are Value, Array and Description, where Value is an integer and the other columns are text strings. The initial contents of the registry are:
+IANA has created a new registry titled "EDHOC Cipher Suites" under the new registry group "Ephemeral Diffie-Hellman Over COSE (EDHOC)". The registration procedure is "Expert Review" {{RFC8126}}. The columns of the registry are Value, Array and Description, where Value is an integer and the other columns are text strings. The initial contents of the registry are:
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 Value: -24
@@ -1445,19 +1446,19 @@ Desc: ChaCha20/Poly1305, SHAKE256, 16, X448, EdDSA,
 
 ## EDHOC Method Type Registry {#method-types}
 
-IANA has created a new registry entitled "EDHOC Method Type" under the new group name "Ephemeral Diffie-Hellman Over COSE (EDHOC)". The registration procedure is "Specification Required". The columns of the registry are Value, Initiator Authentication Key, and Responder Authentication Key, where Value is an integer and the other columns are text strings describing the authentication keys. The initial contents of the registry are shown in {{fig-method-types}}.
+IANA has created a new registry entitled "EDHOC Method Type" under the new registry group "Ephemeral Diffie-Hellman Over COSE (EDHOC)". The registration procedure is "Specification Required" {{RFC8126}}. The columns of the registry are Value, Initiator Authentication Key, and Responder Authentication Key, where Value is an integer and the other columns are text strings describing the authentication keys. The initial contents of the registry are shown in {{fig-method-types}}.
 
 ## EDHOC Error Codes Registry {#error-code-reg}
 
-IANA has created a new registry entitled "EDHOC Error Codes" under the new group name "Ephemeral Diffie-Hellman Over COSE (EDHOC)". The registration procedure is "Expert Review". The columns of the registry are ERR_CODE, ERR_INFO Type and Description, where ERR_CODE is an integer, ERR_INFO is a CDDL defined type, and Description is a text string. The initial contents of the registry are shown in {{fig-error-codes}}.
+IANA has created a new registry entitled "EDHOC Error Codes" under the new registry group "Ephemeral Diffie-Hellman Over COSE (EDHOC)". The registration procedure is "Expert Review" {{RFC8126}}. The columns of the registry are ERR_CODE, ERR_INFO Type and Description, where ERR_CODE is an integer, ERR_INFO is a CDDL defined type, and Description is a text string. The initial contents of the registry are shown in {{fig-error-codes}}.
 
 ## EDHOC External Authorization Data Registry {#iana-ead}
 
-IANA has created a new registry entitled "EDHOC External Authorization Data" under the new group name "Ephemeral Diffie-Hellman Over COSE (EDHOC)". The registration procedure is "Specification Required". The columns of the registry are Label, Description, and Reference, where Label is a positive integer and the other columns are text strings.
+IANA has created a new registry entitled "EDHOC External Authorization Data" under the new registry group "Ephemeral Diffie-Hellman Over COSE (EDHOC)". The registration procedure is "Specification Required" {{RFC8126}}. The columns of the registry are Label, Description, and Reference, where Label is a positive integer and the other columns are text strings.
 
 ## COSE Header Parameters Registry {#cwt-header-param}
 
-IANA has registered the following entries in the "COSE Header Parameters" registry under the group name "CBOR Object Signing and Encryption (COSE)". The value of the 'kcwt' header parameter is a COSE Web Token (CWT) {{RFC8392}}, and the value of the 'kccs' header parameter is a CWT Claims Set (CCS), see {{term}}. The CWT/CCS must contain a COSE_Key in a 'cnf' claim {{RFC8747}}. The Value Registry for this item is empty and omitted from the table below.
+IANA has registered the following entries in the "COSE Header Parameters" registry under the registry group "CBOR Object Signing and Encryption (COSE)". The value of the 'kcwt' header parameter is a COSE Web Token (CWT) {{RFC8392}}, and the value of the 'kccs' header parameter is a CWT Claims Set (CCS), see {{term}}. The CWT/CCS must contain a COSE_Key in a 'cnf' claim {{RFC8747}}. The Value Registry for this item is empty and omitted from the table below.
 
 ~~~~~~~~~~~
 +-----------+-------+----------------+---------------------------+
@@ -1476,7 +1477,7 @@ IANA has registered the following entries in the "COSE Header Parameters" regist
 
 ## The Well-Known URI Registry {#well-known}
 
-IANA has added the well-known URI "edhoc" to the "Well-Known URIs" registry under the group name "Well-Known URIs".
+IANA has added the well-known URI "edhoc" to the "Well-Known URIs" registry.
 
 - URI suffix: edhoc
 
@@ -1572,7 +1573,7 @@ IANA has added the media types "application/edhoc+cbor-seq" and "application/cid
 
 ## CoAP Content-Formats Registry {#content-format}
 
-IANA has added the media types "application/edhoc+cbor-seq" and "application/cid-edhoc+cbor-seq" to the "CoAP Content-Formats" registry under the group name "Constrained RESTful Environments (CoRE) Parameters".
+IANA has added the media types "application/edhoc+cbor-seq" and "application/cid-edhoc+cbor-seq" to the "CoAP Content-Formats" registry under the registry group "Constrained RESTful Environments (CoRE) Parameters".
 
 ~~~~~~~~~~~
 +--------------------------------+----------+------+-------------------+
@@ -1586,7 +1587,7 @@ IANA has added the media types "application/edhoc+cbor-seq" and "application/cid
 
 ## Resource Type (rt=) Link Target Attribute Values Registry {#rt}
 
-IANA has added the resource type "core.edhoc" to the "Resource Type (rt=) Link Target Attribute Values" registry under the group name "Constrained RESTful Environments (CoRE) Parameters".
+IANA has added the resource type "core.edhoc" to the "Resource Type (rt=) Link Target Attribute Values" registry under the registry group "Constrained RESTful Environments (CoRE) Parameters".
 
 -  Value: "core.edhoc"
 
