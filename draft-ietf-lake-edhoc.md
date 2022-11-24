@@ -909,7 +909,7 @@ The Responder SHALL process message_1 as follows:
 
 * If EAD_1 is present then make it available to the application for EAD processing.
 
-If any processing step fails, then the Responder MUST send an EDHOC error message back as defined in {{error}}, and the  protocol MUST be discontinued.
+If any processing step fails, then the Responder MUST send an EDHOC error message back as defined in {{error}}, and the protocol MUST be discontinued.
 
 ## EDHOC Message 2 {#m2}
 
@@ -981,7 +981,7 @@ The Initiator SHALL process message_2 as follows:
 
 * Verify Signature_or_MAC_2 using the algorithm in the selected cipher suite. The verification process depends on the method, see {{asym-msg2-proc}}.
 
-If any processing step fails, then the Initiator MUST send an EDHOC error message back as defined in {{error}}, and the  protocol MUST be discontinued.
+If any processing step fails, then the Initiator MUST send an EDHOC error message back as defined in {{error}}, and the protocol MUST be discontinued.
 
 
 ## EDHOC Message 3 {#m3}
