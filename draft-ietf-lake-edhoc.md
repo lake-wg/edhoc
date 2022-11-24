@@ -1779,7 +1779,7 @@ we can calculate y as the square root w = (x^3 + a * x + b)^((p + 1)/4) (mod p)
 
 * y = 83438718007019280682007586491862600528145125996401575416632522940595860276856
 
-Note that this does not garuantee that (x, y) is on the correct elliptic curve. A full validation according to Section 5.6.2.3.3 of {{SP-800-56A}} can be achieved by also checking that x < p and that y^2 = x^3 + a * x + b (mod p).
+Note that this does not guarantee that (x, y) is on the correct elliptic curve. A full validation according to Section 5.6.2.3.3 of {{SP-800-56A}} can be achieved by also checking that x < p and that y^2 = x^3 + a * x + b (mod p).
 
 # Use of CBOR, CDDL, and COSE in EDHOC {#CBORandCOSE}
 
