@@ -766,7 +766,7 @@ The definition of Expand depends on the EDHOC hash algorithm of the selected cip
 * if the EDHOC hash algorithm is SHAKE128, then Expand( PRK, info, length ) = KMAC128( PRK, info, L, "" )
 * if the EDHOC hash algorithm is SHAKE256, then Expand( PRK, info, length ) = KMAC256( PRK, info, L, "" )
 
-where L = 8*length, the output length in bits.
+where L = 8 {{{⋅}}} length, the output length in bits.
 
 {{fig-edhoc-kdf}} lists derivations made with EDHOC-KDF during message processing, where
 
@@ -1798,12 +1798,12 @@ Given an example x:
 * x = 115792089183396302095546807154740558443406795108653336
 398970697772788799766525
 
-we can calculate y as the square root w = (x<sup>3</sup> + a * x + b)<sup>((p + 1)/4)</sup> (mod p)
+we can calculate y as the square root w = (x<sup>3</sup> + a {{{⋅}}} x + b)<sup>((p + 1)/4)</sup> (mod p)
 
 * y = 834387180070192806820075864918626005281451259964015754
 16632522940595860276856
 
-Note that this does not guarantee that (x, y) is on the correct elliptic curve. A full validation according to Section 5.6.2.3.3 of {{SP-800-56A}} can be achieved by also checking that 0 {{{≤}}} x < p and that y<sup>2</sup> {{{≡}}} x<sup>3</sup> + a * x + b (mod p).
+Note that this does not guarantee that (x, y) is on the correct elliptic curve. A full validation according to Section 5.6.2.3.3 of {{SP-800-56A}} can be achieved by also checking that 0 {{{≤}}} x < p and that y<sup>2</sup> {{{≡}}} x<sup>3</sup> + a {{{⋅}}} x + b (mod p).
 
 # Use of CBOR, CDDL, and COSE in EDHOC {#CBORandCOSE}
 
@@ -2072,7 +2072,7 @@ may need ... no, they don't need anything special: after an error, the next thin
 
 # Long PLAINTEXT_2 {#large-plaintext_2}
 
-By the definition of encryption of PLAINTEXT_2 with KEYSTREAM_2, it is limited to lengths of PLAINTEXT_2 not exceeding the output of EDHOC-KDF, see {{expand}}. If the EDHOC hash algorithm is SHA-2 then HKDF-Expand is used, which limits the length of the EDHOC-KDF output to 255 * hash_length, where hash_length is the length of the output of the EDHOC hash algorithm given by the cipher suite. For example, with SHA-256 as EDHOC hash algorithm the length of the hash output is 32 bytes and the maximum length of PLAINTEXT_2 is 255 * 32 = 8160 bytes.
+By the definition of encryption of PLAINTEXT_2 with KEYSTREAM_2, it is limited to lengths of PLAINTEXT_2 not exceeding the output of EDHOC-KDF, see {{expand}}. If the EDHOC hash algorithm is SHA-2 then HKDF-Expand is used, which limits the length of the EDHOC-KDF output to 255 {{{⋅}}} hash_length, where hash_length is the length of the output of the EDHOC hash algorithm given by the cipher suite. For example, with SHA-256 as EDHOC hash algorithm the length of the hash output is 32 bytes and the maximum length of PLAINTEXT_2 is 255 {{{⋅}}} 32 = 8160 bytes.
 
 While PLAINTEXT_2 is expected to be much shorter than 8 kB for the intended use cases, it seems nevertheless prudent to provide an extended solution for the event that this should turn out to be a limitation.
 
@@ -2080,7 +2080,7 @@ A potential work-around is to use a cipher suite with a different hash function.
 
 Another solution is to make use of multiple invocations of HKDF-Expand and negative values of info_label, as specified in the remainder of this section.
 
-Consider the PLAINTEXT_2 partitioned in parts P(i) of length equal to M = 255 \* hash_length, except possibly the last part P(last) which has length > 0 and \<= M.
+Consider the PLAINTEXT_2 partitioned in parts P(i) of length equal to M = 255 {{{⋅}}} hash_length, except possibly the last part P(last) which has 0 > length {{{≤}}} M.
 
 ~~~~~~~~~~~
 PLAINTEXT_2 = P(0) | P(1) | ... | P(last)
@@ -2106,7 +2106,7 @@ where
 OKM(i) = EDHOC-KDF( PRK_2e, -i, TH_2, length(P(i)) )
 ~~~~~~~~~~~
 
-Note that if length(PLAINTEXT_2) \<= M then P(0) = PLAINTEXT_2 and the definition of KEYSTREAM_2 = OKM(0) coincides with {{fig-edhoc-kdf}}.
+Note that if length(PLAINTEXT_2) {{{≤}}} M then P(0) = PLAINTEXT_2 and the definition of KEYSTREAM_2 = OKM(0) coincides with {{fig-edhoc-kdf}}.
 
 This describes the processing of the Responder when sending message_2. The Initiator makes the same calculations when receiving message_2, but interchanging PLAINTEXT_2 and CIPHERTEXT_2.
 
