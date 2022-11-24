@@ -607,7 +607,7 @@ A security application using external authorization data needs to register a pos
 
 An EAD item can be either critical or non-critical, determined by the sign of the ead_label in the EAD item transported in the EDHOC message. A negative value indicates that the EAD item is critical and a non-negative value indicates that this EAD item is non-critical. The specification registering a new EAD label needs to describe under what conditions the EAD item is critical or non-critical, and thus whether the ead_label is used with negative or positive sign. ead_label = 0 is used for padding, see {{padding}}.
 
-If an endpoint receives a critical EAD item it does not recognize or a critical EAD item that contains information that it cannot process, then the endpoint MUST send an EDHOC error message back as defined in {{error}}, and the EDHOC session MUST be discontinued. The EAD specification must define the error processing. A non-critical EAD item can be ignored.
+If an endpoint receives a critical EAD item it does not recognize or a critical EAD item that contains information that it cannot process, then the endpoint MUST send an EDHOC error message back as defined in {{error}}, and the protocol MUST be discontinued. The EAD specification must define the error processing. A non-critical EAD item can be ignored.
 
 The EAD fields of EDHOC must not be used for generic application data. Examples of the use of EAD are provided in {{ead-appendix}}.
 
@@ -909,7 +909,7 @@ The Responder SHALL process message_1 as follows:
 
 * If EAD_1 is present then make it available to the application for EAD processing.
 
-If any processing step fails, then the Responder MUST send an EDHOC error message back as defined in {{error}}, and the EDHOC session MUST be discontinued.
+If any processing step fails, then the Responder MUST send an EDHOC error message back as defined in {{error}}, and the  protocol MUST be discontinued.
 
 ## EDHOC Message 2 {#m2}
 
@@ -981,7 +981,7 @@ The Initiator SHALL process message_2 as follows:
 
 * Verify Signature_or_MAC_2 using the algorithm in the selected cipher suite. The verification process depends on the method, see {{asym-msg2-proc}}.
 
-If any processing step fails, then the Initiator MUST send an EDHOC error message back as defined in {{error}}, and the EDHOC session MUST be discontinued.
+If any processing step fails, then the Initiator MUST send an EDHOC error message back as defined in {{error}}, and the  protocol MUST be discontinued.
 
 
 ## EDHOC Message 3 {#m3}
@@ -1061,7 +1061,7 @@ The Responder SHALL process message_3 as follows:
 
 After verifying message_3, the Responder can compute PRK_out, see {{prkout}}, derive application keys using the EDHOC-Exporter interface, see {{exporter}}, persistently store the keying material, and send protected application data.
 
-If any processing step fails, then the Responder MUST send an EDHOC error message back as defined in {{error}}, and the EDHOC session MUST be discontinued.
+If any processing step fails, then the Responder MUST send an EDHOC error message back as defined in {{error}}, and the protocol MUST be discontinued.
 
 
 ## EDHOC Message 4 {#m4}
@@ -1113,7 +1113,7 @@ The Initiator SHALL process message_4 as follows:
 
 * Make (if present) EAD_4 available to the application for EAD processing.
 
-If any processing step fails, then the Initiator MUST send an EDHOC error message back as defined in {{error}}, and the EDHOC session MUST be discontinued.
+If any processing step fails, then the Initiator MUST send an EDHOC error message back as defined in {{error}}, and the protocol MUST be discontinued.
 
 After verifying message_4, the Initiator is assured that the Responder has calculated the key PRK_out (key confirmation) and that no other party can derive the key.
 
@@ -1323,7 +1323,7 @@ The fields ID_CRED_I, ID_CRED_R, EAD_2, EAD_3, and EAD_4 have variable length, a
 
 EDHOC itself does not provide countermeasures against Denial-of-Service attacks. In particular, by sending a number of new or replayed message_1 an attacker may cause the Responder to allocate state, perform cryptographic operations, and amplify messages. To mitigate such attacks, an implementation SHOULD rely on lower layer mechanisms. For instance, when EDHOC is transferred as an exchange of CoAP messages, the CoAP server can use the Echo option defined in {{RFC9175}} which forces the CoAP client to demonstrate reachability at its apparent network address. To avoid an additional roundtrip the Initiator can reduce the amplification factor by padding message_1, see {{padding}}.
 
-An attacker can also send faked message_2, message_3, message_4, or error in an attempt to trick the receiving party to send an error message and discontinue the session. EDHOC implementations MAY evaluate if a received message is likely to have been forged by an attacker and ignore it without sending an error message or discontinuing the session.
+An attacker can also send faked message_2, message_3, message_4, or error in an attempt to trick the receiving party to send an error message and discontinue the protocol. EDHOC implementations MAY evaluate if a received message is likely to have been forged by an attacker and ignore it without sending an error message or discontinuing the protocol.
 
 ## Implementation Considerations {#impl-cons}
 
