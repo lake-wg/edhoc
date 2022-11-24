@@ -278,7 +278,7 @@ Initiator                                                   Responder
 {: #fig-sigma title="MAC-then-Sign variant of the SIGMA-I protocol used by EDHOC."}
 {: artwork-align="center"}
 
-The parties exchanging messages are called Initiator (I) and Responder (R). They exchange ephemeral public keys, compute a shared secret session key PRK_out, and derive symmetric application keys used to protect application data.
+The parties exchanging messages in an EDHOC session are called Initiator (I) and Responder (R). They exchange ephemeral public keys, compute a shared secret session key PRK_out, and derive symmetric application keys used to protect application data.
 
 * G_X and G_Y are the ECDH ephemeral public keys of I and R, respectively.
 
@@ -370,7 +370,7 @@ EDHOC does not have a dedicated message field to indicate protocol version. Brea
 
 EDHOC includes the selection of connection identifiers (C_I, C_R) identifying a connection for which keys are agreed.
 
-Connection identifiers may be used to correlate EDHOC messages and facilitate the retrieval of protocol state during EDHOC execution (see {{transport}}) or in subsequent applications of  EDHOC, e.g., in OSCORE (see {{ci-oscore}}). The connection identifiers do not have any cryptographic purpose in EDHOC except facilitating the retrieval of security data associated to the protocol state.
+Connection identifiers may be used to correlate EDHOC messages and facilitate the retrieval of protocol state during an EDHOC session (see {{transport}}) or in subsequent applications of  EDHOC, e.g., in OSCORE (see {{ci-oscore}}). The connection identifiers do not have any cryptographic purpose in EDHOC except facilitating the retrieval of security data associated to the protocol state.
 
 Connection identifiers in EDHOC are intrinsically byte strings. Most constrained devices only have a few connections for which short identifiers may be sufficient. In some cases minimum length identifiers are necessary to comply with overhead requirements. However, CBOR byte strings - with the exception of the empty byte string h’’ which encodes as one byte (0x40) - are encoded as two or more bytes. To enable one-byte encoding of certain byte strings while maintaining CBOR encoding, EDHOC represents certain byte string identifiers as CBOR ints on the wire, see {{bstr-repr}}.
 
@@ -434,9 +434,9 @@ The Initiator and the Responder need to have agreed on a transport to be used fo
 
 ### Use of Connection Identifiers for EDHOC Message Correlation {#ci-edhoc}
 
-The transport needs to support the correlation between EDHOC messages and facilitate the retrieval of protocol state and security context during EDHOC protocol execution, including an indication of a message being message_1. The correlation may reuse existing mechanisms in the transport protocol. For example, the CoAP Token may be used to correlate EDHOC messages in a CoAP response and an associated CoAP request.
+The transport needs to support the correlation between EDHOC messages and facilitate the retrieval of protocol state and security context during an EDHOC session, including an indication of a message being message_1. The correlation may reuse existing mechanisms in the transport protocol. For example, the CoAP Token may be used to correlate EDHOC messages in a CoAP response and an associated CoAP request.
 
-Connection identifiers may be used to correlate EDHOC messages and facilitate the retrieval of protocol state/security context during EDHOC protocol execution.  Transports that do not inherently provide correlation across all EDHOC messages of an exchange can send connection identifiers along with EDHOC messages to gain that required capability, e.g., by prepending the appropriate connection identifier (when available from the EDHOC protocol) to the EDHOC message. Transport of EDHOC in CoAP payloads is described in {{coap}}, which also shows how to use connection identifiers and message_1 indication with CoAP.
+Connection identifiers may be used to correlate EDHOC messages and facilitate the retrieval of protocol state/security context during an EDHOC session. Transports that do not inherently provide correlation across all messages of an EDHOC session can send connection identifiers along with EDHOC messages to gain that required capability, e.g., by prepending the appropriate connection identifier (when available from the EDHOC protocol) to the EDHOC message. Transport of EDHOC in CoAP payloads is described in {{coap}}, which also shows how to use connection identifiers and message_1 indication with CoAP.
 
 ## Authentication Parameters {#auth-key-id}
 
@@ -1236,7 +1236,7 @@ EDHOC messages might change in transit due to a noisy channel or through modific
 
 Compared to {{SIGMA}}, EDHOC adds an explicit method type and expands the message authentication coverage to additional elements such as algorithms, external authorization data, and previous plaintext messages. This protects against an attacker replaying messages or injecting messages from another session.
 
-EDHOC also adds selection of connection identifiers and downgrade protected negotiation of cryptographic parameters, i.e., an attacker cannot affect the negotiated parameters. A single session of EDHOC does not include negotiation of cipher suites, but it enables the Responder to verify that the selected cipher suite is the most preferred cipher suite by the Initiator which is supported by both the Initiator and the Responder.
+EDHOC also adds selection of connection identifiers and downgrade protected negotiation of cryptographic parameters, i.e., an attacker cannot affect the negotiated parameters. A single session of EDHOC does not include negotiation of cipher suites, but it enables the Responder to verify that the selected cipher suite is the most preferred cipher suite by the Initiator which is supported by both the Initiator and the Responder, and to discontinue the session if not.
 
 As required by {{RFC7258}}, IETF protocols need to mitigate pervasive monitoring when possible. EDHOC therefore only supports methods with ephemeral Diffie-Hellman and provides a key update function (see {{keyupdate}}) for lightweight application protocol rekeying. Either of these provide forward secrecy, in the sense that compromise of the private authentication keys does not compromise past session keys (PRK_out), and compromise of a session key does not compromise past session keys. Frequently re-running EDHOC with ephemeral Diffie-Hellman forces attackers to perform dynamic key exfiltration where the attacker must have continuous interactions with the collaborator, which is a significant complication.
 
