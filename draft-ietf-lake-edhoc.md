@@ -168,6 +168,20 @@ informative:
         ins: NSA
     date: August 2015
 
+  Jacomme23:
+    target: https://hal.inria.fr/hal-03810102/
+    title: A comprehensive, formal and automated analysis of the EDHOC protocol
+    author:
+      -
+        ins: C. Jacomme
+      -
+        ins: E. Klein
+      -
+        ins: S. Kremer
+      -
+        ins: M. Racouchot 		
+    date: October 2022
+
   Norrman20:
     target: https://arxiv.org/abs/2007.11427
     title: Formal Analysis of EDHOC Key Establishment for Constrained IoT Devices
@@ -1258,7 +1272,7 @@ Key compromise impersonation (KCI): In EDHOC authenticated with signature keys, 
 
 Repudiation: If an endpoint authenticates with a signature, the other endpoint can prove that the endpoint performed a run of the protocol by presenting the data being signed as well as the signature itself. With static Diffie-Hellman key authentication, the authenticating endpoint can deny having participated in the protocol.
 
-Two earlier versions of EDHOC have been formally analyzed {{Norrman20}} {{Bruni18}} and the specification has been updated based on the analysis.
+Three earlier versions of EDHOC have been formally analyzed {{Jacomme23}} {{Norrman20}} {{Bruni18}} and the specification has been updated based on the analysis.
 
 ## Cryptographic Considerations {#crypto}
 The SIGMA protocol requires that the encryption of message_3 provides confidentiality against active attackers and EDHOC message_4 relies on the use of
