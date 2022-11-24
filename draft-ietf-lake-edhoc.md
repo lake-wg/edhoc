@@ -2080,7 +2080,7 @@ A potential work-around is to use a cipher suite with a different hash function.
 
 Another solution is to make use of multiple invocations of HKDF-Expand and negative values of info_label, as specified in the remainder of this section.
 
-Consider the PLAINTEXT_2 partitioned in parts P(i) of length equal to M = 255 {{{⋅}}} hash_length, except possibly the last part P(last) which has 0 > length {{{≤}}} M.
+Consider the PLAINTEXT_2 partitioned in parts P(i) of length equal to M = 255 {{{⋅}}} hash_length, except possibly the last part P(last) which has 0 < length {{{≤}}} M.
 
 ~~~~~~~~~~~
 PLAINTEXT_2 = P(0) | P(1) | ... | P(last)
