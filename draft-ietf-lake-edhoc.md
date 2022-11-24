@@ -405,7 +405,7 @@ For example:
 * 0x38 is represented by 0x4138 (CBOR encoding of the byte string 0x38).
 * 0xABCD is represented by 0x42ABCD (CBOR encoding of the byte string 0xABCD).
 
-One way to view this representation of byte strings as a transport encoding: a byte string which parses as the one-byte CBOR encoding of an integer (i.e. integer in the interval -24, ..., 23) is just copied directly into the message, a byte string which does not is encoded as a CBOR byte string during transport.
+One way to view this representation of byte strings as a transport encoding: a byte string which parses as the one-byte CBOR encoding of an integer (i.e., integer in the interval -24, ..., 23) is just copied directly into the message, a byte string which does not is encoded as a CBOR byte string during transport.
 
 Implementation Note: When implementing the byte string identifier representation, it can in some programming languages help to define a new type, or other data structure, which (in its user facing API) behaves like a byte string, but when serializing to CBOR produces a CBOR byte string or a CBOR integer depending on its value.
 
@@ -528,9 +528,9 @@ The value of a COSE 'kid' parameter is a CBOR byte string. For a more compact re
 
 Examples:
 
-* The CBOR map { 4 : h'FF' } is not encoded as 0xA10441FF but as the CBOR byte string h'FF', i.e. 0x41FF.
+* The CBOR map { 4 : h'FF' } is not encoded as 0xA10441FF but as the CBOR byte string h'FF', i.e., 0x41FF.
 
-* The CBOR map { 4 : h'21' } is neither encoded as 0xA1044121, nor as the CBOR byte string h'21', i.e. 0x4121, but as the CBOR integer 0x21.
+* The CBOR map { 4 : h'21' } is neither encoded as 0xA1044121, nor as the CBOR byte string h'21', i.e., 0x4121, but as the CBOR integer 0x21.
 
 As stated in Section 3.1 of {{RFC9052}}, applications MUST NOT assume that 'kid' values are unique and several keys associated with a 'kid' may need to be checked before the correct one is found. Applications might use additional information such as 'kid context' or lower layers to determine which key to try first. Applications should strive to make ID_CRED_x as unique as possible, since the recipient may otherwise have to try several keys.
 
