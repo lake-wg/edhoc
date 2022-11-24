@@ -1788,17 +1788,22 @@ The following may be needed for validation or compatibility with APIs that do no
 
 For example: The curve P-256 has the parameters (using the notation in {{RFC6090}})
 
-* p = 2^256 − 2^224 + 2^192 + 2^96 − 1
+* p = 2<sup>256</sup> − 2<sup>224</sup> + 2<sup>192</sup> + 2<sup>96</sup> − 1
 * a = -3
-* b = 41058363725152142129326129780047268409114441015993725554835256314039467401291
+* b = 410583637251521421293261297800472684091144410159937255
+54835256314039467401291
 
-Given an example x
+Given an example x:
 
-* x = 115792089183396302095546807154740558443406795108653336398970697772788799766525
+* x = 115792089183396302095546807154740558443406795108653336
+398970697772788799766525
 
-we can calculate y as the square root w = (x^3 + a * x + b)^((p + 1)/4) (mod p)
+we can calculate y as the square root w = (x<sup>3</sup> + a * x + b)<sup>((p + 1)/4)</sup> (mod p)
 
-* y = 83438718007019280682007586491862600528145125996401575416632522940595860276856
+* y = 834387180070192806820075864918626005281451259964015754
+16632522940595860276856
+
+Note that this does not guarantee that (x, y) is on the correct elliptic curve. A full validation according to Section 5.6.2.3.3 of {{SP-800-56A}} can be achieved by also checking that 0 {{{≤}}} x < p and that y<sup>2</sup> {{{≡}}} x<sup>3</sup> + a * x + b (mod p).
 
 # Use of CBOR, CDDL, and COSE in EDHOC {#CBORandCOSE}
 
