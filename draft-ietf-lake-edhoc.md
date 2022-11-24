@@ -537,7 +537,7 @@ Example: CWT or CCS can be identified by a key identifier using the 'kid' parame
 
 * ID_CRED_x = { 4 : kid_x }, where kid_x : kid, for x = I or R.
 
-The value of a COSE 'kid' parameter is a CBOR byte string. For a more compact representation, the CBOR map is replaced by a byte string, see the definitions of plaintext in {{asym-msg2-proc}} and {{asym-msg3-proc}}. To allow one-byte encodings of ID_CRED_x with key identifiers 'kid' the integer representation of byte string identifiers in {{bstr-repr}} MUST be applied.
+The value of a COSE 'kid' parameter is a CBOR byte string. For a more compact encoding, the CBOR map is replaced by a byte string, see the definitions of plaintext in {{asym-msg2-proc}} and {{asym-msg3-proc}}. To allow one-byte encodings of ID_CRED_x with key identifiers 'kid' the integer representation of byte string identifiers in {{bstr-repr}} MUST be applied.
 
 Examples:
 
