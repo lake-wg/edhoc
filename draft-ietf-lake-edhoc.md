@@ -1647,11 +1647,8 @@ This section specifies how to use EDHOC output to derive the OSCORE security con
 After successful processing of EDHOC message_3, Client and Server derive Security Context parameters for OSCORE as follows (see Section 3.2 of {{RFC8613}}):
 
 * The Master Secret and Master Salt are derived by using the EDHOC-Exporter interface, see {{exporter}}:
-
    * The EDHOC Exporter Labels for deriving the OSCORE Master Secret and the OSCORE Master Salt, are the uints 0 and 1, respectively.
-
    * The context parameter is h'' (0x40), the empty CBOR byte string.
-
    * By default, oscore_key_length is the key length (in bytes) of the application AEAD Algorithm of the selected cipher suite for the EDHOC session. Also by default, oscore_salt_length has value 8. The Initiator and Responder MAY agree out-of-band on a longer oscore_key_length than the default and on a different oscore_salt_length.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
