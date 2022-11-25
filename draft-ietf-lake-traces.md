@@ -1892,11 +1892,9 @@ CRED_R is identified by a 'kid' with byte string value 0x32:
      4 : h'32'
     }
 
-Since ID_CRED_R contains a single 'kid' parameter, only the byte string value is included in the plaintext, represented as described in {{Section 3.3.2 of I-D.ietf-lake-edhoc}}. The CBOR map { 4 : h'32' } is thus replaced, not by the CBOR byte string 0x4132, but by the CBOR int 0x32, since that is a one byte encoding of a CBOR integer (-19).
-
 ~~~~~~~~
 ID_CRED_R (CBOR Data Item) (4 bytes)
-32
+a1 04 41 32
 ~~~~~~~~
 
 CRED_R is an RPK encoded as a CCS:
@@ -2024,6 +2022,8 @@ PAD_2 (CBOR sequence of simple type) (0 bytes)
      Signature_or_MAC_2,
      ? EAD_2
     )
+
+Since ID_CRED_R contains a single 'kid' parameter, only the byte string value is included in the plaintext, represented as described in {{Section 3.3.2 of I-D.ietf-lake-edhoc}}. The CBOR map { 4 : h'32' } is thus replaced, not by the CBOR byte string 0x4132, but by the CBOR int 0x32, since that is a one byte encoding of a CBOR integer (-19).
 
 
 ~~~~~~~~
@@ -2208,11 +2208,9 @@ CRED_I is identified by a 'kid' with byte string value 0x2b:
     }
 
 
-Since ID_CRED_I contains a single 'kid' parameter, only the byte string value is included in the plaintext, represented as described in {{Section 3.3.2 of I-D.ietf-lake-edhoc}}. The CBOR map { 4 : h'2b' } is thus replaced, not by the CBOR byte string 0x412b, but by the CBOR int 0x2b, since that is a one byte encoding of a CBOR integer (-12).
-
 ~~~~~~~~
 ID_CRED_I (CBOR Data Item) (4 bytes)
-2b
+a1 04 41 2b
 ~~~~~~~~
 
 CRED_I is an RPK encoded as a CCS:
@@ -2348,6 +2346,8 @@ PAD_3 (CBOR sequence of simple type) (0 bytes)
      Signature_or_MAC_3,
      ? EAD_3
     )
+
+Since ID_CRED_I contains a single 'kid' parameter, only the byte string value is included in the plaintext, represented as described in {{Section 3.3.2 of I-D.ietf-lake-edhoc}}. The CBOR map { 4 : h'2b' } is thus replaced, not by the CBOR byte string 0x412b, but by the CBOR int 0x2b, since that is a one byte encoding of a CBOR integer (-12).
 
 
 ~~~~~~~~
