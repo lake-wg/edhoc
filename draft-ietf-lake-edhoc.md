@@ -331,7 +331,9 @@ To simplify for implementors, the use of CBOR and COSE in EDHOC is summarized in
 
 ## General
 
-The EDHOC protocol consists of three mandatory messages (message_1, message_2, message_3) between Initiator and Responder, an optional fourth message (message_4), and an error message. All EDHOC messages are CBOR Sequences {{RFC8742}}, and are deterministically encoded. {{fig-flow}} illustrates an EDHOC message flow with the optional fourth message as well as the content of each message. The protocol elements in the figure are introduced in {{overview}} and {{asym}}. Message formatting and processing are specified in {{asym}} and {{error}}.
+The EDHOC protocol consists of three mandatory messages (message_1, message_2, message_3) between an Initiator and a Responder, an optional fourth message (message_4), and an error message.
+The roles have slightly different security properties which should be considered when the roles are assigned, see {{sec-prop}}.
+All EDHOC messages are CBOR Sequences {{RFC8742}}, and are deterministically encoded. {{fig-flow}} illustrates an EDHOC message flow with the optional fourth message as well as the content of each message. The protocol elements in the figure are introduced in {{overview}} and {{asym}}. Message formatting and processing are specified in {{asym}} and {{error}}.
 
 Application data may be protected using the agreed application algorithms (AEAD, hash) in the selected cipher suite (see {{cs}}) and the application can make use of the established connection identifiers C_I and C_R (see {{ci}}). Media types that may be used for EDHOC are defined in {{media-type}}.
 
@@ -476,14 +478,15 @@ The authentication key algorithm needs to be compatible with the method and the 
 
 Note that for most signature algorithms, the signature is determined by the signature algorithm and the authentication key algorithm together. When using static Diffie-Hellman keys the Initiator's and Responder's private authentication keys are denoted as I and R, respectively, and the public authentication keys are denoted G_I and G_R, respectively.
 
-For X.509 certificates the authentication key is represented with a SubjectPublicKeyInfo field. For CWT and CCS (see {{auth-cred}})) the authentication key is represented with a 'cnf' claim {{RFC8747}} containing a COSE_Key {{RFC9052}}.
+For X.509 certificates the authentication key is represented by a SubjectPublicKeyInfo field. For CWT and CCS (see {{auth-cred}})) the authentication key is represented by a 'cnf' claim {{RFC8747}} containing a COSE_Key {{RFC9052}}. In EDHOC, a raw public key (RPK) is an authentication key encoded as a COSE_Key wrapped in a CCS.
 
 
 ### Authentication Credentials {#auth-cred}
 
 The authentication credentials, CRED_I and CRED_R, contain the public authentication key of the Initiator and the Responder, respectively.
+The authentication credential typically also contains other parameters that needs to be verified by the application, see {{auth-validation}}, and in particular information about the identity ("subject") of the endpoint to prevent misbinding attacks, see {{identities}}.
 
-EDHOC relies on COSE for identification of credentials (see {{id_cred}}), for example X.509 certificates {{RFC5280}}, C509 certificates {{I-D.ietf-cose-cbor-encoded-cert}}, CWTs {{RFC8392}} and CWT Claims Sets (CCS) {{RFC8392}}. When the identified credential is a chain or a bag, the authentication credential CRED_x is just the end entity X.509 or C509 certificate / CWT.
+EDHOC relies on COSE for identification of credentials (see {{id_cred}}), for example X.509 certificates {{RFC5280}}, C509 certificates {{I-D.ietf-cose-cbor-encoded-cert}}, CWTs {{RFC8392}} and CWT Claims Sets (CCS) {{RFC8392}}. When the identified credential is a chain or a bag, the authentication credential CRED_x is just the end entity X.509 or C509 certificate / CWT. The Initiator and the Responder MAY use different types of authentication credentials, e.g., one uses an RPK and the other uses a public key certificate.
 
 Since CRED_R is used in the integrity verification, see {{asym-msg2-proc}}, it needs to be specified such that it is identical when used by Initiator or Responder. Similarly for CRED_I, see {{asym-msg3-proc}}. The Initiator and Responder are expected to agree on the specific encoding of the credentials, see {{applicability}}.
 
@@ -491,9 +494,9 @@ It is RECOMMENDED that the COSE 'kid' parameter, when used to identify the authe
 
 * When the authentication credential is an X.509 certificate, CRED_x SHALL be the DER encoded certificate, encoded as a bstr {{I-D.ietf-cose-x509}}.
 * When the authentication credential is a C509 certificate, CRED_x SHALL be the C509Certificate {{I-D.ietf-cose-cbor-encoded-cert}}.
-* When the authentication credential is a CWT including a COSE_Key, then CRED_x SHALL be the untagged CWT.
-* When the authentication credential includes a COSE_Key but is not in a CWT, CRED_x SHALL be an untagged CCS.
-   * Naked COSE_Keys are thus dressed as CCS when used in EDHOC, which is done by prefixing the COSE_Key with 0xA108A101.
+* When the authentication credential is a CWT including a COSE_Key, CRED_x SHALL be the untagged CWT.
+* When the authentication credential includes a COSE_Key but is not in a CWT, CRED_x SHALL be an untagged CCS. This is how RPKs are encoded, see {{fig-ccs}} for an example.
+   * Naked COSE_Keys are thus dressed as CCS when used in EDHOC, in its simplest form by prefixing the COSE_Key with 0xA108A101 (a map with a 'cnf' claim). In that case the resulting authentication credential contains no other identity than the public key itself, see {{identities}}.
 
 An example of a CRED_x is shown below:
 
@@ -511,7 +514,7 @@ An example of a CRED_x is shown below:
   }
 }
 ~~~~~~~~~~~
-{: title="CWT Claims Set (CCS) containing an X25519 static Diffie-Hellman key and an EUI-64 identity."}
+{: #fig-ccs title="CWT Claims Set (CCS) containing an X25519 static Diffie-Hellman key and an EUI-64 identity."}
 
 
 ### Identification of Credentials {#id_cred}
@@ -631,7 +634,7 @@ Multiple occurrences of EAD items with ead_label = 0 are allowed. Certain paddin
 
 ## Application Profile {#applicability}
 
-EDHOC requires certain parameters to be agreed upon between Initiator and Responder. Some parameters can be negotiated through the protocol execution (specifically, cipher suite, see {{cs}}) but other parameters are only communicated and may not be negotiated (e.g., which authentication method is used, see {{method}}). Yet other parameters need to be known out-of-band.
+EDHOC requires certain parameters to be agreed upon between Initiator and Responder. Some parameters can be negotiated through the protocol execution (specifically, cipher suite, see {{cs}}) but other parameters are only communicated and may not be negotiated (e.g., which authentication method is used, see {{method}}). Yet other parameters need to be known out-of-band. The application decides which endpoint is Initiator and which is Responder.
 
 The purpose of an application profile is to describe the intended use of EDHOC to allow for the relevant processing and verifications to be made, including things like:
 
@@ -2398,6 +2401,7 @@ The authors want to thank
 {{{Steve Kremer}}},
 {{{Alexandros Krontiris}}},
 {{{Ilari Liusvaara}}},
+{{{Rafa Marín-López}}},
 {{{Kathleen Moriarty}}},
 {{{David Navarro}}},
 {{{Karl Norrman}}},
