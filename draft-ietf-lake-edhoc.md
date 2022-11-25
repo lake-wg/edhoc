@@ -431,8 +431,8 @@ For OSCORE, the choice of connection identifier results in the endpoint selectin
 
 Examples:
 
-   * A connection identifier 0xFF (represented in the EDHOC message as the CBOR byte string 0x41FF, see {{bstr-repr}}) is converted to the OSCORE Recipient ID 0xFF
-   * A connection identifier 0x21 (represented in the EDHOC message as the CBOR integer 0x21, see {{bstr-repr}}) is converted to the OSCORE Recipient ID 0x21.
+   * A connection identifier 0xFF (represented in the EDHOC message as 0x41FF, see {{bstr-repr}}) is converted to the OSCORE Recipient ID 0xFF.
+   * A connection identifier 0x21 (represented in the EDHOC message as 0x21, see {{bstr-repr}}) is converted to the OSCORE Recipient ID 0x21.
 
 
 ## Transport {#transport}
@@ -1646,13 +1646,13 @@ This section specifies how to use EDHOC output to derive the OSCORE security con
 
 After successful processing of EDHOC message_3, Client and Server derive Security Context parameters for OSCORE as follows (see Section 3.2 of {{RFC8613}}):
 
-* The Master Secret and Master Salt are derived by using the EDHOC-Exporter interface, see {{exporter}}.
+* The Master Secret and Master Salt are derived by using the EDHOC-Exporter interface, see {{exporter}}:
 
-  The EDHOC Exporter Labels for deriving the OSCORE Master Secret and the OSCORE Master Salt, are the uints 0 and 1, respectively.
+   * The EDHOC Exporter Labels for deriving the OSCORE Master Secret and the OSCORE Master Salt, are the uints 0 and 1, respectively.
 
-  The context parameter is h'' (0x40), the empty CBOR byte string.
+  * The context parameter is h'' (0x40), the empty CBOR byte string.
 
-  By default, oscore_key_length is the key length (in bytes) of the application AEAD Algorithm of the selected cipher suite for the EDHOC session. Also by default, oscore_salt_length has value 8. The Initiator and Responder MAY agree out-of-band on a longer oscore_key_length than the default and on a different oscore_salt_length.
+  * By default, oscore_key_length is the key length (in bytes) of the application AEAD Algorithm of the selected cipher suite for the EDHOC session. Also by default, oscore_salt_length has value 8. The Initiator and Responder MAY agree out-of-band on a longer oscore_key_length than the default and on a different oscore_salt_length.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
    Master Secret = EDHOC-Exporter( 0, h'', oscore_key_length )
