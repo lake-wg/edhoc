@@ -463,7 +463,7 @@ The authentication key algorithm needs to be compatible with the method and the 
 
 Note that for most signature algorithms, the signature is determined by the signature algorithm and the authentication key algorithm together. When using static Diffie-Hellman keys the Initiator's and Responder's private authentication keys are denoted I and R, respectively, and the public authentication keys are denoted G_I and G_R, respectively.
 
-For X.509 certificates the authentication key is represented with a SubjectPublicKeyInfo field. For CWT and CCS (see {{auth-cred}})) the authentication key is represented with a 'cnf' claim {{RFC8747}} containing a COSE_Key {{RFC9052}}. In EDHOC, a raw public key (RPK) is a COSE_Key wrapped in a CCS.
+For X.509 certificates the authentication key is represented by a SubjectPublicKeyInfo field. For CWT and CCS (see {{auth-cred}})) the authentication key is represented by a 'cnf' claim {{RFC8747}} containing a COSE_Key {{RFC9052}}. In EDHOC, a raw public key (RPK) is an authentication key encoded as a COSE_Key wrapped in a CCS.
 
 
 ### Authentication Credentials {#auth-cred}
