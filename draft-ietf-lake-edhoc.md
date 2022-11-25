@@ -169,6 +169,20 @@ informative:
         ins: NSA
     date: August 2015
 
+  Jacomme23:
+    target: https://hal.inria.fr/hal-03810102/
+    title: A comprehensive, formal and automated analysis of the EDHOC protocol
+    author:
+      -
+        ins: C. Jacomme
+      -
+        ins: E. Klein
+      -
+        ins: S. Kremer
+      -
+        ins: M. Racouchot 		
+    date: October 2022
+
   Norrman20:
     target: https://arxiv.org/abs/2007.11427
     title: Formal Analysis of EDHOC Key Establishment for Constrained IoT Devices
@@ -524,7 +538,8 @@ Example: CWT or CCS can be identified by a key identifier using the 'kid' parame
 
 * ID_CRED_x = { 4 : kid_x }, where kid_x : kid, for x = I or R.
 
-The value of a COSE 'kid' parameter is a CBOR byte string. For a more compact representation, the CBOR map is replaced by a byte string, see the definitions of plaintext in {{asym-msg2-proc}} and {{asym-msg3-proc}}. To allow one-byte encodings of ID_CRED_x with key identifiers 'kid', the same representation used for EDHOC connection identifiers defined in {{bstr-repr}} MUST be applied.
+
+The value of a COSE 'kid' parameter is a CBOR byte string. For a more compact encoding, the CBOR map is replaced by a byte string, see the definitions of plaintext in {{asym-msg2-proc}} and {{asym-msg3-proc}}. To allow one-byte encodings of ID_CRED_x with key identifiers 'kid', the same representation used for EDHOC connection identifiers defined in {{bstr-repr}} MUST be applied.
 
 Examples:
 
@@ -572,7 +587,8 @@ The Initiator needs to have a list of cipher suites it supports in order of pref
 
 ## Ephemeral Public Keys {#cose_key}
 
-The ephemeral public keys in EDHOC (G_X and G_Y) use compact representation of elliptic curve points, see {{comrep}}. In COSE, compact representation is achieved by formatting the ECDH ephemeral public keys as COSE_Keys of type EC2 or OKP according to Sections 7.1 and 7.2 of {{RFC9053}}, but only including the 'x' parameter in G_X and G_Y. For Elliptic Curve Keys of type EC2, compact representation MAY be used also in the COSE_Key.  If the COSE implementation requires a 'y' parameter, the value y = false SHALL be used. COSE always use compact output for Elliptic Curve Keys of type EC2.
+
+The ephemeral public keys in EDHOC (G_X and G_Y) use compact representation of elliptic curve points, see {{comrep}}. In COSE, compact representation is achieved by formatting the ECDH ephemeral public keys as COSE_Keys of type EC2 or OKP according to Sections 7.1 and 7.2 of {{RFC9053}}, but only including the 'x' parameter in G_X and G_Y. For Elliptic Curve Keys of type EC2, compact representation MAY be used also in the COSE_Key. COSE always uses compact output for Elliptic Curve Keys of type EC2. If the COSE implementation requires a 'y' parameter, the value y = false or a calculated y-coordinate can be used, see {{comrep}}.
 
 ## External Authorization Data (EAD) {#AD}
 
@@ -580,24 +596,38 @@ In order to reduce round trips and the number of messages, or to simplify proces
 
 EDHOC allows processing of external authorization data (EAD) to be defined in a separate specification, and sent in dedicated fields of the four EDHOC messages (EAD_1, EAD_2, EAD_3, EAD_4). EAD is opaque data to EDHOC.
 
-Each EAD field is a CBOR sequence (see {{CBOR}}) consisting of one or more EAD items (ead_label, ead_value) as defined below:
+Each EAD field, EAD_x for x = 1, 2, 3 or 4, is a CBOR sequence (see {{CBOR}}) of one or more EAD items ead defined in {{fig-ead-item}}. See {{CDDL}} for the CDDL definitions.
 
 ~~~~~~~~~~~ CDDL
-ead = 1* (
+ead = (
   ead_label : int,
-  ead_value : bstr,
+  ? ead_value : bstr,
 )
 ~~~~~~~~~~~
+{: #fig-ead-item title="Definition of EAD item."}
 
-A security application using external authorization data need to register a positive ead_label and the associated ead_value format for each EAD item it uses (see {{iana-ead}}), and describe processing and security considerations. Each application registers their own EAD items and defines associated operations. The application may define multiple uses of certain EAD items, e.g., the same EAD item may be used in different EDHOC messages with the same application.
+A security application using external authorization data needs to register a positive ead_label and optionally an associated ead_value format, for each EAD item it uses (see {{iana-ead}}). Each application registers its own EAD items and describes the associated processing and security considerations. The application may define multiple uses of certain EAD items, e.g., the same EAD item may be used in different EDHOC messages with the same application. Multiple occurrences of an EAD item in one EAD field may also be specified.
 
-An EAD item can be either critical or non-critical, determined by the sign of the ead_label in the transported EAD item included in the EDHOC message. Using the registered positive value indicates that the EAD item is non-critical. The corresponding negative value indicates that the EAD item is critical. ead_label = 0 MUST NOT be used.
+An EAD item can be either critical or non-critical, determined by the sign of the ead_label in the EAD item transported in the EDHOC message. A negative value indicates that the EAD item is critical and a non-negative value indicates that this EAD item is non-critical. The specification registering a new EAD label needs to describe under what conditions the EAD item is critical or non-critical, and thus whether the ead_label is used with negative or positive sign. ead_label = 0 is used for padding, see {{padding}}.
 
 If an endpoint receives a critical EAD item it does not recognize or a critical EAD item that contains information that it cannot process, the EDHOC protocol MUST be discontinued. A non-critical EAD item can be ignored.
 
-The specification registering a new EAD label needs to describe under what conditions the EAD item is critical or non-critical.
-
 The EAD fields of EDHOC must not be used for generic application data. Examples of the use of EAD are provided in {{ead-appendix}}.
+
+### Padding {#padding}
+
+EDHOC message_1 and the plaintext of message_2, message_3 and message_4 can be padded with the use of the corresponding EAD_x field, for x = 1, 2, 3, 4. Padding is intended to be discarded by the receiving application.
+
+Padding is obtained by using an EAD item with ead_label = 0 and a randomly generated byte string of appropriate length as ead_value, noting that the ead_label and the CBOR encoding of ead_value also add bytes. Examples:
+
+* One byte padding is achieved by omitting the ead_value:
+   * EAD_x = 0x00
+* Two bytes padding using the empty byte string (0x40) as ead_value:
+   * EAD_x = 0x0040
+* Three bytes padding constructed from the randomly generated 0xe9 encoded as ead_value:
+   * EAD_x = 0x0041e9
+
+Multiple occurrences of EAD items with ead_label = 0 are allowed. Certain padding lengths require the use of at least two such EAD items.
 
 ## Application Profile {#applicability}
 
@@ -739,7 +769,7 @@ The definition of Expand depends on the EDHOC hash algorithm of the selected cip
 * if the EDHOC hash algorithm is SHAKE128, then Expand( PRK, info, length ) = KMAC128( PRK, info, L, "" )
 * if the EDHOC hash algorithm is SHAKE256, then Expand( PRK, info, length ) = KMAC256( PRK, info, L, "" )
 
-where L = 8*length, the output length in bits.
+where L = 8 {{{⋅}}} length, the output length in bits.
 
 {{fig-edhoc-kdf}} lists derivations made with EDHOC-KDF during message processing, where
 
@@ -840,10 +870,11 @@ message_1 = (
   SUITES_I : suites,
   G_X : bstr,
   C_I : bstr / -24..23,
-  ? EAD_1 : ead,
+  ? EAD_1,
 )
 
 suites = [ 2* int ] / int
+EAD_1 = 1* ead
 ~~~~~~~~~~~
 
 where:
@@ -927,11 +958,9 @@ The Responder SHALL compose message_2 as follows:
 
 * CIPHERTEXT_2 is calculated by using the Expand function as a binary additive stream cipher over the following plaintext:
 
-   * PLAINTEXT_2 = ( ? PAD_2, ID_CRED_R / bstr / -24..23, Signature_or_MAC_2, ? EAD_2 )
+   * PLAINTEXT_2 = ( ID_CRED_R / bstr / -24..23, Signature_or_MAC_2, ? EAD_2 )
 
       * If ID_CRED_R contains a single 'kid' parameter, i.e., ID_CRED_R = { 4 : kid_R }, then only the byte string is included in the plaintext, represented as described in {{bstr-repr}}, see examples in {{id_cred}}.
-
-      * PAD_2 = 1* `true` (see {{CBOR}}) is padding that may be used to hide the length of the unpadded plaintext
 
    * Compute KEYSTREAM_2 as in {{expand}}, where plaintext_length is the length of PLAINTEXT_2. For the case of plaintext_length exceeding the EDHOC-KDF output size, see {{large-plaintext_2}}.
 
@@ -947,7 +976,7 @@ The Initiator SHALL process message_2 as follows:
 
 * Retrieve the protocol state using the message correlation provided by the transport (e.g., the CoAP Token, the 5-tuple, or the prepended C_I, see {{coap}}).
 
-* Decrypt CIPHERTEXT_2, see {{asym-msg2-proc}}, and, if present, discard the padding PAD_2.
+* Decrypt CIPHERTEXT_2, see {{asym-msg2-proc}}.
 
 * Make ID_CRED_R and (if present) EAD_2 available to the application for authentication- and EAD processing.
 
@@ -983,7 +1012,6 @@ The Initiator SHALL compose message_3 as follows:
     * CRED_I - CBOR item containing the authentication credential of the Initiator, see {{auth-cred}}
     * EAD_3 - external authorization data, see {{AD}}
 
-
 * If the Initiator authenticates with a static Diffie-Hellman key (method equals 2 or 3), then Signature_or_MAC_3 is MAC_3. If the Initiator authenticates with a signature key (method equals 0 or 1), then Signature_or_MAC_3 is the 'signature' field of a COSE_Sign1 object, computed as specified in Section 4.4 of {{RFC9052}} using the signature algorithm of the selected cipher suite, the private authentication key of the Initiator, and the following parameters as input (see {{COSE}}):
 
    * protected =  << ID_CRED_I >>
@@ -999,11 +1027,9 @@ The Initiator SHALL compose message_3 as follows:
 
    * K_3 and IV_3 are defined in {{expand}}
 
-   * PLAINTEXT_3 = ( ? PAD_3, ID_CRED_I / bstr / -24..23, Signature_or_MAC_3, ? EAD_3 )
+   * PLAINTEXT_3 = ( ID_CRED_I / bstr / -24..23, Signature_or_MAC_3, ? EAD_3 )
 
        * If ID_CRED_I contains a single 'kid' parameter, i.e., ID_CRED_I = { 4 : kid_I }, then only the byte string is included in the plaintext, represented as described in {{bstr-repr}}, see examples in {{id_cred}}.
-
-       * PAD_3 = 1* `true` (see {{CBOR}}) is padding that may be used to hide the length of the unpadded plaintext
 
    CIPHERTEXT_3 is the 'ciphertext' of COSE_Encrypt0.
 
@@ -1026,7 +1052,7 @@ The Responder SHALL process message_3 as follows:
 
 * Retrieve the protocol state using the message correlation provided by the transport (e.g., the CoAP Token, the 5-tuple, or the prepended C_R, see {{coap}}).
 
-* Decrypt and verify the COSE_Encrypt0 as defined in Sections 5.2 and 5.3 of {{RFC9052}}, with the EDHOC AEAD algorithm in the selected cipher suite, and the parameters defined in {{asym-msg3-proc}}. Discard the padding PAD_3, if present.
+* Decrypt and verify the COSE_Encrypt0 as defined in Sections 5.2 and 5.3 of {{RFC9052}}, with the EDHOC AEAD algorithm in the selected cipher suite, and the parameters defined in {{asym-msg3-proc}}.
 
 * Make ID_CRED_I and (if present) EAD_3 available to the application for authentication- and EAD processing.
 
@@ -1071,8 +1097,7 @@ The Responder SHALL compose message_4 as follows:
 
    * K_4 and IV_4 are defined in {{expand}}
 
-    * PLAINTEXT_4 = ( ? PAD_4, ? EAD_4 )
-      * PAD_4 = 1* `true` (see {{CBOR}}) is padding that may be used to hide the length of the unpadded plaintext.
+    * PLAINTEXT_4 = ( ? EAD_4 )
       * EAD_4 - external authorization data, see {{AD}}.
 
   CIPHERTEXT_4 is the 'ciphertext' of COSE_Encrypt0.
@@ -1087,7 +1112,7 @@ The Initiator SHALL process message_4 as follows:
 
 * Retrieve the protocol state using the message correlation provided by the transport (e.g., the CoAP Token, the 5-tuple, or the prepended C_I, see {{coap}}).
 
-* Decrypt and verify the COSE_Encrypt0 as defined in Sections 5.2 and 5.3 of {{RFC9052}}, with the EDHOC AEAD algorithm in the selected cipher suite, and the parameters defined in {{asym-msg4-proc}}. Discard the padding PAD_4, if present.
+* Decrypt and verify the COSE_Encrypt0 as defined in Sections 5.2 and 5.3 of {{RFC9052}}, with the EDHOC AEAD algorithm in the selected cipher suite, and the parameters defined in {{asym-msg4-proc}}.
 
 * Make (if present) EAD_4 available to the application for EAD processing.
 
@@ -1219,9 +1244,7 @@ Implementations MUST support the EDHOC-Exporter.
 
 Implementations MAY support message_4. Error codes (ERR_CODE) 1 and 2 MUST be supported.
 
-Implementations MAY support EAD.
-
-Implementations MAY support padding of plaintext when sending messages. Implementations MUST support padding of plaintext when receiving messages, i.e., MUST be able to parse padded messages.
+Implementations MUST support EAD.
 
 Implementations MUST support cipher suite 2 and 3. Cipher suites 2 (AES-CCM-16-64-128, SHA-256, 8, P-256, ES256, AES-CCM-16-64-128, SHA-256) and 3 (AES-CCM-16-128-128, SHA-256, 16, P-256, ES256, AES-CCM-16-64-128, SHA-256) only differ in the size of the MAC length, so supporting one or both of these is no essential difference. Implementations only need to implement the algorithms needed for their supported methods.
 
@@ -1233,7 +1256,7 @@ EDHOC inherits its security properties from the theoretical SIGMA-I protocol {{S
 
 As described in {{SIGMA}}, different levels of identity protection are provided to the Initiator and the Responder. EDHOC provides identity protection of the Initiator against active attacks and identity protection of the Responder against passive attacks. An active attacker can get the credential identifier of the Responder by eavesdropping on the destination address used for transporting message_1 and then sending its own message_1 to the same address. The roles should be assigned to protect the most sensitive identity/identifier, typically that which is not possible to infer from routing information in the lower layers.
 
-EDHOC messages might change in transit due to a noisy channel or through modification by an attacker. Changes in message_1 and message_2 (except PAD_2 and Signature_or_MAC_2 when the signature scheme is not strongly unforgeable) are detected when verifying Signature_or_MAC_2. Changes to PAD_2, not strongly unforgeable Signature_or_MAC_2, and message_3 are detected when verifying CIPHERTEXT_3. Changes to message_4 are detected when verifying CIPHERTEXT_4.
+EDHOC messages might change in transit due to a noisy channel or through modification by an attacker. Changes in message_1 and message_2 (except Signature_or_MAC_2 when the signature scheme is not strongly unforgeable) are detected when verifying Signature_or_MAC_2. Changes to not strongly unforgeable Signature_or_MAC_2, and message_3 are detected when verifying CIPHERTEXT_3. Changes to message_4 are detected when verifying CIPHERTEXT_4.
 
 Compared to {{SIGMA}}, EDHOC adds an explicit method type and expands the message authentication coverage to additional elements such as algorithms, external authorization data, and previous plaintext messages. This protects against an attacker replaying messages or injecting messages from another session.
 
@@ -1241,7 +1264,7 @@ EDHOC also adds selection of connection identifiers and downgrade protected nego
 
 As required by {{RFC7258}}, IETF protocols need to mitigate pervasive monitoring when possible. EDHOC therefore only supports methods with ephemeral Diffie-Hellman and provides a key update function (see {{keyupdate}}) for lightweight application protocol rekeying. Either of these provides forward secrecy, in the sense that compromise of the private authentication keys does not compromise past session keys (PRK_out), and compromise of a session key does not compromise past session keys. Frequently re-running EDHOC with ephemeral Diffie-Hellman forces attackers to perform dynamic key exfiltration where the attacker must have continuous interactions with the collaborator, which is a significant complication.
 
-To limit the effect of breaches, it is important to limit the use of symmetrical group keys for bootstrapping. EDHOC therefore strives to make the additional cost of using raw public keys and self-signed certificates as small as possible. Raw public keys and self-signed certificates are not a replacement for a public key infrastructure but SHOULD be used instead of symmetrical group keys for bootstrapping.
+To limit the effect of breaches, it is important to limit the use of symmetric group keys for bootstrapping. EDHOC therefore strives to make the additional cost of using raw public keys and self-signed certificates as small as possible. Raw public keys and self-signed certificates are not a replacement for a public key infrastructure but SHOULD be used instead of symmetric group keys for bootstrapping.
 
 Compromise of the long-term keys (private signature or static DH keys) does not compromise the security of completed EDHOC exchanges. Compromising the private authentication keys of one party lets an active attacker impersonate that compromised party in EDHOC exchanges with other parties but does not let the attacker impersonate other parties in EDHOC exchanges with the compromised party. Compromise of the long-term keys does not enable a passive attacker to compromise future session keys (PRK_out). Compromise of the HDKF input parameters (ECDH shared secret) leads to compromise of all session keys derived from that compromised shared secret. Compromise of one session key does not compromise other session keys. Compromise of PRK_out leads to compromise of all keying material derived with the EDHOC-Exporter.
 
@@ -1259,7 +1282,7 @@ Key compromise impersonation (KCI): In EDHOC authenticated with signature keys, 
 
 Repudiation: If an endpoint authenticates with a signature, the other endpoint can prove that the endpoint performed a run of the protocol by presenting the data being signed as well as the signature itself. With static Diffie-Hellman key authentication, the authenticating endpoint can deny having participated in the protocol.
 
-Two earlier versions of EDHOC have been formally analyzed {{Norrman20}} {{Bruni18}} and the specification has been updated based on the analysis.
+Earlier versions of EDHOC have been formally analyzed {{Jacomme23}} {{Norrman20}} {{Bruni18}} and the specification has been updated based on the analysis.
 
 ## Cryptographic Considerations {#crypto}
 The SIGMA protocol requires that the encryption of message_3 provides confidentiality against active attackers and EDHOC message_4 relies on the use of
@@ -1297,11 +1320,11 @@ An attacker observing network traffic may use connection identifiers sent in cle
 
 Since the publication of {{RFC3552}} there has been an increased awareness of the need to protect against endpoints that are compromised, malicious, or whose interests simply do not align with the interests of users {{I-D.arkko-arch-internet-threat-model-guidance}}. {{RFC7624}} describes an updated threat model for Internet confidentiality, see {{sec-prop}}. {{I-D.arkko-arch-internet-threat-model-guidance}} further expands the threat model. Implementations and users SHOULD consider these threat models. In particular, even data sent protected to the other endpoint such as ID_CRED and EAD can be used for tracking, see Section 2.7 of {{I-D.arkko-arch-internet-threat-model-guidance}}.
 
-The fields ID_CRED_I, ID_CRED_R, EAD_2, EAD_3, and EAD_4 have variable length and information regarding the length may leak to an attacker. A passive attacker may e.g., be able to differentiating endpoints using identifiers of different length. To mitigate this information leakage an implementation may ensure that the fields have fixed length or use padding. An implementation may e.g., only use fix length identifiers like 'kid' of length 1. Alternatively padding may be used to hide the true length of e.g., certificates by value in 'x5chain' or 'c5c'.
+The fields ID_CRED_I, ID_CRED_R, EAD_2, EAD_3, and EAD_4 have variable length, and information regarding the length may leak to an attacker. A passive attacker may, e.g., be able to differentiate endpoints using identifiers of different length. To mitigate this information leakage an implementation may ensure that the fields have fixed length or use padding. An implementation may, e.g., only use fixed length identifiers like 'kid' of length 1. Alternatively, padding may be used (see {{padding}}) to hide the true length of, e.g., certificates by value in 'x5chain' or 'c5c'.
 
 ## Denial-of-Service {#dos}
 
-EDHOC itself does not provide countermeasures against Denial-of-Service attacks. In particular, by sending a number of new or replayed message_1 an attacker may cause the Responder to allocate state, perform cryptographic operations, and amplify messages. To mitigate such attacks, an implementation SHOULD rely on lower layer mechanisms. For instance, when EDHOC is transferred as an exchange of CoAP messages, the CoAP server can use the Echo option defined in {{RFC9175}} which forces the CoAP client to demonstrate reachability at its apparent network address.
+EDHOC itself does not provide countermeasures against Denial-of-Service attacks. In particular, by sending a number of new or replayed message_1 an attacker may cause the Responder to allocate state, perform cryptographic operations, and amplify messages. To mitigate such attacks, an implementation SHOULD rely on lower layer mechanisms. For instance, when EDHOC is transferred as an exchange of CoAP messages, the CoAP server can use the Echo option defined in {{RFC9175}} which forces the CoAP client to demonstrate reachability at its apparent network address. To avoid an additional roundtrip the Initiator can reduce the amplification factor by padding message_1, see {{padding}}.
 
 An attacker can also send faked message_2, message_3, message_4, or error in an attempt to trick the receiving party to send an error message and discontinue the session. EDHOC implementations MAY evaluate if a received message is likely to have been forged by an attacker and ignore it without sending an error message or discontinuing the session.
 
@@ -1636,7 +1659,18 @@ After successful processing of EDHOC message_3, Client and Server derive Securit
 
 * The HKDF Algorithm is the one based on the application hash algorithm of the selected cipher suite for the EDHOC session. For example, if SHA-256 is the application hash algorithm of the selected cipher suite, HKDF SHA-256 is used as HKDF Algorithm in the OSCORE Security Context.
 
-* In case the Client is Initiator and the Server is Responder, the Client's OSCORE Sender ID and the Server's OSCORE Sender ID are determined from the EDHOC connection identifiers C_R and C_I for the EDHOC session, respectively, by applying the conversion in {{ci-oscore}}. The reverse applies in case the Client is the Responder and the Server is the Initiator.
+* The relationship between identifiers in OSCORE and EDHOC is specified in {{ci-oscore}}. The OSCORE Sender ID and Recipient ID are determined by the EDHOC connection identifiers C_R and C_I for the EDHOC session as shown in {{fig-edhoc-oscore-id-mapping}}.
+
+~~~~~~~~~~~
++----------------+-----------+--------------+
+| EDHOC \ OSCORE | Sender ID | Recipient ID |
++----------------+-----------+--------------+
+| Initiator      |    C_R    |     C_I      |
++----------------+-----------+--------------+
+| Responder      |    C_I    |     C_R      |
++----------------+-----------+--------------+
+~~~~~~~~~~~
+{: #fig-edhoc-oscore-id-mapping title="Usage of connection identifiers in OSCORE" artwork-align="center"}
 
 Client and Server use the parameters above to establish an OSCORE Security Context, as per Section 3.2.1 of {{RFC8613}}.
 
@@ -1744,12 +1778,31 @@ In EDHOC, compact representation is used for the ephemeral public keys (G_X and 
 
 The encoding of the point at infinity is not supported.
 
-Compact representation does not change any requirements on validation, see {{crypto}}. The following may be needed for validation or compatibility with APIs:
+Compact representation does not change any requirements on validation, see {{crypto}}. Using compact representation has some security benefits. An implementation does not need to check that the point is not the point at infinity (the identity element). Similarly, as not even the sign of the y-coordinate is encoded, compact representation trivially avoids so called "benign malleability" attacks where an attacker changes the sign, see {{SECG}}.
 
-* If a y-coordinate is required then the value ~yp SHALL be set to zero
-* The compact representation described above can in such a case be transformed into the SECG point compressed format by prepending it with the single byte 0x02 (i.e., M = 0x02 \|\| X).
+The following may be needed for validation or compatibility with APIs that do not support compact representation or do not support the full {{SECG}} format:
 
-Using compact representation has some security benefits. An implementation does not need to check that the point is not the point at infinity (the identity element). Similarly, as not even the sign of the y-coordinate is encoded, compact representation trivially avoids so called "benign malleability" attacks where an attacker changes the sign, see {{SECG}}.
+* If a compressed y-coordinate is required, then the value ~yp set to zero can be used. The compact representation described above can in such a case be transformed into the SECG point compressed format by prepending it with the single byte 0x02 (i.e., M = 0x02 \|\| X).
+* If a uncompressed y-coordinate is required, then a y-coordinate has to be calculated following Section 2.3.4 of {{SECG}} or Appendix C of {{RFC6090}}. Any of the square roots (see {{SECG}} or {{RFC6090}}) can be used.
+
+For example: The curve P-256 has the parameters (using the notation in {{RFC6090}})
+
+* p = 2<sup>256</sup> − 2<sup>224</sup> + 2<sup>192</sup> + 2<sup>96</sup> − 1
+* a = -3
+* b = 410583637251521421293261297800472684091144410159937255
+54835256314039467401291
+
+Given an example x:
+
+* x = 115792089183396302095546807154740558443406795108653336
+398970697772788799766525
+
+we can calculate y as the square root w = (x<sup>3</sup> + a {{{⋅}}} x + b)<sup>((p + 1)/4)</sup> (mod p)
+
+* y = 834387180070192806820075864918626005281451259964015754
+16632522940595860276856
+
+Note that this does not guarantee that (x, y) is on the correct elliptic curve. A full validation according to Section 5.6.2.3.3 of {{SP-800-56A}} can be achieved by also checking that 0 {{{≤}}} x < p and that y<sup>2</sup> {{{≡}}} x<sup>3</sup> + a {{{⋅}}} x + b (mod p).
 
 # Use of CBOR, CDDL, and COSE in EDHOC {#CBORandCOSE}
 
@@ -1761,7 +1814,7 @@ The Concise Binary Object Representation (CBOR) {{RFC8949}} is a data format des
 
 CBOR data items are encoded to or decoded from byte strings using a type-length-value encoding scheme, where the three highest order bits of the initial byte contain information about the major type. CBOR supports several different types of data items, in addition to integers (int, uint), simple values, byte strings (bstr), and text strings (tstr), CBOR also supports arrays \[\]  of data items, maps {} of pairs of data items, and sequences {{RFC8742}} of data items. Some examples are given below.
 
-The EDHOC specification sometimes use CDDL names in CBOR diagnostic notation as in e.g., << ID_CRED_R, ? EAD_2 >>. This means that EAD_2 is optional and that ID_CRED_R and EAD_2 should be substituted with their values before evaluation. I.e., if ID_CRED_R = { 4 : h'' } and EAD_2 is omitted then << ID_CRED_R, ? EAD_2 >> = << { 4 : h'' } >>, which encodes to 0x43a10440. We also make use of the occurrance symbol "\*", like in e.g.,  2* int, meaning two or more CBOR integers.
+The EDHOC specification sometimes use CDDL names in CBOR diagnostic notation as in e.g., << ID_CRED_R, ? EAD_2 >>. This means that EAD_2 is optional and that ID_CRED_R and EAD_2 should be substituted with their values before evaluation. I.e., if ID_CRED_R = { 4 : h'' } and EAD_2 is omitted then << ID_CRED_R, ? EAD_2 >> = << { 4 : h'' } >>, which encodes to 0x43a10440. We also make use of the occurrence symbol "\*", like in e.g.,  2* int, meaning two or more CBOR integers.
 
 For a complete specification and more examples, see {{RFC8949}} and {{RFC8610}}. We recommend implementors to get used to CBOR by using the CBOR playground {{CborMe}}.
 
@@ -1786,24 +1839,29 @@ h'12cd'             0x4212cd             byte string
 ~~~~~~~~~~~~~~~~~~~~~~~
 {: artwork-align="center"}
 
-## CDDL Definitions
+## CDDL Definitions {#CDDL}
 
 This sections compiles the CDDL definitions for ease of reference.
 
 ~~~~~~~~~~~ CDDL
 suites = [ 2* int ] / int
 
-ead = 1* (
+ead = (
   ead_label : int,
-  ead_value : bstr,
+  ? ead_value : bstr,
 )
+
+EAD_1 = 1* ead
+EAD_2 = 1* ead
+EAD_3 = 1* ead
+EAD_4 = 1* ead
 
 message_1 = (
   METHOD : int,
   SUITES_I : suites,
   G_X : bstr,
   C_I : bstr / -24..23,
-  ? EAD_1 : ead,
+  ? EAD_1,
 )
 
 message_2 = (
@@ -1931,7 +1989,7 @@ The application may need to verify that the credentials are not revoked, see {{i
 EDHOC might be used without authentication by allowing the Initiator or Responder to communicate with any identity except its own. Note that EDHOC without mutual authentication is vulnerable to man-in-the-middle attacks and therefore unsafe for general use. However, it is possible to later establish a trust relationship with an unknown or not-yet-trusted endpoint. Some examples:
 
 * The EDHOC authentication credential can be verified out-of-band at a later stage.
-* The EDHOC session key can be bound to an identity out-of-band at a later state.
+* The EDHOC session key can be bound to an identity out-of-band at a later stage.
 * Trust on first use (TOFU) can be used to verify that several EDHOC connections are made to the same identity. TOFU combined with proximity is a common IoT deployment model which provides good security if done correctly. Note that secure proximity based on short range wireless technology requires very low signal strength or very low latency.
 
 # Use of External Authorization Data {#ead-appendix}
@@ -1954,7 +2012,7 @@ Conversely, the security application may need to wait for EDHOC message verifica
 
 The security application may reuse EDHOC protocol fields which therefore need to be available to the application. For example, the security application may use the same crypto algorithms as in the EDHOC session and therefore needs access to the selected cipher suite (or the whole SUITES_I). The application may use the ephemeral public keys G_X and G_Y, as ephemeral keys or as nonces, see {{I-D.selander-lake-authz}}.
 
-The processing of the EAD item (ead_label, ead_value) by the security application needs to be described in the specification where the ead_label is registered, see {{iana-ead}}, including the ead_value for each message and actions in case of errors. An application may support multiple security applications that make use of EAD, which may result in multiple EAD items in one EAD field, see {{AD}}. Any dependencies on security applications with previously registered EAD items needs to be documented, and the processing needs to consider their simultaneous use.
+The processing of the EAD item (ead_label, ? ead_value) by the security application needs to be described in the specification where the ead_label is registered, see {{iana-ead}}, including the optional ead_value for each message and actions in case of errors. An application may support multiple security applications that make use of EAD, which may result in multiple EAD items in one EAD field, see {{AD}}. Any dependencies on security applications with previously registered EAD items needs to be documented, and the processing needs to consider their simultaneous use.
 
 Since data carried in EAD may not be protected, or be processed by the application before the EDHOC message is verified, special considerations need to be made such that it does not violate security and privacy requirements of the service which uses this data, see {{unprot-data}}. The content in an EAD item may impact the security properties provided by EDHOC. Security applications making use of the EAD items must perform the necessary security analysis.
 
@@ -2013,7 +2071,7 @@ may need ... no, they don't need anything special: after an error, the next thin
 
 # Long PLAINTEXT_2 {#large-plaintext_2}
 
-By design of encryption of PLAINTEXT_2, if the EDHOC hash algorithm is SHA-2 then HKDF-Expand is used which limits the length of plaintext that can be encrypted to 255 * hash_length, where hash_length is the length of the output of the EDHOC hash algorithm given by the cipher suite. For example, with SHA-256 as EDHOC hash algorithm, the length of the hash output is 32 bytes and the maximum length of PLAINTEXT_2 is 255 * 32 = 8160 bytes.
+By the definition of encryption of PLAINTEXT_2 with KEYSTREAM_2, it is limited to lengths of PLAINTEXT_2 not exceeding the output of EDHOC-KDF, see {{expand}}. If the EDHOC hash algorithm is SHA-2 then HKDF-Expand is used, which limits the length of the EDHOC-KDF output to 255 {{{⋅}}} hash_length, where hash_length is the length of the output of the EDHOC hash algorithm given by the cipher suite. For example, with SHA-256 as EDHOC hash algorithm the length of the hash output is 32 bytes and the maximum length of PLAINTEXT_2 is 255 {{{⋅}}} 32 = 8160 bytes.
 
 While PLAINTEXT_2 is expected to be much shorter than 8 kB for the intended use cases, it seems nevertheless prudent to provide an extended solution for the event that this should turn out to be a limitation.
 
@@ -2021,7 +2079,7 @@ A potential work-around is to use a cipher suite with a different hash function.
 
 Another solution is to make use of multiple invocations of HKDF-Expand and negative values of info_label, as specified in the remainder of this section.
 
-Consider the PLAINTEXT_2 partitioned in parts P(i) of length equal to M = 255 \* hash_length, except possibly the last part P(last) which has length > 0 and \<= M.
+Consider the PLAINTEXT_2 partitioned in parts P(i) of length equal to M = 255 {{{⋅}}} hash_length, except possibly the last part P(last) which has 0 < length {{{≤}}} M.
 
 ~~~~~~~~~~~
 PLAINTEXT_2 = P(0) | P(1) | ... | P(last)
@@ -2047,7 +2105,7 @@ where
 OKM(i) = EDHOC-KDF( PRK_2e, -i, TH_2, length(P(i)) )
 ~~~~~~~~~~~
 
-Note that if length(PLAINTEXT_2) \<= M then P(0) = PLAINTEXT_2 and the definition of KEYSTREAM_2 = OKM(0) coincides with {{fig-edhoc-kdf}}.
+Note that if length(PLAINTEXT_2) {{{≤}}} M then P(0) = PLAINTEXT_2 and the definition of KEYSTREAM_2 = OKM(0) coincides with {{fig-edhoc-kdf}}.
 
 This describes the processing of the Responder when sending message_2. The Initiator makes the same calculations when receiving message_2, but interchanging PLAINTEXT_2 and CIPHERTEXT_2.
 
