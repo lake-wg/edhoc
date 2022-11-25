@@ -1650,9 +1650,9 @@ After successful processing of EDHOC message_3, Client and Server derive Securit
 
    * The EDHOC Exporter Labels for deriving the OSCORE Master Secret and the OSCORE Master Salt, are the uints 0 and 1, respectively.
 
-  * The context parameter is h'' (0x40), the empty CBOR byte string.
+   * The context parameter is h'' (0x40), the empty CBOR byte string.
 
-  * By default, oscore_key_length is the key length (in bytes) of the application AEAD Algorithm of the selected cipher suite for the EDHOC session. Also by default, oscore_salt_length has value 8. The Initiator and Responder MAY agree out-of-band on a longer oscore_key_length than the default and on a different oscore_salt_length.
+   * By default, oscore_key_length is the key length (in bytes) of the application AEAD Algorithm of the selected cipher suite for the EDHOC session. Also by default, oscore_salt_length has value 8. The Initiator and Responder MAY agree out-of-band on a longer oscore_key_length than the default and on a different oscore_salt_length.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
    Master Secret = EDHOC-Exporter( 0, h'', oscore_key_length )
