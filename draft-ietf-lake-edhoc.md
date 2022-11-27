@@ -547,7 +547,7 @@ See {{COSE}} for more examples.
 
 #### Compact Encoding of ID_CRED for 'kid' {#compact-kid}
 
-To comply with the LAKE message overhead requirements, see {{draft-ietf-lake-reqs}}, two optimizations are made for the case when ID_CRED_x contains a single 'kid' parameter.
+To comply with the LAKE message overhead requirements, see {{I-D.ietf-lake-reqs}}, two optimizations are made for the case when ID_CRED_x contains a single 'kid' parameter.
 
 1. The CBOR map { 4 : kid_x } is replaced by the byte string kid_x.
 2. The representation of identifiers specified in {{bstr-repr}} is applied to kid_x.
