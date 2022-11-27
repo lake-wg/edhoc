@@ -547,14 +547,12 @@ See {{COSE}} for more examples.
 
 #### Compact Encoding of ID_CRED for 'kid' {#compact-kid}
 
-To comply with the EDHOC message size requirements, two optimizations are made for the case when ID_CRED_x contains a single 'kid' parameter.
+To comply with the LAKE message overhead requirements, see {{draft-ietf-lake-reqs}}, two optimizations are made for the case when ID_CRED_x contains a single 'kid' parameter.
 
 1. The CBOR map { 4 : kid_x } is replaced by the byte string kid_x.
 2. The representation of identifiers specified in {{bstr-repr}} is applied to kid_x.
 
-These optimizations MUST be applied if and only if ID_CRED_x = { 4 : kid_x } and only on the ID_CRED_x in PLAINTEXT_y of message_y, y = 2 or 3, see {{asym-msg2-proc}} and {{asym-msg3-proc}}. (These optimizations are not applied to ID_CRED_x in context_y, protected, etc.)
-
-Examples:
+These optimizations MUST be applied if and only if ID_CRED_x = { 4 : kid_x } and ID_CRED_x in PLAINTEXT_y of message_y, y = 2 or 3, see {{asym-msg2-proc}} and {{asym-msg3-proc}}. Note that these optimizations are not applied to instances of ID_CRED_x which have no impact on message size, e.g., context_y, or the COSE protected header.
 
 * For ID_CRED_x = { 4 : h'FF' }, the encoding in PLAINTEXT_y is not the CBOR map 0xA10441FF but the CBOR byte string h'FF', i.e., 0x41FF.
 
