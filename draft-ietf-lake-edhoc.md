@@ -552,7 +552,7 @@ To comply with the LAKE message size requirements, see {{I-D.ietf-lake-reqs}}, t
 1. The CBOR map { 4 : kid_x } is replaced by the byte string kid_x.
 2. The representation of identifiers specified in {{bstr-repr}} is applied to kid_x.
 
-These optimizations MUST be applied if and only if ID_CRED_x = { 4 : kid_x } and ID_CRED_x in PLAINTEXT_y of message_y, y = 2 or 3, see {{asym-msg2-proc}} and {{asym-msg3-proc}}. Note that these optimizations are not applied to instances of ID_CRED_x which have no impact on message size, e.g., context_y, or the COSE protected header.
+These optimizations MUST be applied if and only if ID_CRED_x = { 4 : kid_x } and ID_CRED_x in PLAINTEXT_y of message_y, y = 2 or 3, see {{asym-msg2-proc}} and {{asym-msg3-proc}}. Note that these optimizations are not applied to instances of ID_CRED_x which have no impact on message size, e.g., context_y, or the COSE protected header. Examples:
 
 * For ID_CRED_x = { 4 : h'FF' }, the encoding in PLAINTEXT_y is not the CBOR map 0xA10441FF but the CBOR byte string h'FF', i.e., 0x41FF.
 
