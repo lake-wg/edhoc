@@ -180,7 +180,7 @@ informative:
       -
         ins: S. Kremer
       -
-        ins: M. Racouchot 		
+        ins: M. Racouchot
     date: October 2022
 
   Norrman20:
@@ -541,18 +541,22 @@ Example: CWT or CCS can be identified by a key identifier using the 'kid' parame
 
 * ID_CRED_x = { 4 : kid_x }, where kid_x : kid, for x = I or R.
 
-
-The value of a COSE 'kid' parameter is a CBOR byte string. For a more compact encoding, the CBOR map is replaced by a byte string, see the definitions of plaintext in {{asym-msg2-proc}} and {{asym-msg3-proc}}. To allow one-byte encodings of ID_CRED_x with key identifiers 'kid', the same representation used for EDHOC connection identifiers defined in {{bstr-repr}} MUST be applied.
-
-Examples:
-
-* The CBOR map { 4 : h'FF' } is not encoded as 0xA10441FF but as the CBOR byte string h'FF', i.e., 0x41FF.
-
-* The CBOR map { 4 : h'21' } is neither encoded as 0xA1044121, nor as the CBOR byte string h'21', i.e., 0x4121, but as the CBOR integer 0x21.
-
 As stated in Section 3.1 of {{RFC9052}}, applications MUST NOT assume that 'kid' values are unique and several keys associated with a 'kid' may need to be checked before the correct one is found. Applications might use additional information such as 'kid context' or lower layers to determine which key to try first. Applications should strive to make ID_CRED_x as unique as possible, since the recipient may otherwise have to try several keys.
 
 See {{COSE}} for more examples.
+
+#### Compact Encoding of ID_CRED for 'kid' {#compact-kid}
+
+To comply with the LAKE message size requirements, see {{I-D.ietf-lake-reqs}}, two optimizations are made for the case when ID_CRED_x contains a single 'kid' parameter.
+
+1. The CBOR map { 4 : kid_x } is replaced by the byte string kid_x.
+2. The representation of identifiers specified in {{bstr-repr}} is applied to kid_x.
+
+These optimizations MUST be applied if and only if ID_CRED_x = { 4 : kid_x } and ID_CRED_x in PLAINTEXT_y of message_y, y = 2 or 3, see {{asym-msg2-proc}} and {{asym-msg3-proc}}. Note that these optimizations are not applied to instances of ID_CRED_x which have no impact on message size, e.g., context_y, or the COSE protected header.
+
+* For ID_CRED_x = { 4 : h'FF' }, the encoding in PLAINTEXT_y is not the CBOR map 0xA10441FF but the CBOR byte string h'FF', i.e., 0x41FF.
+
+* For ID_CRED_x = { 4 : h'21' }, the encoding in PLAINTEXT_y is neither the CBOR map 0xA1044121, nor the CBOR byte string h'21', i.e., 0x4121, but the CBOR integer 0x21.
 
 ## Cipher Suites {#cs}
 
@@ -964,7 +968,7 @@ The Responder SHALL compose message_2 as follows:
 
    * PLAINTEXT_2 = ( ID_CRED_R / bstr / -24..23, Signature_or_MAC_2, ? EAD_2 )
 
-      * If ID_CRED_R contains a single 'kid' parameter, i.e., ID_CRED_R = { 4 : kid_R }, then only the byte string is included in the plaintext, represented as described in {{bstr-repr}}, see examples in {{id_cred}}.
+      * If ID_CRED_R contains a single 'kid' parameter, i.e., ID_CRED_R = { 4 : kid_R }, then the compact encoding is applied, see {{compact-kid}}.
 
    * Compute KEYSTREAM_2 as in {{expand}}, where plaintext_length is the length of PLAINTEXT_2. For the case of plaintext_length exceeding the EDHOC-KDF output size, see {{large-plaintext_2}}.
 
@@ -1033,7 +1037,7 @@ The Initiator SHALL compose message_3 as follows:
 
    * PLAINTEXT_3 = ( ID_CRED_I / bstr / -24..23, Signature_or_MAC_3, ? EAD_3 )
 
-       * If ID_CRED_I contains a single 'kid' parameter, i.e., ID_CRED_I = { 4 : kid_I }, then only the byte string is included in the plaintext, represented as described in {{bstr-repr}}, see examples in {{id_cred}}.
+       * If ID_CRED_I contains a single 'kid' parameter, i.e., ID_CRED_I = { 4 : kid_I }, then the compact encoding is applied, see {{compact-kid}}.
 
    CIPHERTEXT_3 is the 'ciphertext' of COSE_Encrypt0.
 
