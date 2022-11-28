@@ -2139,6 +2139,26 @@ While this key update method provides forward secrecy it does not give as strong
 
 RFC Editor: Please remove this appendix.
 
+
+* From -17 to -18
+
+  * Padding realised as EAD with ead_label = 0, PAD fields removed
+  * Revised EAD syntax; ead is now EAD item; ead_value is now optional
+  * Clarifications of
+    * Identifier representation
+    * Authentication credentials
+    * RPK
+    * Encoding of ID_CRED with kid
+    * Representation of public keys, y-coordinate of ephemeral keys and validation
+    * Processing after completed protocol
+    * Making verifications available to the application
+    * Relation between EDHOC and OSCORE identifiers
+  * Terminology alignment in particular session / protocol; discontinue / terminate
+  * Updated CDDL
+  * Additional unicode encodings
+  * Large number of nits from WGLC
+
+
 * From -16 to -17
 
   * EDHOC-KeyUpdate moved to appendix
