@@ -2175,6 +2175,35 @@ ABORTED <---------------- WAIT_M2
 ~~~~~~~~~~~~~~~~~~~~~~~
 {: artwork-align="center"}
 
+## Responder State Machine
+
+The responder transitions from START to RCVD_M1 upon the reception of a message_1. If a processing error occurred on message_1, the Responder sends back an error message. This includes sending error message with error code 2 (Wrong Selected Cipher Suite) if the received message_1 was generated with an unsupported cipher suite. Once in RCVD_M1, the Responder processes and prepares message_2 for sending. It transitions to WAIT_M3 by successfully sending message_2. The Responder then processes the incoming message, and if an error occurs during the processing sends an error message back and discontinues the protocol. If an error message is received instead, the protocol is discontinued but the error message sending is skipped. Successful processing of message_3 transitions the state machine into COMPLETED. If an application profile mandates message_4, the Responder sends it and transitions into PERSISTED. Otherwise, it directly transitions into PERSISTED state.
+
+~~~~~~~~~~~~~~~~~~~~~~~
+                          START
+                            |
+                            | Receive message_1
+                            |
+         (send error msg)   v
+ABORTED <---------------- RCVD_M1
+    ^                       |
+    |    Receive invalid    |
+    |    or error msg       | Send message_2
+    |    (send error msg)   v
+    +-------------------- WAIT_M3
+    ^                       |
+    |                       |
+    |                       | Receive message_3
+    |                       |
+    |    (send error msg)   v
+    +------------------- COMPLETED
+                            |
+                            | (Send message_4)
+                            v
+                         PERSISTED
+~~~~~~~~~~~~~~~~~~~~~~~
+{: artwork-align="center"}
+
 
 # Change Log
 
