@@ -2139,6 +2139,43 @@ While this key update method provides forward secrecy it does not give as strong
 
  A similar method to do key update for OSCORE is KUDOS, see {{I-D.ietf-core-oscore-key-update}}.
 
+# Example Protocol State Machine
+
+This appendix describes an example protocol state machine for the Initiator and for the Responder. States are denoted in all capitals and parentheses denote actions takes only in some circumstances.
+
+## Initiator State Machine
+
+The Initiator triggers the state machine by sending message_1, transitioning from START to WAIT_M2. In case the incoming message processing failed, the Initiator sends an error message and discontinues the protocol, transitioning from WAIT_M2 to ABORTED. If an error message is received with error code 2 (Wrong Selected Cipher Suite), the Initiator remembers the supported suites for this particular Responder and transitions from ABORTED to START. The message_1 that the Initiator subsequently sends takes into account the cipher suite supported by the Responder. Upon successful processing of message_2, the Initiator transitions to RCVD_M2. The Initiator prepares and processes message_3 for sending. In case any internal error is encountered, the Initiator sends an error message and discontinues the protocol by transitioning from RCVD_M2 to ABORTED. Once message_3 is successfully sent, the Initiator transitions from RCVD_M2 to COMPLETED. The Initiator transitions from COMPLETED to PERSISTED upon key confirmation by the Responder. The key confirmation can either occur by receiving an optional message_4 (if supported by the application profile) or by successful decryption and verification of an incoming application message protected with derived application keys. In case a processing error occurs while in COMPLETED, the Initiator sends an error message and discontinues the protocol.
+
+~~~~~~~~~~~~~~~~~~~~~~~
+    +-------------------> START
+    |                       |
+    |                       |
+    |    Receive invalid    | Send message_1
+    |    or error msg       |
+    |    (send error msg)   v
+ABORTED <---------------- WAIT_M2
+    ^                       |
+    |                       | Receive message_2
+    |    (send error msg)   v
+    +-------------------- RCVD_M2
+    ^                       |
+    |                       |
+    |    Receive invalid    | Send message_3
+    |    or error msg       |
+    |    (send error msg)   v
+    +------------------- COMPLETED
+                            |
+                            | (Receive message_4)
+                            v
+                         PERSISTED <-- Successful decryption and
+                                       verification of an incoming
+                                       application message protected
+                                       with derived application keys
+~~~~~~~~~~~~~~~~~~~~~~~
+{: artwork-align="center"}
+
+
 # Change Log
 
 RFC Editor: Please remove this appendix.
