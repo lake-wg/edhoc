@@ -2141,41 +2141,61 @@ While this key update method provides forward secrecy it does not give as strong
 
 # Example Protocol State Machine
 
-This appendix describes an example protocol state machine for the Initiator and for the Responder. States are denoted in all capitals and parentheses denote actions takes only in some circumstances.
+This appendix describes an example protocol state machine for the Initiator and for the Responder. States are denoted in all capitals and parentheses denote actions taken only in some circumstances.
 
 ## Initiator State Machine
 
-The Initiator triggers the state machine by sending message_1, transitioning from START to WAIT_M2.
+The Initiator sends message_1, triggering the state machine to transition from START to WAIT_M2, and waits for message_2.
 
-In case the incoming message processing failed, the Initiator sends an error message and discontinues the protocol, transitioning from WAIT_M2 to ABORTED. If an error message is received with error code 2 (Wrong Selected Cipher Suite), the Initiator remembers the supported suites for this particular Responder and transitions from ABORTED to START. The message_1 that the Initiator subsequently sends takes into account the cipher suite supported by the Responder. Upon successful processing of message_2, the Initiator transitions to RCVD_M2. The Initiator prepares and processes message_3 for sending. In case any internal error is encountered, the Initiator sends an error message and discontinues the protocol by transitioning from RCVD_M2 to ABORTED. Once message_3 is successfully sent, the Initiator transitions from RCVD_M2 to COMPLETED. The Initiator transitions from COMPLETED to PERSISTED upon key confirmation by the Responder. The key confirmation can either occur by receiving an optional message_4 (if supported by the application profile) or by successful decryption and verification of an incoming application message protected with derived application keys. In case a processing error occurs while in COMPLETED, the Initiator sends an error message and discontinues the protocol.
+If the incoming message is an error message then the Initiator transitions from WAIT_M2 to ABORTED. In case of error code 2 (Wrong Selected Cipher Suite), the Initiator remembers the supported cipher suites for this particular Responder and transitions from ABORTED to START. The message_1 that the Initiator subsequently sends takes into account the cipher suites supported by the Responder.
+
+Upon receiving a non-error message, the Initiator transitions from WAIT_M2 to RCVD_M2 and processes the message. If processing fails, then the Initiator transitions from RCVD_M2 to ABORTED.
+
+In case of successful processing of message_2, the Initiator transitions from RCVD_M2 to VRFD_M2.
+
+The Initiator prepares and processes message_3 for sending. If any processing error is encountered, the Initiator transitions from VRFD_M2 to ABORTED. If message_3 is successfully sent, the Initiator transitions from VRFD_M2 to COMPLETED.
+
+If the application profile includes message_4, then the Initiator waits for message_4. If the incoming message is an error message then the Initiator transitions from COMPLETED to ABORTED. Upon receiving a non-error message, the Initiator transitions from COMPLETED (="WAIT_M4") to RCVD_M4 and processes the message. If processing fails, then the Initiator transitions from RCVD_M4 to ABORTED. In case of successful processing of message_4, the Initiator transitions from RCVD_M4 to PERSISTED (="VRFD_M4").
+
+If the application profile does not include message_4, then the Initiator waits for an incoming application message. If the decryption and verification of the application message is successful, then the the Initiator transitions from COMPLETED to PERSISTED.
+
 
 ~~~~~~~~~~~~~~~~~~~~~~~
-    +-------------------> START
+
+    +- - - - - - - - - -> START
     |                       |
+                            | Sent message_1
     |                       |
-    |    Receive invalid    | Send message_1
-    |    or error msg       |
-    |    (send error msg)   v
+          Received error    v
 ABORTED <---------------- WAIT_M2
     ^                       |
-    |                       | Receive message_2
-    |    (send error msg)   v
+    |                       | Received message_2
+    |                       |
+    |    Processing error   v
     +-------------------- RCVD_M2
     ^                       |
+    |                       | Verified message_2
     |                       |
-    |    Receive invalid    | Send message_3
-    |    or error msg       |
-    |    (send error msg)   v
-    +------------------- COMPLETED
-                            |
-                            | (Receive message_4)
-                            v
-                         PERSISTED <-- Successful decryption and
-                                       verification of an incoming
-                                       application message protected
-                                       with derived application keys
+    |    Processing error   v
+    +-------------------- VRFD_M2
+    ^                       |
+    |                       | Sent message_3
+    |                       |
+    |   (Received error)    v
+    +-------------------- COMPLETED ----------------+
+    ^                       |                       |
+    |                       | (Received message_4)  |
+    |                       |                       |
+    |   (Processing error)  v                       | (Verified
+    +--------------------(RCVD_M4)                  |  application
+                            |                       |  message)
+                            | (Verified message_4)  |
+                            |                       |
+                            v                       |
+                          PERSISTED <---------------+
 ~~~~~~~~~~~~~~~~~~~~~~~
 {: artwork-align="center"}
+
 
 ## Responder State Machine
 
