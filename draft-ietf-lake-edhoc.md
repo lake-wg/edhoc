@@ -2149,9 +2149,7 @@ The Initiator sends message_1, triggering the state machine to transition from S
 
 If the incoming message is an error message then the Initiator transitions from WAIT_M2 to ABORTED. In case of error code 2 (Wrong Selected Cipher Suite), the Initiator remembers the supported cipher suites for this particular Responder and transitions from ABORTED to START. The message_1 that the Initiator subsequently sends takes into account the cipher suites supported by the Responder.
 
-Upon receiving a non-error message, the Initiator transitions from WAIT_M2 to RCVD_M2 and processes the message. If processing fails, then the Initiator transitions from RCVD_M2 to ABORTED.
-
-In case of successful processing of message_2, the Initiator transitions from RCVD_M2 to VRFD_M2.
+Upon receiving a non-error message, the Initiator transitions from WAIT_M2 to RCVD_M2 and processes the message. If processing fails, then the Initiator transitions from RCVD_M2 to ABORTED. In case of successful processing of message_2, the Initiator transitions from RCVD_M2 to VRFD_M2.
 
 The Initiator prepares and processes message_3 for sending. If any processing error is encountered, the Initiator transitions from VRFD_M2 to ABORTED. If message_3 is successfully sent, the Initiator transitions from VRFD_M2 to COMPLETED.
 
