@@ -547,16 +547,10 @@ ed 9f 94 4e 6a 78 79 7f 5c 08 49 58 db 0f 20 89 c2 1c 52 02
 ~~~~~~~~
 
 
-R constructs the plaintext without padding:
-
-~~~~~~~~
-PAD_2 (CBOR sequence of simple type) (0 bytes)
-~~~~~~~~
-
+R constructs PLAINTEXT_2:
 
     PLAINTEXT_2 =
     (
-     ? PAD_2,
      ID_CRED_R / bstr / -24..23,
      Signature_or_MAC_2,
      ? EAD_2
@@ -922,15 +916,10 @@ d2 ce ee c0 6a dc ff 6a 76 a7 0e 31 56 a6 00 fb 61 ac d6 02
 ~~~~~~~~
 
 
-I constructs the plaintext without padding:
-
-~~~~~~~~
-PAD_3 (CBOR sequence of simple type) (0 bytes)
-~~~~~~~~
+I constructs PLAINTEXT_3:
 
     PLAINTEXT_3 =
     (
-     ? PAD_3,
      ID_CRED_I / bstr / -24..23,
      Signature_or_MAC_3,
      ? EAD_3
@@ -1085,7 +1074,7 @@ No external authorization data:
 EAD_4 (CBOR Sequence) (0 bytes)
 ~~~~~~~~
 
-R constructs the plaintext PLAINTEXT_4:
+R constructs PLAINTEXT_4:
 
     PLAINTEXT_4 =
     (
@@ -2009,15 +1998,10 @@ Signature_or_MAC_2 (CBOR Data Item) (9 bytes)
 48 d0 d1 a5 94 79 7d 0a af
 ~~~~~~~~
 
-R constructs PLAINTEXT_2 without padding:
-
-~~~~~~~~
-PAD_2 (CBOR sequence of simple type) (0 bytes)
-~~~~~~~~
+R constructs PLAINTEXT_2:
 
     PLAINTEXT_2 =
     (
-     ? PAD_2,
      ID_CRED_R / bstr / -24..23,
      Signature_or_MAC_2,
      ? EAD_2
@@ -2048,7 +2032,7 @@ where plaintext_length is the length of PLAINTEXT_2, and info for KEYSTREAM_2 is
     )
 
 
-where last value is the length of PLAINTEXT_2.
+where the last value is the length of PLAINTEXT_2.
 
 ~~~~~~~~
 info for KEYSTREAM_2 (CBOR Sequence) (36 bytes)
@@ -2332,16 +2316,10 @@ Signature_or_MAC_3 (CBOR Data Item) (9 bytes)
 ~~~~~~~~
 
 
-I constructs PLAINTEXT_3 without padding:
-
-~~~~~~~~
-PAD_3 (CBOR sequence of simple type) (0 bytes)
-~~~~~~~~
-
+I constructs PLAINTEXT_3:
 
     PLAINTEXT_3 =
     (
-     ? PAD_3,
      ID_CRED_I / bstr / -24..23,
      Signature_or_MAC_3,
      ? EAD_3
@@ -2476,7 +2454,7 @@ No external authorization data:
 
 EAD_4 (CBOR Sequence) (0 bytes)
 
-R constructs the plaintext PLAINTEXT_4:
+R constructs PLAINTEXT_4:
 
     PLAINTEXT_4 =
     (
