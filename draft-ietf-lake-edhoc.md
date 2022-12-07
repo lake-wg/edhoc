@@ -613,10 +613,9 @@ ead = (
 ~~~~~~~~~~~
 {: #fig-ead-item title="Definition of EAD item."}
 
+Each application may register EAD label(s), see {{iana-ead}}, and describes the associated processing and security considerations. The application may define multiple uses of certain EAD items, e.g., the same EAD item may be used in different EDHOC messages with the same application. Multiple occurrences of an EAD item in one EAD field may also be specified.
 
-A security application using external authorization data needs to register a positive ead_label and optionally an associated ead_value format, for each EAD item it uses (see {{iana-ead}}). Each application registers its own EAD items and describes the associated processing and security considerations. The application may define multiple uses of certain EAD items, e.g., the same EAD item may be used in different EDHOC messages with the same application. Multiple occurrences of an EAD item in one EAD field may also be specified.
-
-An EAD item can be either critical or non-critical, determined by the sign of the ead_label in the EAD item transported in the EDHOC message. A negative value indicates that the EAD item is critical and a non-negative value indicates that this EAD item is non-critical. The specification registering a new EAD label needs to describe under what conditions the EAD item is critical or non-critical, and thus whether the ead_label is used with negative or positive sign. ead_label = 0 is used for padding, see {{padding}}.
+An EAD item can be either critical or non-critical, determined by the sign of the ead_label in the EAD item transported in the EDHOC message. A negative value indicates that the EAD item is critical and a non-negative value indicates that this EAD item is non-critical. The IANA registry defines only the non-negative ead_label, the same ead_value applies independent of sign of ead_label. The specification registering a new EAD label needs to describe under what conditions the EAD item is critical or non-critical, and thus whether the ead_label is used with negative or positive sign. ead_label = 0 is used for padding, see {{padding}}.
 
 If an endpoint receives a critical EAD item it does not recognize or a critical EAD item that contains information that it cannot process, then the endpoint MUST send an EDHOC error message back as defined in {{error}}, and the protocol MUST be discontinued. The EAD specification must define the error processing. A non-critical EAD item can be ignored.
 
@@ -1485,7 +1484,18 @@ IANA has created a new registry entitled "EDHOC Error Codes" under the new regis
 
 ## EDHOC External Authorization Data Registry {#iana-ead}
 
-IANA has created a new registry entitled "EDHOC External Authorization Data" under the new registry group "Ephemeral Diffie-Hellman Over COSE (EDHOC)". The registration procedure is "Specification Required" {{RFC8126}}. The columns of the registry are Label, Description, and Reference, where Label is a positive integer and the other columns are text strings.
+IANA has created a new registry entitled "EDHOC External Authorization Data" under the new registry group "Ephemeral Diffie-Hellman Over COSE (EDHOC)". The registration procedure is "Specification Required" {{RFC8126}}. The columns of the registry are Name, Label, Description, and Reference, where Label is a non-negative integer and the other columns are text strings.
+
+~~~~~~~~~~~
+
++-----------+-------+------------------------+-------------------+
+| Name      | Label | Description            | Reference         |
++===========+=======+========================+===================+
+| Padding   |   0   | Randomly generated     | [[this document]] |
+|           |       | CBOR byte string       | Section 3.8.1     |
++-----------+-------+----------------+-------+-------------------+
+
+~~~~~~~~~~~
 
 ## COSE Header Parameters Registry {#cwt-header-param}
 
