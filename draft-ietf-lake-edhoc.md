@@ -2169,32 +2169,32 @@ If the application profile does not include message_4, then the Initiator waits 
 
     +- - - - - - - - - -> START
     |                       |
-                            | Sent message_1
+                            | Send message_1
     |                       |
-          Received error    v
+          Receive error     v
 ABORTED <---------------- WAIT_M2
     ^                       |
-    |                       | Received message_2
+    |                       | Receive message_2
     |                       |
     |    Processing error   v
     +-------------------- RCVD_M2
     ^                       |
-    |                       | Verified message_2
+    |                       | Verify message_2
     |                       |
     |    Processing error   v
     +-------------------- VRFD_M2
     ^                       |
-    |                       | Sent message_3
+    |                       | Send message_3
     |                       |
-    |   (Received error)    v
+    |    (Receive error)    v
     +-------------------- COMPLETED ----------------+
     ^                       |                       |
-    |                       | (Received message_4)  |
+    |                       | (Receive message_4)   |
     |                       |                       |
-    |   (Processing error)  v                       | (Verified
+    |   (Processing error)  v                       | (Verify
     +--------------------(RCVD_M4)                  |  application
                             |                       |  message)
-                            | (Verified message_4)  |
+                            | (Verify message_4)    |
                             |                       |
                             v                       |
                           PERSISTED <---------------+
@@ -2223,32 +2223,32 @@ If message_4 is successfully sent, or if the application profile does not includ
 
                           START
                             |
-                            | Received message_1
+                            | Receive message_1
                             |
          Processing error   v
 ABORTED <---------------- RCVD_M1
     ^                       |
-    |                       | Verified message_1
+    |                       | Verify message_1
     |                       |
     |    Processing error   v
     +-------------------- VRFD_M1
     ^                       |
-    |                       | Sent message_2
+    |                       | Send message_2
     |                       |
-    |     Received error    v
+    |     Receive error     v
     +-------------------- WAIT_M3
     ^                       |
-    |                       | Received message_3
+    |                       | Receive message_3
     |                       |
     |    Processing error   v
     +-------------------- RCVD_M3
     ^                       |
-    |                       | Verified message_3
+    |                       | Verify message_3
     |                       |
     |   (Processing error)  v
     +------------------- COMPLETED
                             |
-                            | (Sent message_4)
+                            | (Send message_4)
                             |
                             v
                          PERSISTED
