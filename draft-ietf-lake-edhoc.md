@@ -2204,28 +2204,50 @@ ABORTED <---------------- WAIT_M2
 
 ## Responder State Machine
 
-The responder transitions from START to RCVD_M1 upon the reception of a message_1. If a processing error occurred on message_1, the Responder sends back an error message. This includes sending error message with error code 2 (Wrong Selected Cipher Suite) if the received message_1 was generated with an unsupported cipher suite. Once in RCVD_M1, the Responder processes and prepares message_2 for sending. It transitions to WAIT_M3 by successfully sending message_2. The Responder then processes the incoming message, and if an error occurs during the processing sends an error message back and discontinues the protocol. If an error message is received instead, the protocol is discontinued but the error message sending is skipped. Successful processing of message_3 transitions the state machine into COMPLETED. If an application profile mandates message_4, the Responder sends it and transitions into PERSISTED. Otherwise, it directly transitions into PERSISTED state.
+Upon receiving message_1, the Responder transitions from START to RCVD_M1.
+
+If a processing error occurs on message_1, the Responder transitions from RCVD_M1 to ABORTED. This includes sending error message with error code 2 (Wrong Selected Cipher Suite) if the selected cipher suite in message_1 is not supported. In case of successful processing of message_1, the Responder transitions from RCVD_M1 to VRFD_M1.
+
+The Responder prepares and processes message_2 for sending. If any processing error is encountered, the Responder transitions from VRFD_M1 to ABORTED. If message_2 is successfully sent, the Initiator transitions from VRFD_M2 to WAIT_M3, and waits for message_3.
+
+If the incoming message is an error message then the Responder transitions from WAIT_M3 to ABORTED.
+
+Upon receiving message_3, the Responder transitions from WAIT_M3 to RCVD_M3. If a processing error occurs on message_3, the Responder transitions from RCVD_M3 to ABORTED. In case of successful processing of message_3, the Responder transitions from RCVD_M3 to COMPLETED (="VRFD_M3").
+
+If the application profile includes message_4, the Responder prepares and processes message_4 for sending. If any processing error is encountered, the Responder transitions from COMPLETED to ABORTED. If not, message_4 is successfully sent and the Responder transitions from COMPLETED to PERSISTED.
+
 
 ~~~~~~~~~~~~~~~~~~~~~~~
+
                           START
                             |
-                            | Receive message_1
+                            | Received message_1
                             |
-         (send error msg)   v
+         Processing error   v
 ABORTED <---------------- RCVD_M1
     ^                       |
-    |    Receive invalid    |
-    |    or error msg       | Send message_2
-    |    (send error msg)   v
+    |                       | Verified message_1
+    |                       |
+    |    Processing error   v
+    +-------------------- VRFD_M1
+    ^                       |
+    |                       | Sent message_2
+    |                       |
+    |     Received error    v
     +-------------------- WAIT_M3
     ^                       |
+    |                       | Received message_3
     |                       |
-    |                       | Receive message_3
+    |    Processing error   v
+    +-------------------- RCVD_M3
+    ^                       |
+    |                       | Verified message_3
     |                       |
-    |    (send error msg)   v
+    |   (Processing error)  v
     +------------------- COMPLETED
                             |
-                            | (Send message_4)
+                            | (Sent message_4)
+                            |
                             v
                          PERSISTED
 ~~~~~~~~~~~~~~~~~~~~~~~
