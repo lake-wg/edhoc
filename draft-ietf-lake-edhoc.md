@@ -2214,7 +2214,9 @@ If the incoming message is an error message then the Responder transitions from 
 
 Upon receiving message_3, the Responder transitions from WAIT_M3 to RCVD_M3. If a processing error occurs on message_3, the Responder transitions from RCVD_M3 to ABORTED. In case of successful processing of message_3, the Responder transitions from RCVD_M3 to COMPLETED (="VRFD_M3").
 
-If the application profile includes message_4, the Responder prepares and processes message_4 for sending. If any processing error is encountered, the Responder transitions from COMPLETED to ABORTED. If not, message_4 is successfully sent and the Responder transitions from COMPLETED to PERSISTED.
+If the application profile includes message_4, the Responder prepares and processes message_4 for sending. If any processing error is encountered, the Responder transitions from COMPLETED to ABORTED.
+
+If message_4 is successfully sent, or if the application profile does not include message_4, the Responder transitions from COMPLETED to PERSISTED.
 
 
 ~~~~~~~~~~~~~~~~~~~~~~~
