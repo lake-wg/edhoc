@@ -613,13 +613,15 @@ ead = (
 ~~~~~~~~~~~
 {: #fig-ead-item title="An EAD item is a CBOR sequence of an ead_label and an optional ead_value. The absolute value of ead_label, |ead_label|,  determines the ead_value. The sign of the ead_label signals criticality of the EAD item."}
 
- A security application may register one or more EAD labels, see {{iana-ead}}, and specify the associated processing and security considerations. The IANA registry contains the absolute value of the ead_label, \|ead_label\|; the same ead_value applies independently of sign of ead_label. The security application may define multiple uses of certain EAD items, e.g., the same EAD item may be used in different EDHOC messages. Multiple occurrences of an EAD item in one EAD field may also be specified.
+ A security application may register one or more EAD labels, see {{iana-ead}}, and specify the associated processing and security considerations. The IANA registry contains the absolute value of the ead_label, \|ead_label\|; the same ead_value applies independently of sign of ead_label.
 
 An EAD item can be either critical or non-critical, determined by the sign of the ead_label in the EAD item transported in the EAD field. A negative value indicates that the EAD item is critical and a non-negative value indicates that the EAD item is non-critical.
 
 If an endpoint receives a critical EAD item it does not recognize, or a critical EAD item that contains information that it cannot process, then the endpoint MUST send an EDHOC error message back as defined in {{error}}, and the protocol MUST be discontinued. The EAD item specification defines the error processing. A non-critical EAD item can be ignored.
 
  The security application registering a new EAD item needs to describe under what conditions the EAD item is critical or non-critical, and thus whether the ead_label is used with negative or positive sign. ead_label = 0 is used for padding, see {{padding}}.
+
+  The security application may define multiple uses of certain EAD items, e.g., the same EAD item may be used in different EDHOC messages. Multiple occurrences of an EAD item in one EAD field may also be specified, but the criticality of the repeated EAD item is expected to be the same.
 
 The EAD fields of EDHOC must not be used for generic application data. Examples of the use of EAD are provided in {{ead-appendix}}.
 
