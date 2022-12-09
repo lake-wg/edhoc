@@ -1484,7 +1484,7 @@ IANA has created a new registry entitled "EDHOC Error Codes" under the new regis
 
 ## EDHOC External Authorization Data Registry {#iana-ead}
 
-IANA has created a new registry entitled "EDHOC External Authorization Data" under the new registry group "Ephemeral Diffie-Hellman Over COSE (EDHOC)". The registration procedure is "Specification Required" {{RFC8126}}. The columns of the registry are Name, Label, Description, and Reference, where Label is a non-negative integer and the other columns are text strings.
+IANA has created a new registry entitled "EDHOC External Authorization Data" under the new registry group "Ephemeral Diffie-Hellman Over COSE (EDHOC)". The registration procedure is "Specification Required" {{RFC8126}}. The columns of the registry are Name, Label, Description, and Reference, where Label is a non-negative integer and the other columns are text strings. The initial contents of the registry are:
 
 ~~~~~~~~~~~
 
