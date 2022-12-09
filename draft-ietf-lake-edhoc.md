@@ -938,13 +938,13 @@ The Initiator SHALL compose message_1 as follows:
 
 ### Responder Processing of Message 1 {#resp-proc-msg1}
 
-The Responder SHALL process message_1 as follows:
+The Responder SHALL process message_1 in the following order:
 
 * Decode message_1 (see {{CBOR}}).
 
-* Verify that the selected cipher suite is supported and that no prior cipher suite in SUITES_I is supported.
+* Verify message_1, in particular that the selected cipher suite is supported and that no prior cipher suite in SUITES_I is supported.
 
-* If EAD_1 is present then make it available to the application for EAD processing.
+* If all verifications have completed successfully, and if EAD_1 is present, then make it available to the application for EAD processing.
 
 If any processing step fails, then the Responder MUST send an EDHOC error message back as defined in {{error}}, and the protocol MUST be discontinued.
 
@@ -1004,7 +1004,7 @@ The Responder SHALL compose message_2 as follows:
 
 ### Initiator Processing of Message 2
 
-The Initiator SHALL process message_2 as follows:
+The Initiator SHALL process message_2 in the following order:
 
 * Decode message_2 (see {{CBOR}}).
 
@@ -1012,7 +1012,7 @@ The Initiator SHALL process message_2 as follows:
 
 * Decrypt CIPHERTEXT_2, see {{asym-msg2-proc}}.
 
-* Make ID_CRED_R and (if present) EAD_2 available to the application for authentication- and EAD processing.
+* If all verifications have completed successfully, then make ID_CRED_R and (if present) EAD_2 available to the application for authentication- and EAD processing.
 
 * Obtain the authentication credential (CRED_R) and the authentication key of R from the application (or by other means).
 
@@ -1080,7 +1080,7 @@ The Initiator SHALL compose message_3 as follows:
 
 ### Responder Processing of Message 3
 
-The Responder SHALL process message_3 as follows:
+The Responder SHALL process message_3 in the following order:
 
 * Decode message_3 (see {{CBOR}}).
 
@@ -1088,7 +1088,7 @@ The Responder SHALL process message_3 as follows:
 
 * Decrypt and verify the COSE_Encrypt0 as defined in Sections 5.2 and 5.3 of {{RFC9052}}, with the EDHOC AEAD algorithm in the selected cipher suite, and the parameters defined in {{asym-msg3-proc}}.
 
-* Make ID_CRED_I and (if present) EAD_3 available to the application for authentication- and EAD processing.
+* If all verifications have completed successfully, then make ID_CRED_I and (if present) EAD_3 available to the application for authentication- and EAD processing.
 
 * Obtain the authentication credential (CRED_I) and the authentication key of I from the application (or by other means).
 
