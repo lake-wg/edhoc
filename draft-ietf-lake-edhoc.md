@@ -170,7 +170,7 @@ informative:
     date: August 2015
 
   GuentherIlunga22:
-    target: https://eprint.iacr.org/2022/XXXX
+    target: https://eprint.iacr.org/2022/1705
     title: Careful with MAc-then-SIGn: A Computational Analysis of the EDHOC Lightweight Authenticated Key Exchange Protocol
     author:
       -
