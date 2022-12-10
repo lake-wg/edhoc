@@ -1309,7 +1309,7 @@ Key compromise impersonation (KCI): In EDHOC authenticated with signature keys, 
 
 Repudiation: If an endpoint authenticates with a signature, the other endpoint can prove that the endpoint performed a run of the protocol by presenting the data being signed as well as the signature itself. With static Diffie-Hellman key authentication, the authenticating endpoint can deny having participated in the protocol.
 
-Earlier versions of EDHOC have been formally analyzed {{GuentherIlunga22}} {{Jacomme23}} {{CottierPointcheval22}} {{Norrman20}} {{Bruni18}} and the specification has been updated based on the analysis.
+Earlier versions of EDHOC have been formally analyzed {{Bruni18}} {{Norrman20}} {{CottierPointcheval22}} {{Jacomme23}} {{GuentherIlunga22}} and the specification has been updated based on the analysis.
 
 ## Cryptographic Considerations {#crypto}
 The SIGMA protocol requires that the encryption of message_3 provides confidentiality against active attackers and EDHOC message_4 relies on the use of
