@@ -844,7 +844,7 @@ This section specifies formatting of the messages and processing steps. Error me
 An EDHOC message is encoded as a sequence of CBOR data items (CBOR Sequence, {{RFC8742}}).
 Additional optimizations are made to reduce message overhead.
 
-While EDHOC uses the COSE_Key, COSE_Sign1, and COSE_Encrypt0 structures, only a subset of the parameters is included in the EDHOC messages, see {{COSE}}. The unprotected COSE header in COSE_Sign1, and COSE_Encrypt0 (not included in the EDHOC message) MAY contain parameters (e.g., 'alg').
+While EDHOC uses the COSE_Key, COSE_Sign1, and COSE_Encrypt0 structures, only a subset of the parameters is included in the EDHOC messages, see {{COSE}}. In order to recreate the COSE object, the recipient endpoint may need to add parameters to the COSE headers not included in the EDHOC message, for example the parameter 'alg' to COSE_Sign1 or COSE_Encrypt0.
 
 ## Message Processing Outline {#proc-outline}
 
