@@ -169,6 +169,16 @@ informative:
         ins: NSA
     date: August 2015
 
+  GuentherIlunga22:
+    target: https://eprint.iacr.org/2022/1705
+    title: "Careful with MAc-then-SIGn: A Computational Analysis of the EDHOC Lightweight Authenticated Key Exchange Protocol"
+    author:
+      -
+        ins: F. Günther
+      -
+        ins: M. Ilunga
+    date: December 2022
+  
   Jacomme23:
     target: https://hal.inria.fr/hal-03810102/
     title: A comprehensive, formal and automated analysis of the EDHOC protocol
@@ -182,6 +192,16 @@ informative:
       -
         ins: M. Racouchot
     date: October 2022
+  
+  CottierPointcheval22:
+    target: https://arxiv.org/abs/2209.03599
+    title: Security Analysis of the EDHOC protocol
+    author:
+      -
+        ins: B. Cottier
+      -
+        ins: D. Pointcheval
+    date: September 2022
 
   Norrman20:
     target: https://arxiv.org/abs/2007.11427
@@ -1289,7 +1309,7 @@ Key compromise impersonation (KCI): In EDHOC authenticated with signature keys, 
 
 Repudiation: If an endpoint authenticates with a signature, the other endpoint can prove that the endpoint performed a run of the protocol by presenting the data being signed as well as the signature itself. With static Diffie-Hellman key authentication, the authenticating endpoint can deny having participated in the protocol.
 
-Earlier versions of EDHOC have been formally analyzed {{Jacomme23}} {{Norrman20}} {{Bruni18}} and the specification has been updated based on the analysis.
+Earlier versions of EDHOC have been formally analyzed {{Bruni18}} {{Norrman20}} {{CottierPointcheval22}} {{Jacomme23}} {{GuentherIlunga22}} and the specification has been updated based on the analysis.
 
 ## Cryptographic Considerations {#crypto}
 The SIGMA protocol requires that the encryption of message_3 provides confidentiality against active attackers and EDHOC message_4 relies on the use of
