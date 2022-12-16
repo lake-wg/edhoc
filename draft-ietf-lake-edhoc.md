@@ -262,12 +262,12 @@ Total               101        128        216        242
 
 ## Document Structure
 
-The remainder of the document is organized as follows: {{background}} outlines EDHOC authenticated with signature keys, {{overview}} describes the protocol elements of EDHOC, including formatting of the ephemeral public keys, {{key-der}} specifies the key derivation, {{asym}} specifies message processing for EDHOC authenticated with signature keys or static Diffie-Hellman keys, {{error}} describes the error messages, and {{mti}} lists compliance requirements.
+The remainder of the document is organized as follows: {{background}} outlines EDHOC authenticated with signature keys, {{overview}} describes the protocol elements of EDHOC, including formatting of the ephemeral public keys, {{key-der}} specifies the key derivation, {{asym}} specifies message processing for EDHOC authenticated with signature keys or static Diffie-Hellman keys, {{error}} describes the error messages, and {{mti}} lists compliance requirements. Note that normative text is also used in appendices, in particular {{transfer}}.
 
 
 ## Terminology and Requirements Language {#term}
 
-The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this document, including the appendices, are to be interpreted as described in BCP 14 {{RFC2119}} {{RFC8174}} when, and only when, they appear in all capitals, as shown here.
+The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in BCP 14 {{RFC2119}} {{RFC8174}} when, and only when, they appear in all capitals, as shown here.
 
 Readers are expected to be familiar with the terms and concepts described in CBOR {{RFC8949}}, CBOR Sequences {{RFC8742}}, COSE structures and processing {{RFC9052}}, COSE algorithms {{RFC9053}}, CWT and CWT Claims Set {{RFC8392}}, and the Concise Data Definition Language (CDDL, {{RFC8610}}), which is used to express CBOR data structures. Examples of CBOR and CDDL are provided in {{CBOR}}. When referring to CBOR, this specification always refers to Deterministically Encoded CBOR as specified in Sections 4.2.1 and 4.2.2 of {{RFC8949}}. The single output from authenticated encryption (including the authentication tag) is called "ciphertext", following {{RFC5116}}.
 
@@ -529,7 +529,7 @@ ID_CRED_x may contain the authentication credential CRED_x, but for many setting
 
 EDHOC relies on COSE for identification of credentials and supports all credential types for which COSE header parameters are defined including X.509 certificates ({{I-D.ietf-cose-x509}}), C509 certificates ({{I-D.ietf-cose-cbor-encoded-cert}}), CWT ({{cwt-header-param}}) and CWT Claims Set (CCS) ({{cwt-header-param}}).
 
-ID_CRED_I and ID_CRED_R are CBOR maps and contains one or more COSE header parameters, see Section 3 of {{RFC9052}}. ID_CRED_I and ID_CRED_R MAY contain different header parameters. The header parameters typically provide some information about the format of the credential.
+ID_CRED_I and ID_CRED_R are of type COSE header_map, as defined in Section 3 of {{RFC9052}}, and contains one or more COSE header parameters. ID_CRED_I and ID_CRED_R MAY contain different header parameters. The header parameters typically provide some information about the format of the credential.
 
 Example: X.509 certificates can be identified by a hash value using the 'x5t' parameter, see Section 2 of {{I-D.ietf-cose-x509}}:
 
@@ -1216,7 +1216,7 @@ Initiator                                                   Responder
 |<------------------------------------------------------------------+
 |                               error                               |
 |                                                                   |
-|             METHOD, SUITES_I = [5, 6], G_X', C_I, EAD_1            |
+|             METHOD, SUITES_I = [5, 6], G_X, C_I, EAD_1            |
 +------------------------------------------------------------------>|
 |                             message_1                             |
 ~~~~~~~~~~~
@@ -1224,6 +1224,8 @@ Initiator                                                   Responder
 {: artwork-align="center"}
 
 In the second example ({{fig-error2}}), the Responder supports cipher suites 8 and 9 but not the more preferred (by the Initiator) cipher suites 5, 6 or 7. To illustrate the negotiation mechanics we let the Initiator first make a guess that the Responder supports suite 6 but not suite 5. Since the Responder supports neither 5 nor 6, it responds with SUITES_R containing the supported suites, after which the Initiator selects its most preferred supported suite.  (If the Responder had supported suite 5, it would have included it in SUITES_R of the response, and it would in that case have become the selected suite in the second message_1.)
+
+Note that the content of the fields of message_1 may be different when sent the second time, in particular the ephemeral key MUST be different.
 
 ~~~~~~~~~~~
 Initiator                                                   Responder
