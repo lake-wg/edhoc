@@ -178,7 +178,7 @@ informative:
       -
         ins: M. Ilunga
     date: December 2022
-  
+
   Jacomme23:
     target: https://hal.inria.fr/hal-03810102/
     title: A comprehensive, formal and automated analysis of the EDHOC protocol
@@ -192,7 +192,7 @@ informative:
       -
         ins: M. Racouchot
     date: October 2022
-  
+
   CottierPointcheval22:
     target: https://arxiv.org/abs/2209.03599
     title: Security Analysis of the EDHOC protocol
