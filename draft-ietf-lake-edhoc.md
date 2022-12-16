@@ -2149,6 +2149,123 @@ While this key update method provides forward secrecy it does not give as strong
 
  A similar method to do key update for OSCORE is KUDOS, see {{I-D.ietf-core-oscore-key-update}}.
 
+# Example Protocol State Machine
+
+This appendix describes an example protocol state machine for the Initiator and for the Responder. States are denoted in all capitals and parentheses denote actions taken only in some circumstances.
+
+Note that this state machine is just an example, and that details of processing are omitted, for example:
+
+* When error messages are being sent (with one exception)
+* How credentials and EAD are processed by EDHOC and the application in the RCVD state
+* What verifications are made, which includes not only MACs and signatures
+
+
+## Initiator State Machine
+
+The Initiator sends message_1, triggering the state machine to transition from START to WAIT_M2, and waits for message_2.
+
+If the incoming message is an error message then the Initiator transitions from WAIT_M2 to ABORTED. In case of error code 2 (Wrong Selected Cipher Suite), the Initiator remembers the supported cipher suites for this particular Responder and transitions from ABORTED to START. The message_1 that the Initiator subsequently sends takes into account the cipher suites supported by the Responder.
+
+Upon receiving a non-error message, the Initiator transitions from WAIT_M2 to RCVD_M2 and processes the message. If a processing error occurs on message_2, then the Initiator transitions from RCVD_M2 to ABORTED. In case of successful processing of message_2, the Initiator transitions from RCVD_M2 to VRFD_M2.
+
+The Initiator prepares and processes message_3 for sending. If any processing error is encountered, the Initiator transitions from VRFD_M2 to ABORTED. If message_3 is successfully sent, the Initiator transitions from VRFD_M2 to COMPLETED.
+
+If the application profile includes message_4, then the Initiator waits for message_4. If the incoming message is an error message then the Initiator transitions from COMPLETED to ABORTED. Upon receiving a non-error message, the Initiator transitions from COMPLETED (="WAIT_M4") to RCVD_M4 and processes the message. If a processing error occurs on message_4, then the Initiator transitions from RCVD_M4 to ABORTED. In case of successful processing of message_4, the Initiator transitions from RCVD_M4 to PERSISTED (="VRFD_M4").
+
+If the application profile does not include message_4, then the Initiator waits for an incoming application message. If the decryption and verification of the application message is successful, then the the Initiator transitions from COMPLETED to PERSISTED.
+
+
+~~~~~~~~~~~~~~~~~~~~~~~
+
+    +- - - - - - - - - -> START
+    |                       |
+                            | Send message_1
+    |                       |
+          Receive error     v
+ABORTED <---------------- WAIT_M2
+    ^                       |
+    |                       | Receive message_2
+    |                       |
+    |    Processing error   v
+    +-------------------- RCVD_M2
+    ^                       |
+    |                       | Verify message_2
+    |                       |
+    |    Processing error   v
+    +-------------------- VRFD_M2
+    ^                       |
+    |                       | Send message_3
+    |                       |
+    |    (Receive error)    v
+    +-------------------- COMPLETED ----------------+
+    ^                       |                       |
+    |                       | (Receive message_4)   |
+    |                       |                       |
+    |   (Processing error)  v                       | (Verify
+    +--------------------(RCVD_M4)                  |  application
+                            |                       |  message)
+                            | (Verify message_4)    |
+                            |                       |
+                            v                       |
+                          PERSISTED <---------------+
+~~~~~~~~~~~~~~~~~~~~~~~
+{: artwork-align="center"}
+
+
+## Responder State Machine
+
+Upon receiving message_1, the Responder transitions from START to RCVD_M1.
+
+If a processing error occurs on message_1, the Responder transitions from RCVD_M1 to ABORTED. This includes sending error message with error code 2 (Wrong Selected Cipher Suite) if the selected cipher suite in message_1 is not supported. In case of successful processing of message_1, the Responder transitions from RCVD_M1 to VRFD_M1.
+
+The Responder prepares and processes message_2 for sending. If any processing error is encountered, the Responder transitions from VRFD_M1 to ABORTED. If message_2 is successfully sent, the Initiator transitions from VRFD_M2 to WAIT_M3, and waits for message_3.
+
+If the incoming message is an error message then the Responder transitions from WAIT_M3 to ABORTED.
+
+Upon receiving message_3, the Responder transitions from WAIT_M3 to RCVD_M3. If a processing error occurs on message_3, the Responder transitions from RCVD_M3 to ABORTED. In case of successful processing of message_3, the Responder transitions from RCVD_M3 to COMPLETED (="VRFD_M3").
+
+If the application profile includes message_4, the Responder prepares and processes message_4 for sending. If any processing error is encountered, the Responder transitions from COMPLETED to ABORTED.
+
+If message_4 is successfully sent, or if the application profile does not include message_4, the Responder transitions from COMPLETED to PERSISTED.
+
+
+~~~~~~~~~~~~~~~~~~~~~~~
+
+                          START
+                            |
+                            | Receive message_1
+                            |
+         Processing error   v
+ABORTED <---------------- RCVD_M1
+    ^                       |
+    |                       | Verify message_1
+    |                       |
+    |    Processing error   v
+    +-------------------- VRFD_M1
+    ^                       |
+    |                       | Send message_2
+    |                       |
+    |     Receive error     v
+    +-------------------- WAIT_M3
+    ^                       |
+    |                       | Receive message_3
+    |                       |
+    |    Processing error   v
+    +-------------------- RCVD_M3
+    ^                       |
+    |                       | Verify message_3
+    |                       |
+    |   (Processing error)  v
+    +------------------- COMPLETED
+                            |
+                            | (Send message_4)
+                            |
+                            v
+                         PERSISTED
+~~~~~~~~~~~~~~~~~~~~~~~
+{: artwork-align="center"}
+
+
 # Change Log
 
 RFC Editor: Please remove this appendix.
