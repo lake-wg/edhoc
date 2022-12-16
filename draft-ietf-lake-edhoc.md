@@ -171,7 +171,7 @@ informative:
 
   GuentherIlunga22:
     target: https://eprint.iacr.org/2022/1705
-    title: Careful with MAc-then-SIGn: A Computational Analysis of the EDHOC Lightweight Authenticated Key Exchange Protocol
+    title: "Careful with MAc-then-SIGn: A Computational Analysis of the EDHOC Lightweight Authenticated Key Exchange Protocol"
     author:
       -
         ins: F. Günther
@@ -201,7 +201,7 @@ informative:
         ins: B. Cottier
       -
         ins: D. Pointcheval
-    date: Sep 2022
+    date: September 2022
 
   Norrman20:
     target: https://arxiv.org/abs/2007.11427
