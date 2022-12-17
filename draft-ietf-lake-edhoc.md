@@ -315,7 +315,7 @@ In order to create a "full-fledged" protocol some additional protocol elements a
 
 * A keying material exporter and a key update function with forward secrecy.
 
-* Negotiation of cipher suite, more specifically verification by Responder or most preferred cipher suite by Initiator
+* Negotiation of cipher suite, more specifically verification by Responder of most preferred cipher suite by Initiator
 
 * Method types, error handling, and padding.
 
