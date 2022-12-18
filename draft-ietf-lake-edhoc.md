@@ -1174,7 +1174,7 @@ where:
 
 The remainder of this section specifies the currently defined error codes, see {{fig-error-codes}}. Additional error codes and corresponding error information may be specified.
 
-~~~~~~~~~~~
+~~~~~~~~~~~ aasvg
 +----------+---------------+----------------------------------------+
 | ERR_CODE | ERR_INFO Type | Description                            |
 +==========+===============+========================================+
@@ -1219,7 +1219,7 @@ Assume that the Initiator supports the five cipher suites 5, 6, 7, 8, and 9 in d
 
 In the first example ({{fig-error1}}), the Responder supports cipher suite 6 but not the initially selected cipher suite 5.
 
-~~~~~~~~~~~
+~~~~~~~~~~~ aasvg
 Initiator                                                   Responder
 |              METHOD, SUITES_I = 5, G_X, C_I, EAD_1                |
 +------------------------------------------------------------------>|
@@ -1238,7 +1238,7 @@ Initiator                                                   Responder
 
 In the second example ({{fig-error2}}), the Responder supports cipher suites 8 and 9 but not the more preferred (by the Initiator) cipher suites 5, 6 or 7. To illustrate the negotiation mechanics we let the Initiator first make a guess that the Responder supports suite 6 but not suite 5. Since the Responder supports neither 5 nor 6, it responds with SUITES_R containing the supported suites, after which the Initiator selects its most preferred supported suite.  (If the Responder had supported suite 5, it would have included it in SUITES_R of the response, and it would in that case have become the selected suite in the second message_1.)
 
-~~~~~~~~~~~
+~~~~~~~~~~~ aasvg
 Initiator                                                   Responder
 |            METHOD, SUITES_I = [5, 6], G_X, C_I, EAD_1             |
 +------------------------------------------------------------------>|
@@ -1506,8 +1506,7 @@ IANA has created a new registry entitled "EDHOC Error Codes" under the new regis
 
 IANA has created a new registry entitled "EDHOC External Authorization Data" under the new registry group "Ephemeral Diffie-Hellman Over COSE (EDHOC)". The registration procedure is "Specification Required" {{RFC8126}}. The columns of the registry are Name, Label, Description, and Reference, where Label is a non-negative integer and the other columns are text strings. The initial contents of the registry are:
 
-~~~~~~~~~~~
-
+~~~~~~~~~~~ aasvg
 +-----------+-------+------------------------+-------------------+
 | Name      | Label | Description            | Reference         |
 +===========+=======+========================+===================+
@@ -1521,7 +1520,7 @@ IANA has created a new registry entitled "EDHOC External Authorization Data" und
 
 IANA has registered the following entries in the "COSE Header Parameters" registry under the registry group "CBOR Object Signing and Encryption (COSE)". The value of the 'kcwt' header parameter is a COSE Web Token (CWT) {{RFC8392}}, and the value of the 'kccs' header parameter is a CWT Claims Set (CCS), see {{term}}. The CWT/CCS must contain a COSE_Key in a 'cnf' claim {{RFC8747}}. The Value Registry for this item is empty and omitted from the table below.
 
-~~~~~~~~~~~
+~~~~~~~~~~~ aasvg
 +-----------+-------+----------------+---------------------------+
 | Name      | Label | Value Type     | Description               |
 +===========+=======+================+===========================+
@@ -1636,7 +1635,7 @@ IANA has added the media types "application/edhoc+cbor-seq" and "application/cid
 
 IANA has added the media types "application/edhoc+cbor-seq" and "application/cid-edhoc+cbor-seq" to the "CoAP Content-Formats" registry under the registry group "Constrained RESTful Environments (CoRE) Parameters".
 
-~~~~~~~~~~~
+~~~~~~~~~~~ aasvg
 +--------------------------------+----------+------+-------------------+
 | Media Type                     | Encoding | ID   | Reference         |
 +--------------------------------+----------+------+-------------------+
@@ -1696,7 +1695,7 @@ After successful processing of EDHOC message_3, Client and Server derive Securit
 
 * The relationship between identifiers in OSCORE and EDHOC is specified in {{ci-oscore}}. The OSCORE Sender ID and Recipient ID are determined by the EDHOC connection identifiers C_R and C_I for the EDHOC session as shown in {{fig-edhoc-oscore-id-mapping}}.
 
-~~~~~~~~~~~
+~~~~~~~~~~~ aasvg
 +----------------+-----------+--------------+
 | EDHOC \ OSCORE | Sender ID | Recipient ID |
 +----------------+-----------+--------------+
@@ -1736,7 +1735,7 @@ The application/edhoc+cbor-seq media type does not apply to a CoAP message that 
 
 An example of a successful EDHOC exchange using CoAP is shown in {{fig-coap1}}. In this case the CoAP Token enables correlation on the Initiator side, and the prepended C_R enables correlation on the Responder (server) side.
 
-~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~ aasvg
 Client    Server
   |          |
   +--------->| Header: POST (Code=0.02)
@@ -1765,7 +1764,7 @@ The exchange in {{fig-coap1}} protects the client identity against active attack
 
 An alternative exchange that protects the server identity against active attackers and the client identity against passive attackers is shown in {{fig-coap2}}. In this case the CoAP Token enables the Responder to correlate message_2 and message_3, and the prepended C_I enables correlation on the Initiator (server) side. If EDHOC message_4 is used, C_I is prepended, and it is transported with CoAP in the payload of a POST request with a 2.04 (Changed) response.
 
-~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~ aasvg
 Client    Server
   |          |
   +--------->| Header: POST (Code=0.02)
@@ -1853,7 +1852,7 @@ The EDHOC specification sometimes use CDDL names in CBOR diagnostic notation as 
 
 For a complete specification and more examples, see {{RFC8949}} and {{RFC8610}}. We recommend implementors to get used to CBOR by using the CBOR playground {{CborMe}}.
 
-~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~ aasvg
 Diagnostic          Encoded              Type
 ------------------------------------------------------------------
 1                   0x01                 unsigned integer
@@ -2194,9 +2193,7 @@ If the application profile includes message_4, then the Initiator waits for mess
 
 If the application profile does not include message_4, then the Initiator waits for an incoming application message. If the decryption and verification of the application message is successful, then the the Initiator transitions from COMPLETED to PERSISTED.
 
-
-~~~~~~~~~~~~~~~~~~~~~~~
-
+~~~~~~~~~~~~~~~~~~~~~~~ aasvg
     +- - - - - - - - - -> START
     |                       |
                             | Send message_1
@@ -2248,9 +2245,7 @@ If the application profile includes message_4, the Responder prepares and proces
 
 If message_4 is successfully sent, or if the application profile does not include message_4, the Responder transitions from COMPLETED to PERSISTED.
 
-
-~~~~~~~~~~~~~~~~~~~~~~~
-
+~~~~~~~~~~~~~~~~~~~~~~~ aasvg
                           START
                             |
                             | Receive message_1
