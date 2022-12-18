@@ -265,18 +265,18 @@ A typical setting is when one of the endpoints is constrained or in a constraine
 
 Compared to the DTLS 1.3 handshake {{RFC9147}} with ECDHE and connection ID, the EDHOC message size when transferred in CoAP can be less than 1/6 when RPK authentication is used, see {{I-D.ietf-lwig-security-protocol-comparison}}. {{fig-sizes}} shows examples of EDHOC message sizes based on the assumptions in Section 2 of {{I-D.ietf-lwig-security-protocol-comparison}}, comparing different kinds of authentication keys and COSE header parameters for identification: static Diffie-Hellman keys or signature keys, either in CBOR Web Token (CWT) / CWT Claims Set (CCS) {{RFC8392}} identified by a key identifier using 'kid' {{RFC9052}}, or in X.509 certificates identified by a hash value using 'x5t' {{I-D.ietf-cose-x509}}.
 
-~~~~~~~~~~~~~~~~~~~~~~~
-========================================================
-                    Static DH Keys        Signature Keys
-                    --------------        --------------
-                    kid        x5t        kid        x5t
---------------------------------------------------------
-message_1            37         37         37         37
-message_2            45         58        102        115
-message_3            19         33         77         90
---------------------------------------------------------
-Total               101        128        216        242
-========================================================
+~~~~~~~~~~~~~~~~~~~~~~~ aasvg
+----------------------------------------------------------
+                     Static DH Keys        Signature Keys
+                    ----------------      ----------------
+                     kid        x5t        kid        x5t
+----------------------------------------------------------
+ message_1            37         37         37         37
+ message_2            45         58        102        115
+ message_3            19         33         77         90
+----------------------------------------------------------
+ Total               101        128        216        242
+----------------------------------------------------------
 ~~~~~~~~~~~~~~~~~~~~~~~
 {: #fig-sizes title="Examples of EDHOC message sizes in bytes." artwork-align="center"}
 
