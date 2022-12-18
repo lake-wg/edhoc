@@ -298,7 +298,7 @@ EDHOC specifies different authentication methods of the ephemeral Diffie-Hellman
 
 SIGMA (SIGn-and-MAc) is a family of theoretical protocols with a large number of variants {{SIGMA}}. Like in IKEv2 {{RFC7296}} and (D)TLS 1.3 {{RFC8446}}{{RFC9147}}, EDHOC authenticated with signature keys is built on a variant of the SIGMA protocol which provides identity protection of the Initiator (SIGMA-I) against active attackers, and like IKEv2, EDHOC implements the MAC-then-Sign variant of the SIGMA-I protocol shown in {{fig-sigma}}.
 
-~~~~~~~~~~~
+~~~~~~~~~~~ aasvg
 Initiator                                                   Responder
 |                                G_X                                |
 +------------------------------------------------------------------>|
@@ -359,7 +359,7 @@ Application data may be protected using the agreed application algorithms (AEAD,
 
 The Initiator can derive symmetric application keys after creating EDHOC message_3, see {{exporter}}. Protected application data can therefore be sent in parallel or together with EDHOC message_3. EDHOC message_4 is typically not sent.
 
-~~~~~~~~~~~
+~~~~~~~~~~~ aasvg
 Initiator                                                   Responder
 |                 METHOD, SUITES_I, G_X, C_I, EAD_1                 |
 +------------------------------------------------------------------>|
@@ -387,7 +387,7 @@ The data item METHOD in message_1 (see {{asym-msg1-form}}), is an integer specif
 
 The Initiator and the Responder need to have agreed on a single method to be used for EDHOC, see {{applicability}}.
 
-~~~~~~~~~~~
+~~~~~~~~~~~ aasvg
 +-------------+--------------------+--------------------+
 | Method Type | Initiator          | Responder          |
 |       Value | Authentication Key | Authentication Key |
