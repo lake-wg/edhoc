@@ -287,7 +287,7 @@ The remainder of the document is organized as follows: {{background}} outlines E
 
 ## Terminology and Requirements Language {#term}
 
-The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in BCP 14 {{RFC2119}} {{RFC8174}} when, and only when, they appear in all capitals, as shown here.
+{::boilerplate bcp14}
 
 Readers are expected to be familiar with the terms and concepts described in CBOR {{RFC8949}}, CBOR Sequences {{RFC8742}}, COSE structures and processing {{RFC9052}}, COSE algorithms {{RFC9053}}, CWT and CWT Claims Set {{RFC8392}}, and the Concise Data Definition Language (CDDL, {{RFC8610}}), which is used to express CBOR data structures. Examples of CBOR and CDDL are provided in {{CBOR}}. When referring to CBOR, this specification always refers to Deterministically Encoded CBOR as specified in Sections 4.2.1 and 4.2.2 of {{RFC8949}}. The single output from authenticated encryption (including the authentication tag) is called "ciphertext", following {{RFC5116}}.
 
