@@ -391,7 +391,7 @@ The Initiator and the Responder need to have agreed on a single method to be use
 +-------------+--------------------+--------------------+
 | Method Type | Initiator          | Responder          |
 |       Value | Authentication Key | Authentication Key |
-+-------------+--------------------+--------------------+
++=============+====================+====================+
 |           0 | Signature Key      | Signature Key      |
 |           1 | Signature Key      | Static DH Key      |
 |           2 | Static DH Key      | Signature Key      |
