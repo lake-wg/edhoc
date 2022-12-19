@@ -2219,7 +2219,7 @@ ABORTED <---------------- WAIT_M2
     |                       | (Receive message_4)   |
     |                       |                       |
     |   (Processing error)  v                       | (Verify
-    +--------------------(RCVD_M4)                  |  application
+    +------------------- (RCVD_M4)                  |  application
                             |                       |  message)
                             | (Verify message_4)    |
                             |                       |
