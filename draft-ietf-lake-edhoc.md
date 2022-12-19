@@ -282,7 +282,7 @@ Compared to the DTLS 1.3 handshake {{RFC9147}} with ECDHE and connection ID, the
 
 ## Document Structure
 
-The remainder of the document is organized as follows: {{background}} outlines EDHOC authenticated with signature keys, {{overview}} describes the protocol elements of EDHOC, including formatting of the ephemeral public keys, {{key-der}} specifies the key derivation, {{asym}} specifies message processing for EDHOC authenticated with signature keys or static Diffie-Hellman keys, {{error}} describes the error messages, and {{transfer}} shows how to transfer EDHOC with CoAP and establish an OSCORE security context.
+The remainder of the document is organized as follows: {{background}} outlines EDHOC authenticated with signature keys, {{overview}} describes the protocol elements of EDHOC, including formatting of the ephemeral public keys, {{key-der}} specifies the key derivation, {{asym}} specifies message processing for EDHOC authenticated with signature keys or static Diffie-Hellman keys, {{error}} describes the error messages, and {{mti}} lists compliance requirements. Note that normative text is also used in appendices, in particular {{transfer}}.
 
 
 ## Terminology and Requirements Language {#term}
@@ -335,7 +335,7 @@ In order to create a "full-fledged" protocol some additional protocol elements a
 
 * A keying material exporter and a key update function with forward secrecy.
 
-* Verification of the selected cipher suite.
+* Secure negotiation of cipher suite.
 
 * Method types, error handling, and padding.
 
@@ -343,7 +343,7 @@ In order to create a "full-fledged" protocol some additional protocol elements a
 
 * Transport of external authorization data.
 
-EDHOC is designed to encrypt and integrity protect as much information as possible. Symmetric keys and random material derived using EDHOC-KDF are derived with as much previous information as possible, see {{fig-edhoc-kdf}}. EDHOC is furthermore designed to be as compact and lightweight as possible, in terms of message sizes, processing, and the ability to reuse already existing CBOR, COSE, and CoAP libraries. Like in (D)TLS, authentication is the responsibility of the application. EDHOC identifies (and optionally transports) authentication credentials, and provides proof-of-possession of the private authentication key.
+EDHOC is designed to encrypt and integrity protect as much information as possible. Symmetric keys and random material derived using EDHOC_KDF are derived with as much previous information as possible, see {{fig-edhoc-kdf}}. EDHOC is furthermore designed to be as compact and lightweight as possible, in terms of message sizes, processing, and the ability to reuse already existing CBOR, COSE, and CoAP libraries. Like in (D)TLS, authentication is the responsibility of the application. EDHOC identifies (and optionally transports) authentication credentials, and provides proof-of-possession of the private authentication key.
 
 To simplify for implementors, the use of CBOR and COSE in EDHOC is summarized in {{CBORandCOSE}}. Test vectors including CBOR diagnostic notation are provided in {{I-D.ietf-lake-traces}}.
 
@@ -467,7 +467,7 @@ Cryptographically, EDHOC does not put requirements on the lower layers. EDHOC is
 * denial-of-service protection,
 * message correlation.
 
-The Initiator and the Responder need to have agreed on a transport to be used for EDHOC, see {{applicability}}.
+The use of transport is specified in the application profile {{applicability}}.
 
 ### Use of Connection Identifiers for EDHOC Message Correlation {#ci-edhoc}
 
@@ -549,17 +549,17 @@ ID_CRED_x may contain the authentication credential CRED_x, but for many setting
 
 EDHOC relies on COSE for identification of credentials and supports all credential types for which COSE header parameters are defined including X.509 certificates ({{I-D.ietf-cose-x509}}), C509 certificates ({{I-D.ietf-cose-cbor-encoded-cert}}), CWT ({{cwt-header-param}}) and CWT Claims Set (CCS) ({{cwt-header-param}}).
 
-ID_CRED_I and ID_CRED_R are COSE header maps and contains one or more COSE header parameters. ID_CRED_I and ID_CRED_R MAY contain different header parameters. The header parameters typically provide some information about the format of the credential.
+ID_CRED_I and ID_CRED_R are of type COSE header_map, as defined in Section 3 of {{RFC9052}}, and contains one or more COSE header parameters. ID_CRED_I and ID_CRED_R MAY contain different header parameters. The header parameters typically provide some information about the format of the credential.
 
-Note that COSE header parameters in ID_CRED_x are used to identify the message sender's credential. There is therefore no reason to use the "-sender" header parameters, such as x5t-sender, defined in Section 3 of {{I-D.ietf-cose-x509}}. Instead, the corresponding parameter without "-sender", such as x5t, SHOULD be used.
-
-Example: X.509 certificates can be identified by a hash value using the 'x5t' parameter:
+Example: X.509 certificates can be identified by a hash value using the 'x5t' parameter, see Section 2 of {{I-D.ietf-cose-x509}}:
 
 * ID_CRED_x = { 34 : COSE_CertHash }, for x = I or R,
 
-Example: CWT or CCS can be identified by a key identifier using the 'kid' parameter:
+Example: CWT or CCS can be identified by a key identifier using the 'kid' parameter, see Section 3.1 of {{RFC9052}}:
 
 * ID_CRED_x = { 4 : kid_x }, where kid_x : kid, for x = I or R.
+
+Note that COSE header parameters in ID_CRED_x are used to identify the message sender's credential. There is therefore no reason to use the "-sender" header parameters, such as x5t-sender, defined in Section 3 of {{I-D.ietf-cose-x509}}. Instead, the corresponding parameter without "-sender", such as x5t, SHOULD be used.
 
 As stated in Section 3.1 of {{RFC9052}}, applications MUST NOT assume that 'kid' values are unique and several keys associated with a 'kid' may need to be checked before the correct one is found. Applications might use additional information such as 'kid context' or lower layers to determine which key to try first. Applications should strive to make ID_CRED_x as unique as possible, since the recipient may otherwise have to try several keys.
 
@@ -631,19 +631,23 @@ ead = (
   ? ead_value : bstr,
 )
 ~~~~~~~~~~~
-{: #fig-ead-item title="Definition of EAD item."}
+{: #fig-ead-item title="An EAD item is a CBOR sequence of an ead_label and an optional ead_value. The absolute value of ead_label, |ead_label|,  determines the ead_value. The sign of the ead_label signals criticality of the EAD item."}
 
-Each application may register EAD label(s), see {{iana-ead}}, and describes the associated processing and security considerations. The application may define multiple uses of certain EAD items, e.g., the same EAD item may be used in different EDHOC messages with the same application. Multiple occurrences of an EAD item in one EAD field may also be specified.
+ A security application may register one or more EAD labels, see {{iana-ead}}, and specify the associated processing and security considerations. The IANA registry contains the absolute value of the ead_label, \|ead_label\|; the same ead_value applies independently of sign of ead_label.
 
-An EAD item can be either critical or non-critical, determined by the sign of the ead_label in the EAD item transported in the EDHOC message. A negative value indicates that the EAD item is critical and a non-negative value indicates that this EAD item is non-critical. The IANA registry defines only the non-negative ead_label, the same ead_value applies independent of sign of ead_label. The specification registering a new EAD label needs to describe under what conditions the EAD item is critical or non-critical, and thus whether the ead_label is used with negative or positive sign. ead_label = 0 is used for padding, see {{padding}}.
+An EAD item can be either critical or non-critical, determined by the sign of the ead_label in the EAD item transported in the EAD field. A negative value indicates that the EAD item is critical and a non-negative value indicates that the EAD item is non-critical.
 
-If an endpoint receives a critical EAD item it does not recognize or a critical EAD item that contains information that it cannot process, then the endpoint MUST send an EDHOC error message back as defined in {{error}}, and the protocol MUST be discontinued. The EAD specification must define the error processing. A non-critical EAD item can be ignored.
+If an endpoint receives a critical EAD item it does not recognize, or a critical EAD item that contains information that it cannot process, then the endpoint MUST send an EDHOC error message back as defined in {{error}}, and the protocol MUST be discontinued. The EAD item specification defines the error processing. A non-critical EAD item can be ignored.
+
+ The security application registering a new EAD item needs to describe under what conditions the EAD item is critical or non-critical, and thus whether the ead_label is used with negative or positive sign. ead_label = 0 is used for padding, see {{padding}}.
+
+  The security application may define multiple uses of certain EAD items, e.g., the same EAD item may be used in different EDHOC messages. Multiple occurrences of an EAD item in one EAD field may also be specified, but the criticality of the repeated EAD item is expected to be the same.
 
 The EAD fields of EDHOC must not be used for generic application data. Examples of the use of EAD are provided in {{ead-appendix}}.
 
 ### Padding {#padding}
 
-EDHOC message_1 and the plaintext of message_2, message_3 and message_4 can be padded with the use of the corresponding EAD_x field, for x = 1, 2, 3, 4. Padding is intended to be discarded by the receiving application.
+EDHOC message_1 and the plaintext of message_2, message_3 and message_4 can be padded with the use of the corresponding EAD_x field, for x = 1, 2, 3, 4. Padding in EAD_1 mitigates amplification attacks (see {{dos}}), and padding in EAD_2, EAD_3, and EAD_4 hides the true length of the plaintext (see {{internet-threat}}). Padding is intended to be discarded by the receiving application.
 
 Padding is obtained by using an EAD item with ead_label = 0 and a randomly generated byte string of appropriate length as ead_value, noting that the ead_label and the CBOR encoding of ead_value also add bytes. Examples:
 
@@ -655,6 +659,8 @@ Padding is obtained by using an EAD item with ead_label = 0 and a randomly gener
    * EAD_x = 0x0041e9
 
 Multiple occurrences of EAD items with ead_label = 0 are allowed. Certain padding lengths require the use of at least two such EAD items.
+
+Note that padding is non-critical because the intended behaviour when receiving is to ignore it.
 
 ## Application Profile {#applicability}
 
@@ -675,9 +681,9 @@ The application profile may also contain information about supported cipher suit
 
 An example of an application profile is shown in {{appl-temp}}.
 
-For some parameters, like METHOD, ID_CRED_x, type of EAD, the receiver of an EDHOC message is able to verify compliance with the application profile, and if it needs to fail because of incompliance, to infer the reason why the protocol failed.
+For some parameters, like METHOD, ID_CRED_x, type of EAD, the receiver of an EDHOC message is able to verify compliance with the application profile, and if it needs to fail because of lack of compliance, to infer the reason why the protocol failed.
 
-For other parameters, like the profile of CRED_x in the case that it is not transported, it may not be possible to verify that incompliance with the application profile was the reason for failure: Integrity verification in message_2 or message_3 may fail not only because of wrong credential. For example, in case the Initiator uses a public key certificate by reference (i.e., not transported within the protocol) then both endpoints need to use an identical data structure as CRED_I or else the integrity verification will fail.
+For other parameters, like the profile of CRED_x in the case that it is not transported, it may not be possible to verify that lack of compliance with the application profile was the reason for failure: Integrity verification in message_2 or message_3 may fail not only because of wrong credential. For example, in case the Initiator uses a public key certificate by reference (i.e., not transported within the protocol) then both endpoints need to use an identical data structure as CRED_I or else the integrity verification will fail.
 
 Note that it is not necessary for the endpoints to specify a single transport for the EDHOC messages. For example, a mix of CoAP and HTTP may be used along the path, and this may still allow correlation between messages.
 
@@ -692,31 +698,31 @@ Other conditions may be part of the application profile, such as what is the tar
 
 ## Keys for EDHOC Message Processing
 
-EDHOC uses Extract-and-Expand {{RFC5869}} with the EDHOC hash algorithm in the selected cipher suite to derive keys used in message processing. This section defines Extract ({{extract}}) and Expand ({{expand}}), and how to use them to derive PRK_out ({{prkout}}) which is the shared secret session key resulting from a successful EDHOC exchange.
+EDHOC uses Extract-and-Expand {{RFC5869}} with the EDHOC hash algorithm in the selected cipher suite to derive keys used in message processing. This section defines EDHOC_Extract ({{extract}}) and EDHOC_Expand ({{expand}}), and how to use them to derive PRK_out ({{prkout}}) which is the shared secret session key resulting from a successful EDHOC exchange.
 
-Extract is used to derive fixed-length uniformly pseudorandom keys (PRK) from ECDH shared secrets. Expand is used to define EDHOC-KDF for generating MACs and for deriving output keying material (OKM) from PRKs.
+EDHOC_Extract is used to derive fixed-length uniformly pseudorandom keys (PRK) from ECDH shared secrets. EDHOC_Expand is used to define EDHOC_KDF for generating MACs and for deriving output keying material (OKM) from PRKs.
 
- In EDHOC a specific message is protected with a certain pseudorandom key, but how the key is derived depends on the method as detailed in {{asym}}.
+ In EDHOC a specific message is protected with a certain pseudorandom key, but how the key is derived depends on the authentication method ({{method}}) as detailed in {{asym}}.
 
 <!-- A diagram of the EDHOC key schedule can be found in Figure 2 of {{Vucinic22}}. TBD: Rewrite the diagram -->
 
-### Extract {#extract}
+### EDHOC_Extract {#extract}
 
-The pseudorandom keys (PRKs) used for EDHOC message processing are derived using Extract:
+The pseudorandom keys (PRKs) used for EDHOC message processing are derived using EDHOC_Extract:
 
 ~~~~~~~~~~~~~~~~~~~~~~~
-   PRK = Extract( salt, IKM )
+   PRK = EDHOC_Extract( salt, IKM )
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 where the input keying material (IKM) and salt are defined for each PRK below.
 
-The definition of Extract depends on the EDHOC hash algorithm of the selected cipher suite:
+The definition of EDHOC_Extract depends on the EDHOC hash algorithm of the selected cipher suite:
 
-* if the EDHOC hash algorithm is SHA-2, then Extract( salt, IKM ) = HKDF-Extract( salt, IKM ) {{RFC5869}}
-* if the EDHOC hash algorithm is SHAKE128, then Extract( salt, IKM ) = KMAC128( salt, IKM, 256, "" )
-* if the EDHOC hash algorithm is SHAKE256, then Extract( salt, IKM ) = KMAC256( salt, IKM, 512, "" )
+* if the EDHOC hash algorithm is SHA-2, then EDHOC_Extract( salt, IKM ) = HKDF-Extract( salt, IKM ) {{RFC5869}}
+* if the EDHOC hash algorithm is SHAKE128, then EDHOC_Extract( salt, IKM ) = KMAC128( salt, IKM, 256, "" )
+* if the EDHOC hash algorithm is SHAKE256, then EDHOC_Extract( salt, IKM ) = KMAC256( salt, IKM, 512, "" )
 
-The rest of the section defines the pseudorandom keys PRK_2e, PRK_3e2m and PRK_4e3m; their use is shown in {{fig-edhoc-kdf}}.
+The rest of the section defines the pseudorandom keys PRK_2e, PRK_3e2m and PRK_4e3m; their use is shown in {{fig-edhoc-kdf}}. The index of a PRK indicates its use or in what message protection operation it is involved. For example, PRK_3e2m is involved in the encryption of message 3 and in calculating the MAC of message 2.
 
 #### PRK_2e
 
@@ -742,7 +748,7 @@ Example: Assuming the use of SHA-256 the extract phase of HKDF produces PRK_2e a
 
 The pseudorandom key PRK_3e2m is derived as follows:
 
-If the Responder authenticates with a static Diffie-Hellman key, then PRK_3e2m = Extract( SALT_3e2m, G_RX ), where
+If the Responder authenticates with a static Diffie-Hellman key, then PRK_3e2m = EDHOC_Extract( SALT_3e2m, G_RX ), where
 
 * SALT_3e2m is derived from PRK_2e, see {{expand}}, and
 * G_RX is the ECDH shared secret calculated from G_R and X, or G_X and R (the Responder's private authentication key, see {{auth-keys}}),
@@ -753,7 +759,7 @@ else PRK_3e2m = PRK_2e.
 
 The pseudorandom key PRK_4e3m is derived as follows:
 
-If the Initiator authenticates with a static Diffie-Hellman key, then PRK_4e3m = Extract( SALT_4e3m, G_IY ), where
+If the Initiator authenticates with a static Diffie-Hellman key, then PRK_4e3m = EDHOC_Extract( SALT_4e3m, G_IY ), where
 
 * SALT_4e3m is derived from PRK_3e2m, see {{expand}}, and
 * G_IY is the ECDH shared secret calculated from G_I and Y, or G_Y and I (the Initiator's private authentication key, see {{auth-keys}}),
@@ -761,13 +767,13 @@ If the Initiator authenticates with a static Diffie-Hellman key, then PRK_4e3m =
 else PRK_4e3m = PRK_3e2m.
 
 
-### Expand and EDHOC-KDF {#expand}
+### EDHOC_Expand and EDHOC_KDF {#expand}
 
-The output keying material (OKM) - including keys, IVs, and salts - are derived from the PRKs using the EDHOC-KDF, which is defined through Expand:
+The output keying material (OKM) - including keys, IVs, and salts - are derived from the PRKs using the EDHOC_KDF, which is defined through EDHOC_Expand:
 
 ~~~~~~~~~~~~~~~~~~~~~~~
-   OKM = EDHOC-KDF( PRK, info_label, context, length )
-       = Expand( PRK, info, length )
+   OKM = EDHOC_KDF( PRK, info_label, context, length )
+       = EDHOC_Expand( PRK, info, length )
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 where info is encoded as the CBOR sequence
@@ -788,17 +794,17 @@ where
 
   + length is the length of OKM in bytes
 
-When EDHOC-KDF is used to derive OKM for EDHOC message processing, then context includes one of the transcript hashes TH_2, TH_3, or TH_4 defined in Sections {{asym-msg2-proc}}{: format="counter"} and {{asym-msg3-proc}}{: format="counter"}.
+When EDHOC_KDF is used to derive OKM for EDHOC message processing, then context includes one of the transcript hashes TH_2, TH_3, or TH_4 defined in Sections {{asym-msg2-proc}}{: format="counter"} and {{asym-msg3-proc}}{: format="counter"}.
 
-The definition of Expand depends on the EDHOC hash algorithm of the selected cipher suite:
+The definition of EDHOC_Expand depends on the EDHOC hash algorithm of the selected cipher suite:
 
-* if the EDHOC hash algorithm is SHA-2, then Expand( PRK, info, length ) = HKDF-Expand( PRK, info, length ) {{RFC5869}}
-* if the EDHOC hash algorithm is SHAKE128, then Expand( PRK, info, length ) = KMAC128( PRK, info, L, "" )
-* if the EDHOC hash algorithm is SHAKE256, then Expand( PRK, info, length ) = KMAC256( PRK, info, L, "" )
+* if the EDHOC hash algorithm is SHA-2, then EDHOC_Expand( PRK, info, length ) = HKDF-Expand( PRK, info, length ) {{RFC5869}}
+* if the EDHOC hash algorithm is SHAKE128, then EDHOC_Expand( PRK, info, length ) = KMAC128( PRK, info, L, "" )
+* if the EDHOC hash algorithm is SHAKE256, then EDHOC_Expand( PRK, info, length ) = KMAC256( PRK, info, L, "" )
 
 where L = 8 {{{⋅}}} length, the output length in bits.
 
-{{fig-edhoc-kdf}} lists derivations made with EDHOC-KDF during message processing, where
+{{fig-edhoc-kdf}} lists derivations made with EDHOC_KDF during message processing, where
 
 * hash_length - length of output size of the EDHOC hash algorithm of the selected cipher suite
 
@@ -809,53 +815,54 @@ where L = 8 {{{⋅}}} length, the output length in bits.
 Further details of the key derivation and how the output keying material is used are specified in {{asym}}.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
-KEYSTREAM_2   = EDHOC-KDF( PRK_2e,   0, TH_2,      plaintext_length )
-SALT_3e2m     = EDHOC-KDF( PRK_2e,   1, TH_2,      hash_length )
-MAC_2         = EDHOC-KDF( PRK_3e2m, 2, context_2, mac_length_2 )
-K_3           = EDHOC-KDF( PRK_3e2m, 3, TH_3,      key_length )
-IV_3          = EDHOC-KDF( PRK_3e2m, 4, TH_3,      iv_length )
-SALT_4e3m     = EDHOC-KDF( PRK_3e2m, 5, TH_3,      hash_length )
-MAC_3         = EDHOC-KDF( PRK_4e3m, 6, context_3, mac_length_3 )
-PRK_out       = EDHOC-KDF( PRK_4e3m, 7, TH_4,      hash_length )
-K_4           = EDHOC-KDF( PRK_4e3m, 8, TH_4,      key_length )
-IV_4          = EDHOC-KDF( PRK_4e3m, 9, TH_4,      iv_length )
+KEYSTREAM_2   = EDHOC_KDF( PRK_2e,   0, TH_2,      plaintext_length )
+SALT_3e2m     = EDHOC_KDF( PRK_2e,   1, TH_2,      hash_length )
+MAC_2         = EDHOC_KDF( PRK_3e2m, 2, context_2, mac_length_2 )
+K_3           = EDHOC_KDF( PRK_3e2m, 3, TH_3,      key_length )
+IV_3          = EDHOC_KDF( PRK_3e2m, 4, TH_3,      iv_length )
+SALT_4e3m     = EDHOC_KDF( PRK_3e2m, 5, TH_3,      hash_length )
+MAC_3         = EDHOC_KDF( PRK_4e3m, 6, context_3, mac_length_3 )
+PRK_out       = EDHOC_KDF( PRK_4e3m, 7, TH_4,      hash_length )
+K_4           = EDHOC_KDF( PRK_4e3m, 8, TH_4,      key_length )
+IV_4          = EDHOC_KDF( PRK_4e3m, 9, TH_4,      iv_length )
 ~~~~~~~~~~~~~~~~~~~~~~~
-{: #fig-edhoc-kdf title="Key derivations using EDHOC-KDF."}
+{: #fig-edhoc-kdf title="Key derivations using EDHOC_KDF."}
 {: artwork-align="center"}
 
 ### PRK_out {#prkout}
 
- The pseudorandom key PRK_out, derived as shown in {{fig-edhoc-kdf}} is the output session key of a successful EDHOC exchange. Keys for applications are derived from PRK_out, see {{exporter}}. For the purpose of using EDHOC-Exporter, an application only needs to store PRK_out or PRK_exporter. (Note that the word "store" used here does not imply that the application has access to the plaintext PRK_out since that may be reserved for code within a TEE, see {{impl-cons}}).
+ The pseudorandom key PRK_out, derived as shown in {{fig-edhoc-kdf}} is the output session key of a successful EDHOC exchange.
+
+ Keys for applications are derived using EDHOC_Exporter from PRK_exporter (see {{exporter}}) which in turn is derived from PRK_out. For the purpose of generating application keys, it is sufficient to store PRK_out or PRK_exporter. (Note that the word "store" used here does not imply that the application has access to the plaintext PRK_out since that may be reserved for code within a Trusted Execution Environment, see {{impl-cons}}).
 
 ## Keys for EDHOC Applications
 
-This section defines EDHOC-Exporter in terms of EDHOC-KDF and PRK_out. A key update function is defined in {{keyupdate}}.
+This section defines EDHOC_Exporter in terms of EDHOC_KDF and PRK_out. A key update function is defined in {{keyupdate}}.
 
-### EDHOC-Exporter {#exporter}
+### EDHOC_Exporter {#exporter}
 
-Keying material for the application can be derived using the EDHOC-Exporter interface defined as:
+Keying material for the application can be derived using the EDHOC_Exporter interface defined as:
 
 ~~~~~~~~~~~
-   EDHOC-Exporter(exporter_label, context, length)
-     = EDHOC-KDF(PRK_exporter, exporter_label, context, length)
+   EDHOC_Exporter(exporter_label, context, length)
+     = EDHOC_KDF(PRK_exporter, exporter_label, context, length)
 ~~~~~~~~~~~
 where
 
-* exporter_label is a registered uint from the EDHOC Exporter Label registry ({{exporter-label}})
+* exporter_label is a registered uint from the EDHOC_Exporter Label registry ({{exporter-label}})
 * context is a bstr defined by the application
 * length is a uint defined by the application
 * PRK_exporter is derived from PRK_out:
 
 ~~~~~~~~~~~~~~~~~~~~~~~
-PRK_exporter  = EDHOC-KDF( PRK_out, 10, h'', hash_length )
+PRK_exporter  = EDHOC_KDF( PRK_out, 10, h'', hash_length )
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 where hash_length denotes the output size in bytes of the EDHOC hash algorithm of the selected cipher suite.
 
-The (exporter_label, context) pair used in EDHOC-Exporter must be unique, i.e., an (exporter_label, context) MUST NOT be used for two different purposes. However an application can re-derive the same key several times as long as it is done in a secure way. For example, in most encryption algorithms the same key can be reused with different nonces. The context can for example be the empty CBOR byte string.
+The (exporter_label, context) pair used in EDHOC_Exporter must be unique, i.e., an (exporter_label, context) MUST NOT be used for two different purposes. However an application can re-derive the same key several times as long as it is done in a secure way. For example, in most encryption algorithms the same key can be reused with different nonces. The context can for example be the empty CBOR byte string.
 
-Examples of use of the EDHOC-Exporter are given in {{transfer}}.
-
+Examples of use of the EDHOC_Exporter are given in {{transfer}}.
 
 # Message Formatting and Processing {#asym}
 
@@ -870,7 +877,7 @@ While EDHOC uses the COSE_Key, COSE_Sign1, and COSE_Encrypt0 structures, only a 
 
 This section outlines the message processing of EDHOC.
 
-For each new/ongoing session, the endpoints are assumed to keep an associated protocol state containing identifiers, keying material, etc. used for subsequent processing of protocol related data. The protocol state is assumed to be associated with an application profile ({{applicability}}) which provides the context for how messages are transported, identified, and processed.
+For each new/ongoing EDHOC session, the endpoints are assumed to keep an associated protocol state containing identifiers, keying material, etc. used for subsequent processing of protocol related data. The protocol state is assumed to be associated with an application profile ({{applicability}}) which provides the context for how messages are transported, identified, and processed.
 
 EDHOC messages SHALL be processed according to the current protocol state. The following steps are expected to be performed at reception of an EDHOC message:
 
@@ -925,7 +932,7 @@ The Initiator SHALL compose message_1 as follows:
 
 * Generate an ephemeral ECDH key pair using the curve in the selected cipher suite and format it as a COSE_Key. Let G_X be the 'x' parameter of the COSE_Key.
 
-* Choose a connection identifier C_I and store it for the length of the protocol.
+* Choose a connection identifier C_I and store it during the EDHOC session.
 
 * Encode message_1 as a sequence of CBOR encoded data items as specified in {{asym-msg1-form}}
 
@@ -969,7 +976,7 @@ The Responder SHALL compose message_2 as follows:
 
 * Compute the transcript hash TH_2 = H( G_Y, C_R, H(message_1) ) where H() is the EDHOC hash algorithm of the selected cipher suite. The input to the hash function is a CBOR Sequence. Note that H(message_1) can be computed and cached already in the processing of message_1.
 
-* Compute MAC_2 as in {{expand}} with context_2 = << ID_CRED_R, TH_2, CRED_R, ? EAD_2 >>
+* Compute MAC_2 as in {{expand}} with context_2 = << ID_CRED_R, TH_2, CRED_R, ? EAD_2 >> (see {{CBOR}} for notation)
    * If the Responder authenticates with a static Diffie-Hellman key (method equals 1 or 3), then mac_length_2 is the EDHOC MAC length of the selected cipher suite. If the Responder authenticates with a signature key (method equals 0 or 2), then mac_length_2 is equal to the output size of the EDHOC hash algorithm of the selected cipher suite.
     * ID_CRED_R - identifier to facilitate the retrieval of CRED_R, see {{id_cred}}
     * CRED_R - CBOR item containing the authentication credential of the Responder, see {{auth-cred}}
@@ -983,13 +990,13 @@ The Responder SHALL compose message_2 as follows:
 
    * payload = MAC_2
 
-* CIPHERTEXT_2 is calculated by using the Expand function as a binary additive stream cipher over the following plaintext:
+* CIPHERTEXT_2 is calculated by using the EDHOC_Expand function as a binary additive stream cipher over the following plaintext:
 
    * PLAINTEXT_2 = ( ID_CRED_R / bstr / -24..23, Signature_or_MAC_2, ? EAD_2 )
 
       * If ID_CRED_R contains a single 'kid' parameter, i.e., ID_CRED_R = { 4 : kid_R }, then the compact encoding is applied, see {{compact-kid}}.
 
-   * Compute KEYSTREAM_2 as in {{expand}}, where plaintext_length is the length of PLAINTEXT_2. For the case of plaintext_length exceeding the EDHOC-KDF output size, see {{large-plaintext_2}}.
+   * Compute KEYSTREAM_2 as in {{expand}}, where plaintext_length is the length of PLAINTEXT_2. For the case of plaintext_length exceeding the EDHOC_KDF output size, see {{large-plaintext_2}}.
 
    * CIPHERTEXT_2 = PLAINTEXT_2 XOR KEYSTREAM_2
 
@@ -1062,7 +1069,7 @@ The Initiator SHALL compose message_3 as follows:
 
 * Compute the transcript hash TH_4 = H(TH_3, PLAINTEXT_3, CRED_I) where H() is the EDHOC hash algorithm of the selected cipher suite. The input to the hash function is a CBOR Sequence. Note that TH_4 can be computed and cached already in the processing of message_3.
 
-* Calculate PRK_out as defined in {{fig-edhoc-kdf}}. The Initiator can now derive application keys using the EDHOC-Exporter interface, see {{exporter}}.
+* Calculate PRK_out as defined in {{fig-edhoc-kdf}}. The Initiator can now derive application keys using the EDHOC_Exporter interface, see {{exporter}}.
 
 * Encode message_3 as a CBOR data item as specified in {{asym-msg3-form}}.
 
@@ -1089,14 +1096,14 @@ The Responder SHALL process message_3 as follows:
 
 *  Make the connection identifiers (C_I, C_R) and the application algorithms in the selected cipher suite available to the application.
 
-After verifying message_3, the Responder can compute PRK_out, see {{prkout}}, derive application keys using the EDHOC-Exporter interface, see {{exporter}}, persistently store the keying material, and send protected application data.
+After verifying message_3, the Responder can compute PRK_out, see {{prkout}}, derive application keys using the EDHOC_Exporter interface, see {{exporter}}, persistently store the keying material, and send protected application data.
 
 If any processing step fails, then the Responder MUST send an EDHOC error message back as defined in {{error}}, and the protocol MUST be discontinued.
 
 
 ## EDHOC Message 4 {#m4}
 
-This section specifies message_4 which is OPTIONAL to support. Key confirmation is normally provided by sending an application message from the Responder to the Initiator protected with a key derived with the EDHOC-Exporter, e.g., using OSCORE (see {{transfer}}). In deployments where no protected application message is sent from the Responder to the Initiator, message_4 MUST be supported and MUST be used. Two examples of such deployments are:
+This section specifies message_4 which is OPTIONAL to support. Key confirmation is normally provided by sending an application message from the Responder to the Initiator protected with a key derived with the EDHOC_Exporter, e.g., using OSCORE (see {{transfer}}). In deployments where no protected application message is sent from the Responder to the Initiator, message_4 MUST be supported and MUST be used. Two examples of such deployments are:
 
 1. When EDHOC is only used for authentication and no application data is sent.
 2. When application data is only sent from the Initiator to the Responder.
@@ -1238,6 +1245,9 @@ Initiator                                                   Responder
 
 In the second example ({{fig-error2}}), the Responder supports cipher suites 8 and 9 but not the more preferred (by the Initiator) cipher suites 5, 6 or 7. To illustrate the negotiation mechanics we let the Initiator first make a guess that the Responder supports suite 6 but not suite 5. Since the Responder supports neither 5 nor 6, it responds with SUITES_R containing the supported suites, after which the Initiator selects its most preferred supported suite.  (If the Responder had supported suite 5, it would have included it in SUITES_R of the response, and it would in that case have become the selected suite in the second message_1.)
 
+
+Note that the content of the fields of message_1 may be different when sent the second time, in particular the ephemeral key MUST be different.
+
 ~~~~~~~~~~~ aasvg
 Initiator                                                   Responder
 |            METHOD, SUITES_I = [5, 6], G_X, C_I, EAD_1             |
@@ -1267,7 +1277,7 @@ Implementations MUST support 'kid' parameters. None of the other COSE header par
 
 An implementation MAY support only a single credential type (CCS, CWT, X.509, C509). None of the credential types are mandatory-to-implement.
 
-Implementations MUST support the EDHOC-Exporter.
+Implementations MUST support the EDHOC_Exporter.
 
 Implementations MAY support message_4. Error codes (ERR_CODE) 1 and 2 MUST be supported.
 
@@ -1293,7 +1303,7 @@ As required by {{RFC7258}}, IETF protocols need to mitigate pervasive monitoring
 
 To limit the effect of breaches, it is important to limit the use of symmetric group keys for bootstrapping. EDHOC therefore strives to make the additional cost of using raw public keys and self-signed certificates as small as possible. Raw public keys and self-signed certificates are not a replacement for a public key infrastructure but SHOULD be used instead of symmetric group keys for bootstrapping.
 
-Compromise of the long-term keys (private signature or static DH keys) does not compromise the security of completed EDHOC exchanges. Compromising the private authentication keys of one party lets an active attacker impersonate that compromised party in EDHOC exchanges with other parties but does not let the attacker impersonate other parties in EDHOC exchanges with the compromised party. Compromise of the long-term keys does not enable a passive attacker to compromise future session keys (PRK_out). Compromise of the HDKF input parameters (ECDH shared secret) leads to compromise of all session keys derived from that compromised shared secret. Compromise of one session key does not compromise other session keys. Compromise of PRK_out leads to compromise of all keying material derived with the EDHOC-Exporter.
+Compromise of the long-term keys (private signature or static DH keys) does not compromise the security of completed EDHOC exchanges. Compromising the private authentication keys of one party lets an active attacker impersonate that compromised party in EDHOC exchanges with other parties but does not let the attacker impersonate other parties in EDHOC exchanges with the compromised party. Compromise of the long-term keys does not enable a passive attacker to compromise future session keys (PRK_out). Compromise of the HDKF input parameters (ECDH shared secret) leads to compromise of all session keys derived from that compromised shared secret. Compromise of one session key does not compromise other session keys. Compromise of PRK_out leads to compromise of all keying material derived with the EDHOC_Exporter.
 
 Based on the cryptographic algorithms requirements {{sec_algs}}, EDHOC provides a minimum of 64-bit security against online brute force attacks and a minimum of 128-bit security against offline brute force attacks. To break 64-bit security against online brute force an attacker would on average have to send 4.3 billion messages per second for 68 years, which is infeasible in constrained IoT radio technologies. A forgery against a 64-bit MAC in EDHOC breaks the security of all future application data, while a forgery against a 64-bit MAC in the subsequent application protocol (e.g., OSCORE {{RFC8613}}) typically only breaks the security of the data in the forged packet.
 
@@ -1317,7 +1327,7 @@ authenticated encryption. Hence the message authenticating functionality of the 
 
 To reduce message overhead EDHOC does not use explicit nonces and instead relies on the ephemeral public keys to provide randomness to each session. A good amount of randomness is important for the key generation, to provide liveness, and to protect against interleaving attacks. For this reason, the ephemeral keys MUST NOT be used in more than one EDHOC message, and both parties SHALL generate fresh random ephemeral key pairs. Note that an ephemeral key may be used to calculate several ECDH shared secrets. When static Diffie-Hellman authentication is used the same ephemeral key is used in both ephemeral-ephemeral and ephemeral-static ECDH.
 
-As discussed in {{SIGMA}}, the encryption of message_2 does only need to protect against passive attacker as active attackers can always get the Responder's identity by sending their own message_1. EDHOC uses the Expand function (typically HKDF-Expand) as a binary additive stream cipher which is proven secure as long as the expand function is a PRF.  HKDF-Expand is not often used as a stream cipher as it is slow on long messages, and most applications require both IND-CCA confidentiality as well as integrity protection. For the encryption of message_2, any speed difference is negligible, IND-CCA does not increase security, and integrity is provided by the inner MAC (and signature depending on method).
+As discussed in {{SIGMA}}, the encryption of message_2 does only need to protect against passive attacker as active attackers can always get the Responder's identity by sending their own message_1. EDHOC uses the EDHOC_Expand function (typically HKDF-Expand) as a binary additive stream cipher which is proven secure as long as the expand function is a PRF.  HKDF-Expand is not often used as a stream cipher as it is slow on long messages, and most applications require both IND-CCA confidentiality as well as integrity protection. For the encryption of message_2, any speed difference is negligible, IND-CCA does not increase security, and integrity is provided by the inner MAC (and signature depending on method).
 
 Requirements for how to securely generate, validate, and process the ephemeral public keys depend on the elliptic curve. For X25519 and X448, the requirements are defined in {{RFC7748}}. For secp256r1, secp384r1, and secp521r1, the requirements are defined in Section 5 of {{SP-800-56A}}. For secp256r1, secp384r1, and secp521r1, at least partial public-key validation MUST be done.
 
@@ -1351,7 +1361,7 @@ The fields ID_CRED_I, ID_CRED_R, EAD_2, EAD_3, and EAD_4 have variable length, a
 
 ## Denial-of-Service {#dos}
 
-EDHOC itself does not provide countermeasures against Denial-of-Service attacks. In particular, by sending a number of new or replayed message_1 an attacker may cause the Responder to allocate state, perform cryptographic operations, and amplify messages. To mitigate such attacks, an implementation SHOULD rely on lower layer mechanisms. For instance, when EDHOC is transferred as an exchange of CoAP messages, the CoAP server can use the Echo option defined in {{RFC9175}} which forces the CoAP client to demonstrate reachability at its apparent network address. To avoid an additional roundtrip the Initiator can reduce the amplification factor by padding message_1, see {{padding}}.
+EDHOC itself does not provide countermeasures against Denial-of-Service attacks. In particular, by sending a number of new or replayed message_1 an attacker may cause the Responder to allocate state, perform cryptographic operations, and amplify messages. To mitigate such attacks, an implementation SHOULD rely on lower layer mechanisms. For instance, when EDHOC is transferred as an exchange of CoAP messages, the CoAP server can use the Echo option defined in {{RFC9175}} which forces the CoAP client to demonstrate reachability at its apparent network address. To avoid an additional roundtrip the Initiator can reduce the amplification factor by padding message_1, i.e., using EAD_1, see {{padding}}.
 
 An attacker can also send faked message_2, message_3, message_4, or error in an attempt to trick the receiving party to send an error message and discontinue the protocol. EDHOC implementations MAY evaluate if a received message is likely to have been forged by an attacker and ignore it without sending an error message or discontinuing the protocol.
 
@@ -1679,14 +1689,14 @@ This section specifies how to use EDHOC output to derive the OSCORE security con
 
 After successful processing of EDHOC message_3, Client and Server derive Security Context parameters for OSCORE as follows (see Section 3.2 of {{RFC8613}}):
 
-* The Master Secret and Master Salt are derived by using the EDHOC-Exporter interface, see {{exporter}}:
+* The Master Secret and Master Salt are derived by using the EDHOC_Exporter interface, see {{exporter}}:
    * The EDHOC Exporter Labels for deriving the OSCORE Master Secret and the OSCORE Master Salt, are the uints 0 and 1, respectively.
    * The context parameter is h'' (0x40), the empty CBOR byte string.
    * By default, oscore_key_length is the key length (in bytes) of the application AEAD Algorithm of the selected cipher suite for the EDHOC session. Also by default, oscore_salt_length has value 8. The Initiator and Responder MAY agree out-of-band on a longer oscore_key_length than the default and on a different oscore_salt_length.
 
 ~~~~~~~~~~~~~~~~~~~~~~~
-   Master Secret = EDHOC-Exporter( 0, h'', oscore_key_length )
-   Master Salt   = EDHOC-Exporter( 1, h'', oscore_salt_length )
+   Master Secret = EDHOC_Exporter( 0, h'', oscore_key_length )
+   Master Salt   = EDHOC_Exporter( 1, h'', oscore_salt_length )
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 * The AEAD Algorithm is the application AEAD algorithm of the selected cipher suite for the EDHOC session.
@@ -1871,7 +1881,7 @@ h'12cd'             0x4212cd             byte string
 1, 2, true          0x0102f5             sequence
 ------------------------------------------------------------------
 ~~~~~~~~~~~~~~~~~~~~~~~
-{: artwork-align="center"}
+{: #fig-cbor-examples title="Examples of use of CBOR and CDDL" artwork-align="center"}
 
 ## CDDL Definitions {#CDDL}
 
@@ -1960,7 +1970,7 @@ When ID_CRED_x does not contain the actual credential, it may be very short, e.g
 
 * ID_CRED_x = { 4 : kid_x }, where kid_x : kid, for x = I or R. For further optimization, see {{id_cred}}.
 
-Note that a COSE header map can contain several header parameters, for example { x5u, x5t } or { kid, kid_context }.
+Note that ID_CRED_x can contain several header parameters, for example { x5u, x5t } or { kid, kid_context }.
 
 ID_CRED_x MAY also identify the credential by value. For example, a certificate chain can be transported in ID_CRED_x with COSE header parameter c5c or x5chain, defined in {{I-D.ietf-cose-cbor-encoded-cert}} and {{I-D.ietf-cose-x509}} and credentials of type CWT and CCS can be transported with the COSE header parameters registered in {{cwt-header-param}}.
 
@@ -2105,13 +2115,13 @@ may need ... no, they don't need anything special: after an error, the next thin
 
 # Long PLAINTEXT_2 {#large-plaintext_2}
 
-By the definition of encryption of PLAINTEXT_2 with KEYSTREAM_2, it is limited to lengths of PLAINTEXT_2 not exceeding the output of EDHOC-KDF, see {{expand}}. If the EDHOC hash algorithm is SHA-2 then HKDF-Expand is used, which limits the length of the EDHOC-KDF output to 255 {{{⋅}}} hash_length, where hash_length is the length of the output of the EDHOC hash algorithm given by the cipher suite. For example, with SHA-256 as EDHOC hash algorithm, the length of the hash output is 32 bytes and the maximum length of PLAINTEXT_2 is 255 {{{⋅}}} 32 = 8160 bytes.
+By the definition of encryption of PLAINTEXT_2 with KEYSTREAM_2, it is limited to lengths of PLAINTEXT_2 not exceeding the output of EDHOC_KDF, see {{expand}}. If the EDHOC hash algorithm is SHA-2 then HKDF-Expand is used, which limits the length of the EDHOC_KDF output to 255 {{{⋅}}} hash_length, where hash_length is the length of the output of the EDHOC hash algorithm given by the cipher suite. For example, with SHA-256 as EDHOC hash algorithm, the length of the hash output is 32 bytes and the maximum length of PLAINTEXT_2 is 255 {{{⋅}}} 32 = 8160 bytes.
 
-While PLAINTEXT_2 is expected to be much shorter than 8 kB for the intended use cases, it seems nevertheless prudent to provide an extended solution for the event that this should turn out to be a limitation.
+While PLAINTEXT_2 is expected to be much shorter than 8 kB for the intended use cases, it seems nevertheless prudent to specify a solution for the event that this should turn out to be a limitation.
 
 A potential work-around is to use a cipher suite with a different hash function. In particular, the use of KMAC removes all practical limitations in this respect.
 
-Another solution is to make use of multiple invocations of HKDF-Expand and negative values of info_label, as specified in the remainder of this section.
+This section specifies a solution which works with any hash function, by making use of multiple invocations of HKDF-Expand and negative values of info_label.
 
 Consider the PLAINTEXT_2 partitioned in parts P(i) of length equal to M = 255 {{{⋅}}} hash_length, except possibly the last part P(last) which has 0 < length {{{≤}}} M.
 
@@ -2136,7 +2146,7 @@ KEYSTREAM_2 = OKM(0) | OKM(1)  | ... | OKM(last)
 where
 
 ~~~~~~~~~~~
-OKM(i) = EDHOC-KDF( PRK_2e, -i, TH_2, length(P(i)) )
+OKM(i) = EDHOC_KDF( PRK_2e, -i, TH_2, length(P(i)) )
 ~~~~~~~~~~~
 
 Note that if length(PLAINTEXT_2) {{{≤}}} M then P(0) = PLAINTEXT_2 and the definition of KEYSTREAM_2 = OKM(0) coincides with {{fig-edhoc-kdf}}.
@@ -2146,25 +2156,25 @@ This describes the processing of the Responder when sending message_2. The Initi
 An application profile may specify if it supports or not the method described in this appendix.
 
 
-# EDHOC-KeyUpdate {#keyupdate}
+# EDHOC_KeyUpdate {#keyupdate}
 
-To provide forward secrecy in an even more efficient way than re-running EDHOC, this section specifies the optional function EDHOC-KeyUpdate in terms of EDHOC-KDF and PRK_out.
+To provide forward secrecy in an even more efficient way than re-running EDHOC, this section specifies the optional function EDHOC_KeyUpdate in terms of EDHOC_KDF and PRK_out.
 
-When EDHOC-KeyUpdate is called, a new PRK_out is calculated as a "hash" of the old PRK_out using the Expand function as illustrated by the following pseudocode. The change of PRK_out causes a change to PRK_exporter which enables the derivation of new application keys superseding the old ones, using EDHOC-Exporter, see {{exporter}}.
+When EDHOC_KeyUpdate is called, a new PRK_out is calculated as a "hash" of the old PRK_out using the EDHOC_Expand function as illustrated by the following pseudocode. The change of PRK_out causes a change to PRK_exporter which enables the derivation of new application keys superseding the old ones, using EDHOC_Exporter, see {{exporter}}.
 
 ~~~~~~~~~~~
-   EDHOC-KeyUpdate( context ):
-      new PRK_out = EDHOC-KDF( old PRK_out, 11, context, hash_length )
-      new PRK_exporter = EDHOC-KDF( new PRK_out, 10, h'', hash_length )
+   EDHOC_KeyUpdate( context ):
+      new PRK_out = EDHOC_KDF( old PRK_out, 11, context, hash_length )
+      new PRK_exporter = EDHOC_KDF( new PRK_out, 10, h'', hash_length )
 ~~~~~~~~~~~
 
 where hash_length denotes the output size in bytes of the EDHOC hash algorithm of the selected cipher suite.
 
-The EDHOC-KeyUpdate takes a context as input to enable binding of the updated PRK_out to some event that triggered the key update. The Initiator and the Responder need to agree on the context, which can, e.g., be a counter or a pseudorandom number such as a hash. To provide forward secrecy the old PRK_out and keys derived from it (old PRK_exporter and old application keys) must be deleted as soon as they are not needed. When to delete the old keys and how to verify that they are not needed is up to the application.
+The EDHOC_KeyUpdate takes a context as input to enable binding of the updated PRK_out to some event that triggered the key update. The Initiator and the Responder need to agree on the context, which can, e.g., be a counter or a pseudorandom number such as a hash. To provide forward secrecy the old PRK_out and keys derived from it (old PRK_exporter and old application keys) must be deleted as soon as they are not needed. When to delete the old keys and how to verify that they are not needed is up to the application.
 
-An application using EDHOC-KeyUpdate needs to store PRK_out. Compromise of PRK_out leads to compromise of all keying material derived with the EDHOC-Exporter since the last invocation of the EDHOC-KeyUpdate function.
+An application using EDHOC_KeyUpdate needs to store PRK_out. Compromise of PRK_out leads to compromise of all keying material derived with the EDHOC_Exporter since the last invocation of the EDHOC_KeyUpdate function.
 
-While this key update method provides forward secrecy it does not give as strong security properties as re-running EDHOC. EDHOC-KeyUpdate can be used to meet cryptographic limits and provide partial protection against key leakage, but it provides significantly weaker security properties than re-running EDHOC with ephemeral Diffie-Hellman. Even with frequent use of EDHOC-KeyUpdate, compromise of one session key compromises all future session keys, and an attacker therefore only needs to perform static key exfiltration {{RFC7624}}, which is less complicated and has a lower risk profile than the dynamic case, see {{sec-prop}}.
+While this key update method provides forward secrecy it does not give as strong security properties as re-running EDHOC. EDHOC_KeyUpdate can be used to meet cryptographic limits and provide partial protection against key leakage, but it provides significantly weaker security properties than re-running EDHOC with ephemeral Diffie-Hellman. Even with frequent use of EDHOC_KeyUpdate, compromise of one session key compromises all future session keys, and an attacker therefore only needs to perform static key exfiltration {{RFC7624}}, which is less complicated and has a lower risk profile than the dynamic case, see {{sec-prop}}.
 
  A similar method to do key update for OSCORE is KUDOS, see {{I-D.ietf-core-oscore-key-update}}.
 
@@ -2589,7 +2599,7 @@ The authors want to thank
 {{{Michel Veillette}}},
 and
 {{{Mališa Vučinić}}}
-for reviewing and commenting on intermediate versions of the draft. We are especially indebted to {{{Jim Schaad}}} for his continuous reviewing and implementation of different versions of the draft.
+for reviewing and commenting on intermediate versions of the draft. We are especially indebted to the late {{{Jim Schaad}}} for his continuous reviewing and implementation of early versions of this and other drafts.
 
 Work on this document has in part been supported by the H2020 project SIFIS-Home (grant agreement 952652).
 
