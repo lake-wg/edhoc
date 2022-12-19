@@ -169,6 +169,16 @@ informative:
         ins: NSA
     date: August 2015
 
+  GuentherIlunga22:
+    target: https://eprint.iacr.org/2022/1705
+    title: "Careful with MAc-then-SIGn: A Computational Analysis of the EDHOC Lightweight Authenticated Key Exchange Protocol"
+    author:
+      -
+        ins: F. Günther
+      -
+        ins: M. Ilunga
+    date: December 2022
+
   Jacomme23:
     target: https://hal.inria.fr/hal-03810102/
     title: A comprehensive, formal and automated analysis of the EDHOC protocol
@@ -182,6 +192,16 @@ informative:
       -
         ins: M. Racouchot
     date: October 2022
+
+  CottierPointcheval22:
+    target: https://arxiv.org/abs/2209.03599
+    title: Security Analysis of the EDHOC protocol
+    author:
+      -
+        ins: B. Cottier
+      -
+        ins: D. Pointcheval
+    date: September 2022
 
   Norrman20:
     target: https://arxiv.org/abs/2007.11427
@@ -245,18 +265,18 @@ A typical setting is when one of the endpoints is constrained or in a constraine
 
 Compared to the DTLS 1.3 handshake {{RFC9147}} with ECDHE and connection ID, the EDHOC message size when transferred in CoAP can be less than 1/6 when RPK authentication is used, see {{I-D.ietf-lwig-security-protocol-comparison}}. {{fig-sizes}} shows examples of EDHOC message sizes based on the assumptions in Section 2 of {{I-D.ietf-lwig-security-protocol-comparison}}, comparing different kinds of authentication keys and COSE header parameters for identification: static Diffie-Hellman keys or signature keys, either in CBOR Web Token (CWT) / CWT Claims Set (CCS) {{RFC8392}} identified by a key identifier using 'kid' {{RFC9052}}, or in X.509 certificates identified by a hash value using 'x5t' {{I-D.ietf-cose-x509}}.
 
-~~~~~~~~~~~~~~~~~~~~~~~
-========================================================
-                    Static DH Keys        Signature Keys
-                    --------------        --------------
-                    kid        x5t        kid        x5t
---------------------------------------------------------
-message_1            37         37         37         37
-message_2            45         58        102        115
-message_3            19         33         77         90
---------------------------------------------------------
-Total               101        128        216        242
-========================================================
+~~~~~~~~~~~~~~~~~~~~~~~ aasvg
+----------------------------------------------------------
+                     Static DH Keys        Signature Keys
+                    ----------------      ----------------
+                     kid        x5t        kid        x5t
+----------------------------------------------------------
+ message_1            37         37         37         37
+ message_2            45         58        102        115
+ message_3            19         33         77         90
+----------------------------------------------------------
+ Total               101        128        216        242
+----------------------------------------------------------
 ~~~~~~~~~~~~~~~~~~~~~~~
 {: #fig-sizes title="Examples of EDHOC message sizes in bytes." artwork-align="center"}
 
@@ -267,7 +287,7 @@ The remainder of the document is organized as follows: {{background}} outlines E
 
 ## Terminology and Requirements Language {#term}
 
-The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in BCP 14 {{RFC2119}} {{RFC8174}} when, and only when, they appear in all capitals, as shown here.
+{::boilerplate bcp14}
 
 Readers are expected to be familiar with the terms and concepts described in CBOR {{RFC8949}}, CBOR Sequences {{RFC8742}}, COSE structures and processing {{RFC9052}}, COSE algorithms {{RFC9053}}, CWT and CWT Claims Set {{RFC8392}}, and the Concise Data Definition Language (CDDL, {{RFC8610}}), which is used to express CBOR data structures. Examples of CBOR and CDDL are provided in {{CBOR}}. When referring to CBOR, this specification always refers to Deterministically Encoded CBOR as specified in Sections 4.2.1 and 4.2.2 of {{RFC8949}}. The single output from authenticated encryption (including the authentication tag) is called "ciphertext", following {{RFC5116}}.
 
@@ -278,7 +298,7 @@ EDHOC specifies different authentication methods of the ephemeral Diffie-Hellman
 
 SIGMA (SIGn-and-MAc) is a family of theoretical protocols with a large number of variants {{SIGMA}}. Like in IKEv2 {{RFC7296}} and (D)TLS 1.3 {{RFC8446}}{{RFC9147}}, EDHOC authenticated with signature keys is built on a variant of the SIGMA protocol which provides identity protection of the Initiator (SIGMA-I) against active attackers, and like IKEv2, EDHOC implements the MAC-then-Sign variant of the SIGMA-I protocol shown in {{fig-sigma}}.
 
-~~~~~~~~~~~
+~~~~~~~~~~~ aasvg
 Initiator                                                   Responder
 |                                G_X                                |
 +------------------------------------------------------------------>|
@@ -339,7 +359,7 @@ Application data may be protected using the agreed application algorithms (AEAD,
 
 The Initiator can derive symmetric application keys after creating EDHOC message_3, see {{exporter}}. Protected application data can therefore be sent in parallel or together with EDHOC message_3. EDHOC message_4 is typically not sent.
 
-~~~~~~~~~~~
+~~~~~~~~~~~ aasvg
 Initiator                                                   Responder
 |                 METHOD, SUITES_I, G_X, C_I, EAD_1                 |
 +------------------------------------------------------------------>|
@@ -367,11 +387,11 @@ The data item METHOD in message_1 (see {{asym-msg1-form}}), is an integer specif
 
 The Initiator and the Responder need to have agreed on a single method to be used for EDHOC, see {{applicability}}.
 
-~~~~~~~~~~~
+~~~~~~~~~~~ aasvg
 +-------------+--------------------+--------------------+
 | Method Type | Initiator          | Responder          |
 |       Value | Authentication Key | Authentication Key |
-+-------------+--------------------+--------------------+
++=============+====================+====================+
 |           0 | Signature Key      | Signature Key      |
 |           1 | Signature Key      | Static DH Key      |
 |           2 | Static DH Key      | Signature Key      |
@@ -851,7 +871,7 @@ This section specifies formatting of the messages and processing steps. Error me
 An EDHOC message is encoded as a sequence of CBOR data items (CBOR Sequence, {{RFC8742}}).
 Additional optimizations are made to reduce message overhead.
 
-While EDHOC uses the COSE_Key, COSE_Sign1, and COSE_Encrypt0 structures, only a subset of the parameters is included in the EDHOC messages, see {{COSE}}. The unprotected COSE header in COSE_Sign1, and COSE_Encrypt0 (not included in the EDHOC message) MAY contain parameters (e.g., 'alg').
+While EDHOC uses the COSE_Key, COSE_Sign1, and COSE_Encrypt0 structures, only a subset of the parameters is included in the EDHOC messages, see {{COSE}}. In order to recreate the COSE object, the recipient endpoint may need to add parameters to the COSE headers not included in the EDHOC message, for example the parameter 'alg' to COSE_Sign1 or COSE_Encrypt0.
 
 ## Message Processing Outline {#proc-outline}
 
@@ -1161,7 +1181,7 @@ where:
 
 The remainder of this section specifies the currently defined error codes, see {{fig-error-codes}}. Additional error codes and corresponding error information may be specified.
 
-~~~~~~~~~~~
+~~~~~~~~~~~ aasvg
 +----------+---------------+----------------------------------------+
 | ERR_CODE | ERR_INFO Type | Description                            |
 +==========+===============+========================================+
@@ -1206,7 +1226,7 @@ Assume that the Initiator supports the five cipher suites 5, 6, 7, 8, and 9 in d
 
 In the first example ({{fig-error1}}), the Responder supports cipher suite 6 but not the initially selected cipher suite 5.
 
-~~~~~~~~~~~
+~~~~~~~~~~~ aasvg
 Initiator                                                   Responder
 |              METHOD, SUITES_I = 5, G_X, C_I, EAD_1                |
 +------------------------------------------------------------------>|
@@ -1225,9 +1245,10 @@ Initiator                                                   Responder
 
 In the second example ({{fig-error2}}), the Responder supports cipher suites 8 and 9 but not the more preferred (by the Initiator) cipher suites 5, 6 or 7. To illustrate the negotiation mechanics we let the Initiator first make a guess that the Responder supports suite 6 but not suite 5. Since the Responder supports neither 5 nor 6, it responds with SUITES_R containing the supported suites, after which the Initiator selects its most preferred supported suite.  (If the Responder had supported suite 5, it would have included it in SUITES_R of the response, and it would in that case have become the selected suite in the second message_1.)
 
+
 Note that the content of the fields of message_1 may be different when sent the second time, in particular the ephemeral key MUST be different.
 
-~~~~~~~~~~~
+~~~~~~~~~~~ aasvg
 Initiator                                                   Responder
 |            METHOD, SUITES_I = [5, 6], G_X, C_I, EAD_1             |
 +------------------------------------------------------------------>|
@@ -1298,7 +1319,7 @@ Key compromise impersonation (KCI): In EDHOC authenticated with signature keys, 
 
 Repudiation: If an endpoint authenticates with a signature, the other endpoint can prove that the endpoint performed a run of the protocol by presenting the data being signed as well as the signature itself. With static Diffie-Hellman key authentication, the authenticating endpoint can deny having participated in the protocol.
 
-Earlier versions of EDHOC have been formally analyzed {{Jacomme23}} {{Norrman20}} {{Bruni18}} and the specification has been updated based on the analysis.
+Earlier versions of EDHOC have been formally analyzed {{Bruni18}} {{Norrman20}} {{CottierPointcheval22}} {{Jacomme23}} {{GuentherIlunga22}} and the specification has been updated based on the analysis.
 
 ## Cryptographic Considerations {#crypto}
 The SIGMA protocol requires that the encryption of message_3 provides confidentiality against active attackers and EDHOC message_4 relies on the use of
@@ -1493,10 +1514,9 @@ IANA has created a new registry entitled "EDHOC Error Codes" under the new regis
 
 ## EDHOC External Authorization Data Registry {#iana-ead}
 
-IANA has created a new registry entitled "EDHOC External Authorization Data" under the new registry group "Ephemeral Diffie-Hellman Over COSE (EDHOC)". The registration procedure is "Specification Required" {{RFC8126}}. The columns of the registry are Name, Label, Description, and Reference, where Label is a non-negative integer and the other columns are text strings.
+IANA has created a new registry entitled "EDHOC External Authorization Data" under the new registry group "Ephemeral Diffie-Hellman Over COSE (EDHOC)". The registration procedure is "Specification Required" {{RFC8126}}. The columns of the registry are Name, Label, Description, and Reference, where Label is a non-negative integer and the other columns are text strings. The initial contents of the registry are:
 
-~~~~~~~~~~~
-
+~~~~~~~~~~~ aasvg
 +-----------+-------+------------------------+-------------------+
 | Name      | Label | Description            | Reference         |
 +===========+=======+========================+===================+
@@ -1510,7 +1530,7 @@ IANA has created a new registry entitled "EDHOC External Authorization Data" und
 
 IANA has registered the following entries in the "COSE Header Parameters" registry under the registry group "CBOR Object Signing and Encryption (COSE)". The value of the 'kcwt' header parameter is a COSE Web Token (CWT) {{RFC8392}}, and the value of the 'kccs' header parameter is a CWT Claims Set (CCS), see {{term}}. The CWT/CCS must contain a COSE_Key in a 'cnf' claim {{RFC8747}}. The Value Registry for this item is empty and omitted from the table below.
 
-~~~~~~~~~~~
+~~~~~~~~~~~ aasvg
 +-----------+-------+----------------+---------------------------+
 | Name      | Label | Value Type     | Description               |
 +===========+=======+================+===========================+
@@ -1625,7 +1645,7 @@ IANA has added the media types "application/edhoc+cbor-seq" and "application/cid
 
 IANA has added the media types "application/edhoc+cbor-seq" and "application/cid-edhoc+cbor-seq" to the "CoAP Content-Formats" registry under the registry group "Constrained RESTful Environments (CoRE) Parameters".
 
-~~~~~~~~~~~
+~~~~~~~~~~~ aasvg
 +--------------------------------+----------+------+-------------------+
 | Media Type                     | Encoding | ID   | Reference         |
 +--------------------------------+----------+------+-------------------+
@@ -1685,7 +1705,7 @@ After successful processing of EDHOC message_3, Client and Server derive Securit
 
 * The relationship between identifiers in OSCORE and EDHOC is specified in {{ci-oscore}}. The OSCORE Sender ID and Recipient ID are determined by the EDHOC connection identifiers C_R and C_I for the EDHOC session as shown in {{fig-edhoc-oscore-id-mapping}}.
 
-~~~~~~~~~~~
+~~~~~~~~~~~ aasvg
 +----------------+-----------+--------------+
 | EDHOC \ OSCORE | Sender ID | Recipient ID |
 +----------------+-----------+--------------+
@@ -1725,7 +1745,7 @@ The application/edhoc+cbor-seq media type does not apply to a CoAP message that 
 
 An example of a successful EDHOC exchange using CoAP is shown in {{fig-coap1}}. In this case the CoAP Token enables correlation on the Initiator side, and the prepended C_R enables correlation on the Responder (server) side.
 
-~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~ aasvg
 Client    Server
   |          |
   +--------->| Header: POST (Code=0.02)
@@ -1754,7 +1774,7 @@ The exchange in {{fig-coap1}} protects the client identity against active attack
 
 An alternative exchange that protects the server identity against active attackers and the client identity against passive attackers is shown in {{fig-coap2}}. In this case the CoAP Token enables the Responder to correlate message_2 and message_3, and the prepended C_I enables correlation on the Initiator (server) side. If EDHOC message_4 is used, C_I is prepended, and it is transported with CoAP in the payload of a POST request with a 2.04 (Changed) response.
 
-~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~ aasvg
 Client    Server
   |          |
   +--------->| Header: POST (Code=0.02)
@@ -1842,7 +1862,7 @@ The EDHOC specification sometimes use CDDL names in CBOR diagnostic notation as 
 
 For a complete specification and more examples, see {{RFC8949}} and {{RFC8610}}. We recommend implementors to get used to CBOR by using the CBOR playground {{CborMe}}.
 
-~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~ aasvg
 Diagnostic          Encoded              Type
 ------------------------------------------------------------------
 1                   0x01                 unsigned integer
@@ -2157,6 +2177,119 @@ An application using EDHOC_KeyUpdate needs to store PRK_out. Compromise of PRK_o
 While this key update method provides forward secrecy it does not give as strong security properties as re-running EDHOC. EDHOC_KeyUpdate can be used to meet cryptographic limits and provide partial protection against key leakage, but it provides significantly weaker security properties than re-running EDHOC with ephemeral Diffie-Hellman. Even with frequent use of EDHOC_KeyUpdate, compromise of one session key compromises all future session keys, and an attacker therefore only needs to perform static key exfiltration {{RFC7624}}, which is less complicated and has a lower risk profile than the dynamic case, see {{sec-prop}}.
 
  A similar method to do key update for OSCORE is KUDOS, see {{I-D.ietf-core-oscore-key-update}}.
+
+# Example Protocol State Machine
+
+This appendix describes an example protocol state machine for the Initiator and for the Responder. States are denoted in all capitals and parentheses denote actions taken only in some circumstances.
+
+Note that this state machine is just an example, and that details of processing are omitted, for example:
+
+* When error messages are being sent (with one exception)
+* How credentials and EAD are processed by EDHOC and the application in the RCVD state
+* What verifications are made, which includes not only MACs and signatures
+
+
+## Initiator State Machine
+
+The Initiator sends message_1, triggering the state machine to transition from START to WAIT_M2, and waits for message_2.
+
+If the incoming message is an error message then the Initiator transitions from WAIT_M2 to ABORTED. In case of error code 2 (Wrong Selected Cipher Suite), the Initiator remembers the supported cipher suites for this particular Responder and transitions from ABORTED to START. The message_1 that the Initiator subsequently sends takes into account the cipher suites supported by the Responder.
+
+Upon receiving a non-error message, the Initiator transitions from WAIT_M2 to RCVD_M2 and processes the message. If a processing error occurs on message_2, then the Initiator transitions from RCVD_M2 to ABORTED. In case of successful processing of message_2, the Initiator transitions from RCVD_M2 to VRFD_M2.
+
+The Initiator prepares and processes message_3 for sending. If any processing error is encountered, the Initiator transitions from VRFD_M2 to ABORTED. If message_3 is successfully sent, the Initiator transitions from VRFD_M2 to COMPLETED.
+
+If the application profile includes message_4, then the Initiator waits for message_4. If the incoming message is an error message then the Initiator transitions from COMPLETED to ABORTED. Upon receiving a non-error message, the Initiator transitions from COMPLETED (="WAIT_M4") to RCVD_M4 and processes the message. If a processing error occurs on message_4, then the Initiator transitions from RCVD_M4 to ABORTED. In case of successful processing of message_4, the Initiator transitions from RCVD_M4 to PERSISTED (="VRFD_M4").
+
+If the application profile does not include message_4, then the Initiator waits for an incoming application message. If the decryption and verification of the application message is successful, then the the Initiator transitions from COMPLETED to PERSISTED.
+
+~~~~~~~~~~~~~~~~~~~~~~~ aasvg
+    +- - - - - - - - - -> START
+    |                       |
+                            | Send message_1
+    |                       |
+          Receive error     v
+ABORTED <---------------- WAIT_M2
+    ^                       |
+    |                       | Receive message_2
+    |                       |
+    |    Processing error   v
+    +-------------------- RCVD_M2
+    ^                       |
+    |                       | Verify message_2
+    |                       |
+    |    Processing error   v
+    +-------------------- VRFD_M2
+    ^                       |
+    |                       | Send message_3
+    |                       |
+    |    (Receive error)    v
+    +-------------------- COMPLETED ----------------+
+    ^                       |                       |
+    |                       | (Receive message_4)   |
+    |                       |                       |
+    |   (Processing error)  v                       | (Verify
+    +------------------- (RCVD_M4)                  |  application
+                            |                       |  message)
+                            | (Verify message_4)    |
+                            |                       |
+                            v                       |
+                          PERSISTED <---------------+
+~~~~~~~~~~~~~~~~~~~~~~~
+{: artwork-align="center"}
+
+
+## Responder State Machine
+
+Upon receiving message_1, the Responder transitions from START to RCVD_M1.
+
+If a processing error occurs on message_1, the Responder transitions from RCVD_M1 to ABORTED. This includes sending error message with error code 2 (Wrong Selected Cipher Suite) if the selected cipher suite in message_1 is not supported. In case of successful processing of message_1, the Responder transitions from RCVD_M1 to VRFD_M1.
+
+The Responder prepares and processes message_2 for sending. If any processing error is encountered, the Responder transitions from VRFD_M1 to ABORTED. If message_2 is successfully sent, the Initiator transitions from VRFD_M2 to WAIT_M3, and waits for message_3.
+
+If the incoming message is an error message then the Responder transitions from WAIT_M3 to ABORTED.
+
+Upon receiving message_3, the Responder transitions from WAIT_M3 to RCVD_M3. If a processing error occurs on message_3, the Responder transitions from RCVD_M3 to ABORTED. In case of successful processing of message_3, the Responder transitions from RCVD_M3 to COMPLETED (="VRFD_M3").
+
+If the application profile includes message_4, the Responder prepares and processes message_4 for sending. If any processing error is encountered, the Responder transitions from COMPLETED to ABORTED.
+
+If message_4 is successfully sent, or if the application profile does not include message_4, the Responder transitions from COMPLETED to PERSISTED.
+
+~~~~~~~~~~~~~~~~~~~~~~~ aasvg
+                          START
+                            |
+                            | Receive message_1
+                            |
+         Processing error   v
+ABORTED <---------------- RCVD_M1
+    ^                       |
+    |                       | Verify message_1
+    |                       |
+    |    Processing error   v
+    +-------------------- VRFD_M1
+    ^                       |
+    |                       | Send message_2
+    |                       |
+    |     Receive error     v
+    +-------------------- WAIT_M3
+    ^                       |
+    |                       | Receive message_3
+    |                       |
+    |    Processing error   v
+    +-------------------- RCVD_M3
+    ^                       |
+    |                       | Verify message_3
+    |                       |
+    |   (Processing error)  v
+    +------------------- COMPLETED
+                            |
+                            | (Send message_4)
+                            |
+                            v
+                         PERSISTED
+~~~~~~~~~~~~~~~~~~~~~~~
+{: artwork-align="center"}
+
 
 # Change Log
 
