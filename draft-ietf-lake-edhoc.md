@@ -1864,7 +1864,7 @@ For a complete specification and more examples, see {{RFC8949}} and {{RFC8610}}.
 
 ~~~~~~~~~~~~~~~~~~~~~~~ aasvg
  Diagnostic          Encoded              Type
-------------------------------------------------------------------
+-----------------------------------------------------------
  1                   0x01                 unsigned integer
  24                  0x1818               unsigned integer
  -24                 0x37                 negative integer
@@ -1879,7 +1879,7 @@ For a complete specification and more examples, see {{RFC8949}} and {{RFC8610}}.
  [ 1, 2, true ]      0x830102f5           array
  ( 1, 2, true )      0x0102f5             sequence
  1, 2, true          0x0102f5             sequence
-------------------------------------------------------------------
+-----------------------------------------------------------
 ~~~~~~~~~~~~~~~~~~~~~~~
 {: #fig-cbor-examples title="Examples of use of CBOR and CDDL" artwork-align="center"}
 
