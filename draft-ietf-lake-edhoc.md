@@ -1648,7 +1648,7 @@ IANA has added the media types "application/edhoc+cbor-seq" and "application/cid
 ~~~~~~~~~~~ aasvg
 +--------------------------------+----------+------+-------------------+
 | Media Type                     | Encoding | ID   | Reference         |
-+--------------------------------+----------+------+-------------------+
++================================+==========+======+===================+
 | application/edhoc+cbor-seq     | -        | TBD5 | [[this document]] |
 | application/cid-edhoc+cbor-seq | -        | TBD6 | [[this document]] |
 +--------------------------------+----------+------+-------------------+
@@ -1863,22 +1863,22 @@ The EDHOC specification sometimes use CDDL names in CBOR diagnostic notation as 
 For a complete specification and more examples, see {{RFC8949}} and {{RFC8610}}. We recommend implementors to get used to CBOR by using the CBOR playground {{CborMe}}.
 
 ~~~~~~~~~~~~~~~~~~~~~~~ aasvg
-Diagnostic          Encoded              Type
+ Diagnostic          Encoded              Type
 ------------------------------------------------------------------
-1                   0x01                 unsigned integer
-24                  0x1818               unsigned integer
--24                 0x37                 negative integer
--25                 0x3818               negative integer
-true                0xf5                 simple value
-h''                 0x40                 byte string
-h'12cd'             0x4212cd             byte string
-'12cd'              0x4431326364         byte string
-"12cd"              0x6431326364         text string
-{ 4 : h'cd' }       0xa10441cd           map
-<< 1, 2, true >>    0x430102f5           byte string
-[ 1, 2, true ]      0x830102f5           array
-( 1, 2, true )      0x0102f5             sequence
-1, 2, true          0x0102f5             sequence
+ 1                   0x01                 unsigned integer
+ 24                  0x1818               unsigned integer
+ -24                 0x37                 negative integer
+ -25                 0x3818               negative integer
+ true                0xf5                 simple value
+ h''                 0x40                 byte string
+ h'12cd'             0x4212cd             byte string
+ '12cd'              0x4431326364         byte string
+ "12cd"              0x6431326364         text string
+ { 4 : h'cd' }       0xa10441cd           map
+ << 1, 2, true >>    0x430102f5           byte string
+ [ 1, 2, true ]      0x830102f5           array
+ ( 1, 2, true )      0x0102f5             sequence
+ 1, 2, true          0x0102f5             sequence
 ------------------------------------------------------------------
 ~~~~~~~~~~~~~~~~~~~~~~~
 {: #fig-cbor-examples title="Examples of use of CBOR and CDDL" artwork-align="center"}
