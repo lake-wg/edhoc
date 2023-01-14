@@ -1816,7 +1816,7 @@ This section defines a format for compact representation based on the Elliptic-C
 
 As described in Section 4.2 of {{RFC6090}} the x-coordinate of an elliptic curve public key is a suitable representative for the entire point whenever scalar multiplication is used as a one-way function. One example is ECDH with compact output, where only the x-coordinate of the computed value is used as the shared secret.
 
-In EDHOC, compact representation is used for the ephemeral public keys (G_X and G_Y), see {{cose_key}}. Using the notation from {{SECG}}, the output is an octet string of length ceil( (log2 q) / 8 ). See {{SECG}} for a definition of q, M, X, xp, and ~yp. The steps in Section 2.3.3 of {{SECG}} are replaced by:
+In EDHOC, compact representation is used for the ephemeral public keys (G_X and G_Y), see {{cose_key}}. Using the notation from {{SECG}}, the output is an octet string of length ceil( (log2 q) / 8 ), where ceil(x) is the smallest integer not less than x. See {{SECG}} for a definition of q, M, X, xp, and ~yp. The steps in Section 2.3.3 of {{SECG}} are replaced by:
 
   1. Convert the field element xp to an octet string X of length ceil( (log2 q) / 8 ) octets using the conversion routine specified in Section 2.3.5 of {{SECG}}.
 
