@@ -914,21 +914,21 @@ EAD_1 = 1* ead
 where:
 
 * METHOD - authentication method, see {{method}}.
-* SUITES_I - array of cipher suites which the Initiator supports in order of preference, the first cipher suite in network byte order is the most preferred by I, the last is the one selected by I for this session. If the most preferred cipher suite is selected then SUITES_I contains only that cipher suite and is encoded as an int. The processing steps are detailed below and in {{wrong-selected}}.
+* SUITES_I - array of cipher suites which the Initiator supports constructed as specified in {{init-proc-msg1}}.
 * G_X - the ephemeral public key of the Initiator
 * C_I - variable length connection identifier. Note that connection identifiers are byte strings but certain values are represented as integers in the message, see {{bstr-repr}}.
 * EAD_1 - external authorization data, see {{AD}}.
 
 ### Initiator Processing of Message 1 {#init-proc-msg1}
 
+
+The processing steps are detailed below and in {{wrong-selected}}.
+
 The Initiator SHALL compose message_1 as follows:
 
-* Construct SUITES_I complying with the definition in {{asym-msg1-form}}}, and furthermore:
-   * The Initiator MUST select its most preferred cipher suite, conditioned on what it can assume to be supported by the Responder.
-   * The selected cipher suite (i.e., the last cipher suite in SUITES_I) MAY be different between sessions, e.g., based on previous error messages (see next bullet), but all cipher suites which are more preferred by I than the selected cipher suite MUST be included in SUITES_I.
-   * If the Initiator previously received from the Responder an error message with error code 2 containing SUITES_R (see {{wrong-selected}}) which indicates cipher suites supported by the Responder, then the Initiator SHOULD select its most preferred supported cipher suite among those (bearing in mind that error messages are not authenticated and may be forged).
-   * The Initiator MUST NOT change the supported cipher suites and the order of preference in SUITES_I based on previous error messages.
-
+* Construct SUITES_I as an array of cipher suites supported by I in order of preference with the first cipher suite in network byte order being the most preferred by I, and the last being the one selected by I for this session. If the cipher suite most preferred by I is selected then SUITES_I contains only that cipher suite and is encoded as an int. All cipher suites, if any, preferred by I over the selected one MUST be included. (See also {{wrong-selected}}.)
+   * The selected suite is based on what the Initiator can assume to be supported by the Responder; if the Initiator previously received from the Responder an error message with error code 2 containing SUITES_R (see {{wrong-selected}}) indicating cipher suites supported by the Responder, then the Initiator SHOULD select its most preferred supported cipher suite among those (bearing in mind that error messages are not authenticated and may be forged).
+   * The Initiator MUST NOT change its order of preference for cipher suites, and MUST NOT omit a cipher suite preferred to the selected one because of previous error messages received from the Responder.
 
 * Generate an ephemeral ECDH key pair using the curve in the selected cipher suite and format it as a COSE_Key. Let G_X be the 'x' parameter of the COSE_Key.
 
