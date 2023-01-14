@@ -467,6 +467,8 @@ Cryptographically, EDHOC does not put requirements on the lower layers. EDHOC is
 * denial-of-service protection,
 * message correlation.
 
+EDHOC does not require error free transport since changes in the content of a message is detected by the integrity verification, although possibly in the following message, see "transcript hashes" in {{asym}}.
+
 EDHOC is designed to enable an authenticated key exchange with small messages, where the minimum message sizes are of the order illustrated in the first column of {{fig-sizes}}. There is no maximum message size specified by the protocol; this is for example dependent on the size of authentication credentials (if they are transported, see {{auth-key-id}}). The use of transport is specified in the application profile, which in particular may specify limitations in message sizes, see {{applicability}}.
 
 
