@@ -1515,21 +1515,22 @@ IANA has created a new registry entitled "EDHOC Error Codes" under the new regis
 
 ## EDHOC External Authorization Data Registry {#iana-ead}
 
-IANA has created a new registry entitled "EDHOC External Authorization Data" under the new registry group "Ephemeral Diffie-Hellman Over COSE (EDHOC)". The registration procedure is "Specification Required" {{RFC8126}}. The columns of the registry are Name, Label, Description, and Reference, where Label is a non-negative integer and the other columns are text strings. The initial contents of the registry are:
+IANA has created a new registry entitled "EDHOC External Authorization Data" under the new registry group "Ephemeral Diffie-Hellman Over COSE (EDHOC)". The registration procedure is "Specification Required" {{RFC8126}}. The columns of the registry are Name, Label, Description, and Reference, where Label is a non-negative integer and the other columns are text strings. The initial contents of the registry is shown in {{fig-ead-labels}}.
 
 ~~~~~~~~~~~ aasvg
+
 +-----------+-------+------------------------+-------------------+
 | Name      | Label | Description            | Reference         |
 +===========+=======+========================+===================+
 | Padding   |   0   | Randomly generated     | [[this document]] |
 |           |       | CBOR byte string       | Section 3.8.1     |
-+-----------+-------+----------------+-------+-------------------+
-
++-----------+-------+------------------------+-------------------+
 ~~~~~~~~~~~
+{: #fig-ead-labels title="Initial EAD Labels"}
 
 ## COSE Header Parameters Registry {#cwt-header-param}
 
-IANA has registered the following entries in the "COSE Header Parameters" registry under the registry group "CBOR Object Signing and Encryption (COSE)". The value of the 'kcwt' header parameter is a COSE Web Token (CWT) {{RFC8392}}, and the value of the 'kccs' header parameter is a CWT Claims Set (CCS), see {{term}}. The CWT/CCS must contain a COSE_Key in a 'cnf' claim {{RFC8747}}. The Value Registry for this item is empty and omitted from the table below.
+IANA has registered the following entries in the "COSE Header Parameters" registry under the registry group "CBOR Object Signing and Encryption (COSE)" (see {{fig-header-params}}): The value of the 'kcwt' header parameter is a COSE Web Token (CWT) {{RFC8392}}, and the value of the 'kccs' header parameter is a CWT Claims Set (CCS), see {{term}}. The CWT/CCS must contain a COSE_Key in a 'cnf' claim {{RFC8747}}. The Value Registry for this item is empty and omitted from the table below.
 
 ~~~~~~~~~~~ aasvg
 +-----------+-------+----------------+---------------------------+
@@ -1544,7 +1545,7 @@ IANA has registered the following entries in the "COSE Header Parameters" regist
 |           |       |                | a 'cnf' claim             |
 +-----------+-------+----------------+---------------------------+
 ~~~~~~~~~~~
-
+{: #fig-header-params title="COSE Header Parameter Labels"}
 
 ## The Well-Known URI Registry {#well-known}
 
