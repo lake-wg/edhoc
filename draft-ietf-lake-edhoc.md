@@ -1397,125 +1397,235 @@ When parsing a received EDHOC message, implementations MUST discontinue the prot
 
 # IANA Considerations {#iana}
 
+This Section provides IANA Considerations according to {{RFC8126}}.
+
 ## EDHOC Exporter Label Registry {#exporter-label}
 
-IANA has created a new registry titled "EDHOC Exporter Label" under the new registry group "Ephemeral Diffie-Hellman Over COSE (EDHOC)". The registration procedure is "Expert Review" {{RFC8126}}. The columns of the registry are Label and Description. Label is a uint. Description is a text string. The initial contents of the registry are:
+IANA is requested to create a new registry under the new registry group "Ephemeral Diffie-Hellman Over COSE (EDHOC)" as follows:
 
-<!-- TBD Labels for private use? -->
+Registry Name: EDHOC Exporter Label
 
-~~~~~~~~~~~~~~~~~~~~~~~
-Label: 0
-Description: Derived OSCORE Master Secret
-~~~~~~~~~~~~~~~~~~~~~~~
+Reference: [[this document]]
 
-~~~~~~~~~~~~~~~~~~~~~~~
-Label: 1
-Description: Derived OSCORE Master Salt
-~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~ aasvg
 
++---------+------------------------------+-------------------+
+| Label   | Description                  | Reference         |
++=========+==============================+===================+
+| 0       | Derived OSCORE Master Secret | [[this document]] |
++---------+------------------------------+-------------------+
+| 1       | Derived OSCORE Master Salt   | [[this document]] |
++---------+------------------------------+-------------------+
+| 2-65534 | Unassigned                   |                   |
++---------+------------------------------+-------------------+
+| 65535   | Reserved                     | [[this document]] |
++---------+------------------------------+-------------------+
+| > 65535 | Private Use                  |                   |
++---------+------------------------------+-------------------+
+
+~~~~~~~~~~~
+{: #fig-exporter-label title="EDHOC Exporter Label"}
+
+
+~~~~~~~~~~~
+
++----------------+-------------------------------------+
+|  Range         | Registration Procedures             |
++----------------+-------------------------------------+
+| 0 to 23        | Standards Action with Expert Review |
++----------------+-------------------------------------+
+| 24 to 65535    | Expert Review                       |
++----------------+-------------------------------------+
+~~~~~~~~~~~
 
 ## EDHOC Cipher Suites Registry {#suites-registry}
 
-IANA has created a new registry titled "EDHOC Cipher Suites" under the new registry group "Ephemeral Diffie-Hellman Over COSE (EDHOC)". The registration procedure is "Expert Review" {{RFC8126}}. The columns of the registry are Value, Array and Description, where Value is an integer and the other columns are text strings. The initial contents of the registry are:
+IANA is requested to create a new registry under the new registry group "Ephemeral Diffie-Hellman Over COSE (EDHOC)" as follows:
+
+Registry Name: EDHOC Cipher Suites
+
+Reference: [[this document]]
+
+The columns of the registry are Value, Array and Description, where Value is an integer and the other columns are text strings. The initial contents of the registry are:
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 Value: -24
 Array: N/A
-Desc: Reserved for Private Use
+Description: Private Use
+Reference: [[this document]]
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 Value: -23
 Array: N/A
-Desc: Reserved for Private Use
+Description: Private Use
+Reference: [[this document]]
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 Value: -22
 Array: N/A
-Desc: Reserved for Private Use
+Description: Private Use
+Reference: [[this document]]
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 Value: -21
 Array: N/A
-Desc: Reserved for Private Use
+Description: Private Use
+Reference: [[this document]]
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 Value: 0
 Array: 10, -16, 8, 4, -8, 10, -16
-Desc: AES-CCM-16-64-128, SHA-256, 8, X25519, EdDSA,
+Description: AES-CCM-16-64-128, SHA-256, 8, X25519, EdDSA,
       AES-CCM-16-64-128, SHA-256
+Reference: [[this document]]
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 Value: 1
 Array: 30, -16, 16, 4, -8, 10, -16
-Desc: AES-CCM-16-128-128, SHA-256, 16, X25519, EdDSA,
+Description: AES-CCM-16-128-128, SHA-256, 16, X25519, EdDSA,
       AES-CCM-16-64-128, SHA-256
+Reference: [[this document]]
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 Value: 2
 Array: 10, -16, 8, 1, -7, 10, -16
-Desc: AES-CCM-16-64-128, SHA-256, 8, P-256, ES256,
+Description: AES-CCM-16-64-128, SHA-256, 8, P-256, ES256,
       AES-CCM-16-64-128, SHA-256
+Reference: [[this document]]
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 Value: 3
 Array: 30, -16, 16, 1, -7, 10, -16
-Desc: AES-CCM-16-128-128, SHA-256, 16, P-256, ES256,
+Description: AES-CCM-16-128-128, SHA-256, 16, P-256, ES256,
       AES-CCM-16-64-128, SHA-256
+Reference: [[this document]]
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 Value: 4
 Array: 24, -16, 16, 4, -8, 24, -16
-Desc: ChaCha20/Poly1305, SHA-256, 16, X25519, EdDSA,
+Description: ChaCha20/Poly1305, SHA-256, 16, X25519, EdDSA,
       ChaCha20/Poly1305, SHA-256
+Reference: [[this document]]
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 Value: 5
 Array: 24, -16, 16, 1, -7, 24, -16
-Desc: ChaCha20/Poly1305, SHA-256, 16, P-256, ES256,
+Description: ChaCha20/Poly1305, SHA-256, 16, P-256, ES256,
       ChaCha20/Poly1305, SHA-256
+Reference: [[this document]]
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 Value: 6
 Array: 1, -16, 16, 4, -7, 1, -16
-Desc: A128GCM, SHA-256, 16, X25519, ES256,
+Description: A128GCM, SHA-256, 16, X25519, ES256,
       A128GCM, SHA-256
+Reference: [[this document]]
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 Value: 24
 Array: 3, -43, 16, 2, -35, 3, -43
-Desc: A256GCM, SHA-384, 16, P-384, ES384,
+Description: A256GCM, SHA-384, 16, P-384, ES384,
       A256GCM, SHA-384
+Reference: [[this document]]
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 ~~~~~~~~~~~~~~~~~~~~~~~
 Value: 25
 Array: 24, -45, 16, 5, -8, 24, -45
-Desc: ChaCha20/Poly1305, SHAKE256, 16, X448, EdDSA,
+Description: ChaCha20/Poly1305, SHAKE256, 16, X448, EdDSA,
       ChaCha20/Poly1305, SHAKE256
+Reference: [[this document]]
 ~~~~~~~~~~~~~~~~~~~~~~~
+
+
+
+
+~~~~~~~~~~~
+
++----------------+-------------------------------------+
+|  Range         | Registration Procedures             |
++----------------+-------------------------------------+
+| -65536 to -257 | Expert Review                       |
++----------------+-------------------------------------+
+| -256 to -25    | Specification Required              |
++----------------+-------------------------------------+
+| -24 to 23      | Standards Action with Expert Review |
++----------------+-------------------------------------+
+| 24 to 255      | Specification Required              |
++----------------+-------------------------------------+
+| 256 to 65535   | Expert Review                       |
++----------------+-------------------------------------+
+~~~~~~~~~~~
+
+
+
 
 ## EDHOC Method Type Registry {#method-types}
 
-IANA has created a new registry entitled "EDHOC Method Type" under the new registry group "Ephemeral Diffie-Hellman Over COSE (EDHOC)". The registration procedure is "Specification Required" {{RFC8126}}. The columns of the registry are Value, Initiator Authentication Key, and Responder Authentication Key, where Value is an integer and the other columns are text strings describing the authentication keys. The initial contents of the registry are shown in {{fig-method-types}}.
+IANA is requested to create a new registry under the new registry group "Ephemeral Diffie-Hellman Over COSE (EDHOC)" as follows:
+
+Registry Name: EDHOC Method Type
+
+Assignment Policy: Specification Required
+
+Reference: [[this document]]
+
+The columns of the registry are Value, Initiator Authentication Key, and Responder Authentication Key, where Value is an integer and the other columns are text strings describing the authentication keys. The initial contents of the registry are shown in {{fig-method-types}}.
+
+
+~~~~~~~~~~~
+
++----------------+-------------------------------------+
+|  Range         | Registration Procedures             |
++----------------+-------------------------------------+
+| -24 to 23      | Standards Action with Expert Review |
++----------------+-------------------------------------+
+~~~~~~~~~~~
 
 ## EDHOC Error Codes Registry {#error-code-reg}
 
-IANA has created a new registry entitled "EDHOC Error Codes" under the new registry group "Ephemeral Diffie-Hellman Over COSE (EDHOC)". The registration procedure is "Expert Review" {{RFC8126}}. The columns of the registry are ERR_CODE, ERR_INFO Type and Description, where ERR_CODE is an integer, ERR_INFO is a CDDL defined type, and Description is a text string. The initial contents of the registry are shown in {{fig-error-codes}}.
+IANA is requested to create a new registry under the new registry group "Ephemeral Diffie-Hellman Over COSE (EDHOC)" as follows:
+
+Registry Name: EDHOC Error Codes
+
+Assignment Policy: Expert Review
+
+Reference: [[this document]]
+
+The columns of the registry are ERR_CODE, ERR_INFO Type and Description, where ERR_CODE is an integer, ERR_INFO is a CDDL defined type, and Description is a text string. The initial contents of the registry are shown in {{fig-error-codes}}.
+
+~~~~~~~~~~~
+
++----------------+-------------------------------------+
+|  Range         | Registration Procedures             |
++----------------+-------------------------------------+
+| -24 to 23      | Specification Required              |
++----------------+-------------------------------------+
+~~~~~~~~~~~
+
 
 ## EDHOC External Authorization Data Registry {#iana-ead}
 
-IANA has created a new registry entitled "EDHOC External Authorization Data" under the new registry group "Ephemeral Diffie-Hellman Over COSE (EDHOC)". The registration procedure is "Specification Required" {{RFC8126}}. The columns of the registry are Name, Label, Description, and Reference, where Label is a non-negative integer and the other columns are text strings. The initial contents of the registry is shown in {{fig-ead-labels}}.
+IANA is requested to create a new registry under the new registry group "Ephemeral Diffie-Hellman Over COSE (EDHOC)" as follows:
+
+Registry Name: EDHOC External Authorization Data
+
+Assignment Policy: Standards Action with Expert Review
+
+Reference: [[this document]]
+
+The columns of the registry are Name, Label, Description, and Reference, where Label is a non-negative integer and the other columns are text strings. The initial contents of the registry is shown in {{fig-ead-labels}}.
 
 ~~~~~~~~~~~ aasvg
 
@@ -1528,9 +1638,10 @@ IANA has created a new registry entitled "EDHOC External Authorization Data" und
 ~~~~~~~~~~~
 {: #fig-ead-labels title="Initial EAD Labels"}
 
+
 ## COSE Header Parameters Registry {#cwt-header-param}
 
-IANA has registered the following entries in the "COSE Header Parameters" registry under the registry group "CBOR Object Signing and Encryption (COSE)" (see {{fig-header-params}}): The value of the 'kcwt' header parameter is a COSE Web Token (CWT) {{RFC8392}}, and the value of the 'kccs' header parameter is a CWT Claims Set (CCS), see {{term}}. The CWT/CCS must contain a COSE_Key in a 'cnf' claim {{RFC8747}}. The Value Registry for this item is empty and omitted from the table below.
+IANA is requested to register the following entries in the "COSE Header Parameters" registry under the registry group "CBOR Object Signing and Encryption (COSE)" (see {{fig-header-params}}): The value of the 'kcwt' header parameter is a COSE Web Token (CWT) {{RFC8392}}, and the value of the 'kccs' header parameter is a CWT Claims Set (CCS), see {{term}}. The CWT/CCS must contain a COSE_Key in a 'cnf' claim {{RFC8747}}. The Value Registry for this item is empty and omitted from the table below.
 
 ~~~~~~~~~~~ aasvg
 +-----------+-------+----------------+---------------------------+
@@ -1549,7 +1660,7 @@ IANA has registered the following entries in the "COSE Header Parameters" regist
 
 ## The Well-Known URI Registry {#well-known}
 
-IANA has added the well-known URI "edhoc" to the "Well-Known URIs" registry.
+IANA is requested to add the well-known URI "edhoc" to the "Well-Known URIs" registry.
 
 - URI suffix: edhoc
 
@@ -1561,7 +1672,7 @@ IANA has added the well-known URI "edhoc" to the "Well-Known URIs" registry.
 
 ## Media Types Registry {#media-type}
 
-IANA has added the media types "application/edhoc+cbor-seq" and "application/cid-edhoc+cbor-seq" to the "Media Types" registry.
+IANA is requested to add the media types "application/edhoc+cbor-seq" and "application/cid-edhoc+cbor-seq" to the "Media Types" registry.
 
 ### application/edhoc+cbor-seq Media Type Registration
 
@@ -1659,7 +1770,7 @@ IANA has added the media types "application/edhoc+cbor-seq" and "application/cid
 
 ## Resource Type (rt=) Link Target Attribute Values Registry {#rt}
 
-IANA has added the resource type "core.edhoc" to the "Resource Type (rt=) Link Target Attribute Values" registry under the registry group "Constrained RESTful Environments (CoRE) Parameters".
+IANA is requested to add the resource type "core.edhoc" to the "Resource Type (rt=) Link Target Attribute Values" registry under the registry group "Constrained RESTful Environments (CoRE) Parameters".
 
 -  Value: "core.edhoc"
 
@@ -1670,13 +1781,13 @@ IANA has added the resource type "core.edhoc" to the "Resource Type (rt=) Link T
 
 ## Expert Review Instructions
 
-The IANA Registries established in this document are defined as "Expert Review". This section gives some general guidelines for what the experts should be looking for, but they are being designated as experts for a reason so they should be given substantial latitude.
+The IANA Registries established in this document are defined as "Expert Review",  "Specification Required" or "Standards Action with Expert Review". This section gives some general guidelines for what the experts should be looking for, but they are being designated as experts for a reason so they should be given substantial latitude.
 
 Expert reviewers should take into consideration the following points:
 
 * Clarity and correctness of registrations. Experts are expected to check the clarity of purpose and use of the requested entries. Expert needs to make sure the values of algorithms are taken from the right registry, when that is required. Experts should consider requesting an opinion on the correctness of registered parameters from relevant IETF working groups. Encodings that do not meet these objective of clarity and completeness should not be registered.
 * Experts should take into account the expected usage of fields when approving code point assignment. The length of the encoded value should be weighed against how many code points of that length are left, the size of device it will be used on, and the number of code points left that encode to that size.
-* Specifications are recommended. When specifications are not provided, the description provided needs to have sufficient information to verify the code points above.
+* Even for "Expert Review" specifications are recommended. When specifications are not provided for a request where Expert Review is the assignment policy, the description provided needs to have sufficient information to verify the code points above.
 
 --- back
 
