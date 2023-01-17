@@ -78,7 +78,7 @@ This document contains some example traces of Ephemeral Diffie-Hellman Over COSE
 
 # Introduction
 
-EDHOC {{I-D.ietf-lake-edhoc}} is a lightweight authenticated key exchange protocol designed for highly constrained settings. This document contains annotated traces of EDHOC protocol runs, with input, output and intermediate processing results to simplify testing of implementations.
+EDHOC {{I-D.ietf-lake-edhoc}} is a lightweight authenticated key exchange protocol designed for highly constrained settings. This document contains annotated traces of EDHOC protocol runs, with input, output, and intermediate processing results to simplify testing of implementations.
 
 The document contains two traces:
 
@@ -122,7 +122,7 @@ The public keys are represented with X.509 certificates identified by the COSE h
 
 ## message_1
 
-Both endpoints are authenticated with signatures, i.e. METHOD = 0:
+Both endpoints are authenticated with signatures, i.e., METHOD = 0:
 
 ~~~~~~~~
 METHOD (CBOR Data Item) (1 byte)
@@ -312,7 +312,7 @@ ef 14 0f f9 00 b0 ab 03 f0 c0 8d 87 9c bb d4 b3 1e a7 1e 6e 7e e7 ff
 cb 7e 79 55 77 7a 33 27 99
 ~~~~~~~~
 ~~~~~~~~
-Responders's public authentication key
+Responder's public authentication key
 PK_R (Raw Value) (32 bytes)
 a1 db 47 b9 51 84 85 4a d1 2a 0c 1a 35 4e 41 8a ac e3 3a a0 f2 c6 62
 c0 0b 3a c5 5d e9 2f 93 59
@@ -1512,7 +1512,7 @@ The public keys are represented as raw public keys (RPK), encoded in a CWT Claim
 
 ## message_1 (first time) {#m1_1}
 
-Both endpoints are authenticated with static DH, i.e. METHOD = 3:
+Both endpoints are authenticated with static DH, i.e., METHOD = 3:
 
 ~~~~~~~~
 METHOD (CBOR Data Item) (1 byte)
@@ -1601,7 +1601,7 @@ error (CBOR Sequence) (2 bytes)
 
 Same steps are performed as message_1 first time, {{m1_1}}, but with updated SUITES_I.
 
-Both endpoints are authenticated with static DH, i.e. METHOD = 3:
+Both endpoints are authenticated with static DH, i.e., METHOD = 3:
 
 ~~~~~~~~
 METHOD (CBOR Data Item) (1 byte)
@@ -1817,7 +1817,7 @@ Responder's public authentication key, 'y'-coordinate
 Since R authenticates with static DH (METHOD = 3), PRK_3e2m is derived
 from SALT_3e2m and G_RX.
 
-The input needed to calculate SALT_3e2m is defined in {{Section 4.1.2 of I-D.ietf-lake-edhoc}}, using Expand() with the EDHOC hash algorithm:.
+The input needed to calculate SALT_3e2m is defined in {{Section 4.1.2 of I-D.ietf-lake-edhoc}}, using Expand() with the EDHOC hash algorithm:
 
     SALT_3e2m  = EDHOC-KDF( PRK_2e, 1, TH_2, hash_length ) =
                = HKDF-Expand( PRK_2e, info, hash_length )
@@ -2128,7 +2128,7 @@ Initiator's public authentication key, 'y'-coordinate
 Since I authenticates with static DH (METHOD = 3), PRK_4e3m is derived
 from SALT_4e3m and G_IY.
 
-The input needed to calculate SALT_4e3m is defined in {{Section 4.1.2 of I-D.ietf-lake-edhoc}}, using Expand() with the EDHOC hash algorithm:.
+The input needed to calculate SALT_4e3m is defined in {{Section 4.1.2 of I-D.ietf-lake-edhoc}}, using Expand() with the EDHOC hash algorithm:
 
     SALT_4e3m  = EDHOC-KDF( PRK_3e2m, 5, TH_3, hash_length ) =
                = HKDF-Expand( PRK_3e2m, info, hash_length )
