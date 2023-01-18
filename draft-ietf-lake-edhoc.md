@@ -1409,19 +1409,21 @@ Reference: [[this document]]
 
 ~~~~~~~~~~~ aasvg
 
-+---------+------------------------------+-------------------+
-| Label   | Description                  | Reference         |
-+=========+==============================+===================+
-| 0       | Derived OSCORE Master Secret | [[this document]] |
-+---------+------------------------------+-------------------+
-| 1       | Derived OSCORE Master Salt   | [[this document]] |
-+---------+------------------------------+-------------------+
-| 2-65534 | Unassigned                   |                   |
-+---------+------------------------------+-------------------+
-| 65535   | Reserved                     | [[this document]] |
-+---------+------------------------------+-------------------+
-| > 65535 | Private Use                  |                   |
-+---------+------------------------------+-------------------+
++-------------+------------------------------+-------------------+
+| Label       | Description                  | Reference         |
++=============+==============================+===================+
+| 0           | Derived OSCORE Master Secret | [[this document]] |
++-------------+------------------------------+-------------------+
+| 1           | Derived OSCORE Master Salt   | [[this document]] |
++-------------+------------------------------+-------------------+
+| 2-22        | Unassigned                   |                   |
++-------------+------------------------------+-------------------+
+| 23          | Reserved                     | [[this document]] |
++-------------+------------------------------+-------------------+
+| 24-32767    | Unassigned                   |                   |
++-------------+------------------------------+-------------------+
+| 32768-65535 | Private Use                  |                   |
++-------------+------------------------------+-------------------+
 
 ~~~~~~~~~~~
 {: #fig-exporter-label title="EDHOC Exporter Label"}
@@ -1429,13 +1431,13 @@ Reference: [[this document]]
 
 ~~~~~~~~~~~
 
-+----------------+-------------------------------------+
-|  Range         | Registration Procedures             |
-+----------------+-------------------------------------+
-| 0 to 23        | Standards Action with Expert Review |
-+----------------+-------------------------------------+
-| 24 to 65535    | Expert Review                       |
-+----------------+-------------------------------------+
++-------------+-------------------------------------+
+|  Range      | Registration Procedures             |
++-------------+-------------------------------------+
+| 0-23        | Standards Action                    |
++-------------+-------------------------------------+
+| 24-32767    | Expert Review                       |
++-------------+-------------------------------------+
 ~~~~~~~~~~~
 
 ## EDHOC Cipher Suites Registry {#suites-registry}
@@ -1533,6 +1535,12 @@ Reference: [[this document]]
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 ~~~~~~~~~~~~~~~~~~~~~~~
+Value: 23
+Reserved
+Reference: [[this document]]
+~~~~~~~~~~~~~~~~~~~~~~~
+
+~~~~~~~~~~~~~~~~~~~~~~~
 Value: 24
 Array: 3, -43, 16, 2, -35, 3, -43
 Description: A256GCM, SHA-384, 16, P-384, ES384,
@@ -1556,19 +1564,13 @@ Reference: [[this document]]
 +----------------+-------------------------------------+
 |  Range         | Registration Procedures             |
 +----------------+-------------------------------------+
-| -65536 to -257 | Expert Review                       |
+| -65536 to -25  | Specification Required              |
 +----------------+-------------------------------------+
-| -256 to -25    | Specification Required              |
+| -20 to 23      | Standards Action with Expert Review |
 +----------------+-------------------------------------+
-| -24 to 23      | Standards Action with Expert Review |
-+----------------+-------------------------------------+
-| 24 to 255      | Specification Required              |
-+----------------+-------------------------------------+
-| 256 to 65535   | Expert Review                       |
+| 24 to 65535    | Specification Required              |
 +----------------+-------------------------------------+
 ~~~~~~~~~~~
-
-
 
 
 ## EDHOC Method Type Registry {#method-types}
@@ -1577,11 +1579,11 @@ IANA is requested to create a new registry under the new registry group "Ephemer
 
 Registry Name: EDHOC Method Type
 
-Assignment Policy: Specification Required
-
 Reference: [[this document]]
 
-The columns of the registry are Value, Initiator Authentication Key, and Responder Authentication Key, where Value is an integer and the other columns are text strings describing the authentication keys. The initial contents of the registry are shown in {{fig-method-types}}.
+The columns of the registry are Value, Initiator Authentication Key, and Responder Authentication Key, and Reference, where Value is an integer and the key columns are text strings describing the authentication keys.
+
+The initial contents of the registry are shown in {{fig-method-types}}. Method 23 is Reserved.
 
 
 ~~~~~~~~~~~
@@ -1589,7 +1591,11 @@ The columns of the registry are Value, Initiator Authentication Key, and Respond
 +----------------+-------------------------------------+
 |  Range         | Registration Procedures             |
 +----------------+-------------------------------------+
+| -65536 to -25  | Specification Required              |
++----------------+-------------------------------------+
 | -24 to 23      | Standards Action with Expert Review |
++----------------+-------------------------------------+
+| 24 to 65535    | Specification Required              |
 +----------------+-------------------------------------+
 ~~~~~~~~~~~
 
@@ -1599,18 +1605,20 @@ IANA is requested to create a new registry under the new registry group "Ephemer
 
 Registry Name: EDHOC Error Codes
 
-Assignment Policy: Expert Review
-
 Reference: [[this document]]
 
-The columns of the registry are ERR_CODE, ERR_INFO Type and Description, where ERR_CODE is an integer, ERR_INFO is a CDDL defined type, and Description is a text string. The initial contents of the registry are shown in {{fig-error-codes}}.
+The columns of the registry are ERR_CODE, ERR_INFO Type, Description, and Reference, where ERR_CODE is an integer, ERR_INFO is a CDDL defined type, and Description is a text string. The initial contents of the registry are shown in {{fig-error-codes}}. Error code 23 is Reserved.
 
 ~~~~~~~~~~~
 
 +----------------+-------------------------------------+
 |  Range         | Registration Procedures             |
 +----------------+-------------------------------------+
-| -24 to 23      | Specification Required              |
+| -65536 to -25  | Expert Review                       |
++----------------+-------------------------------------+
+| -24 to 23      | Standards Action                    |
++----------------+-------------------------------------+
+| 24 to 65535    | Expert Review                       |
 +----------------+-------------------------------------+
 ~~~~~~~~~~~
 
@@ -1621,11 +1629,9 @@ IANA is requested to create a new registry under the new registry group "Ephemer
 
 Registry Name: EDHOC External Authorization Data
 
-Assignment Policy: Standards Action with Expert Review
-
 Reference: [[this document]]
 
-The columns of the registry are Name, Label, Description, and Reference, where Label is a non-negative integer and the other columns are text strings. The initial contents of the registry is shown in {{fig-ead-labels}}.
+The columns of the registry are Name, Label, Description, and Reference, where Label is a non-negative integer and the other columns are text strings. The initial contents of the registry is shown in {{fig-ead-labels}}. EAD label 23 is Reserved.
 
 ~~~~~~~~~~~ aasvg
 
@@ -1636,8 +1642,20 @@ The columns of the registry are Name, Label, Description, and Reference, where L
 |           |       | CBOR byte string       | Section 3.8.1     |
 +-----------+-------+------------------------+-------------------+
 ~~~~~~~~~~~
-{: #fig-ead-labels title="Initial EAD Labels"}
+{: #fig-ead-labels title="EAD Labels"}
 
+~~~~~~~~~~~
+
++----------------+-------------------------------------+
+|  Range         | Registration Procedures             |
++----------------+-------------------------------------+
+| -65536 to -25  | Specification Required              |
++----------------+-------------------------------------+
+| -24 to 23      | Standards Action with Expert Review |
++----------------+-------------------------------------+
+| 24 to 65535    | Specification Required              |
++----------------+-------------------------------------+
+~~~~~~~~~~~
 
 ## COSE Header Parameters Registry {#cwt-header-param}
 
