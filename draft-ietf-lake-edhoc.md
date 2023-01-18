@@ -313,7 +313,7 @@ Initiator                                                   Responder
 {: #fig-sigma title="MAC-then-Sign variant of the SIGMA-I protocol used by EDHOC."}
 {: artwork-align="center"}
 
-The parties exchanging messages in an EDHOC session are called Initiator (I) and Responder (R), with the Initiator intitating the protocol. They exchange ephemeral public keys, compute a shared secret session key PRK_out, and derive symmetric application keys used to protect application data.
+The parties exchanging messages in an EDHOC session are called Initiator (I) and Responder (R), where the Initiator sends message_1 (see {{overview}}). They exchange ephemeral public keys, compute a shared secret session key PRK_out, and derive symmetric application keys used to protect application data.
 
 * G_X and G_Y are the ECDH ephemeral public keys of I and R, respectively.
 
@@ -351,7 +351,7 @@ To simplify for implementors, the use of CBOR and COSE in EDHOC is summarized in
 
 ## General
 
-The EDHOC protocol consists of three mandatory messages (message_1, message_2, message_3) between an Initiator and a Responder, an optional fourth message (message_4), and an error message. The odd messages are sent by I, the even by R. Both I and R can send error messages.
+The EDHOC protocol consists of three mandatory messages (message_1, message_2, message_3), an optional fourth message (message_4), and an error message, between an Initiator (I) and a Responder (R). The odd messages are sent by I, the even by R. Both I and R can send error messages.
 The roles have slightly different security properties which should be considered when the roles are assigned, see {{sec-prop}}.
 All EDHOC messages are CBOR Sequences {{RFC8742}}, and are deterministically encoded. {{fig-flow}} illustrates an EDHOC message flow with the optional fourth message as well as the content of each message. The protocol elements in the figure are introduced in {{overview}} and {{asym}}. Message formatting and processing are specified in {{asym}} and {{error}}.
 
