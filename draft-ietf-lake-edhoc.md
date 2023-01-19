@@ -1224,7 +1224,7 @@ If the selected cipher suite is not the first cipher suite which the Responder s
 
 Assume that the Initiator supports the five cipher suites 5, 6, 7, 8, and 9 in decreasing order of preference. Figures {{fig-error1}}{: format="counter"} and {{fig-error2}}{: format="counter"} show two examples of how the Initiator can format SUITES_I and how SUITES_R is used by Responders to give the Initiator information about the cipher suites that the Responder supports.
 
-In the Example 1 ({{fig-error1}}), the Responder supports cipher suite 6 but not the initially selected cipher suite 5. The Responder rejects the first message_1 with an error indicating support for suite 6 in SUITES_R. The Initiator also supports suite 6, and therefore selects suite 6 in the second message_1. The Initiator prepends in SUITES_I the selected suite 6 with the more preferred suites, in this case suite 5, to mitigate a potential attack on the cipher suite negotiation.
+In Example 1 ({{fig-error1}}), the Responder supports cipher suite 6 but not the initially selected cipher suite 5. The Responder rejects the first message_1 with an error indicating support for suite 6 in SUITES_R. The Initiator also supports suite 6, and therefore selects suite 6 in the second message_1. The Initiator prepends in SUITES_I the selected suite 6 with the more preferred suites, in this case suite 5, to mitigate a potential attack on the cipher suite negotiation.
 
 ~~~~~~~~~~~ aasvg
 Initiator                                                   Responder
