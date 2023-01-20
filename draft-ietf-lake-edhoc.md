@@ -466,18 +466,26 @@ Cryptographically, EDHOC does not put requirements on the lower layers. EDHOC is
 * fragmentation and reassembly,
 * demultiplex EDHOC messages from other types of messages,
 * denial-of-service protection,
-* message correlation.
+* message correlation, see {{ci-edhoc}}.
 
 EDHOC does not require error free transport since changes in the content of a message is detected by the integrity verification, although possibly in the following message, see "transcript hashes" in {{asym}}.
 
-EDHOC is designed to enable an authenticated key exchange with small messages, where the minimum message sizes are of the order illustrated in the first column of {{fig-sizes}}. There is no maximum message size specified by the protocol; this is for example dependent on the size of authentication credentials (if they are transported, see {{auth-key-id}}). The use of transport is specified in the application profile, which in particular may specify limitations in message sizes, see {{applicability}}.
+EDHOC is designed to enable an authenticated key exchange with small messages, where the minimum message sizes are of the order illustrated in the first column of {{fig-sizes}}. There is no maximum message size specified by the protocol; this is for example dependent on the size of authentication credentials (if they are transported, see {{auth-key-id}}).
+
+The use of transport is specified in the application profile, which in particular may specify limitations in message sizes, see {{applicability}}.
 
 
-### Use of Connection Identifiers for EDHOC Message Correlation {#ci-edhoc}
+### EDHOC Message Correlation {#ci-edhoc}
 
-The transport needs to support the correlation between EDHOC messages and facilitate the retrieval of protocol state and security context during an EDHOC session, including an indication of a message being message_1. The correlation may reuse existing mechanisms in the transport protocol. For example, the CoAP Token may be used to correlate EDHOC messages in a CoAP response and an associated CoAP request.
+Correlation between EDHOC messages is needed to facilitate the retrieval of protocol state and security context during an EDHOC session. It is also helpful for the Responder to get an indication that a received EDHOC message is the beginning of a new session so there is no protocol state or security context to retrieve.
 
-Connection identifiers may be used to correlate EDHOC messages and facilitate the retrieval of protocol state/security context during an EDHOC session. Transports that do not inherently provide correlation across all messages of an EDHOC session can send connection identifiers along with EDHOC messages to gain that required capability, e.g., by prepending the appropriate connection identifier (when available from the EDHOC protocol) to the EDHOC message. Transport of EDHOC in CoAP payloads is described in {{coap}}, which also shows how to use connection identifiers and message_1 indication with CoAP.
+Correlation may be based on existing mechanisms in the transport protocol, for example, the CoAP Token may be used to correlate EDHOC messages in a CoAP response and in an associated CoAP request. The connection identifiers may also be used to correlate EDHOC messages.
+
+If correlation between consecutive messages is not provided by other means then the transport SHOULD prepend the appropriate connection identifier (when available from the EDHOC protocol) to the EDHOC message. If message_1 indication is not provided by other means, then the transport SHOULD prepend the message_1 with the CBOR simple value `true` (0xf5), as a unique dummy identifier.
+
+Transport of EDHOC in CoAP payloads is described in {{coap}}, including how to use connection identifiers and message_1 indication with CoAP. A similar construction is possible for other client-server protocols. Protocols that do not provide any correlation at all can prescribe prepending of the peer's connection identifier to all messages.
+
+Note that correlation between EDHOC messages may be obtained without transport support or connection identifiers, for example if the endpoints only accept a single instance of the protocol at a time, and execute conditionally on a correct sequence of messages.
 
 ## Authentication Parameters {#auth-key-id}
 
@@ -887,7 +895,7 @@ EDHOC messages SHALL be processed according to the current protocol state. The f
 
 1. Detect that an EDHOC message has been received, for example by means of port number, URI, or media type ({{applicability}}).
 
-2. Retrieve the protocol state according to the message correlation provided by the transport, see {{transport}}. If there is no protocol state, in the case of message_1, a new protocol state is created. The Responder endpoint needs to make use of available Denial-of-Service mitigation ({{dos}}).
+2. Retrieve the protocol state according to the message correlation, see {{ci-edhoc}}. If there is no protocol state, in the case of message_1, a new protocol state is created. The Responder endpoint needs to make use of available Denial-of-Service mitigation ({{dos}}).
 
 3. If the message received is an error message, then process it according to {{error}}, else process it as the expected next message according to the protocol state.
 
@@ -1012,7 +1020,7 @@ The Initiator SHALL process message_2 in the following order:
 
 * Decode message_2 (see {{CBOR}}).
 
-* Retrieve the protocol state using the message correlation provided by the transport (e.g., the CoAP Token, the 5-tuple, or the prepended C_I, see {{coap}}).
+* Retrieve the protocol state using available message correlation (e.g., the CoAP Token, the 5-tuple, or the prepended C_I, see {{ci-edhoc}}).
 
 * Decrypt CIPHERTEXT_2, see {{asym-msg2-proc}}.
 
@@ -1088,7 +1096,7 @@ The Responder SHALL process message_3 in the following order:
 
 * Decode message_3 (see {{CBOR}}).
 
-* Retrieve the protocol state using the message correlation provided by the transport (e.g., the CoAP Token, the 5-tuple, or the prepended C_R, see {{coap}}).
+* Retrieve the protocol state using available message correlation (e.g., the CoAP Token, the 5-tuple, or the prepended C_R, see {{ci-edhoc}}).
 
 * Decrypt and verify the COSE_Encrypt0 as defined in Sections 5.2 and 5.3 of {{RFC9052}}, with the EDHOC AEAD algorithm in the selected cipher suite, and the parameters defined in {{asym-msg3-proc}}.
 
@@ -1148,7 +1156,7 @@ The Initiator SHALL process message_4 as follows:
 
 * Decode message_4 (see {{CBOR}}).
 
-* Retrieve the protocol state using the message correlation provided by the transport (e.g., the CoAP Token, the 5-tuple, or the prepended C_I, see {{coap}}).
+* Retrieve the protocol state using available message correlation (e.g., the CoAP Token, the 5-tuple, or the prepended C_I, see {{ci-edhoc}}).
 
 * Decrypt and verify the COSE_Encrypt0 as defined in Sections 5.2 and 5.3 of {{RFC9052}}, with the EDHOC AEAD algorithm in the selected cipher suite, and the parameters defined in {{asym-msg4-proc}}.
 
@@ -1726,23 +1734,26 @@ From then on, Client and Server retrieve the OSCORE protocol state using the Rec
 
 ## Transferring EDHOC over CoAP {#coap}
 
-This section specifies how EDHOC can be transferred as an exchange of CoAP {{RFC7252}} messages. CoAP provides a reliable transport that can preserve packet ordering and handle message duplication. CoAP can also perform fragmentation and protect against denial-of-service attacks. The underlying CoAP transport should be used in reliable mode, in particular when fragmentation is used, to avoid, e.g., situations with hanging endpoints waiting for each other.
+This section specifies how EDHOC can be transferred as an exchange of CoAP {{RFC7252}} messages. CoAP provides a reliable transport that can preserve packet ordering, flow control, and handle message duplication. CoAP can also perform fragmentation and protect against denial-of-service attacks. The underlying CoAP transport should be used in reliable mode, in particular when fragmentation is used, to avoid, e.g., situations with hanging endpoints waiting for each other.
 
 EDHOC may run with the Initiator either being CoAP client or CoAP server. We denote the former by the "forward message flow" (see {{forward}}) and the latter by the "reverse message flow" (see {{reverse}}). By default we assume the forward message flow, but the roles SHOULD be chosen to protect the most sensitive identity, see {{security}}.
 
- According to this specification, EDHOC is transferred in POST requests and 2.04 (Changed) responses to the Uri-Path: "/.well-known/edhoc", see {{well-known}}. An application may define its own path that can be discovered, e.g., using a resource directory {{RFC9176}}. Client applications can use the resource type "core.edhoc" to discover a server's EDHOC resource, i.e., where to send a request for executing the EDHOC protocol, see {{rt}}. An alternative transfer of the forward message flow is specified in {{I-D.ietf-core-oscore-edhoc}}.
+ According to this specification, EDHOC is transferred in POST requests to the Uri-Path: "/.well-known/edhoc" (see {{well-known}}), and 2.04 (Changed) responses. An application may define its own path that can be discovered, e.g., using a resource directory {{RFC9176}}. Client applications can use the resource type "core.edhoc" to discover a server's EDHOC resource, i.e., where to send a request for executing the EDHOC protocol, see {{rt}}. An alternative transfer of the forward message flow is specified in {{I-D.ietf-core-oscore-edhoc}}.
 
-In order for the server to correlate a message received from a client to a message previously sent in the same EDHOC session over CoAP, messages sent by the client SHOULD be prepended with the CBOR serialization of the connection identifier which the server has selected. This applies both the forward and reverse message flows. Prepended identifiers MAY be omitted in case the transport provides such correlation.
+In order for the server to correlate a message received from a client to a message previously sent in the same EDHOC session over CoAP, messages sent by the client SHOULD be prepended with the CBOR serialization of the connection identifier which the server has selected, see {{ci-edhoc}}. This applies both to the forward and the reverse message flows. To indicate a new EDHOC session in the forward message flow, message_1 SHOULD be prepended with the CBOR simple value `true` (0xf5), as a dummy identifier. Even if CoAP is carried over a reliable transport protocol such as TCP, the prepending of identifiers specified here SHOULD be practiced to enable interoperability independent of how CoAP is transported.
 
-To indicate a new EDHOC session in the forward message flow, message_1 SHOULD be prepended with the CBOR simple value `true` (0xf5), as a dummy identifier. The prepended dummy identifier MAY be omitted if the Responder can distinguish a new EDHOC session in some other way.
-
-The prepended identifiers are encoded in CBOR and thus self-delimiting. The integer representation of identifiers described in {{bstr-repr}} is used, when applicable. They are sent in front of the actual EDHOC message to keep track of messages in an EDHOC session, and only the part of the body following the identifier is used for EDHOC processing. In particular, the connection identifiers within the EDHOC messages are not impacted by the prepended identifiers.
+The prepended identifiers are encoded in CBOR and thus self-delimiting. The representation of identifiers described in {{bstr-repr}} SHALL be used. They are sent in front of the actual EDHOC message to keep track of messages in an EDHOC session, and only the part of the body following the identifier is used for EDHOC processing. In particular, the connection identifiers within the EDHOC messages are not impacted by the prepended identifiers.
 
  An EDHOC message has media type application/edhoc+cbor-seq, whereas an EDHOC message prepended by a connection identifier has media type application/cid-edhoc+cbor-seq, see {{content-format}}.
 
 To protect against denial-of-service attacks, the CoAP server MAY respond to the first POST request with a 4.01 (Unauthorized) containing an Echo option {{RFC9175}}. This forces the Initiator to demonstrate reachability at its apparent network address. If message fragmentation is needed, the EDHOC messages may be fragmented using the CoAP Block-Wise Transfer mechanism {{RFC7959}}.
 
 EDHOC does not restrict how error messages are transported with CoAP, as long as the appropriate error message can to be transported in response to a message that failed (see {{error}}). EDHOC error messages transported with CoAP are carried in the payload.
+
+Note that the transport over CoAP can serve as a blueprint for other client-server protocols:
+
+* The client prepends the connection identifier selected by the server  (or, for message_1, the CBOR simple value `true`) to any request message it sends.
+* The server does not send any such indicator, as responses are matched to request by the client-server protocol design.
 
 ### The Forward Message Flow {#forward}
 
@@ -1802,7 +1813,7 @@ In the reverse message flow the CoAP client is the Responder and the CoAP server
 
 * EDHOC message_3 or the EDHOC error message is sent from the server to the client in the payload of the response, in the former case with response code 2.04 (Changed), in the latter with response code as specified in {{edhoc-oscore-over-coap}}.
 
-If message_4 is used, then C_I is prepended and message_4 (or the EDHOC error message) is transported with CoAP in the payload of a POST request. The response is analogous to message_2.
+* If EDHOC message_4 is used, or in case of an error message, it is sent from the client to the server's resource in the payload of a POST request, prepended with the connection identifier C_I. In case of an error message sent in response to message_4, it is sent analogously to an error message sent in response to message_2.
 
 An example of a successful EDHOC exchange over CoAP in the reverse message flow is shown in {{fig-coap2}}.
 
@@ -2126,20 +2137,6 @@ The EDHOC implementation MUST NOT store previous protocol state and regenerate a
 
 The previous message or protocol state MUST NOT be kept longer than what is required for retransmission, for example, in the case of CoAP transport, no longer than the EXCHANGE_LIFETIME (see Section 4.8.2 of {{RFC7252}}).
 
-# Transports Not Natively Providing Correlation
-
-Protocols that do not natively provide full correlation between a series of messages can send the C_I and C_R identifiers along as needed.
-
-The transport over CoAP ({{coap}}) can serve as a blueprint for other server-client protocols:
-The client prepends the C_x which the server selected (or, for message_1, the CBOR simple value `true` which is not a valid C_x) to any request message it sends.
-The server does not send any such indicator, as responses are matched to request by the client-server protocol design.
-
-Protocols that do not provide any correlation at all can prescribe prepending of the peer's chosen C_x to all messages.
-
-<!--
-Protocols that can provide all the necessary correlation but do not have any short-lived component to it
-may need ... no, they don't need anything special: after an error, the next thing is a message 1 again.
--->
 
 # Long PLAINTEXT_2 {#large-plaintext_2}
 
