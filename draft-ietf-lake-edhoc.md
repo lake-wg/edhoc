@@ -1397,7 +1397,7 @@ When parsing a received EDHOC message, implementations MUST discontinue the prot
 
 # IANA Considerations {#iana}
 
-This Section provides IANA Considerations according to {{RFC8126}}.
+This Section gives IANA Considerations and, unless otherwise noted, conforms with {{RFC8126}}.
 
 ## EDHOC Exporter Label Registry {#exporter-label}
 
