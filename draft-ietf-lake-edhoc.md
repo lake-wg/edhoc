@@ -237,6 +237,14 @@ informative:
         ins: C. Bormann
     date: May 2018
 
+  Noise:
+    target: https://noiseprotocol.org/noise.html
+    title: The Noise Protocol Framework, Revision 34
+    author:
+      -
+        ins: T. Perrin
+    date: July 2018
+
 --- abstract
 
 This document specifies Ephemeral Diffie-Hellman Over COSE (EDHOC), a very compact and lightweight authenticated Diffie-Hellman key exchange with ephemeral keys. EDHOC provides mutual authentication, forward secrecy, and identity protection. EDHOC is intended for usage in constrained scenarios and a main use case is to establish an OSCORE security context. By reusing COSE for cryptography, CBOR for encoding, and CoAP for transport, the additional code size can be kept very low.
@@ -256,7 +264,7 @@ Some security solutions for such settings exist already. CBOR Object Signing and
 This document specifies Ephemeral Diffie-Hellman Over COSE (EDHOC), a lightweight authenticated key exchange protocol providing good security properties including forward secrecy, identity protection, and cipher suite negotiation. Authentication can be based on raw public keys (RPK) or public key certificates and requires the application to provide input on how to verify that endpoints are trusted. This specification supports the referencing of credentials in order to reduce message overhead, but credentials may alternatively be embedded in the messages.
 EDHOC does not currently support pre-shared key (PSK) authentication as authentication with static Diffie-Hellman public keys by reference produces equally small message sizes but with much simpler key distribution and identity protection.
 
-EDHOC makes use of known protocol constructions, such as SIGMA {{SIGMA}} and Extract-and-Expand {{RFC5869}}. EDHOC uses COSE for cryptography and identification of credentials (including COSE_Key, CBOR Web Token (CWT), CWT Claims Set (CCS), X.509, and CBOR encoded X.509 (C509) certificates, see {{auth-cred}}). COSE provides crypto agility and enables the use of future algorithms and credential types targeting IoT.
+EDHOC makes use of known protocol constructions, such as SIGMA {{SIGMA}}, the Noise XX pattern {{Noise}}, and Extract-and-Expand {{RFC5869}}. EDHOC uses COSE for cryptography and identification of credentials (including COSE_Key, CBOR Web Token (CWT), CWT Claims Set (CCS), X.509, and CBOR encoded X.509 (C509) certificates, see {{auth-cred}}). COSE provides crypto agility and enables the use of future algorithms and credential types targeting IoT.
 
 EDHOC is designed for highly constrained settings making it especially suitable for low-power networks {{RFC8376}} such as Cellular IoT, 6TiSCH, and LoRaWAN. A main objective for EDHOC is to be a lightweight authenticated key exchange for OSCORE, i.e., to provide authentication and session key establishment for IoT use cases such as those built on CoAP {{RFC7252}} involving 'things' with embedded microcontrollers, sensors, and actuators. By reusing the same lightweight primitives as OSCORE (CBOR, COSE, CoAP) the additional code size can be kept very low. Note that while CBOR and COSE primitives are built into the protocol messages, EDHOC is not bound to a particular transport.
 
@@ -295,7 +303,7 @@ Readers are expected to be familiar with the terms and concepts described in CBO
 
 # EDHOC Outline {#background}
 
-EDHOC specifies different authentication methods of the ephemeral Diffie-Hellman key exchange: signature keys and static Diffie-Hellman keys. This section outlines the signature key based method. Further details of protocol elements and other authentication methods are provided in the remainder of this document.
+EDHOC specifies different authentication methods of the ephemeral-ephemeral Diffie-Hellman key exchange: signature keys and static Diffie-Hellman keys. This section outlines the signature key based method. Further details of protocol elements and other authentication methods are provided in the remainder of this document.
 
 SIGMA (SIGn-and-MAc) is a family of theoretical protocols with a large number of variants {{SIGMA}}. Like in IKEv2 {{RFC7296}} and (D)TLS 1.3 {{RFC8446}}{{RFC9147}}, EDHOC authenticated with signature keys is built on a variant of the SIGMA protocol which provides identity protection of the Initiator (SIGMA-I) against active attackers, and like IKEv2, EDHOC implements the MAC-then-Sign variant of the SIGMA-I protocol shown in {{fig-sigma}}.
 
@@ -384,7 +392,7 @@ Initiator                                                   Responder
 
 ## Method {#method}
 
-The data item METHOD in message_1 (see {{asym-msg1-form}}), is an integer specifying the authentication method. EDHOC supports authentication with signature or static Diffie-Hellman keys, as defined in the four authentication methods: 0, 1, 2, and 3, see {{fig-method-types}}. When using a static Diffie-Hellman key the authentication is provided by a Message Authentication Code (MAC) computed from an ephemeral-static ECDH shared secret which enables significant reductions in message sizes.
+The data item METHOD in message_1 (see {{asym-msg1-form}}), is an integer specifying the authentication method. EDHOC supports authentication with signature or static Diffie-Hellman keys, as defined in the four authentication methods: 0, 1, 2, and 3, see {{fig-method-types}}. When using a static Diffie-Hellman key the authentication is provided by a Message Authentication Code (MAC) computed from an ephemeral-static ECDH shared secret which enables significant reductions in message sizes. Note that also in the static Diffie-Hellman based authentication methods there is an ephemeral-ephemeral Diffie-Hellman key exchange, which provides the associated good security properties, see {{sec-prop}}.
 
 The Initiator and the Responder need to have agreed on a single method to be used for EDHOC, see {{applicability}}.
 
