@@ -319,7 +319,7 @@ Initiator                                                   Responder
 +------------------------------------------------------------------>|
 |                                                                   |
 ~~~~~~~~~~~
-{: #fig-sigma title="MAC-then-Sign variant of the SIGMA-I protocol used by EDHOC."}
+{: #fig-sigma title="MAC-then-Sign variant of the SIGMA-I protocol used by EDHOC method 0."}
 {: artwork-align="center"}
 
 The parties exchanging messages in an EDHOC session are called Initiator (I) and Responder (R). They exchange ephemeral public keys, compute a shared secret session key PRK_out, and derive symmetric application keys used to protect application data.
@@ -1298,7 +1298,9 @@ Implementations MUST support cipher suite 2 and 3. Cipher suites 2 (AES-CCM-16-6
 
 ## Security Properties {#sec-prop}
 
-EDHOC inherits its security properties from the theoretical SIGMA-I protocol {{SIGMA}}. Using the terminology from {{SIGMA}}, EDHOC provides forward secrecy, mutual authentication with aliveness, consistency, and peer awareness. As described in {{SIGMA}}, message_3 provides peer awareness to the Responder while message_4 provides peer awareness to the Initiator. By including the authentication credentials in the transcript hash, EDHOC protects against Duplicate Signature Key Selection (DSKS)-like identity mis-binding attack that the MAC-then-Sign variant of SIGMA-I is otherwise vulnerable to.
+EDHOC has similar security properties as can be expected from the theoretical SIGMA-I protocol {{SIGMA}} and the Noise XX pattern {{Noise}}, which correspond to methods 0 and 3, respectively. The proven security properties are detailed in the security analysis publications referenced at the end of this section.
+
+Using the terminology from {{SIGMA}}, EDHOC provides forward secrecy, mutual authentication with aliveness, consistency, and peer awareness. As described in {{SIGMA}}, message_3 provides peer awareness to the Responder while message_4 provides peer awareness to the Initiator. By including the authentication credentials in the transcript hash, EDHOC protects against Duplicate Signature Key Selection (DSKS)-like identity mis-binding attack that the MAC-then-Sign variant of SIGMA-I is otherwise vulnerable to.
 
 As described in {{SIGMA}}, different levels of identity protection are provided to the Initiator and the Responder. EDHOC provides identity protection of the Initiator against active attacks and identity protection of the Responder against passive attacks. An active attacker can get the credential identifier of the Responder by eavesdropping on the destination address used for transporting message_1 and then sending its own message_1 to the same address. The roles should be assigned to protect the most sensitive identity/identifier, typically that which is not possible to infer from routing information in the lower layers.
 
