@@ -392,7 +392,7 @@ Initiator                                                   Responder
 
 ## Method {#method}
 
-The data item METHOD in message_1 (see {{asym-msg1-form}}), is an integer specifying the authentication method. EDHOC supports authentication with signature or static Diffie-Hellman keys, as defined in the four authentication methods: 0, 1, 2, and 3, see {{fig-method-types}}. When using a static Diffie-Hellman key the authentication is provided by a Message Authentication Code (MAC) computed from an ephemeral-static ECDH shared secret which enables significant reductions in message sizes. Note that also in the static Diffie-Hellman based authentication methods there is an ephemeral-ephemeral Diffie-Hellman key exchange, which provides the associated good security properties, see {{sec-prop}}.
+The data item METHOD in message_1 (see {{asym-msg1-form}}), is an integer specifying the authentication method. EDHOC supports authentication with signature or static Diffie-Hellman keys, as defined in the four authentication methods: 0, 1, 2, and 3, see {{fig-method-types}}. When using a static Diffie-Hellman key the authentication is provided by a Message Authentication Code (MAC) computed from an ephemeral-static ECDH shared secret which enables significant reductions in message sizes. Note that also in the static Diffie-Hellman based authentication methods there is an ephemeral-ephemeral Diffie-Hellman key exchange, which enables certain good security properties, see {{sec-prop}}.
 
 The Initiator and the Responder need to have agreed on a single method to be used for EDHOC, see {{applicability}}.
 
