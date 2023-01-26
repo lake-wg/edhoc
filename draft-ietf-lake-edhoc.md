@@ -1298,7 +1298,7 @@ Implementations MUST support cipher suite 2 and 3. Cipher suites 2 (AES-CCM-16-6
 
 ## Security Properties {#sec-prop}
 
-EDHOC has similar security properties as can be expected from the theoretical SIGMA-I protocol {{SIGMA}} and the Noise XX pattern {{Noise}}, which correspond to methods 0 and 3, respectively. The proven security properties are detailed in the security analysis publications referenced at the end of this section.
+EDHOC has similar security properties as can be expected from the theoretical SIGMA-I protocol {{SIGMA}} and the Noise XX pattern {{Noise}}, which are similar to methods 0 and 3, respectively. The proven security properties are detailed in the security analysis publications referenced at the end of this section.
 
 Using the terminology from {{SIGMA}}, EDHOC provides forward secrecy, mutual authentication with aliveness, consistency, and peer awareness. As described in {{SIGMA}}, message_3 provides peer awareness to the Responder while message_4 provides peer awareness to the Initiator. By including the authentication credentials in the transcript hash, EDHOC protects against Duplicate Signature Key Selection (DSKS)-like identity mis-binding attack that the MAC-then-Sign variant of SIGMA-I is otherwise vulnerable to.
 
