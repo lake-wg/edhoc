@@ -392,7 +392,7 @@ Initiator                                                   Responder
 
 ## Method {#method}
 
-The data item METHOD in message_1 (see {{asym-msg1-form}}), is an integer specifying the authentication method. EDHOC supports authentication with signature or static Diffie-Hellman keys, as defined in the four authentication methods: 0, 1, 2, and 3, see {{fig-method-types}}. When using a static Diffie-Hellman key the authentication is provided by a Message Authentication Code (MAC) computed from an ephemeral-static ECDH shared secret which enables significant reductions in message sizes. Note that also in the static Diffie-Hellman based authentication methods there is an ephemeral-ephemeral Diffie-Hellman key exchange, which enables certain good security properties, see {{sec-prop}}.
+The data item METHOD in message_1 (see {{asym-msg1-form}}), is an integer specifying the authentication method. EDHOC supports authentication with signature or static Diffie-Hellman keys, as defined in the four authentication methods: 0, 1, 2, and 3, see {{fig-method-types}}. When using a static Diffie-Hellman key the authentication is provided by a Message Authentication Code (MAC) computed from an ephemeral-static ECDH shared secret which enables significant reductions in message sizes. Note that also in the static Diffie-Hellman based authentication methods there is an ephemeral-ephemeral Diffie-Hellman key exchange.
 
 The Initiator and the Responder need to have agreed on a single method to be used for EDHOC, see {{applicability}}.
 
@@ -1298,7 +1298,7 @@ Implementations MUST support cipher suite 2 and 3. Cipher suites 2 (AES-CCM-16-6
 
 ## Security Properties {#sec-prop}
 
-EDHOC has similar security properties as can be expected from the theoretical SIGMA-I protocol {{SIGMA}} and the Noise XX pattern {{Noise}}, which are similar to methods 0 and 3, respectively. The proven security properties are detailed in the security analysis publications referenced at the end of this section.
+EDHOC has similar security properties as can be expected from the theoretical SIGMA-I protocol {{SIGMA}} and the Noise XX pattern {{Noise}}, which are similar to methods 0 and 3, respectively. Proven security properties are detailed in the security analysis publications referenced at the end of this section.
 
 Using the terminology from {{SIGMA}}, EDHOC provides forward secrecy, mutual authentication with aliveness, consistency, and peer awareness. As described in {{SIGMA}}, message_3 provides peer awareness to the Responder while message_4 provides peer awareness to the Initiator. By including the authentication credentials in the transcript hash, EDHOC protects against Duplicate Signature Key Selection (DSKS)-like identity mis-binding attack that the MAC-then-Sign variant of SIGMA-I is otherwise vulnerable to.
 
