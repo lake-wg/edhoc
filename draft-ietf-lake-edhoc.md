@@ -305,7 +305,7 @@ Readers are expected to be familiar with the terms and concepts described in CBO
 
 EDHOC specifies different authentication methods of the ephemeral-ephemeral Diffie-Hellman key exchange: signature keys and static Diffie-Hellman keys. This section outlines the signature key based method. Further details of protocol elements and other authentication methods are provided in the remainder of this document.
 
-SIGMA (SIGn-and-MAc) is a family of theoretical protocols with a large number of variants {{SIGMA}}. Like in IKEv2 {{RFC7296}} and (D)TLS 1.3 {{RFC8446}}{{RFC9147}}, EDHOC authenticated with signature keys is built on a variant of the SIGMA protocol which provides identity protection of the Initiator (SIGMA-I) against active attackers, and like IKEv2, EDHOC implements a MAC-then-Sign variant of the SIGMA-I protocol. The message flow (excluding an optional fourth message) is shown in {{fig-sigma}}.
+SIGMA (SIGn-and-MAc) is a family of theoretical protocols with a large number of variants {{SIGMA}}. Like in IKEv2 {{RFC7296}} and (D)TLS 1.3 {{RFC8446}}{{RFC9147}}, EDHOC authenticated with signature keys is built on a variant of the SIGMA protocol, SIGMA-I, which provides identity protection against active attacks on the party initiating the protocol. Also like IKEv2, EDHOC implements the MAC-then-Sign variant of the SIGMA-I protocol. The message flow (excluding an optional fourth message) is shown in {{fig-sigma}}.
 
 ~~~~~~~~~~~ aasvg
 Initiator                                                   Responder
@@ -322,7 +322,7 @@ Initiator                                                   Responder
 {: #fig-sigma title="MAC-then-Sign variant of the SIGMA-I protocol used by EDHOC method 0."}
 {: artwork-align="center"}
 
-The parties exchanging messages in an EDHOC session are called Initiator (I) and Responder (R). They exchange ephemeral public keys, compute a shared secret session key PRK_out, and derive symmetric application keys used to protect application data.
+The parties exchanging messages in an EDHOC session are called Initiator (I) and Responder (R), where the Initiator sends message_1 (see {{overview}}). They exchange ephemeral public keys, compute a shared secret session key PRK_out, and derive symmetric application keys used to protect application data.
 
 * G_X and G_Y are the ECDH ephemeral public keys of I and R, respectively.
 
@@ -360,7 +360,7 @@ To simplify for implementors, the use of CBOR and COSE in EDHOC is summarized in
 
 ## General
 
-The EDHOC protocol consists of three mandatory messages (message_1, message_2, message_3) between an Initiator and a Responder, an optional fourth message (message_4), and an error message.
+The EDHOC protocol consists of three mandatory messages (message_1, message_2, message_3), an optional fourth message (message_4), and an error message, between an Initiator (I) and a Responder (R). The odd messages are sent by I, the even by R. Both I and R can send error messages.
 The roles have slightly different security properties which should be considered when the roles are assigned, see {{sec-prop}}.
 All EDHOC messages are CBOR Sequences {{RFC8742}}, and are deterministically encoded. {{fig-flow}} illustrates an EDHOC message flow with the optional fourth message as well as the content of each message. The protocol elements in the figure are introduced in {{overview}} and {{asym}}. Message formatting and processing are specified in {{asym}} and {{error}}.
 
@@ -896,7 +896,9 @@ EDHOC messages SHALL be processed according to the current protocol state. The f
 
 3. If the message received is an error message, then process it according to {{error}}, else process it as the expected next message according to the protocol state.
 
-If the processing fails for some reason then, typically, an error message is sent, the protocol is discontinued, and the protocol state erased. After having successfully processed the last message (message_3 or message_4 depending on application profile) the protocol is completed, after which no error messages are sent and EDHOC session output MAY be maintained even if error messages are received. Further details are provided in the following subsections and in {{error}}.
+The message processing steps SHALL be processed in order, unless otherwise stated. If the processing fails for some reason then, typically, an error message is sent, the protocol is discontinued, and the protocol state erased. When the composition and sending of one message is completed and before the next message is received, error messages SHALL NOT be sent.
+
+After having successfully processed the last message (message_3 or message_4 depending on application profile) the protocol is completed, after which no error messages are sent and EDHOC session output MAY be maintained even if error messages are received. Further details are provided in the following subsections and in {{error}}.
 
 Different instances of the same message MUST NOT be processed in one session.  Note that processing will fail if the same message appears a second time for EDHOC processing in the same session because the state of the protocol has moved on and now expects something else. This assumes that message duplication due to re-transmissions is handled by the transport protocol, see {{transport}}. The case when the transport does not support message deduplication is addressed in {{duplication}}.
 
