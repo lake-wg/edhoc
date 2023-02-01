@@ -468,7 +468,7 @@ Cryptographically, EDHOC does not put requirements on the lower layers. EDHOC is
 * denial-of-service protection,
 * message correlation, see {{ci-edhoc}}.
 
-EDHOC does not require error free transport since changes in the content of a message is detected by the integrity verification, although possibly in the following message, see "transcript hashes" in {{asym}}.
+EDHOC does not require error free transport since a change in message content is detected through the transcript hashes in a subsequent integrity verification, see {{asym}}.
 
 EDHOC is designed to enable an authenticated key exchange with small messages, where the minimum message sizes are of the order illustrated in the first column of {{fig-sizes}}. There is no maximum message size specified by the protocol; this is for example dependent on the size of authentication credentials (if they are transported, see {{auth-key-id}}).
 
@@ -477,7 +477,7 @@ The use of transport is specified in the application profile, which in particula
 
 ### EDHOC Message Correlation {#ci-edhoc}
 
-Correlation between EDHOC messages is needed to facilitate the retrieval of protocol state and security context during an EDHOC session. It is also helpful for the Responder to get an indication that a received EDHOC message is the beginning of a new session so there is no protocol state or security context to retrieve.
+Correlation between EDHOC messages is needed to facilitate the retrieval of protocol state and security context during an EDHOC session. It is also helpful for the Responder to get an indication that a received EDHOC message is the beginning of a new session, such that no existing protocol state or security context needs to be retrieved.
 
 Correlation may be based on existing mechanisms in the transport protocol, for example, the CoAP Token may be used to correlate EDHOC messages in a CoAP response and in an associated CoAP request. The connection identifiers may also be used to correlate EDHOC messages.
 
