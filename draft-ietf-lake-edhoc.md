@@ -2718,7 +2718,6 @@ RFC Editor: Please remove this appendix.
    * Removed references to certificate by value
 
 
-
 # Acknowledgments
 {: numbered="no"}
 
@@ -2730,6 +2729,7 @@ The authors want to thank
 {{{Timothy Claeys}}},
 {{{Baptiste Cottier}}},
 {{{Martin Disch}}},
+{{{Donald Eastlake}}},
 {{{Stephen Farrell}}},
 {{{Loïc Ferreira}}},
 {{{Theis Grønbech Petersen}}},
@@ -2749,12 +2749,14 @@ The authors want to thank
 {{{David Navarro}}},
 {{{Karl Norrman}}},
 {{{Salvador Pérez}}},
+{{{Radia Perlman}}},
 {{{David Pointcheval}}},
 {{{Maïwenn Racouchot}}},
 {{{Eric Rescorla}}},
 {{{Michael Richardson}}},
 {{{Thorvald Sahl Jørgensen}}},
 {{{Jim Schaad}}},
+{{{Michael Scharf}}},
 {{{Carsten Schürmann}}},
 {{{Ludwig Seitz}}},
 {{{Stanislav Smyshlyaev}}},
