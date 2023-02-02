@@ -2464,6 +2464,34 @@ ABORTED <---------------- RCVD_M1
 
 RFC Editor: Please remove this appendix.
 
+* From -18 to -19
+  * Clarifications:
+    * Relation to SIGMA
+    * Role of Static DH
+    * Initiator and Responder roles
+    * Transport properties
+    * Construction of SUITES_I
+    * Message correlation, new subsection 3.4.1, replacing former appendix H
+    * Role of description about long PLAINTEXT_2
+    * ead_label and ead_value
+    * Message processing (Section 5)
+    * Padding
+    * Cipher suite negotiation example
+  * Other updates:
+    * Improved and stricter normative text in Appendix A
+    * Naming and separate sections for the two message flows in Appendix A: Forward/Reverse message flow,
+    * Table index style captions
+    * Aligning with COSE terminology: header map -> header_map
+    * Aligning terminology, use of "_" instead of "-"
+    * Prefixing "EDHOC_" to functions
+    * Updated list of security analysis papers
+    * New appendix with example state machine
+    * Acknowledgements
+    * Language improvements by native English speakers
+    * Updated IANA section with registration procedures
+    * New and updated references
+    * Removed appendix H
+
 
 * From -17 to -18
 
