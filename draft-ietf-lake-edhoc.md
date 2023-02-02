@@ -1457,8 +1457,8 @@ Reference: [[this document]]
 ~~~~~~~~~~~
 
 +-------------+-------------------------------------+
-|  Range      | Registration Procedures             |
-+-------------+-------------------------------------+
+| Range       | Registration Procedures             |
++=============+=====================================+
 | 0-23        | Standards Action                    |
 +-------------+-------------------------------------+
 | 24-32767    | Expert Review                       |
@@ -1587,8 +1587,8 @@ Reference: [[this document]]
 ~~~~~~~~~~~
 
 +----------------+-------------------------------------+
-|  Range         | Registration Procedures             |
-+----------------+-------------------------------------+
+| Range          | Registration Procedures             |
++================+=====================================+
 | -65536 to -25  | Specification Required              |
 +----------------+-------------------------------------+
 | -20 to 23      | Standards Action with Expert Review |
@@ -1614,8 +1614,8 @@ The initial contents of the registry are shown in {{fig-method-types}}. Method 2
 ~~~~~~~~~~~
 
 +----------------+-------------------------------------+
-|  Range         | Registration Procedures             |
-+----------------+-------------------------------------+
+| Range          | Registration Procedures             |
++================+=====================================+
 | -65536 to -25  | Specification Required              |
 +----------------+-------------------------------------+
 | -24 to 23      | Standards Action with Expert Review |
@@ -1637,8 +1637,8 @@ The columns of the registry are ERR_CODE, ERR_INFO Type, Description, and Refere
 ~~~~~~~~~~~
 
 +----------------+-------------------------------------+
-|  Range         | Registration Procedures             |
-+----------------+-------------------------------------+
+| Range          | Registration Procedures             |
++================+=====================================+
 | -65536 to -25  | Expert Review                       |
 +----------------+-------------------------------------+
 | -24 to 23      | Standards Action                    |
@@ -1672,8 +1672,8 @@ The columns of the registry are Name, Label, Description, and Reference, where L
 ~~~~~~~~~~~
 
 +----------------+-------------------------------------+
-|  Range         | Registration Procedures             |
-+----------------+-------------------------------------+
+| Range          | Registration Procedures             |
++================+=====================================+
 | -65536 to -25  | Specification Required              |
 +----------------+-------------------------------------+
 | -24 to 23      | Standards Action with Expert Review |
