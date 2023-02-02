@@ -645,7 +645,7 @@ In order to reduce round trips and the number of messages, or to simplify proces
 
 EDHOC allows processing of external authorization data (EAD) to be defined in a separate specification, and sent in dedicated fields of the four EDHOC messages (EAD_1, EAD_2, EAD_3, EAD_4). EAD is opaque data to EDHOC.
 
-Each EAD field, EAD_x for x = 1, 2, 3 or 4, is a CBOR sequence (see {{CBOR}}) of one or more EAD items ead defined in {{fig-ead-item}}. See {{CDDL}} for the CDDL definitions.
+Each EAD field, EAD_x for x = 1, 2, 3 or 4, is a CBOR sequence (see {{CBOR}}) consisting of one or more EAD items. An EAD item ead is a CBOR sequence of an ead_label and an optional ead_value, see {{fig-ead-item}} and  {{CDDL}} for the CDDL definitions.
 
 ~~~~~~~~~~~ CDDL
 ead = (
@@ -653,7 +653,7 @@ ead = (
   ? ead_value : bstr,
 )
 ~~~~~~~~~~~
-{: #fig-ead-item title="An EAD item is a CBOR sequence of an ead_label and an optional ead_value. The absolute value of ead_label, |ead_label|,  determines the ead_value. The sign of the ead_label signals criticality of the EAD item."}
+{: #fig-ead-item title="EAD item."}
 
  A security application may register one or more EAD labels, see {{iana-ead}}, and specify the associated processing and security considerations. The IANA registry contains the absolute value of the ead_label, \|ead_label\|; the same ead_value applies independently of sign of ead_label.
 
