@@ -1454,7 +1454,7 @@ Reference: [[this document]]
 {: #fig-exporter-label title="EDHOC Exporter Label"}
 
 
-~~~~~~~~~~~
+~~~~~~~~~~~ aasvg
 
 +-------------+-------------------------------------+
 | Range       | Registration Procedures             |
@@ -1584,7 +1584,7 @@ Reference: [[this document]]
 
 
 
-~~~~~~~~~~~
+~~~~~~~~~~~ aasvg
 
 +----------------+-------------------------------------+
 | Range          | Registration Procedures             |
@@ -1611,7 +1611,7 @@ The columns of the registry are Value, Initiator Authentication Key, and Respond
 The initial contents of the registry are shown in {{fig-method-types}}. Method 23 is Reserved.
 
 
-~~~~~~~~~~~
+~~~~~~~~~~~ aasvg
 
 +----------------+-------------------------------------+
 | Range          | Registration Procedures             |
@@ -1634,7 +1634,7 @@ Reference: [[this document]]
 
 The columns of the registry are ERR_CODE, ERR_INFO Type, Description, and Reference, where ERR_CODE is an integer, ERR_INFO is a CDDL defined type, and Description is a text string. The initial contents of the registry are shown in {{fig-error-codes}}. Error code 23 is Reserved.
 
-~~~~~~~~~~~
+~~~~~~~~~~~ aasvg
 
 +----------------+-------------------------------------+
 | Range          | Registration Procedures             |
@@ -1669,7 +1669,7 @@ The columns of the registry are Name, Label, Description, and Reference, where L
 ~~~~~~~~~~~
 {: #fig-ead-labels title="EAD Labels"}
 
-~~~~~~~~~~~
+~~~~~~~~~~~ aasvg
 
 +----------------+-------------------------------------+
 | Range          | Registration Procedures             |
