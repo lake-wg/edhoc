@@ -1459,10 +1459,11 @@ Reference: [[this document]]
 +-------------+-------------------------------------+
 | Range       | Registration Procedures             |
 +=============+=====================================+
-| 0-23        | Standards Action                    |
+| 0 to 23     | Standards Action                    |
 +-------------+-------------------------------------+
-| 24-32767    | Expert Review                       |
+| 24 to 32767 | Expert Review                       |
 +-------------+-------------------------------------+
+
 ~~~~~~~~~~~
 
 ## EDHOC Cipher Suites Registry {#suites-registry}
@@ -1671,15 +1672,14 @@ The columns of the registry are Name, Label, Description, and Reference, where L
 
 ~~~~~~~~~~~ aasvg
 
-+----------------+-------------------------------------+
-| Range          | Registration Procedures             |
-+================+=====================================+
-| -65536 to -25  | Specification Required              |
-+----------------+-------------------------------------+
-| -24 to 23      | Standards Action with Expert Review |
-+----------------+-------------------------------------+
-| 24 to 65535    | Specification Required              |
-+----------------+-------------------------------------+
++-------------+-------------------------------------+
+| Range       | Registration Procedures             |
++=============+=====================================+
+| 0 to 23     | Standards Action with Expert Review |
++-------------+-------------------------------------+
+| 24 to 65535 | Specification Required              |
++-------------+-------------------------------------+
+
 ~~~~~~~~~~~
 
 ## COSE Header Parameters Registry {#cwt-header-param}
