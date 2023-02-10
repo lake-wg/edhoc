@@ -665,7 +665,7 @@ If an endpoint receives a critical EAD item it does not recognize, or a critical
 
   The security application may define multiple uses of certain EAD items, e.g., the same EAD item may be used in different EDHOC messages. Multiple occurrences of an EAD item in one EAD field may also be specified, but the criticality of the repeated EAD item is expected to be the same.
 
-The EAD fields of EDHOC MUST NOT be used for generic application data. Examples of the use of EAD are provided in {{ead-appendix}}.
+The EAD fields of EDHOC MUST only be used with registered EAD items, see {{iana-ead}}. Examples of the use of EAD are provided in {{ead-appendix}}.
 
 ### Padding {#padding}
 
