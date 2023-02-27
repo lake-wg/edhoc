@@ -1035,7 +1035,7 @@ The Initiator SHALL process message_2 in the following order:
 
 * Decrypt CIPHERTEXT_2, see {{asym-msg2-proc}}.
 
-* If all processing completed successfully, then make ID_CRED_R and (if present) EAD_2 available to the application for authentication- and EAD processing.
+* If all processing completed successfully, then make ID_CRED_R and (if present) EAD_2 available to the application for authentication- and EAD processing. When and how the application performs authentication is up to the implementation.
 
 * Obtain the authentication credential (CRED_R) and the authentication key of R from the application (or by other means).
 
@@ -1111,7 +1111,7 @@ The Responder SHALL process message_3 in the following order:
 
 * Decrypt and verify the COSE_Encrypt0 as defined in Sections 5.2 and 5.3 of {{RFC9052}}, with the EDHOC AEAD algorithm in the selected cipher suite, and the parameters defined in {{asym-msg3-proc}}.
 
-* If all processing completed successfully, then make ID_CRED_I and (if present) EAD_3 available to the application for authentication- and EAD processing.
+* If all processing completed successfully, then make ID_CRED_I and (if present) EAD_3 available to the application for authentication- and EAD processing. When and how the application performs authentication is up to the implementation.
 
 * Obtain the authentication credential (CRED_I) and the authentication key of I from the application (or by other means).
 
@@ -1119,7 +1119,7 @@ The Responder SHALL process message_3 in the following order:
 
 *  Make the connection identifiers (C_I, C_R) and the application algorithms in the selected cipher suite available to the application.
 
-After verifying message_3, the Responder can compute PRK_out, see {{prkout}}, derive application keys using the EDHOC_Exporter interface, see {{exporter}}, persistently store the keying material, and send protected application data.
+After verifying message_3, the Responder can compute PRK_out, see {{prkout}}, and derive application keys using the EDHOC_Exporter interface, see {{exporter}}. The Responder SHOULD NOT persistently store PRK_out or application keys until the application has authenticated the Initiator.
 
 If any processing step fails, then the Responder MUST send an EDHOC error message back as defined in {{error}}, and the protocol MUST be discontinued.
 
