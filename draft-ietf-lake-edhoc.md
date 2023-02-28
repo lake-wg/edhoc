@@ -847,6 +847,7 @@ MAC_3         = EDHOC_KDF( PRK_4e3m, 6, context_3, mac_length_3 )
 PRK_out       = EDHOC_KDF( PRK_4e3m, 7, TH_4,      hash_length )
 K_4           = EDHOC_KDF( PRK_4e3m, 8, TH_4,      key_length )
 IV_4          = EDHOC_KDF( PRK_4e3m, 9, TH_4,      iv_length )
+PRK_exporter  = EDHOC_KDF( PRK_out, 10, h'',       hash_length )
 ~~~~~~~~~~~~~~~~~~~~~~~
 {: #fig-edhoc-kdf title="Key derivations using EDHOC_KDF."}
 {: artwork-align="center"}
@@ -874,13 +875,6 @@ where
 * exporter_label is a registered uint from the EDHOC_Exporter Label registry ({{exporter-label}})
 * context is a bstr defined by the application
 * length is a uint defined by the application
-* PRK_exporter is derived from PRK_out:
-
-~~~~~~~~~~~~~~~~~~~~~~~
-PRK_exporter  = EDHOC_KDF( PRK_out, 10, h'', hash_length )
-~~~~~~~~~~~~~~~~~~~~~~~
-
-where hash_length denotes the output size in bytes of the EDHOC hash algorithm of the selected cipher suite.
 
 The (exporter_label, context) pair used in EDHOC_Exporter must be unique, i.e., an (exporter_label, context) MUST NOT be used for two different purposes. However an application can re-derive the same key several times as long as it is done in a secure way. For example, in most encryption algorithms the same key can be reused with different nonces. The context can for example be the empty CBOR byte string.
 
@@ -1000,7 +994,7 @@ The Responder SHALL compose message_2 as follows:
 * Compute the transcript hash TH_2 = H( G_Y, C_R, H(message_1) ) where H() is the EDHOC hash algorithm of the selected cipher suite. The input to the hash function is a CBOR Sequence. Note that H(message_1) can be computed and cached already in the processing of message_1.
 
 * Compute MAC_2 as in {{expand}} with context_2 = << ID_CRED_R, TH_2, CRED_R, ? EAD_2 >> (see {{CBOR}} for notation)
-   * If the Responder authenticates with a static Diffie-Hellman key (method equals 1 or 3), then mac_length_2 is the EDHOC MAC length of the selected cipher suite. If the Responder authenticates with a signature key (method equals 0 or 2), then mac_length_2 is equal to the output size of the EDHOC hash algorithm of the selected cipher suite.
+   * If the Responder authenticates with a static Diffie-Hellman key (method equals 1 or 3), then mac_length_2 is the EDHOC MAC length of the selected cipher suite. If the Responder authenticates with a signature key (method equals 0 or 2), then mac_length_2 is equal to hash_length.
     * ID_CRED_R - identifier to facilitate the retrieval of CRED_R, see {{id_cred}}
     * CRED_R - CBOR item containing the authentication credential of the Responder, see {{auth-cred}}
     * EAD_2 - external authorization data, see {{AD}}
@@ -1064,7 +1058,7 @@ The Initiator SHALL compose message_3 as follows:
 * Compute the transcript hash TH_3 = H(TH_2, PLAINTEXT_2, CRED_R) where H() is the EDHOC hash algorithm of the selected cipher suite. The input to the hash function is a CBOR Sequence. Note that TH_3 can be computed and cached already in the processing of message_2.
 
 * Compute MAC_3 as in {{expand}}, with context_3 = << ID_CRED_I, TH_3, CRED_I, ? EAD_3 >>
-    * If the Initiator authenticates with a static Diffie-Hellman key (method equals 2 or 3), then mac_length_3 is the EDHOC MAC length of the selected cipher suite.  If the Initiator authenticates with a signature key (method equals 0 or 1), then mac_length_3 is equal to the output size of the EDHOC hash algorithm of the selected cipher suite.
+    * If the Initiator authenticates with a static Diffie-Hellman key (method equals 2 or 3), then mac_length_3 is the EDHOC MAC length of the selected cipher suite.  If the Initiator authenticates with a signature key (method equals 0 or 1), then mac_length_3 is equal to hash_length.
     * ID_CRED_I - identifier to facilitate the retrieval of CRED_I, see {{id_cred}}
     * CRED_I - CBOR item containing the authentication credential of the Initiator, see {{auth-cred}}
     * EAD_3 - external authorization data, see {{AD}}
