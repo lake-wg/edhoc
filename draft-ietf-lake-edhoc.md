@@ -1035,7 +1035,7 @@ The Initiator SHALL process message_2 in the following order:
 
 * Decrypt CIPHERTEXT_2, see {{asym-msg2-proc}}.
 
-* If all processing completed successfully, then make ID_CRED_R and (if present) EAD_2 available to the application for authentication- and EAD processing. When and how the application performs authentication is up to the implementation.
+* If all processing completed successfully, then make ID_CRED_R and (if present) EAD_2 available to the application for authentication- and EAD processing. When and how to perform authentication is up to the application.
 
 * Obtain the authentication credential (CRED_R) and the authentication key of R from the application (or by other means).
 
@@ -1110,7 +1110,7 @@ The Responder SHALL process message_3 in the following order:
 
 * Decrypt and verify the COSE_Encrypt0 as defined in Sections 5.2 and 5.3 of {{RFC9052}}, with the EDHOC AEAD algorithm in the selected cipher suite, and the parameters defined in {{asym-msg3-proc}}.
 
-* If all processing completed successfully, then make ID_CRED_I and (if present) EAD_3 available to the application for authentication- and EAD processing. When and how the application performs authentication is up to the implementation.
+* If all processing completed successfully, then make ID_CRED_I and (if present) EAD_3 available to the application for authentication- and EAD processing. When and how to perform authentication is up to the application.
 
 * Obtain the authentication credential (CRED_I) and the authentication key of I from the application (or by other means).
 
@@ -1180,7 +1180,7 @@ After verifying message_4, the Initiator is assured that the Responder has calcu
 
 This section defines the format for error messages, and the processing associated with the currently defined error codes. Additional error codes may be registered, see {{error-code-reg}}.
 
-There are many kinds of errors that can occur during EDHOC processing. As in CoAP, an error can be triggered by errors in the received message or internal errors in the receiving endpoint. Except for processing and formatting errors, it is up to the implementation when to send an error message. Sending error messages is essential for debugging but MAY be skipped if, for example, a session cannot be found or due to denial-of-service reasons, see {{dos}}. Error messages in EDHOC are always fatal. After sending an error message, the sender MUST discontinue the protocol. The receiver SHOULD treat an error message as an indication that the other party likely has discontinued the protocol. But as the error message is not authenticated, a received error message might also have been sent by an attacker and the receiver MAY therefore try to continue the protocol.
+There are many kinds of errors that can occur during EDHOC processing. As in CoAP, an error can be triggered by errors in the received message or internal errors in the receiving endpoint. Except for processing and formatting errors, it is up to the application when to send an error message. Sending error messages is essential for debugging but MAY be skipped if, for example, a session cannot be found or due to denial-of-service reasons, see {{dos}}. Error messages in EDHOC are always fatal. After sending an error message, the sender MUST discontinue the protocol. The receiver SHOULD treat an error message as an indication that the other party likely has discontinued the protocol. But as the error message is not authenticated, a received error message might also have been sent by an attacker and the receiver MAY therefore try to continue the protocol.
 
 
 An EDHOC error message can be sent by either endpoint as a reply to any non-error EDHOC message. How errors at the EDHOC layer are transported depends on lower layers, which need to enable error messages to be sent and processed as intended.
