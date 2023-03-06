@@ -353,7 +353,7 @@ In order to create a "full-fledged" protocol some additional protocol elements a
 
 * Transport of external authorization data.
 
-EDHOC is designed to encrypt and integrity protect as much information as possible. Symmetric keys and random material derived using EDHOC_KDF are derived with as much previous information as possible, see {{fig-edhoc-kdf}}. EDHOC is furthermore designed to be as compact and lightweight as possible, in terms of message sizes, processing, and the ability to reuse already existing CBOR, COSE, and CoAP libraries. Like in (D)TLS, authentication is the responsibility of the application. EDHOC identifies (and optionally transports) authentication credentials, and provides proof-of-possession of the private authentication key.
+EDHOC is designed to encrypt and integrity protect as much information as possible. Symmetric keys and random material used in EDHOC are derived using EDHOC_KDF with as much previous information as possible, see {{fig-edhoc-kdf}}. EDHOC is furthermore designed to be as compact and lightweight as possible, in terms of message sizes, processing, and the ability to reuse already existing CBOR, COSE, and CoAP libraries. Like in (D)TLS, authentication is the responsibility of the application. EDHOC identifies (and optionally transports) authentication credentials, and provides proof-of-possession of the private authentication key.
 
 To simplify for implementors, the use of CBOR and COSE in EDHOC is summarized in {{CBORandCOSE}}. Test vectors including CBOR diagnostic notation are provided in {{I-D.ietf-lake-traces}}.
 
@@ -826,7 +826,7 @@ The definition of EDHOC_Expand depends on the EDHOC hash algorithm of the select
 
 where L = 8 {{{⋅}}} length, the output length in bits.
 
-{{fig-edhoc-kdf}} lists derivations made with EDHOC_KDF during message processing, where
+{{fig-edhoc-kdf}} lists derivations made with EDHOC_KDF, where
 
 * hash_length - length of output size of the EDHOC hash algorithm of the selected cipher suite
 
@@ -854,13 +854,13 @@ PRK_exporter  = EDHOC_KDF( PRK_out, 10, h'',       hash_length )
 
 ### PRK_out {#prkout}
 
- The pseudorandom key PRK_out, derived as shown in {{fig-edhoc-kdf}} is the output session key of a successful EDHOC exchange.
+ The pseudorandom key PRK_out, derived as shown in {{fig-edhoc-kdf}}, is the output session key of a successful EDHOC exchange.
 
- Keys for applications are derived using EDHOC_Exporter from PRK_exporter (see {{exporter}}) which in turn is derived from PRK_out. For the purpose of generating application keys, it is sufficient to store PRK_out or PRK_exporter. (Note that the word "store" used here does not imply that the application has access to the plaintext PRK_out since that may be reserved for code within a Trusted Execution Environment, see {{impl-cons}}).
+ Keys for applications are derived using EDHOC_Exporter (see {{exporter}}) from PRK_exporter, which in turn is derived from PRK_out as shown in {{fig-edhoc-kdf}}. For the purpose of generating application keys, it is sufficient to store PRK_out or PRK_exporter. (Note that the word "store" used here does not imply that the application has access to the plaintext PRK_out since that may be reserved for code within a Trusted Execution Environment, see {{impl-cons}}).
 
 ## Keys for EDHOC Applications
 
-This section defines EDHOC_Exporter in terms of EDHOC_KDF and PRK_out. A key update function is defined in {{keyupdate}}.
+This section defines EDHOC_Exporter in terms of EDHOC_KDF and PRK_exporter. A key update function is defined in {{keyupdate}}.
 
 ### EDHOC_Exporter {#exporter}
 
