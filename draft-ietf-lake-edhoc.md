@@ -2798,6 +2798,7 @@ The authors want to thank
 {{{Michael Scharf}}},
 {{{Carsten Schürmann}}},
 {{{Ludwig Seitz}}},
+{{{Brian Sipos}}},
 {{{Stanislav Smyshlyaev}}},
 {{{Valery Smyslov}}},
 {{{Peter van der Stok}}},
