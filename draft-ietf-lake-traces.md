@@ -1208,9 +1208,9 @@ cf aa 94 87 37 c8 c7 5f 54 2a fb 6a 07 df da 67 3e 78 a1 04 ca cb d9
 ~~~~~~~~
 
 
-The OSCORE Master Secret and OSCORE Master Salt are derived with the EDHOC-Exporter as specified in 4.2.1 of {{I-D.ietf-lake-edhoc}}.
+The OSCORE Master Secret and OSCORE Master Salt are derived with the EDHOC_Exporter as specified in 4.2.1 of {{I-D.ietf-lake-edhoc}}.
 
-    EDHOC-Exporter( label, context, length )
+    EDHOC_Exporter( label, context, length )
     = EDHOC_KDF( PRK_exporter, label, context, length )
 
 where PRK_exporter is derived from PRK_out:
@@ -1278,7 +1278,7 @@ Server's OSCORE Sender ID (Raw Value) (1 byte)
 The OSCORE Master Secret is computed through EDHOC_Expand() using the
 Application hash algorithm, see Appendix A.1 of {{I-D.ietf-lake-edhoc}}:
 
-    OSCORE Master Secret = EDHOC-Exporter( 0, h'', oscore_key_length )
+    OSCORE Master Secret = EDHOC_Exporter( 0, h'', oscore_key_length )
     = EDHOC_KDF( PRK_exporter, 0, h'',  oscore_key_length )
     = HKDF-Expand( PRK_exporter, info,  oscore_key_length )
 
@@ -1308,7 +1308,7 @@ OSCORE Master Secret (Raw Value) (16 bytes)
 
 The OSCORE Master Salt is computed through EDHOC_Expand() using the Application hash algorithm, see {{Section 4.2 of I-D.ietf-lake-edhoc}}:
 
-    OSCORE Master Salt = EDHOC-Exporter( 1, h'', oscore_salt_length )
+    OSCORE Master Salt = EDHOC_Exporter( 1, h'', oscore_salt_length )
     = EDHOC_KDF( PRK_exporter, 1, h'', oscore_salt_length )
     = HKDF-Expand( PRK_4x3m, info, oscore_salt_length )
 
@@ -1338,7 +1338,7 @@ OSCORE Master Salt (Raw Value) (8 bytes)
 
 Key update is defined in {{Section J of I-D.ietf-lake-edhoc}}.
 
-    EDHOC-KeyUpdate( context ):
+    EDHOC_KeyUpdate( context ):
     PRK_out = EDHOC_KDF( PRK_out, 11, context, hash_length )
             = HKDF-Expand( PRK_out, info, hash_length )
 
@@ -2585,9 +2585,9 @@ PRK_out (Raw Value) (32 bytes)
 ~~~~~~~~
 
 
-The OSCORE Master Secret and OSCORE Master Salt are derived with the EDHOC-Exporter as specified in 4.2.1 of {{I-D.ietf-lake-edhoc}}.
+The OSCORE Master Secret and OSCORE Master Salt are derived with the EDHOC_Exporter as specified in 4.2.1 of {{I-D.ietf-lake-edhoc}}.
 
-    EDHOC-Exporter( label, context, length )
+    EDHOC_Exporter( label, context, length )
     = EDHOC_KDF( PRK_exporter, label, context, length )
 
 where PRK_exporter is derived from PRK_out:
@@ -2658,7 +2658,7 @@ Server's OSCORE Sender ID (Raw Value) (1 byte)
 The OSCORE Master Secret is computed through EDHOC_Expand() using the
 Application hash algorithm, see Appendix A.1 of {{I-D.ietf-lake-edhoc}}:
 
-    OSCORE Master Secret = EDHOC-Exporter( 0, h'', oscore_key_length )
+    OSCORE Master Secret = EDHOC_Exporter( 0, h'', oscore_key_length )
     = EDHOC_KDF( PRK_exporter, 0, h'',  oscore_key_length )
     = HKDF-Expand( PRK_exporter, info,  oscore_key_length )
 
@@ -2688,7 +2688,7 @@ OSCORE Master Secret (Raw Value) (16 bytes)
 
 The OSCORE Master Salt is computed through EDHOC_Expand() using the Application hash algorithm, see {{Section 4.2 of I-D.ietf-lake-edhoc}}:
 
-    OSCORE Master Salt = EDHOC-Exporter( 1, h'', oscore_salt_length )
+    OSCORE Master Salt = EDHOC_Exporter( 1, h'', oscore_salt_length )
     = EDHOC_KDF( PRK_exporter, 1, h'', oscore_salt_length )
     = HKDF-Expand( PRK_4x3m, info, oscore_salt_length )
 
@@ -2720,7 +2720,7 @@ OSCORE Master Salt (Raw Value) (8 bytes)
 
 Key update is defined in {{Section J of I-D.ietf-lake-edhoc}}.
 
-    EDHOC-KeyUpdate( context ):
+    EDHOC_KeyUpdate( context ):
     PRK_out = EDHOC_KDF( PRK_out, 11, context, hash_length )
             = HKDF-Expand( PRK_out, info, hash_length )
 
