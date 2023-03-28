@@ -353,7 +353,7 @@ In order to create a "full-fledged" protocol some additional protocol elements a
 
 * Transport of external authorization data.
 
-EDHOC is designed to encrypt and integrity protect as much information as possible. Symmetric keys and random material derived using EDHOC_KDF are derived with as much previous information as possible, see {{fig-edhoc-kdf}}. EDHOC is furthermore designed to be as compact and lightweight as possible, in terms of message sizes, processing, and the ability to reuse already existing CBOR, COSE, and CoAP libraries. Like in (D)TLS, authentication is the responsibility of the application. EDHOC identifies (and optionally transports) authentication credentials, and provides proof-of-possession of the private authentication key.
+EDHOC is designed to encrypt and integrity protect as much information as possible. Symmetric keys and random material used in EDHOC are derived using EDHOC_KDF with as much previous information as possible, see {{fig-edhoc-kdf}}. EDHOC is furthermore designed to be as compact and lightweight as possible, in terms of message sizes, processing, and the ability to reuse already existing CBOR, COSE, and CoAP libraries. Like in (D)TLS, authentication is the responsibility of the application. EDHOC identifies (and optionally transports) authentication credentials, and provides proof-of-possession of the private authentication key.
 
 To simplify for implementors, the use of CBOR and COSE in EDHOC is summarized in {{CBORandCOSE}}. Test vectors including CBOR diagnostic notation are provided in {{I-D.ietf-lake-traces}}.
 
@@ -826,7 +826,7 @@ The definition of EDHOC_Expand depends on the EDHOC hash algorithm of the select
 
 where L = 8 {{{⋅}}} length, the output length in bits.
 
-{{fig-edhoc-kdf}} lists derivations made with EDHOC_KDF during message processing, where
+{{fig-edhoc-kdf}} lists derivations made with EDHOC_KDF, where
 
 * hash_length - length of output size of the EDHOC hash algorithm of the selected cipher suite
 
@@ -847,19 +847,20 @@ MAC_3         = EDHOC_KDF( PRK_4e3m, 6, context_3, mac_length_3 )
 PRK_out       = EDHOC_KDF( PRK_4e3m, 7, TH_4,      hash_length )
 K_4           = EDHOC_KDF( PRK_4e3m, 8, TH_4,      key_length )
 IV_4          = EDHOC_KDF( PRK_4e3m, 9, TH_4,      iv_length )
+PRK_exporter  = EDHOC_KDF( PRK_out, 10, h'',       hash_length )
 ~~~~~~~~~~~~~~~~~~~~~~~
 {: #fig-edhoc-kdf title="Key derivations using EDHOC_KDF."}
 {: artwork-align="center"}
 
 ### PRK_out {#prkout}
 
- The pseudorandom key PRK_out, derived as shown in {{fig-edhoc-kdf}} is the output session key of a successful EDHOC exchange.
+ The pseudorandom key PRK_out, derived as shown in {{fig-edhoc-kdf}}, is the output session key of a successful EDHOC exchange.
 
- Keys for applications are derived using EDHOC_Exporter from PRK_exporter (see {{exporter}}) which in turn is derived from PRK_out. For the purpose of generating application keys, it is sufficient to store PRK_out or PRK_exporter. (Note that the word "store" used here does not imply that the application has access to the plaintext PRK_out since that may be reserved for code within a Trusted Execution Environment, see {{impl-cons}}).
+ Keys for applications are derived using EDHOC_Exporter (see {{exporter}}) from PRK_exporter, which in turn is derived from PRK_out as shown in {{fig-edhoc-kdf}}. For the purpose of generating application keys, it is sufficient to store PRK_out or PRK_exporter. (Note that the word "store" used here does not imply that the application has access to the plaintext PRK_out since that may be reserved for code within a Trusted Execution Environment, see {{impl-cons}}).
 
 ## Keys for EDHOC Applications
 
-This section defines EDHOC_Exporter in terms of EDHOC_KDF and PRK_out. A key update function is defined in {{keyupdate}}.
+This section defines EDHOC_Exporter in terms of EDHOC_KDF and PRK_exporter. A key update function is defined in {{keyupdate}}.
 
 ### EDHOC_Exporter {#exporter}
 
@@ -874,13 +875,6 @@ where
 * exporter_label is a registered uint from the EDHOC_Exporter Label registry ({{exporter-label}})
 * context is a bstr defined by the application
 * length is a uint defined by the application
-* PRK_exporter is derived from PRK_out:
-
-~~~~~~~~~~~~~~~~~~~~~~~
-PRK_exporter  = EDHOC_KDF( PRK_out, 10, h'', hash_length )
-~~~~~~~~~~~~~~~~~~~~~~~
-
-where hash_length denotes the output size in bytes of the EDHOC hash algorithm of the selected cipher suite.
 
 The (exporter_label, context) pair used in EDHOC_Exporter must be unique, i.e., an (exporter_label, context) MUST NOT be used for two different purposes. However an application can re-derive the same key several times as long as it is done in a secure way. For example, in most encryption algorithms the same key can be reused with different nonces. The context can for example be the empty CBOR byte string.
 
@@ -1000,7 +994,7 @@ The Responder SHALL compose message_2 as follows:
 * Compute the transcript hash TH_2 = H( G_Y, C_R, H(message_1) ) where H() is the EDHOC hash algorithm of the selected cipher suite. The input to the hash function is a CBOR Sequence. Note that H(message_1) can be computed and cached already in the processing of message_1.
 
 * Compute MAC_2 as in {{expand}} with context_2 = << ID_CRED_R, TH_2, CRED_R, ? EAD_2 >> (see {{CBOR}} for notation)
-   * If the Responder authenticates with a static Diffie-Hellman key (method equals 1 or 3), then mac_length_2 is the EDHOC MAC length of the selected cipher suite. If the Responder authenticates with a signature key (method equals 0 or 2), then mac_length_2 is equal to the output size of the EDHOC hash algorithm of the selected cipher suite.
+   * If the Responder authenticates with a static Diffie-Hellman key (method equals 1 or 3), then mac_length_2 is the EDHOC MAC length of the selected cipher suite. If the Responder authenticates with a signature key (method equals 0 or 2), then mac_length_2 is equal to hash_length.
     * ID_CRED_R - identifier to facilitate the retrieval of CRED_R, see {{id_cred}}
     * CRED_R - CBOR item containing the authentication credential of the Responder, see {{auth-cred}}
     * EAD_2 - external authorization data, see {{AD}}
@@ -1064,7 +1058,7 @@ The Initiator SHALL compose message_3 as follows:
 * Compute the transcript hash TH_3 = H(TH_2, PLAINTEXT_2, CRED_R) where H() is the EDHOC hash algorithm of the selected cipher suite. The input to the hash function is a CBOR Sequence. Note that TH_3 can be computed and cached already in the processing of message_2.
 
 * Compute MAC_3 as in {{expand}}, with context_3 = << ID_CRED_I, TH_3, CRED_I, ? EAD_3 >>
-    * If the Initiator authenticates with a static Diffie-Hellman key (method equals 2 or 3), then mac_length_3 is the EDHOC MAC length of the selected cipher suite.  If the Initiator authenticates with a signature key (method equals 0 or 1), then mac_length_3 is equal to the output size of the EDHOC hash algorithm of the selected cipher suite.
+    * If the Initiator authenticates with a static Diffie-Hellman key (method equals 2 or 3), then mac_length_3 is the EDHOC MAC length of the selected cipher suite.  If the Initiator authenticates with a signature key (method equals 0 or 1), then mac_length_3 is equal to hash_length.
     * ID_CRED_I - identifier to facilitate the retrieval of CRED_I, see {{id_cred}}
     * CRED_I - CBOR item containing the authentication credential of the Initiator, see {{auth-cred}}
     * EAD_3 - external authorization data, see {{AD}}
