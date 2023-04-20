@@ -1632,7 +1632,7 @@ G_X (Raw Value) (32 bytes)
 96 c1 b7 c8 db ca 2f c3 b6
 ~~~~~~~~
 ~~~~~~~~
-Initiator's ephemeral public key, 'y'-coordinate
+Initiator's ephemeral public key, one 'y'-coordinate
 (Raw Value) (32 bytes)
 51 e8 af 6c 6e db 78 16 01 ad 1d 9c 5f a8 bf 7a a1 57 16 c7 c0 6a 5d
 03 85 03 c6 14 ff 80 c9 b3
@@ -1699,7 +1699,7 @@ G_Y (Raw Value) (32 bytes)
 8e a0 f9 55 a1 3a 4f f5 d5
 ~~~~~~~~
 ~~~~~~~~
-Responder's ephemeral public key, 'y'-coordinate
+Responder's ephemeral public key, one 'y'-coordinate
 (Raw Value) (32 bytes)
 5e 4f 0d d8 a3 da 0b aa 16 b9 d3 ad 56 a0 c1 86 0a 94 0a f8 59 14 91
 5e 25 01 9b 40 24 17 e9 9d
@@ -1791,7 +1791,7 @@ e0 1f a1 4d d5 6e 30 82 67 a1 a8 12 a9 d0 b9 53 41 e3 94 ab c7 c5 c3
 
 Since METHOD = 3, R authenticates using static DH. The EDHOC key exchange algorithm is based on the same curve as for the ephemeral keys, which is P-256, since the selected cipher suite is 2.
 
-R's static Diffie-Hellman key pair for use with P-256:
+R's static Diffie-Hellman P-256 key pair:
 
 ~~~~~~~~
 Responder's private authentication key
@@ -1802,7 +1802,7 @@ e2 f1 40 dc f3 e6 aa 4a ac
 
 ~~~~~~~~
 Responder's public authentication key, 'x'-coordinate
-PK_R (Raw Value) (32 bytes)
+(Raw Value) (32 bytes)
 bb c3 49 60 52 6e a4 d3 2e 94 0c ad 2a 23 41 48 dd c2 17 91 a1 2a fb
 cb ac 93 62 20 46 dd 44 f0
 ~~~~~~~~
@@ -2101,7 +2101,7 @@ TH_3 (CBOR Data Item) (34 bytes)
 
 Since METHOD = 3, I authenticates using static DH. The EDHOC key exchange algorithm is based on the same curve as for the ephemeral keys, which is P-256, since the selected cipher suite is 2.
 
-I's static Diffie-Hellman key pair for use with P-256:
+I's static Diffie-Hellman P-256 key pair:
 
 ~~~~~~~~
 Initiator's private authentication key
@@ -2112,7 +2112,7 @@ a9 53 40 6a 13 05 e8 70 6b
 
 ~~~~~~~~
 Initiator's public authentication key, 'x'-coordinate
-PK_I (Raw Value) (32 bytes)
+(Raw Value) (32 bytes)
 ac 75 e9 ec e3 e5 0b fc 8e d6 03 99 88 95 22 40 5c 47 bf 16 df 96 66
 0a 41 29 8c b4 30 7f 7e b6
 ~~~~~~~~
