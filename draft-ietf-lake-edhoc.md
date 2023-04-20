@@ -1214,10 +1214,10 @@ The remainder of this section specifies the currently defined error codes, see {
 +----------+---------------+----------------------------------------+
 |        2 | suites        | Wrong selected cipher suite            |
 +----------+---------------+----------------------------------------+
-|        3 |               | Unknown credential referenced          |
+|        3 | true          | Unknown credential referenced          |
 +----------+---------------+----------------------------------------+
 ~~~~~~~~~~~
-{: #fig-error-codes title="Error codes and error information included in the EDHOC error message."}
+{: #fig-error-codes title="EDHOC error codes and error information."}
 
 
 
@@ -1298,7 +1298,7 @@ Error code 3 is used for errors due to a received credential identifier (ID_CRED
 
 For example, an application profile could list x5t and x5chain as supported credential identifiers, and state that x5t should be used if it can be assumed that the X.509 certificate chain is available at the receiving side. This error code thus enables the certificate chain to be sent only when needed, bearing in mind that error messages are not protected so an adversary can try to cause unnecessary large credential identifiers.
 
-Error code 3 MUST NOT be used when the received credential identifier type is not supported.
+For the error code 3, the error information SHALL be the CBOR simple value `true` (0xf5). Error code 3 MUST NOT be used when the received credential identifier type is not supported.
 
 # Compliance Requirements {#mti}
 
