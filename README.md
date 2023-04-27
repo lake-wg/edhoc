@@ -7,8 +7,12 @@ This is the working area for the Internet-Draft, "Ephemeral Diffie-Hellman Over 
 * [Editor's Copy HTML](https://lake-wg.github.io/edhoc/#go.draft-ietf-lake-edhoc.html)
 * [Editor's Copy Text](https://lake-wg.github.io/edhoc/#go.draft-ietf-lake-edhoc.txt)
 * [Datatracker Page](https://datatracker.ietf.org/doc/draft-ietf-lake-edhoc)
-* [Individual Draft](https://datatracker.ietf.org/doc/html/draft-ietf-lake-edhoc)
+* [Working Group Draft](https://datatracker.ietf.org/doc/html/draft-ietf-lake-edhoc)
 * [Compare Editor's Copy to Individual Draft](https://lake-wg.github.io/edhoc/#go.draft-ietf-lake-edhoc.diff)
+
+This is the working area for the Internet-Draft, "Traces of EDHOC".
+
+* [Editor's Copy HTML](https://lake-wg.github.io/edhoc/#go.draft-ietf-lake-traces.html)
 
 ## Building the Draft
 
