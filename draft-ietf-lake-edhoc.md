@@ -1208,8 +1208,10 @@ The remainder of this section specifies the currently defined error codes, see {
 +----------+---------------+----------------------------------------+
 |        2 | suites        | Wrong selected cipher suite            |
 +----------+---------------+----------------------------------------+
+|        3 | true          | Unknown credential referenced          |
++----------+---------------+----------------------------------------+
 ~~~~~~~~~~~
-{: #fig-error-codes title="Error codes and error information included in the EDHOC error message."}
+{: #fig-error-codes title="EDHOC error codes and error information."}
 
 
 
@@ -1282,6 +1284,15 @@ Initiator                                                   Responder
 ~~~~~~~~~~~
 {: #fig-error2 title="Cipher Suite Negotiation Example 2."}
 {: artwork-align="center"}
+
+
+## Unknown Credential Referenced
+
+Error code 3 is used for errors due to a received credential identifier (ID_CRED_R in message_2 or ID_CRED_I message_3) containing a reference to a credential which the receiving endpoint does not have access to. The intent with this error code is that the endpoint who sent the credential identifier should for the next EDHOC session try another credential identifier supported according to the application profile.
+
+For example, an application profile could list x5t and x5chain as supported credential identifiers, and state that x5t should be used if it can be assumed that the X.509 certificate is available at the receiving side. This error code thus enables the certificate chain to be sent only when needed, bearing in mind that error messages are not protected so an adversary can try to cause unnecessary large credential identifiers.
+
+For the error code 3, the error information SHALL be the CBOR simple value `true` (0xf5). Error code 3 MUST NOT be used when the received credential identifier type is not supported.
 
 # Compliance Requirements {#mti}
 
@@ -2782,6 +2793,7 @@ The authors want to thank
 {{{Michael Scharf}}},
 {{{Carsten Schürmann}}},
 {{{Ludwig Seitz}}},
+{{{Brian Sipos}}},
 {{{Stanislav Smyshlyaev}}},
 {{{Valery Smyslov}}},
 {{{Peter van der Stok}}},
