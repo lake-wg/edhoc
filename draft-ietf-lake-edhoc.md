@@ -1294,7 +1294,7 @@ Initiator                                                   Responder
 
 ## Unknown Credential Referenced
 
-Error code 3 is used for errors due to a received credential identifier (ID_CRED_I in message_2 or ID_CRED_R message_3) containing a reference to a credential which the receiving endpoint does not have access to. The intent with this error code is that the endpoint who sent the credential identifier should for the next EDHOC session try another credential identifier supported according to the application profile explaining the progression of different credential identifiers to attempt.
+Error code 3 is used for errors due to a received credential identifier (ID_CRED_R in message_2 or ID_CRED_I message_3) containing a reference to a credential which the receiving endpoint does not have access to. The intent with this error code is that the endpoint who sent the credential identifier should for the next EDHOC session try another credential identifier supported according to the application profile explaining the progression of different credential identifiers to attempt.
 
 For example, an application profile could list x5t and x5chain as supported credential identifiers, and state that x5t should be used if it can be assumed that the X.509 certificate chain is available at the receiving side. This error code thus enables the certificate chain to be sent only when needed, bearing in mind that error messages are not protected so an adversary can try to cause unnecessary large credential identifiers.
 
