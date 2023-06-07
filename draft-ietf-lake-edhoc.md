@@ -431,7 +431,7 @@ EDHOC does not have a dedicated message field to indicate the protocol version. 
 
 EDHOC includes the selection of connection identifiers (C_I, C_R) identifying a connection for which keys are agreed.
 
-Connection identifiers may be used to correlate EDHOC messages and facilitate the retrieval of protocol state during an EDHOC session (see {{transport}}), or may be used in applications of EDHOC, e.g., in OSCORE (see {{ci-oscore}}). The connection identifiers do not have any cryptographic purpose in EDHOC except facilitating the retrieval of security data associated with the protocol state.
+Connection identifiers may be used to correlate EDHOC messages and facilitate the retrieval of protocol state during an EDHOC session (see {{transport}}), or may be used in applications of EDHOC, e.g., in OSCORE (see {{ci-oscore}}). The connection identifiers do not have any cryptographic purpose in EDHOC and only facilitate the retrieval of security data associated with the protocol state.
 
 Connection identifiers in EDHOC are intrinsically byte strings. Most constrained devices only have a few connections for which short identifiers may be sufficient. In some cases minimum length identifiers are necessary to comply with overhead requirements. However, CBOR byte strings - with the exception of the empty byte string h’’ which encodes as one byte (0x40) - are encoded as two or more bytes. To enable one-byte encoding of certain byte strings while maintaining CBOR encoding, EDHOC represents certain identifiers as CBOR integers on the wire, see {{bstr-repr}}.
 
@@ -488,7 +488,7 @@ Cryptographically, EDHOC does not put requirements on the lower layers. EDHOC is
 * message duplication,
 * flow control,
 * fragmentation and reassembly,
-* demultiplex EDHOC messages from other types of messages,
+* demultiplexing EDHOC messages from other types of messages,
 * denial-of-service protection,
 * message correlation, see {{ci-edhoc}}.
 
@@ -768,7 +768,7 @@ The pseudorandom key PRK_2e is derived with the following input:
 
 * The salt SHALL be TH_2.
 
-* The IKM SHALL be the ephemeral-ephemeral ECDH shared secret G_XY (calculated from G_X and Y or G_Y and X) as defined in Section 6.3.1 of {{RFC9053}}. The use of G_XY gives forward secrecy, in the sense that compromise of the private authentication keys does not compromise past session keys.
+* The IKM SHALL be the ephemeral-ephemeral ECDH shared secret G_XY (calculated from G_X and Y or G_Y and X) as defined in {{Section 6.3.1 of RFC9053}}. The use of G_XY gives forward secrecy, in the sense that compromise of the private authentication keys does not compromise past session keys.
 
 Example: Assuming the use of curve25519, the ECDH shared secret G_XY is the output of the X25519 function {{RFC7748}}:
 
@@ -905,9 +905,7 @@ Additional optimizations are made to reduce message overhead.
 
 While EDHOC uses the COSE_Key, COSE_Sign1, and COSE_Encrypt0 structures, only a subset of the parameters is included in the EDHOC messages, see {{COSE}}. In order to recreate the COSE object, the recipient endpoint may need to add parameters to the COSE headers not included in the EDHOC message, for example the parameter 'alg' to COSE_Sign1 or COSE_Encrypt0.
 
-## Message Processing Outline {#proc-outline}
-
-This section outlines the message processing of EDHOC.
+## EDHOC Message Processing Outline {#proc-outline}
 
 For each new/ongoing EDHOC session, the endpoints are assumed to keep an associated protocol state containing identifiers, keying material, etc. used for subsequent processing of protocol related data. The protocol state is assumed to be associated with an application profile ({{applicability}}) which provides the context for how messages are transported, identified, and processed.
 
@@ -1335,7 +1333,7 @@ Compared to {{SIGMA}}, EDHOC adds an explicit method type and expands the messag
 
 EDHOC also adds selection of connection identifiers and downgrade protected negotiation of cryptographic parameters, i.e., an attacker cannot affect the negotiated parameters. A single session of EDHOC does not include negotiation of cipher suites, but it enables the Responder to verify that the selected cipher suite is the most preferred cipher suite by the Initiator which is supported by both the Initiator and the Responder, and to discontinue the session if not.
 
-As required by {{RFC7258}}, IETF protocols need to mitigate pervasive monitoring when possible. EDHOC therefore only supports methods with ephemeral Diffie-Hellman and provides a key update function (see {{keyupdate}}) for lightweight application protocol rekeying. Either of these provides forward secrecy, in the sense that compromise of the private authentication keys does not compromise past session keys (PRK_out), and compromise of a session key does not compromise past session keys. Frequently re-running EDHOC with ephemeral Diffie-Hellman forces attackers to perform dynamic key exfiltration where the attacker must have continuous interactions with the collaborator, which is a significant complication.
+As required by {{RFC7258}}, IETF protocols need to mitigate pervasive monitoring when possible. EDHOC therefore only supports methods with ephemeral Diffie-Hellman and provides a key update function (see {{keyupdate}}) for lightweight application protocol rekeying. Either of these provides forward secrecy, in the sense that compromise of the private authentication keys does not compromise past session keys (PRK_out), and compromise of a session key does not compromise past session keys. Frequently re-running EDHOC with ephemeral Diffie-Hellman forces attackers to perform dynamic key exfiltration where the attacker must have continuous interactions with the collaborator, which is a significant sustained attack.
 
 To limit the effect of breaches, it is important to limit the use of symmetric group keys for bootstrapping. EDHOC therefore strives to make the additional cost of using raw public keys and self-signed certificates as small as possible. Raw public keys and self-signed certificates are not a replacement for a public key infrastructure but SHOULD be used instead of symmetric group keys for bootstrapping.
 
