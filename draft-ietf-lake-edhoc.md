@@ -67,7 +67,7 @@ normative:
   RFC9052:
   RFC9053:
   RFC9175:
-  I-D.ietf-cose-x509:
+  RFC9360:
 
 informative:
 
@@ -114,6 +114,20 @@ informative:
         ins: A. Vassilev
       -
         ins: R. Davis
+    date: April 2018
+
+  SP800-185:
+    target: https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-185
+    title: SHA-3 Derived Functions: cSHAKE, KMAC, TupleHash and ParallelHash
+      "NIST": "NIST Special Publication 800-185"
+    author:
+      -
+        ins: John Kelsey
+      -
+        ins: Shu-jen Chang
+      -
+        ins: Ray Perlner
+
     date: April 2018
 
   Degabriele11:
@@ -273,7 +287,7 @@ A typical setting is when one of the endpoints is constrained or in a constraine
 
 ## Message Size Examples
 
-Examples of EDHOC message sizes are shown in {{fig-sizes}}, using different kinds of authentication keys and COSE header parameters for identification: static Diffie-Hellman keys or signature keys, either in CBOR Web Token (CWT) / CWT Claims Set (CCS) {{RFC8392}} identified by a key identifier using 'kid' {{RFC9052}}, or in X.509 certificates identified by a hash value using 'x5t' {{I-D.ietf-cose-x509}}. As a comparison, in the case of RPK authentication, the EDHOC message size when transferred in CoAP can be less than 1/7 of the DTLS 1.3 handshake {{RFC9147}} with ECDHE and connection ID, see Section 2 of {{I-D.ietf-lwig-security-protocol-comparison}}.
+Examples of EDHOC message sizes are shown in {{fig-sizes}}, using different kinds of authentication keys and COSE header parameters for identification: static Diffie-Hellman keys or signature keys, either in CBOR Web Token (CWT) / CWT Claims Set (CCS) {{RFC8392}} identified by a key identifier using 'kid' {{RFC9052}}, or in X.509 certificates identified by a hash value using 'x5t' {{RFC9360}}. As a comparison, in the case of RPK authentication, the EDHOC message size when transferred in CoAP can be less than 1/7 of the DTLS 1.3 handshake {{RFC9147}} with ECDHE and connection ID, see Section 2 of {{I-D.ietf-lwig-security-protocol-comparison}}.
 
 ~~~~~~~~~~~~~~~~~~~~~~~ aasvg
 ----------------------------------------------------------
@@ -534,7 +548,7 @@ Since CRED_R is used in the integrity verification, see {{asym-msg2-proc}}, it n
 
 It is RECOMMENDED that the COSE 'kid' parameter, when used to identify the authentication credential, refers to a specific encoding. The Initiator and Responder SHOULD use an available authentication credential (transported in EDHOC or otherwise provisioned) without re-encoding. If for some reason re-encoding of the authentication credential may occur, then a potential common encoding for CBOR based credentials is bytewise lexicographic order of their deterministic encodings as specified in Section 4.2.1 of {{RFC8949}}.
 
-* When the authentication credential is an X.509 certificate, CRED_x SHALL be the DER encoded certificate, encoded as a bstr {{I-D.ietf-cose-x509}}.
+* When the authentication credential is an X.509 certificate, CRED_x SHALL be the DER encoded certificate, encoded as a bstr {{RFC9360}}.
 * When the authentication credential is a C509 certificate, CRED_x SHALL be the C509Certificate {{I-D.ietf-cose-cbor-encoded-cert}}.
 * When the authentication credential is a CWT including a COSE_Key, CRED_x SHALL be the untagged CWT.
 * When the authentication credential includes a COSE_Key but is not in a CWT, CRED_x SHALL be an untagged CCS. This is how RPKs are encoded, see {{fig-ccs}} for an example.
@@ -569,11 +583,11 @@ ID_CRED_R and ID_CRED_I are transported in message_2 and message_3, respectively
 
 ID_CRED_x may contain the authentication credential CRED_x, but for many settings it is not necessary to transport the authentication credential within EDHOC. For example, it may be pre-provisioned or acquired out-of-band over less constrained links. ID_CRED_I and ID_CRED_R do not have any cryptographic purpose in EDHOC since the authentication credentials are integrity protected.
 
-EDHOC relies on COSE for identification of credentials and supports all credential types for which COSE header parameters are defined including X.509 certificates ({{I-D.ietf-cose-x509}}), C509 certificates ({{I-D.ietf-cose-cbor-encoded-cert}}), CWT ({{cwt-header-param}}) and CWT Claims Set (CCS) ({{cwt-header-param}}).
+EDHOC relies on COSE for identification of credentials and supports all credential types for which COSE header parameters are defined including X.509 certificates ({{RFC9360}}), C509 certificates ({{I-D.ietf-cose-cbor-encoded-cert}}), CWT ({{cwt-header-param}}) and CWT Claims Set (CCS) ({{cwt-header-param}}).
 
 ID_CRED_I and ID_CRED_R are of type COSE header_map, as defined in Section 3 of {{RFC9052}}, and contains one or more COSE header parameters. ID_CRED_I and ID_CRED_R MAY contain different header parameters. The header parameters typically provide some information about the format of the credential.
 
-Example: X.509 certificates can be identified by a hash value using the 'x5t' parameter, see Section 2 of {{I-D.ietf-cose-x509}}:
+Example: X.509 certificates can be identified by a hash value using the 'x5t' parameter, see Section 2 of {{RFC9360}}:
 
 * ID_CRED_x = { 34 : COSE_CertHash }, for x = I or R,
 
@@ -581,7 +595,7 @@ Example: CWT or CCS can be identified by a key identifier using the 'kid' parame
 
 * ID_CRED_x = { 4 : kid_x }, where kid_x : kid, for x = I or R.
 
-Note that COSE header parameters in ID_CRED_x are used to identify the message sender's credential. There is therefore no reason to use the "-sender" header parameters, such as x5t-sender, defined in Section 3 of {{I-D.ietf-cose-x509}}. Instead, the corresponding parameter without "-sender", such as x5t, SHOULD be used.
+Note that COSE header parameters in ID_CRED_x are used to identify the message sender's credential. There is therefore no reason to use the "-sender" header parameters, such as x5t-sender, defined in Section 3 of {{RFC9360}}. Instead, the corresponding parameter without "-sender", such as x5t, SHOULD be used.
 
 As stated in Section 3.1 of {{RFC9052}}, applications MUST NOT assume that 'kid' values are unique and several keys associated with a 'kid' may need to be checked before the correct one is found. Applications might use additional information such as 'kid context' or lower layers to determine which key to try first. Applications should strive to make ID_CRED_x as unique as possible, since the recipient may otherwise have to try several keys.
 
@@ -743,6 +757,8 @@ The definition of EDHOC_Extract depends on the EDHOC hash algorithm of the selec
 * if the EDHOC hash algorithm is SHA-2, then EDHOC_Extract( salt, IKM ) = HKDF-Extract( salt, IKM ) {{RFC5869}}
 * if the EDHOC hash algorithm is SHAKE128, then EDHOC_Extract( salt, IKM ) = KMAC128( salt, IKM, 256, "" )
 * if the EDHOC hash algorithm is SHAKE256, then EDHOC_Extract( salt, IKM ) = KMAC256( salt, IKM, 512, "" )
+
+where the Keccak message authentication code (KMAC) is specified in {{SP800-185}}.
 
 The rest of the section defines the pseudorandom keys PRK_2e, PRK_3e2m and PRK_4e3m; their use is shown in {{fig-edhoc-kdf}}. The index of a PRK indicates its use or in what message protection operation it is involved. For example, PRK_3e2m is involved in the encryption of message 3 and in calculating the MAC of message 2.
 
@@ -2130,7 +2146,7 @@ CBOR Object Signing and Encryption (COSE) {{RFC9052}} describes how to create an
 
     where protected, external_aad and payload are specified in {{m2}} and {{m3}}.
 
-Different header parameters to identify X.509 or C509 certificates by reference are defined in {{I-D.ietf-cose-x509}} and {{I-D.ietf-cose-cbor-encoded-cert}}:
+Different header parameters to identify X.509 or C509 certificates by reference are defined in {{RFC9360}} and {{I-D.ietf-cose-cbor-encoded-cert}}:
 
 * by a hash value with the 'x5t' or 'c5t' parameters, respectively:
 
@@ -2150,7 +2166,7 @@ When ID_CRED_x does not contain the actual credential, it may be very short, e.g
 
 Note that ID_CRED_x can contain several header parameters, for example { x5u, x5t } or { kid, kid_context }.
 
-ID_CRED_x MAY also identify the credential by value. For example, a certificate chain can be transported in ID_CRED_x with COSE header parameter c5c or x5chain, defined in {{I-D.ietf-cose-cbor-encoded-cert}} and {{I-D.ietf-cose-x509}} and credentials of type CWT and CCS can be transported with the COSE header parameters registered in {{cwt-header-param}}.
+ID_CRED_x MAY also identify the credential by value. For example, a certificate chain can be transported in ID_CRED_x with COSE header parameter c5c or x5chain, defined in {{I-D.ietf-cose-cbor-encoded-cert}} and {{RFC9360}} and credentials of type CWT and CCS can be transported with the COSE header parameters registered in {{cwt-header-param}}.
 
 
 # Authentication Related Verifications {#auth-validation}
