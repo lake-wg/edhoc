@@ -117,9 +117,10 @@ informative:
     date: April 2018
 
   SP800-185:
-    target: https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-185
-    title: SHA-3 Derived Functions: cSHAKE, KMAC, TupleHash and ParallelHash
-      "NIST": "NIST Special Publication 800-185"
+    target: https://doi.org/10.6028/NIST.SP.800-185
+    title: SHA-3 Derived Functions cSHAKE, KMAC, TupleHash and ParallelHash
+    seriesinfo:
+      "NIST": "Special Publication 800-185"
     author:
       -
         ins: John Kelsey
@@ -127,8 +128,7 @@ informative:
         ins: Shu-jen Chang
       -
         ins: Ray Perlner
-
-    date: April 2018
+    date: December 2016
 
   Degabriele11:
     target: https://eprint.iacr.org/2011/615
