@@ -92,7 +92,7 @@ informative:
   I-D.ietf-cose-cbor-encoded-cert:
   I-D.ietf-core-oscore-key-update:
   I-D.ietf-lwig-curve-representations:
-  I-D.ietf-lwig-security-protocol-comparison:
+  I-D.ietf-iotops-security-protocol-comparison:
   I-D.irtf-cfrg-det-sigs-with-noise:
   I-D.selander-lake-authz:
   I-D.arkko-arch-internet-threat-model-guidance:
@@ -287,7 +287,7 @@ A typical setting is when one of the endpoints is constrained or in a constraine
 
 ## Message Size Examples
 
-Examples of EDHOC message sizes are shown in {{fig-sizes}}, using different kinds of authentication keys and COSE header parameters for identification: static Diffie-Hellman keys or signature keys, either in CBOR Web Token (CWT) / CWT Claims Set (CCS) {{RFC8392}} identified by a key identifier using 'kid' {{RFC9052}}, or in X.509 certificates identified by a hash value using 'x5t' {{RFC9360}}. As a comparison, in the case of RPK authentication, the EDHOC message size when transferred in CoAP can be less than 1/7 of the DTLS 1.3 handshake {{RFC9147}} with ECDHE and connection ID, see Section 2 of {{I-D.ietf-lwig-security-protocol-comparison}}.
+Examples of EDHOC message sizes are shown in {{fig-sizes}}, using different kinds of authentication keys and COSE header parameters for identification: static Diffie-Hellman keys or signature keys, either in CBOR Web Token (CWT) / CWT Claims Set (CCS) {{RFC8392}} identified by a key identifier using 'kid' {{RFC9052}}, or in X.509 certificates identified by a hash value using 'x5t' {{RFC9360}}. As a comparison, in the case of RPK authentication, the EDHOC message size when transferred in CoAP can be less than 1/7 of the DTLS 1.3 handshake {{RFC9147}} with ECDHE and connection ID, see {{Section 2 of I-D.ietf-iotops-security-protocol-comparison}}.
 
 ~~~~~~~~~~~~~~~~~~~~~~~ aasvg
 ----------------------------------------------------------
