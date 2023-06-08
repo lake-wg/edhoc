@@ -870,7 +870,7 @@ K_4           = EDHOC_KDF( PRK_4e3m, 8, TH_4,      key_length )
 IV_4          = EDHOC_KDF( PRK_4e3m, 9, TH_4,      iv_length )
 PRK_exporter  = EDHOC_KDF( PRK_out, 10, h'',       hash_length )
 ~~~~~~~~~~~~~~~~~~~~~~~
-{: #fig-edhoc-kdf title="Key derivations using EDHOC_KDF."}
+{: #fig-edhoc-kdf title="Key derivations using EDHOC_KDF. h'' is CBOR diagnostic notation for the empty byte string, 0x40."}
 {: artwork-align="center"}
 
 ### PRK_out {#prkout}
