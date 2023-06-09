@@ -1813,7 +1813,7 @@ IANA is requested to add the media types "application/edhoc+cbor-seq" and "appli
 
 ## CoAP Content-Formats Registry {#content-format}
 
-IANA has added the media types "application/edhoc+cbor-seq" and "application/cid-edhoc+cbor-seq" to the "CoAP Content-Formats" registry under the registry group "Constrained RESTful Environments (CoRE) Parameters".
+IANA is requested to add the media types "application/edhoc+cbor-seq" and "application/cid-edhoc+cbor-seq" to the "CoAP Content-Formats" registry under the registry group "Constrained RESTful Environments (CoRE) Parameters".
 
 ~~~~~~~~~~~ aasvg
 +--------------------------------+----------+------+-------------------+
