@@ -1283,7 +1283,7 @@ In Example 2 ({{fig-error2}}), the Responder supports cipher suites 8 and 9 but 
 
 Note 1. If the Responder had supported suite 5, it would have included it in SUITES_R of the response, and it would in that case have become the selected and only suite in the second message_1.
 
-Note 2. The content of the fields of message_1 may be different when sent the second time, in particular the ephemeral key MUST be different.
+Note 2. For each message_1 the Initiator MUST generate a new ephemeral ECDH key pair matching the selected cipher suite.
 
 ~~~~~~~~~~~ aasvg
 Initiator                                                   Responder
