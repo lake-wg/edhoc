@@ -1084,7 +1084,7 @@ The Initiator SHALL compose message_3 as follows:
 
    CIPHERTEXT_3 is the 'ciphertext' of COSE_Encrypt0.
 
-* Compute the transcript hash TH_4 = H(TH_3, PLAINTEXT_3, CRED_I) where H() is the EDHOC hash algorithm of the selected cipher suite. The input to the hash function is a CBOR Sequence. Note that TH_4 can be computed and cached already in the processing of message_3.
+* Compute the transcript hash TH_4 = H(TH_3, PLAINTEXT_3, CRED_I) where H() is the EDHOC hash algorithm of the selected cipher suite. The input to the hash function is a CBOR Sequence.
 
 * Calculate PRK_out as defined in {{fig-edhoc-kdf}}. The Initiator can now derive application keys using the EDHOC_Exporter interface, see {{exporter}}.
 
