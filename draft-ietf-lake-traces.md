@@ -1422,6 +1422,7 @@ OSCORE Master Salt after KeyUpdate (Raw Value) (8 bytes)
         Signature Algorithm: ED25519
         Issuer: CN = EDHOC Root Ed25519
         Validity
+            Not Before: Mar 16 08:24:36 2022 GMT
             Not After : Dec 31 23:00:00 2029 GMT
         Subject: CN = EDHOC Responder Ed25519
         Subject Public Key Info:
