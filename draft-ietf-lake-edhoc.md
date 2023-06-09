@@ -1212,7 +1212,7 @@ error = (
 
 where:
 
-* ERR_CODE - error code encoded as an integer. The value 0 is used for success, all other values (negative or positive) indicate errors.
+* ERR_CODE - error code encoded as an integer. The value 0 is reserved for success and can only be used internally, all other values (negative or positive) indicate errors.
 * ERR_INFO - error information. Content and encoding depend on error code.
 
 The remainder of this section specifies the currently defined error codes, see {{fig-error-codes}}. Additional error codes and corresponding error information may be specified.
@@ -1221,7 +1221,7 @@ The remainder of this section specifies the currently defined error codes, see {
 +----------+---------------+----------------------------------------+
 | ERR_CODE | ERR_INFO Type | Description                            |
 +==========+===============+========================================+
-|        0 | any           | Success                                |
+|        0 |               | This value is reserved                 |
 +----------+---------------+----------------------------------------+
 |        1 | tstr          | Unspecified error                      |
 +----------+---------------+----------------------------------------+
@@ -1234,7 +1234,7 @@ The remainder of this section specifies the currently defined error codes, see {
 
 ## Success
 
-Error code 0 MAY be used internally in an application to indicate success, i.e., as a standard value in case of no error, e.g., in status reporting or log files. ERR_INFO can contain any type of CBOR item, the content is out of scope for this specification. Error code 0 MUST NOT be used as part of the EDHOC message exchange flow. If an endpoint receives an error message with error code 0, then it MUST discontinue the protocol and MUST NOT send an error message.
+Error code 0 MAY be used internally in an application to indicate success, i.e., as a standard value in case of no error, e.g., in status reporting or log files. Error code 0 MUST NOT be used as part of the EDHOC message exchange flow. If an endpoint receives an error message with error code 0, then it MUST discontinue the protocol and MUST NOT send an error message.
 
 ## Unspecified Error
 
