@@ -606,7 +606,7 @@ As stated in Section 3.1 of {{RFC9052}}, applications MUST NOT assume that 'kid'
 
 See {{COSE}} for more examples.
 
-#### Compact Encoding of ID_CRED fields for 'kid' {#compact-kid}
+#### Compact Encoding of ID_CRED Fields for 'kid' {#compact-kid}
 
 To comply with the LAKE message size requirements, see {{I-D.ietf-lake-reqs}}, two optimizations are made for the case when ID_CRED_x, for x = I or R, contains a single 'kid' parameter.
 
