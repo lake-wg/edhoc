@@ -699,7 +699,7 @@ The purpose of an application profile is to describe the intended use of EDHOC t
 6. Identifier used as the identity of the endpoint; see {{identities}}.
 7. If message_4 shall be sent/expected, and if not, how to ensure a protected application message is sent from the Responder to the Initiator; see {{m4}}.
 
-The application profile may also contain information about supported cipher suites. The procedure for selecting and verifying a cipher suite is still performed as described in {{asym-msg1-form}} and {{wrong-selected}}, but it may become simplified by this knowledge.
+The application profile may also contain information about supported cipher suites. The procedure for selecting and verifying a cipher suite is still performed as described in {{asym-msg1-form}} and {{wrong-selected}}, but it may become simplified by this knowledge. EDHOC messages can be processed without the application profile, i.e., the EDHOC messages includes information about the type and length of all fields. 
 
 An example of an application profile is shown in {{appl-temp}}.
 
