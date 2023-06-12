@@ -686,7 +686,7 @@ Note that padding is non-critical because the intended behaviour when receiving 
 
 ## Application Profile {#applicability}
 
-EDHOC requires certain parameters to be agreed upon between Initiator and Responder. Some parameters can be negotiated through the protocol execution (specifically, cipher suite, see {{cs}}) but other parameters are only communicated and may not be negotiated (e.g., which authentication method is used, see {{method}}). Yet other parameters need to be known out-of-band. The application decides which endpoint is Initiator and which is Responder.
+EDHOC requires certain parameters to be agreed upon between Initiator and Responder. Some parameters can be negotiated through the protocol execution (specifically, cipher suite, see {{cs}}) but other parameters are only communicated and may not be negotiated (e.g., which authentication method is used, see {{method}}). Yet other parameters need to be known out-of-band to ensure successful completion, e.g., whether message_4 is used or not. The application decides which endpoint is Initiator and which is Responder.
 
 The purpose of an application profile is to describe the intended use of EDHOC to allow for the relevant processing and verifications to be made, including things like:
 
