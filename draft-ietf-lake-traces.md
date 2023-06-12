@@ -1432,12 +1432,12 @@ OSCORE Master Salt after KeyUpdate (Raw Value) (8 bytes)
                     a1:db:47:b9:51:84:85:4a:d1:2a:0c:1a:35:4e:41:
                     8a:ac:e3:3a:a0:f2:c6:62:c0:0b:3a:c5:5d:e9:2f:
                     93:59
-    Signature Algorithm: ED25519
-    Signature Value:
-        b7:23:bc:01:ea:b0:92:8e:8b:2b:6c:98:de:19:cc:38:23:d4:
-        6e:7d:69:87:b0:32:47:8f:ec:fa:f1:45:37:a1:af:14:cc:8b:
-        e8:29:c6:b7:30:44:10:18:37:eb:4a:bc:94:95:65:d8:6d:ce:
-        51:cf:ae:52:ab:82:c1:52:cb:02
+        Signature Algorithm: ED25519
+        Signature Value:
+            b7:23:bc:01:ea:b0:92:8e:8b:2b:6c:98:de:19:cc:38:23:d4:
+            6e:7d:69:87:b0:32:47:8f:ec:fa:f1:45:37:a1:af:14:cc:8b:
+            e8:29:c6:b7:30:44:10:18:37:eb:4a:bc:94:95:65:d8:6d:ce:
+            51:cf:ae:52:ab:82:c1:52:cb:02
 ~~~~~~~~
 
 ### Initiator Certificate {#init-cer}
@@ -1458,12 +1458,12 @@ OSCORE Master Salt after KeyUpdate (Raw Value) (8 bytes)
                     ed:06:a8:ae:61:a8:29:ba:5f:a5:45:25:c9:d0:7f:
                     48:dd:44:a3:02:f4:3e:0f:23:d8:cc:20:b7:30:85:
                     14:1e
-    Signature Algorithm: ED25519
-    Signature Value:
-        52:12:41:d8:b3:a7:70:99:6b:cf:c9:b9:ea:d4:e7:e0:a1:c0:
-        db:35:3a:3b:df:29:10:b3:92:75:ae:48:b7:56:01:59:81:85:
-        0d:27:db:67:34:e3:7f:67:21:22:67:dd:05:ee:ff:27:b9:e7:
-        a8:13:fa:57:4b:72:a0:0b:43:0b
+        Signature Algorithm: ED25519
+        Signature Value:
+            52:12:41:d8:b3:a7:70:99:6b:cf:c9:b9:ea:d4:e7:e0:a1:c0:
+            db:35:3a:3b:df:29:10:b3:92:75:ae:48:b7:56:01:59:81:85:
+            0d:27:db:67:34:e3:7f:67:21:22:67:dd:05:ee:ff:27:b9:e7:
+            a8:13:fa:57:4b:72:a0:0b:43:0b
 ~~~~~~~~
 
 
@@ -1490,12 +1490,12 @@ OSCORE Master Salt after KeyUpdate (Raw Value) (8 bytes)
                 Certificate Sign
             X509v3 Basic Constraints: critical
                 CA:TRUE
-      Signature Algorithm: ED25519
-    Signature Value:
-        4b:b5:2b:bf:15:39:b7:1a:4a:af:42:97:78:f2:9e:da:7e:81:
-        46:80:69:8f:16:c4:8f:2a:6f:a4:db:e8:25:41:c5:82:07:ba:
-        1b:c9:cd:b0:c2:fa:94:7f:fb:f0:f0:ec:0e:e9:1a:7f:f3:7a:
-        94:d9:25:1f:a5:cd:f1:e6:7a:0f
+        Signature Algorithm: ED25519
+        Signature Value:
+            4b:b5:2b:bf:15:39:b7:1a:4a:af:42:97:78:f2:9e:da:7e:81:
+            46:80:69:8f:16:c4:8f:2a:6f:a4:db:e8:25:41:c5:82:07:ba:
+            1b:c9:cd:b0:c2:fa:94:7f:fb:f0:f0:ec:0e:e9:1a:7f:f3:7a:
+            94:d9:25:1f:a5:cd:f1:e6:7a:0f
 ~~~~~~~~
 
 
