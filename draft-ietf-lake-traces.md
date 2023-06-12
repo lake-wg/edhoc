@@ -1485,7 +1485,12 @@ OSCORE Master Salt after KeyUpdate (Raw Value) (8 bytes)
                     2b:7b:3e:80:57:c8:64:29:44:d0:6a:fe:7a:71:d1:
                     c9:bf:96:1b:62:92:ba:c4:b0:4f:91:66:9b:bb:71:
                     3b:e4
-    Signature Algorithm: ED25519
+        X509v3 extensions:
+            X509v3 Key Usage: critical
+                Certificate Sign
+            X509v3 Basic Constraints: critical
+                CA:TRUE
+      Signature Algorithm: ED25519
     Signature Value:
         4b:b5:2b:bf:15:39:b7:1a:4a:af:42:97:78:f2:9e:da:7e:81:
         46:80:69:8f:16:c4:8f:2a:6f:a4:db:e8:25:41:c5:82:07:ba:
