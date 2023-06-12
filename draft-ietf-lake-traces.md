@@ -86,7 +86,7 @@ The document contains two traces:
 
 * {{sec-trace-2}} - Authentication with static Diffie-Hellman keys identified by short key identifiers labelling CWT Claim Sets (CCSs) {{RFC8392}}. The endpoints use NIST P-256 (FIPS PUB 186-4) for both ephemeral-ephemeral and static-ephemeral Diffie-Hellman key exchange. This trace also illustrates the cipher suite negotiation, and provides an example of low protocol overhead, with messages sizes of (39, 45, 19) bytes.
 
-The traces in this draft are valid for version -16 and -17 of {{I-D.ietf-lake-edhoc}}.
+The traces in this draft are valid for version -19 of {{I-D.ietf-lake-edhoc}}.
 
 Editor's note: Update reference to test vectors below.
 
@@ -282,9 +282,9 @@ e5 cd f3 a9 86 cd ac 5b 7b f0 46 91 e2 b0 7c 08 e7 1f 53 99 8d 8f 84
 2b 7c 3f b4 d8 39 cf 7b 28
 ~~~~~~~~
 
-Then, PRK_2e is calculated using Extract() determined by the EDHOC hash algorithm:
+Then, PRK_2e is calculated using EDHOC_Extract() determined by the EDHOC hash algorithm:
 
-    PRK_2e = Extract( salt, G_XY ) =
+    PRK_2e = EDHOC_Extract( salt, G_XY ) =
            = HMAC-SHA-256( salt, G_XY )
 
 where salt is TH_2:
@@ -331,7 +331,7 @@ PRK_3e2m (Raw Value) (32 bytes)
 
 R constructs the remaining input needed to calculate MAC_2:
 
-MAC_2 = EDHOC-KDF( PRK_3e2m, 2, context_2, mac_length_2 )
+MAC_2 = EDHOC_KDF( PRK_3e2m, 2, context_2, mac_length_2 )
 
 context_2 = << ID_CRED_R, TH_2, CRED_R, ? EAD_2 >>
 
@@ -424,7 +424,7 @@ b7 23 bc 01 ea b0 92 8e 8b 2b 6c 98 de 19 cc 38 23 d4 6e 7d 69 87 b0
 ~~~~~~~~
 
 
-MAC_2 is computed through Expand() using the EDHOC hash algorithm, see {{Section 4.1.2 of I-D.ietf-lake-edhoc}}:
+MAC_2 is computed through EDHOC_Expand() using the EDHOC hash algorithm, see {{Section 4.1.2 of I-D.ietf-lake-edhoc}}:
 
 MAC_2 = HKDF-Expand(PRK_3e2m, info, mac_length_2), where
 
@@ -564,9 +564,9 @@ a1 18 22 82 2e 48 79 f2 a4 1b 51 0c 1f 9b 58 40 af 73 81 f1 9a e1 fe
 08 49 58 db 0f 20 89 c2 1c 52 02
 ~~~~~~~~
 
-The input needed to calculate KEYSTREAM_2 is defined in {{Section 4.1.2 of I-D.ietf-lake-edhoc}}, using Expand() with the EDHOC hash algorithm:
+The input needed to calculate KEYSTREAM_2 is defined in {{Section 4.1.2 of I-D.ietf-lake-edhoc}}, using EDHOC_Expand() with the EDHOC hash algorithm:
 
-    KEYSTREAM_2 = EDHOC-KDF( PRK_2e, 0, TH_2, plaintext_length ) =
+    KEYSTREAM_2 = EDHOC_KDF( PRK_2e, 0, TH_2, plaintext_length ) =
                 = HKDF-Expand( PRK_2e, info, plaintext_length )
 
 where plaintext_length is the length of PLAINTEXT_2, and info for KEYSTREAM_2 is:
@@ -695,7 +695,7 @@ TH_3 (CBOR Data Item) (34 bytes)
 
 I constructs the remaining input needed to calculate MAC_3:
 
-    MAC_3 = EDHOC-KDF( PRK_4e3m, 6, context_3, mac_length_3 )
+    MAC_3 = EDHOC_KDF( PRK_4e3m, 6, context_3, mac_length_3 )
 
 where
 
@@ -790,7 +790,7 @@ a0 30 05 06 03 2b 65 70 30 1d 31 1b 30 19 06 03 55 04 03 0c 12 45 44
 67 dd 05 ee ff 27 b9 e7 a8 13 fa 57 4b 72 a0 0b 43 0b
 ~~~~~~~~
 
-MAC_3 is computed through Expand() using the EDHOC hash algorithm, see {{Section 4.1.2 of I-D.ietf-lake-edhoc}}:
+MAC_3 is computed through EDHOC_Expand() using the EDHOC hash algorithm, see {{Section 4.1.2 of I-D.ietf-lake-edhoc}}:
 
     MAC_3 = HKDF-Expand(PRK_4e3m, info, mac_length_3), where
 
@@ -951,7 +951,7 @@ f5 00 13 e0 64 e6 b4 6d cb 3f a8 40 d8 55 04 5e 33 c0 21 d7 f6 91
 
 I constructs the input needed to derive the key K_3, see {{Section 4.1.2 of I-D.ietf-lake-edhoc}}, using the EDHOC hash algorithm:
 
-    K_3 = EDHOC-KDF( PRK_3e2m, 3, TH_3, key_length )
+    K_3 = EDHOC_KDF( PRK_3e2m, 3, TH_3, key_length )
         = HKDF-Expand( PRK_3e2m, info, key_length ),
 
 where key_length is the key length of EDHOC AEAD algorithm, and info for K_3 is:
@@ -981,7 +981,7 @@ K_3 (Raw Value) (16 bytes)
 
 I constructs the input needed to derive the nonce IV_3, see {{Section 4.1.2 of I-D.ietf-lake-edhoc}}, using the EDHOC hash algorithm:
 
-    IV_3 = EDHOC-KDF( PRK_3e2m, 4, TH_3, iv_length )
+    IV_3 = EDHOC_KDF( PRK_3e2m, 4, TH_3, iv_length )
          = HKDF-Expand( PRK_3e2m, info, iv_length ),
 
 where iv_length is the nonce length of EDHOC AEAD algorithm, and info for IV_3 is:
@@ -1103,7 +1103,7 @@ A_4 (CBOR Data Item) (45 bytes)
 
 R constructs the input needed to derive the EDHOC message_4 key, see {{Section 4.1.2 of I-D.ietf-lake-edhoc}}, using the EDHOC hash algorithm:
 
-    K_4   = EDHOC-KDF( PRK_4e3m, 8, TH_4, key_length )
+    K_4   = EDHOC_KDF( PRK_4e3m, 8, TH_4, key_length )
           = HKDF-Expand( PRK_4x3m, info, key_length )
 
   where key_length is the key length of the EDHOC AEAD algorithm,
@@ -1132,7 +1132,7 @@ K_4 (Raw Value) (16 bytes)
 
 R constructs the input needed to derive the EDHOC message_4 nonce, see {{Section 4.1.2 of I-D.ietf-lake-edhoc}}, using the EDHOC hash algorithm:
 
-          IV_4 = EDHOC-KDF( PRK_4e3m, 9, TH_4, iv_length )
+          IV_4 = EDHOC_KDF( PRK_4e3m, 9, TH_4, iv_length )
                = HKDF-Expand( PRK_4x3m, info, iv_length )
 
   where length is the nonce length of EDHOC AEAD algorithm,
@@ -1180,7 +1180,7 @@ message_4 (CBOR Sequence) (9 bytes)
 
 PRK_out is specified in {{Section 4.1.3 of I-D.ietf-lake-edhoc}}.
 
-    PRK_out = EDHOC-KDF( PRK_4e3m, 7, TH_4, hash_length ) =
+    PRK_out = EDHOC_KDF( PRK_4e3m, 7, TH_4, hash_length ) =
             = HKDF-Expand( PRK_4e3m, info,  hash_length )
 
 where hash_length is the length of the output of the EDHOC hash algorithm, and info for PRK_out is:
@@ -1208,14 +1208,14 @@ cf aa 94 87 37 c8 c7 5f 54 2a fb 6a 07 df da 67 3e 78 a1 04 ca cb d9
 ~~~~~~~~
 
 
-The OSCORE Master Secret and OSCORE Master Salt are derived with the EDHOC-Exporter as specified in 4.2.1 of {{I-D.ietf-lake-edhoc}}.
+The OSCORE Master Secret and OSCORE Master Salt are derived with the EDHOC_Exporter as specified in 4.2.1 of {{I-D.ietf-lake-edhoc}}.
 
-    EDHOC-Exporter( label, context, length )
-    = EDHOC-KDF( PRK_exporter, label, context, length )
+    EDHOC_Exporter( label, context, length )
+    = EDHOC_KDF( PRK_exporter, label, context, length )
 
 where PRK_exporter is derived from PRK_out:
 
-     PRK_exporter = EDHOC-KDF( PRK_out, 10, h'', hash_length ) =
+     PRK_exporter = EDHOC_KDF( PRK_out, 10, h'', hash_length ) =
                   = HKDF-Expand( PRK_out, info,  hash_length )
 
 where hash_length is the length of the output of the EDHOC hash algorithm, and info for the PRK_exporter is:
@@ -1275,11 +1275,11 @@ Server's OSCORE Sender ID (Raw Value) (1 byte)
 ~~~~~~~~
 
 
-The OSCORE Master Secret is computed through Expand() using the
+The OSCORE Master Secret is computed through EDHOC_Expand() using the
 Application hash algorithm, see Appendix A.1 of {{I-D.ietf-lake-edhoc}}:
 
-    OSCORE Master Secret = EDHOC-Exporter( 0, h'', oscore_key_length )
-    = EDHOC-KDF( PRK_exporter, 0, h'',  oscore_key_length )
+    OSCORE Master Secret = EDHOC_Exporter( 0, h'', oscore_key_length )
+    = EDHOC_KDF( PRK_exporter, 0, h'',  oscore_key_length )
     = HKDF-Expand( PRK_exporter, info,  oscore_key_length )
 
 
@@ -1306,10 +1306,10 @@ OSCORE Master Secret (Raw Value) (16 bytes)
 09 c3 66 61 cf 68 f8 c3 ad 21 64 43 cf 62 91 e6
 ~~~~~~~~
 
-The OSCORE Master Salt is computed through Expand() using the Application hash algorithm, see {{Section 4.2 of I-D.ietf-lake-edhoc}}:
+The OSCORE Master Salt is computed through EDHOC_Expand() using the Application hash algorithm, see {{Section 4.2 of I-D.ietf-lake-edhoc}}:
 
-    OSCORE Master Salt = EDHOC-Exporter( 1, h'', oscore_salt_length )
-    = EDHOC-KDF( PRK_exporter, 1, h'', oscore_salt_length )
+    OSCORE Master Salt = EDHOC_Exporter( 1, h'', oscore_salt_length )
+    = EDHOC_KDF( PRK_exporter, 1, h'', oscore_salt_length )
     = HKDF-Expand( PRK_4x3m, info, oscore_salt_length )
 
 where oscore_salt_length is the length of the OSCORE Master Salt, and info for the OSCORE Master Salt is:
@@ -1338,8 +1338,8 @@ OSCORE Master Salt (Raw Value) (8 bytes)
 
 Key update is defined in {{Section J of I-D.ietf-lake-edhoc}}.
 
-    EDHOC-KeyUpdate( context ):
-    PRK_out = EDHOC-KDF( PRK_out, 11, context, hash_length )
+    EDHOC_KeyUpdate( context ):
+    PRK_out = EDHOC_KDF( PRK_out, 11, context, hash_length )
             = HKDF-Expand( PRK_out, info, hash_length )
 
 where hash_length is the length of the output of the EDHOC hash function, context for KeyUpdate is
@@ -1373,7 +1373,7 @@ PRK_out after KeyUpdate (Raw Value) (32 bytes)
 After key update the PRK_exporter needs to be derived anew:
 
 
-     PRK_exporter = EDHOC-KDF( PRK_out, 10, h'', hash_length ) =
+     PRK_exporter = EDHOC_KDF( PRK_out, 10, h'', hash_length ) =
                   = HKDF-Expand( PRK_out, info,  hash_length )
 
 where info and hash_length as unchanged as in {{out-and-exporter1}}.
@@ -1422,6 +1422,7 @@ OSCORE Master Salt after KeyUpdate (Raw Value) (8 bytes)
         Signature Algorithm: ED25519
         Issuer: CN = EDHOC Root Ed25519
         Validity
+            Not Before: Mar 16 08:24:36 2022 GMT
             Not After : Dec 31 23:00:00 2029 GMT
         Subject: CN = EDHOC Responder Ed25519
         Subject Public Key Info:
@@ -1431,12 +1432,12 @@ OSCORE Master Salt after KeyUpdate (Raw Value) (8 bytes)
                     a1:db:47:b9:51:84:85:4a:d1:2a:0c:1a:35:4e:41:
                     8a:ac:e3:3a:a0:f2:c6:62:c0:0b:3a:c5:5d:e9:2f:
                     93:59
-    Signature Algorithm: ED25519
-    Signature Value:
-        b7:23:bc:01:ea:b0:92:8e:8b:2b:6c:98:de:19:cc:38:23:d4:
-        6e:7d:69:87:b0:32:47:8f:ec:fa:f1:45:37:a1:af:14:cc:8b:
-        e8:29:c6:b7:30:44:10:18:37:eb:4a:bc:94:95:65:d8:6d:ce:
-        51:cf:ae:52:ab:82:c1:52:cb:02
+        Signature Algorithm: ED25519
+        Signature Value:
+            b7:23:bc:01:ea:b0:92:8e:8b:2b:6c:98:de:19:cc:38:23:d4:
+            6e:7d:69:87:b0:32:47:8f:ec:fa:f1:45:37:a1:af:14:cc:8b:
+            e8:29:c6:b7:30:44:10:18:37:eb:4a:bc:94:95:65:d8:6d:ce:
+            51:cf:ae:52:ab:82:c1:52:cb:02
 ~~~~~~~~
 
 ### Initiator Certificate {#init-cer}
@@ -1457,12 +1458,12 @@ OSCORE Master Salt after KeyUpdate (Raw Value) (8 bytes)
                     ed:06:a8:ae:61:a8:29:ba:5f:a5:45:25:c9:d0:7f:
                     48:dd:44:a3:02:f4:3e:0f:23:d8:cc:20:b7:30:85:
                     14:1e
-    Signature Algorithm: ED25519
-    Signature Value:
-        52:12:41:d8:b3:a7:70:99:6b:cf:c9:b9:ea:d4:e7:e0:a1:c0:
-        db:35:3a:3b:df:29:10:b3:92:75:ae:48:b7:56:01:59:81:85:
-        0d:27:db:67:34:e3:7f:67:21:22:67:dd:05:ee:ff:27:b9:e7:
-        a8:13:fa:57:4b:72:a0:0b:43:0b
+        Signature Algorithm: ED25519
+        Signature Value:
+            52:12:41:d8:b3:a7:70:99:6b:cf:c9:b9:ea:d4:e7:e0:a1:c0:
+            db:35:3a:3b:df:29:10:b3:92:75:ae:48:b7:56:01:59:81:85:
+            0d:27:db:67:34:e3:7f:67:21:22:67:dd:05:ee:ff:27:b9:e7:
+            a8:13:fa:57:4b:72:a0:0b:43:0b
 ~~~~~~~~
 
 
@@ -1484,12 +1485,17 @@ OSCORE Master Salt after KeyUpdate (Raw Value) (8 bytes)
                     2b:7b:3e:80:57:c8:64:29:44:d0:6a:fe:7a:71:d1:
                     c9:bf:96:1b:62:92:ba:c4:b0:4f:91:66:9b:bb:71:
                     3b:e4
-    Signature Algorithm: ED25519
-    Signature Value:
-        4b:b5:2b:bf:15:39:b7:1a:4a:af:42:97:78:f2:9e:da:7e:81:
-        46:80:69:8f:16:c4:8f:2a:6f:a4:db:e8:25:41:c5:82:07:ba:
-        1b:c9:cd:b0:c2:fa:94:7f:fb:f0:f0:ec:0e:e9:1a:7f:f3:7a:
-        94:d9:25:1f:a5:cd:f1:e6:7a:0f
+        X509v3 extensions:
+            X509v3 Key Usage: critical
+                Certificate Sign
+            X509v3 Basic Constraints: critical
+                CA:TRUE
+        Signature Algorithm: ED25519
+        Signature Value:
+            4b:b5:2b:bf:15:39:b7:1a:4a:af:42:97:78:f2:9e:da:7e:81:
+            46:80:69:8f:16:c4:8f:2a:6f:a4:db:e8:25:41:c5:82:07:ba:
+            1b:c9:cd:b0:c2:fa:94:7f:fb:f0:f0:ec:0e:e9:1a:7f:f3:7a:
+            94:d9:25:1f:a5:cd:f1:e6:7a:0f
 ~~~~~~~~
 
 
@@ -1632,7 +1638,7 @@ G_X (Raw Value) (32 bytes)
 96 c1 b7 c8 db ca 2f c3 b6
 ~~~~~~~~
 ~~~~~~~~
-Initiator's ephemeral public key, 'y'-coordinate
+Initiator's ephemeral public key, one 'y'-coordinate
 (Raw Value) (32 bytes)
 51 e8 af 6c 6e db 78 16 01 ad 1d 9c 5f a8 bf 7a a1 57 16 c7 c0 6a 5d
 03 85 03 c6 14 ff 80 c9 b3
@@ -1699,7 +1705,7 @@ G_Y (Raw Value) (32 bytes)
 8e a0 f9 55 a1 3a 4f f5 d5
 ~~~~~~~~
 ~~~~~~~~
-Responder's ephemeral public key, 'y'-coordinate
+Responder's ephemeral public key, one 'y'-coordinate
 (Raw Value) (32 bytes)
 5e 4f 0d d8 a3 da 0b aa 16 b9 d3 ad 56 a0 c1 86 0a 94 0a f8 59 14 91
 5e 25 01 9b 40 24 17 e9 9d
@@ -1770,9 +1776,9 @@ G_XY (Raw Value) (ECDH shared secret) (32 bytes)
 be 93 78 e5 ec f7 a8 24 ba
 ~~~~~~~~
 
-Then, PRK_2e is calculated using Extract() determined by the EDHOC hash algorithm:
+Then, PRK_2e is calculated using EDHOC_Extract() determined by the EDHOC hash algorithm:
 
-    PRK_2e = Extract( salt, G_XY ) =
+    PRK_2e = EDHOC_Extract( salt, G_XY ) =
            = HMAC-SHA-256( salt, G_XY )
 
 where salt is TH_2:
@@ -1791,7 +1797,7 @@ e0 1f a1 4d d5 6e 30 82 67 a1 a8 12 a9 d0 b9 53 41 e3 94 ab c7 c5 c3
 
 Since METHOD = 3, R authenticates using static DH. The EDHOC key exchange algorithm is based on the same curve as for the ephemeral keys, which is P-256, since the selected cipher suite is 2.
 
-R's static Diffie-Hellman key pair for use with P-256:
+R's static Diffie-Hellman P-256 key pair:
 
 ~~~~~~~~
 Responder's private authentication key
@@ -1802,7 +1808,7 @@ e2 f1 40 dc f3 e6 aa 4a ac
 
 ~~~~~~~~
 Responder's public authentication key, 'x'-coordinate
-PK_R (Raw Value) (32 bytes)
+(Raw Value) (32 bytes)
 bb c3 49 60 52 6e a4 d3 2e 94 0c ad 2a 23 41 48 dd c2 17 91 a1 2a fb
 cb ac 93 62 20 46 dd 44 f0
 ~~~~~~~~
@@ -1817,9 +1823,9 @@ Responder's public authentication key, 'y'-coordinate
 Since R authenticates with static DH (METHOD = 3), PRK_3e2m is derived
 from SALT_3e2m and G_RX.
 
-The input needed to calculate SALT_3e2m is defined in {{Section 4.1.2 of I-D.ietf-lake-edhoc}}, using Expand() with the EDHOC hash algorithm:
+The input needed to calculate SALT_3e2m is defined in {{Section 4.1.2 of I-D.ietf-lake-edhoc}}, using EDHOC_Expand() with the EDHOC hash algorithm:
 
-    SALT_3e2m  = EDHOC-KDF( PRK_2e, 1, TH_2, hash_length ) =
+    SALT_3e2m  = EDHOC_KDF( PRK_2e, 1, TH_2, hash_length ) =
                = HKDF-Expand( PRK_2e, info, hash_length )
 
 where hash_length is the length of the output of the EDHOC hash algorithm, and info for SALT_3e2m is:
@@ -1848,9 +1854,9 @@ a7 ce 8f 37 c9 53 66 d8 d1
 
 PRK_3e2m is specified in {{Section 4.1.1.2 of I-D.ietf-lake-edhoc}}.
 
-PRK_3e2m is derived from G_RX using Extract() with the EDHOC hash algorithm:
+PRK_3e2m is derived from G_RX using EDHOC_Extract() with the EDHOC hash algorithm:
 
-    PRK_3e2m = Extract( SALT_3e2m, G_RX ) =
+    PRK_3e2m = EDHOC_Extract( SALT_3e2m, G_RX ) =
              = HMAC-SHA-256( SALT_3e2m, G_RX )
 
 where G_RX is the ECDH shared secret calculated from G_X and R, or G_R and X.
@@ -1870,7 +1876,7 @@ fe 06 3b e8 62 7f b3 5b 3b
 
 R constructs the remaining input needed to calculate MAC_2:
 
-MAC_2 = EDHOC-KDF( PRK_3e2m, 2, context_2, mac_length_2 )
+MAC_2 = EDHOC_KDF( PRK_3e2m, 2, context_2, mac_length_2 )
 
 context_2 = << ID_CRED_R, TH_2, CRED_R, ? EAD_2 >>
 
@@ -1942,7 +1948,7 @@ ac 93 62 20 46 dd 44 f0 22 58 20 45 19 e2 57 23 6b 2a 0c e2 02 3f 09
 
 
 
-MAC_2 is computed through Expand() using the EDHOC hash algorithm, see {{Section 4.1.2 of I-D.ietf-lake-edhoc}}:
+MAC_2 is computed through EDHOC_Expand() using the EDHOC hash algorithm, see {{Section 4.1.2 of I-D.ietf-lake-edhoc}}:
 
 MAC_2 = HKDF-Expand(PRK_3e2m, info, mac_length_2), where
 
@@ -2015,9 +2021,9 @@ PLAINTEXT_2 (CBOR Sequence) (10 bytes)
 32 48 d0 d1 a5 94 79 7d 0a af
 ~~~~~~~~
 
-The input needed to calculate KEYSTREAM_2 is defined in {{Section 4.1.2 of I-D.ietf-lake-edhoc}}, using Expand() with the EDHOC hash algorithm:
+The input needed to calculate KEYSTREAM_2 is defined in {{Section 4.1.2 of I-D.ietf-lake-edhoc}}, using EDHOC_Expand() with the EDHOC hash algorithm:
 
-    KEYSTREAM_2 = EDHOC-KDF( PRK_2e, 0, TH_2, plaintext_length ) =
+    KEYSTREAM_2 = EDHOC_KDF( PRK_2e, 0, TH_2, plaintext_length ) =
                 = HKDF-Expand( PRK_2e, info, plaintext_length )
 
 
@@ -2101,7 +2107,7 @@ TH_3 (CBOR Data Item) (34 bytes)
 
 Since METHOD = 3, I authenticates using static DH. The EDHOC key exchange algorithm is based on the same curve as for the ephemeral keys, which is P-256, since the selected cipher suite is 2.
 
-I's static Diffie-Hellman key pair for use with P-256:
+I's static Diffie-Hellman P-256 key pair:
 
 ~~~~~~~~
 Initiator's private authentication key
@@ -2112,7 +2118,7 @@ a9 53 40 6a 13 05 e8 70 6b
 
 ~~~~~~~~
 Initiator's public authentication key, 'x'-coordinate
-PK_I (Raw Value) (32 bytes)
+(Raw Value) (32 bytes)
 ac 75 e9 ec e3 e5 0b fc 8e d6 03 99 88 95 22 40 5c 47 bf 16 df 96 66
 0a 41 29 8c b4 30 7f 7e b6
 ~~~~~~~~
@@ -2128,9 +2134,9 @@ Initiator's public authentication key, 'y'-coordinate
 Since I authenticates with static DH (METHOD = 3), PRK_4e3m is derived
 from SALT_4e3m and G_IY.
 
-The input needed to calculate SALT_4e3m is defined in {{Section 4.1.2 of I-D.ietf-lake-edhoc}}, using Expand() with the EDHOC hash algorithm:
+The input needed to calculate SALT_4e3m is defined in {{Section 4.1.2 of I-D.ietf-lake-edhoc}}, using EDHOC_Expand() with the EDHOC hash algorithm:
 
-    SALT_4e3m  = EDHOC-KDF( PRK_3e2m, 5, TH_3, hash_length ) =
+    SALT_4e3m  = EDHOC_KDF( PRK_3e2m, 5, TH_3, hash_length ) =
                = HKDF-Expand( PRK_3e2m, info, hash_length )
 
 where hash_length is the length of the output of the EDHOC hash algorithm, and info for SALT_4e3m is:
@@ -2159,9 +2165,9 @@ d1 81 53 ff c3 59 5c 17 ba
 PRK_4e3m is specified in {{Section 4.1.1.3 of I-D.ietf-lake-edhoc}}.
 
 Since I authenticates with static DH (METHOD = 3), PRK_4e3m is derived
-from G_IY using Extract() with the EDHOC hash algorithm:
+from G_IY using EDHOC_Extract() with the EDHOC hash algorithm:
 
-    PRK_4e3m = Extract(SALT_4e3m, G_IY) =
+    PRK_4e3m = EDHOC_Extract(SALT_4e3m, G_IY) =
              = HMAC-SHA-256(SALT_4e3m, G_IY)
 
 where G_IY is the ECDH shared secret calculated from G_I and Y, or G_Y and I.
@@ -2180,7 +2186,7 @@ PRK_4e3m (Raw Value) (32 bytes)
 
 I constructs the remaining input needed to calculate MAC_3:
 
-MAC_3 = EDHOC-KDF( PRK_4e3m, 6, context_3, mac_length_3 )
+MAC_3 = EDHOC_KDF( PRK_4e3m, 6, context_3, mac_length_3 )
 
 context_3 = << ID_CRED_I, TH_3, CRED_I, ? EAD_3 >>
 
@@ -2255,7 +2261,7 @@ a5 01 02 02 41 2b 20 01 21 58 20 ac 75 e9 ec e3 e5 0b fc 8e d6 03 99
 ~~~~~~~~
 
 
-MAC_3 is computed through Expand() using the EDHOC hash algorithm, see {{Section 4.1.2 of I-D.ietf-lake-edhoc}}:
+MAC_3 is computed through EDHOC_Expand() using the EDHOC hash algorithm, see {{Section 4.1.2 of I-D.ietf-lake-edhoc}}:
 
 
     MAC_3 = HKDF-Expand(PRK_4e3m, info, mac_length_3), where
@@ -2351,7 +2357,7 @@ a6 51 1b 9d e2 85 be df 6e ab 3e 9e d1 2d fe 22 a5 3e ed a7 de 48
 
 I constructs the input needed to derive the key K_3, see {{Section 4.1.2 of I-D.ietf-lake-edhoc}}, using the EDHOC hash algorithm:
 
-    K_3 = EDHOC-KDF( PRK_3e2m, 3, TH_3, key_length )
+    K_3 = EDHOC_KDF( PRK_3e2m, 3, TH_3, key_length )
         = HKDF-Expand( PRK_3e2m, info, key_length ),
 
 where key_length is the key length of EDHOC AEAD algorithm, and info for K_3 is:
@@ -2378,7 +2384,7 @@ K_3 (Raw Value) (16 bytes)
 
 I constructs the input needed to derive the nonce IV_3, see {{Section 4.1.2 of I-D.ietf-lake-edhoc}}, using the EDHOC hash algorithm:
 
-    IV_3 = EDHOC-KDF( PRK_3e2m, 4, TH_3, iv_length )
+    IV_3 = EDHOC_KDF( PRK_3e2m, 4, TH_3, iv_length )
          = HKDF-Expand( PRK_3e2m, info, iv_length ),
 
 where iv_length is the nonce length of EDHOC AEAD algorithm, and info for IV_3 is:
@@ -2481,7 +2487,7 @@ A_4 (CBOR Data Item) (45 bytes)
 
 R constructs the input needed to derive the EDHOC message_4 key, see {{Section 4.1.2 of I-D.ietf-lake-edhoc}}, using the EDHOC hash algorithm:
 
-    K_4   = EDHOC-KDF( PRK_4e3m, 8, TH_4, key_length )
+    K_4   = EDHOC_KDF( PRK_4e3m, 8, TH_4, key_length )
           = HKDF-Expand( PRK_4e3m, info, key_length )
 
 where key_length is the key length of the EDHOC AEAD algorithm,
@@ -2509,7 +2515,7 @@ de 02 dc 03 6c b6 81 cd 53 80 d7 83 e8 53 14 2f
 
 R constructs the input needed to derive the EDHOC message_4 nonce, see {{Section 4.1.2 of I-D.ietf-lake-edhoc}}, using the EDHOC hash algorithm:
 
-          IV_4 = EDHOC-KDF( PRK_4e3m, 9, TH_4, iv_length )
+          IV_4 = EDHOC_KDF( PRK_4e3m, 9, TH_4, iv_length )
                = HKDF-Expand( PRK_4e3m, info, iv_length )
 
 where iv_length is the nonce length of EDHOC AEAD algorithm,
@@ -2557,7 +2563,7 @@ message_4 (CBOR Sequence) (9 bytes)
 
 PRK_out is specified in {{Section 4.1.3 of I-D.ietf-lake-edhoc}}.
 
-    PRK_out = EDHOC-KDF( PRK_4e3m, 7, TH_4, hash_length ) =
+    PRK_out = EDHOC_KDF( PRK_4e3m, 7, TH_4, hash_length ) =
             = HKDF-Expand( PRK_4e3m, info,  hash_length )
 
 where hash_length is the length of the output of the EDHOC hash algorithm, and info for PRK_out is:
@@ -2585,14 +2591,14 @@ PRK_out (Raw Value) (32 bytes)
 ~~~~~~~~
 
 
-The OSCORE Master Secret and OSCORE Master Salt are derived with the EDHOC-Exporter as specified in 4.2.1 of {{I-D.ietf-lake-edhoc}}.
+The OSCORE Master Secret and OSCORE Master Salt are derived with the EDHOC_Exporter as specified in 4.2.1 of {{I-D.ietf-lake-edhoc}}.
 
-    EDHOC-Exporter( label, context, length )
-    = EDHOC-KDF( PRK_exporter, label, context, length )
+    EDHOC_Exporter( label, context, length )
+    = EDHOC_KDF( PRK_exporter, label, context, length )
 
 where PRK_exporter is derived from PRK_out:
 
-     PRK_exporter = EDHOC-KDF( PRK_out, 10, h'', hash_length ) =
+     PRK_exporter = EDHOC_KDF( PRK_out, 10, h'', hash_length ) =
                   = HKDF-Expand( PRK_out, info,  hash_length )
 
 where hash_length is the length of the output of the EDHOC hash algorithm, and info for the PRK_exporter is:
@@ -2655,11 +2661,11 @@ Server's OSCORE Sender ID (Raw Value) (1 byte)
 ~~~~~~~~
 
 
-The OSCORE Master Secret is computed through Expand() using the
+The OSCORE Master Secret is computed through EDHOC_Expand() using the
 Application hash algorithm, see Appendix A.1 of {{I-D.ietf-lake-edhoc}}:
 
-    OSCORE Master Secret = EDHOC-Exporter( 0, h'', oscore_key_length )
-    = EDHOC-KDF( PRK_exporter, 0, h'',  oscore_key_length )
+    OSCORE Master Secret = EDHOC_Exporter( 0, h'', oscore_key_length )
+    = EDHOC_KDF( PRK_exporter, 0, h'',  oscore_key_length )
     = HKDF-Expand( PRK_exporter, info,  oscore_key_length )
 
 
@@ -2686,10 +2692,10 @@ OSCORE Master Secret (Raw Value) (16 bytes)
 07 ce 22 f2 63 8f ca 40 4d de d7 2a 25 fa 45 f4
 ~~~~~~~~
 
-The OSCORE Master Salt is computed through Expand() using the Application hash algorithm, see {{Section 4.2 of I-D.ietf-lake-edhoc}}:
+The OSCORE Master Salt is computed through EDHOC_Expand() using the Application hash algorithm, see {{Section 4.2 of I-D.ietf-lake-edhoc}}:
 
-    OSCORE Master Salt = EDHOC-Exporter( 1, h'', oscore_salt_length )
-    = EDHOC-KDF( PRK_exporter, 1, h'', oscore_salt_length )
+    OSCORE Master Salt = EDHOC_Exporter( 1, h'', oscore_salt_length )
+    = EDHOC_KDF( PRK_exporter, 1, h'', oscore_salt_length )
     = HKDF-Expand( PRK_4x3m, info, oscore_salt_length )
 
 where oscore_salt_length is the length of the OSCORE Master Salt, and info for the OSCORE Master Salt is:
@@ -2720,8 +2726,8 @@ OSCORE Master Salt (Raw Value) (8 bytes)
 
 Key update is defined in {{Section J of I-D.ietf-lake-edhoc}}.
 
-    EDHOC-KeyUpdate( context ):
-    PRK_out = EDHOC-KDF( PRK_out, 11, context, hash_length )
+    EDHOC_KeyUpdate( context ):
+    PRK_out = EDHOC_KDF( PRK_out, 11, context, hash_length )
             = HKDF-Expand( PRK_out, info, hash_length )
 
 where hash_length is the length of the output of the EDHOC hash function, context for KeyUpdate is
@@ -2754,7 +2760,7 @@ cb ae fc 6c fe 8c 9d 65 09 0c 34 2e 4e 4f cd d6 07 98 19 85 db 6f 57
 After key update the PRK_exporter needs to be derived anew:
 
 
-     PRK_exporter = EDHOC-KDF( PRK_out, 10, h'', hash_length ) =
+     PRK_exporter = EDHOC_KDF( PRK_out, 10, h'', hash_length ) =
                   = HKDF-Expand( PRK_out, info,  hash_length )
 
 where info and hash_length as unchanged as in {{out-and-exporter2}}.

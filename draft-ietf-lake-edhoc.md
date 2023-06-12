@@ -353,7 +353,7 @@ In order to create a "full-fledged" protocol some additional protocol elements a
 
 * Transport of external authorization data.
 
-EDHOC is designed to encrypt and integrity protect as much information as possible. Symmetric keys and random material derived using EDHOC_KDF are derived with as much previous information as possible, see {{fig-edhoc-kdf}}. EDHOC is furthermore designed to be as compact and lightweight as possible, in terms of message sizes, processing, and the ability to reuse already existing CBOR, COSE, and CoAP libraries. Like in (D)TLS, authentication is the responsibility of the application. EDHOC identifies (and optionally transports) authentication credentials, and provides proof-of-possession of the private authentication key.
+EDHOC is designed to encrypt and integrity protect as much information as possible. Symmetric keys and random material used in EDHOC are derived using EDHOC_KDF with as much previous information as possible, see {{fig-edhoc-kdf}}. EDHOC is furthermore designed to be as compact and lightweight as possible, in terms of message sizes, processing, and the ability to reuse already existing CBOR, COSE, and CoAP libraries. Like in (D)TLS, authentication is the responsibility of the application. EDHOC identifies (and optionally transports) authentication credentials, and provides proof-of-possession of the private authentication key.
 
 To simplify for implementors, the use of CBOR and COSE in EDHOC is summarized in {{CBORandCOSE}}. Test vectors including CBOR diagnostic notation are provided in {{I-D.ietf-lake-traces}}.
 
@@ -510,7 +510,7 @@ EDHOC performs the following authentication related operations:
 
 Other authentication related verifications are out of scope for EDHOC, and is the responsibility of the application. In particular, the authentication credential needs to be validated in the context of the connection for which EDHOC is used, see {{auth-validation}}. EDHOC MUST allow the application to read received information about credential (ID_CRED_R, ID_CRED_I). EDHOC MUST have access to the authentication key and the authentication credential.
 
-Note that the type of authentication key, authentication credential, and the identification of the credential have a large impact on the message size. For example, the Signature_or_MAC field is much smaller with a static DH key than with a signature key. A CCS is much smaller than a self-signed certificate/CWT, but if it is possible to reference the credential with a COSE header like 'kid', then that is in turn much smaller than a CCS.
+Note that the type of authentication key, authentication credential, and the identification of the credential have a large impact on the message size. For example, the Signature_or_MAC field is much smaller with a static DH key than with a signature key. A CWT Claims Set (CCS) is much smaller than a self-signed certificate/CWT, but if it is possible to reference the credential with a COSE header like 'kid', then that is in turn much smaller than a CCS.
 
 ### Authentication Keys {#auth-keys}
 
@@ -537,7 +537,7 @@ It is RECOMMENDED that the COSE 'kid' parameter, when used to identify the authe
 * When the authentication credential is an X.509 certificate, CRED_x SHALL be the DER encoded certificate, encoded as a bstr {{I-D.ietf-cose-x509}}.
 * When the authentication credential is a C509 certificate, CRED_x SHALL be the C509Certificate {{I-D.ietf-cose-cbor-encoded-cert}}.
 * When the authentication credential is a CWT including a COSE_Key, CRED_x SHALL be the untagged CWT.
-* When the authentication credential includes a COSE_Key but is not in a CWT, CRED_x SHALL be an untagged CCS. This is how RPKs are encoded, see {{fig-ccs}} for an example.
+* When the authentication credential includes a COSE_Key but is not in a CWT, CRED_x SHALL be an untagged CWT Claims Set (CCS). This is how RPKs are encoded, see {{fig-ccs}} for an example.
    * Naked COSE_Keys are thus dressed as CCS when used in EDHOC, in its simplest form by prefixing the COSE_Key with 0xA108A101 (a map with a 'cnf' claim). In that case the resulting authentication credential contains no other identity than the public key itself, see {{identities}}.
 
 An example of a CRED_x is shown below:
@@ -826,7 +826,7 @@ The definition of EDHOC_Expand depends on the EDHOC hash algorithm of the select
 
 where L = 8 {{{⋅}}} length, the output length in bits.
 
-{{fig-edhoc-kdf}} lists derivations made with EDHOC_KDF during message processing, where
+{{fig-edhoc-kdf}} lists derivations made with EDHOC_KDF, where
 
 * hash_length - length of output size of the EDHOC hash algorithm of the selected cipher suite
 
@@ -847,19 +847,20 @@ MAC_3         = EDHOC_KDF( PRK_4e3m, 6, context_3, mac_length_3 )
 PRK_out       = EDHOC_KDF( PRK_4e3m, 7, TH_4,      hash_length )
 K_4           = EDHOC_KDF( PRK_4e3m, 8, TH_4,      key_length )
 IV_4          = EDHOC_KDF( PRK_4e3m, 9, TH_4,      iv_length )
+PRK_exporter  = EDHOC_KDF( PRK_out, 10, h'',       hash_length )
 ~~~~~~~~~~~~~~~~~~~~~~~
 {: #fig-edhoc-kdf title="Key derivations using EDHOC_KDF."}
 {: artwork-align="center"}
 
 ### PRK_out {#prkout}
 
- The pseudorandom key PRK_out, derived as shown in {{fig-edhoc-kdf}} is the output session key of a successful EDHOC exchange.
+ The pseudorandom key PRK_out, derived as shown in {{fig-edhoc-kdf}}, is the output session key of a successful EDHOC exchange.
 
- Keys for applications are derived using EDHOC_Exporter from PRK_exporter (see {{exporter}}) which in turn is derived from PRK_out. For the purpose of generating application keys, it is sufficient to store PRK_out or PRK_exporter. (Note that the word "store" used here does not imply that the application has access to the plaintext PRK_out since that may be reserved for code within a Trusted Execution Environment, see {{impl-cons}}).
+ Keys for applications are derived using EDHOC_Exporter (see {{exporter}}) from PRK_exporter, which in turn is derived from PRK_out as shown in {{fig-edhoc-kdf}}. For the purpose of generating application keys, it is sufficient to store PRK_out or PRK_exporter. (Note that the word "store" used here does not imply that the application has access to the plaintext PRK_out since that may be reserved for code within a Trusted Execution Environment, see {{impl-cons}}).
 
 ## Keys for EDHOC Applications
 
-This section defines EDHOC_Exporter in terms of EDHOC_KDF and PRK_out. A key update function is defined in {{keyupdate}}.
+This section defines EDHOC_Exporter in terms of EDHOC_KDF and PRK_exporter. A key update function is defined in {{keyupdate}}.
 
 ### EDHOC_Exporter {#exporter}
 
@@ -874,13 +875,6 @@ where
 * exporter_label is a registered uint from the EDHOC_Exporter Label registry ({{exporter-label}})
 * context is a bstr defined by the application
 * length is a uint defined by the application
-* PRK_exporter is derived from PRK_out:
-
-~~~~~~~~~~~~~~~~~~~~~~~
-PRK_exporter  = EDHOC_KDF( PRK_out, 10, h'', hash_length )
-~~~~~~~~~~~~~~~~~~~~~~~
-
-where hash_length denotes the output size in bytes of the EDHOC hash algorithm of the selected cipher suite.
 
 The (exporter_label, context) pair used in EDHOC_Exporter must be unique, i.e., an (exporter_label, context) MUST NOT be used for two different purposes. However an application can re-derive the same key several times as long as it is done in a secure way. For example, in most encryption algorithms the same key can be reused with different nonces. The context can for example be the empty CBOR byte string.
 
@@ -1000,7 +994,7 @@ The Responder SHALL compose message_2 as follows:
 * Compute the transcript hash TH_2 = H( G_Y, C_R, H(message_1) ) where H() is the EDHOC hash algorithm of the selected cipher suite. The input to the hash function is a CBOR Sequence. Note that H(message_1) can be computed and cached already in the processing of message_1.
 
 * Compute MAC_2 as in {{expand}} with context_2 = << ID_CRED_R, TH_2, CRED_R, ? EAD_2 >> (see {{CBOR}} for notation)
-   * If the Responder authenticates with a static Diffie-Hellman key (method equals 1 or 3), then mac_length_2 is the EDHOC MAC length of the selected cipher suite. If the Responder authenticates with a signature key (method equals 0 or 2), then mac_length_2 is equal to the output size of the EDHOC hash algorithm of the selected cipher suite.
+   * If the Responder authenticates with a static Diffie-Hellman key (method equals 1 or 3), then mac_length_2 is the EDHOC MAC length of the selected cipher suite. If the Responder authenticates with a signature key (method equals 0 or 2), then mac_length_2 is equal to hash_length.
     * ID_CRED_R - identifier to facilitate the retrieval of CRED_R, see {{id_cred}}
     * CRED_R - CBOR item containing the authentication credential of the Responder, see {{auth-cred}}
     * EAD_2 - external authorization data, see {{AD}}
@@ -1064,7 +1058,7 @@ The Initiator SHALL compose message_3 as follows:
 * Compute the transcript hash TH_3 = H(TH_2, PLAINTEXT_2, CRED_R) where H() is the EDHOC hash algorithm of the selected cipher suite. The input to the hash function is a CBOR Sequence. Note that TH_3 can be computed and cached already in the processing of message_2.
 
 * Compute MAC_3 as in {{expand}}, with context_3 = << ID_CRED_I, TH_3, CRED_I, ? EAD_3 >>
-    * If the Initiator authenticates with a static Diffie-Hellman key (method equals 2 or 3), then mac_length_3 is the EDHOC MAC length of the selected cipher suite.  If the Initiator authenticates with a signature key (method equals 0 or 1), then mac_length_3 is equal to the output size of the EDHOC hash algorithm of the selected cipher suite.
+    * If the Initiator authenticates with a static Diffie-Hellman key (method equals 2 or 3), then mac_length_3 is the EDHOC MAC length of the selected cipher suite.  If the Initiator authenticates with a signature key (method equals 0 or 1), then mac_length_3 is equal to hash_length.
     * ID_CRED_I - identifier to facilitate the retrieval of CRED_I, see {{id_cred}}
     * CRED_I - CBOR item containing the authentication credential of the Initiator, see {{auth-cred}}
     * EAD_3 - external authorization data, see {{AD}}
@@ -1090,7 +1084,7 @@ The Initiator SHALL compose message_3 as follows:
 
    CIPHERTEXT_3 is the 'ciphertext' of COSE_Encrypt0.
 
-* Compute the transcript hash TH_4 = H(TH_3, PLAINTEXT_3, CRED_I) where H() is the EDHOC hash algorithm of the selected cipher suite. The input to the hash function is a CBOR Sequence. Note that TH_4 can be computed and cached already in the processing of message_3.
+* Compute the transcript hash TH_4 = H(TH_3, PLAINTEXT_3, CRED_I) where H() is the EDHOC hash algorithm of the selected cipher suite. The input to the hash function is a CBOR Sequence.
 
 * Calculate PRK_out as defined in {{fig-edhoc-kdf}}. The Initiator can now derive application keys using the EDHOC_Exporter interface, see {{exporter}}.
 
@@ -1180,7 +1174,7 @@ After verifying message_4, the Initiator is assured that the Responder has calcu
 
 This section defines the format for error messages, and the processing associated with the currently defined error codes. Additional error codes may be registered, see {{error-code-reg}}.
 
-There are many kinds of errors that can occur during EDHOC processing. As in CoAP, an error can be triggered by errors in the received message or internal errors in the receiving endpoint. Except for processing and formatting errors, it is up to the application when to send an error message. Sending error messages is essential for debugging but MAY be skipped if, for example, a session cannot be found or due to denial-of-service reasons, see {{dos}}. Error messages in EDHOC are always fatal. After sending an error message, the sender MUST discontinue the protocol. The receiver SHOULD treat an error message as an indication that the other party likely has discontinued the protocol. But since error messages might be forged, the receiver MAY try to continue the protocol.
+Many kinds of errors that can occur during EDHOC processing. As in CoAP, an error can be triggered by errors in the received message or internal errors in the receiving endpoint. Except for processing and formatting errors, it is up to the application when to send an error message. Sending error messages is essential for debugging but MAY be skipped if, for example, a session cannot be found or due to denial-of-service reasons, see {{dos}}. Error messages in EDHOC are always fatal. After sending an error message, the sender MUST discontinue the protocol. The receiver SHOULD treat an error message as an indication that the other party likely has discontinued the protocol. But since error messages might be forged, the receiver MAY try to continue the protocol.
 
 An EDHOC error message can be sent by either endpoint as a reply to any non-error EDHOC message. How errors at the EDHOC layer are transported depends on lower layers, which need to enable error messages to be sent and processed as intended.
 
@@ -1212,8 +1206,10 @@ The remainder of this section specifies the currently defined error codes, see {
 +----------+---------------+----------------------------------------+
 |        2 | suites        | Wrong selected cipher suite            |
 +----------+---------------+----------------------------------------+
+|        3 | true          | Unknown credential referenced          |
++----------+---------------+----------------------------------------+
 ~~~~~~~~~~~
-{: #fig-error-codes title="Error codes and error information included in the EDHOC error message."}
+{: #fig-error-codes title="EDHOC error codes and error information."}
 
 
 
@@ -1237,7 +1233,7 @@ After receiving SUITES_R, the Initiator can determine which cipher suite to sele
 
 If the Initiator intends to contact the Responder in the future, the Initiator SHOULD remember which selected cipher suite to use until the next message_1 has been sent, otherwise the Initiator and Responder will likely run into an infinite loop where the Initiator selects its most preferred cipher suite and the Responder sends an error with supported cipher suites. After a successful run of EDHOC, the Initiator MAY remember the selected cipher suite to use in future EDHOC sessions. Note that if the Initiator or Responder is updated with new cipher suite policies, any cached information may be outdated.
 
-Note that the Initiator's list of supported cipher suites and order of preference is fixed (see {{asym-msg1-form}} and {{init-proc-msg1}}). Furthermore, the Responder SHALL only accept message_1 if the selected cipher suite is the first cipher suite in SUITES_I that the Responder supports (see {{resp-proc-msg1}}). Following this procedure ensures that the selected cipher suite is the most preferred (by the Initiator) cipher suite supported by both parties.
+Note that the Initiator's list of supported cipher suites and order of preference is fixed (see {{asym-msg1-form}} and {{init-proc-msg1}}). Furthermore, the Responder SHALL only accept message_1 if the selected cipher suite is the first cipher suite in SUITES_I that the Responder also supports (see {{resp-proc-msg1}}). Following this procedure ensures that the selected cipher suite is the most preferred (by the Initiator) cipher suite supported by both parties. For examples, see {{ex-neg}}.
 
 If the selected cipher suite is not the first cipher suite which the Responder supports in SUITES_I received in message_1, then the Responder MUST discontinue the protocol, see {{resp-proc-msg1}}. If SUITES_I in message_1 is manipulated, then the integrity verification of message_2 containing the transcript hash TH_2 will fail and the Initiator will discontinue the protocol.
 
@@ -1266,7 +1262,7 @@ Initiator                                                   Responder
 
 In Example 2 ({{fig-error2}}), the Responder supports cipher suites 8 and 9 but not the more preferred (by the Initiator) cipher suites 5, 6 or 7. To illustrate the negotiation mechanics we let the Initiator first make a guess that the Responder supports suite 6 but not suite 5. Since the Responder supports neither 5 nor 6, it rejects the first message_1 with an error indicating support for suites 8 and 9 in SUITES_R (in any order). The Initiator also supports suites 8 and 9, and prefers suite 8, so therefore selects suite 8 in the second message_1. The Initiator prepends in SUITES_I the selected suite 8 with the more preferred suites in order of preference, in this case suites 5, 6 and 7, to mitigate a potential attack on the cipher suite negotiation.
 
-Note 1. If the Responder had supported suite 5, it would have included it in SUITES_R of the response, and it would in that case have become the selected and only suite in the second message_1.
+Note 1. If the Responder had supported suite 5, then the first message_1 would not have been accepted either, since the Responder observes that suite 5 is more preferred by the Initiator than the selected suite 6. In that case the Responder would have included suite 5 in SUITES_R of the response, and it would then have become the selected and only suite in the second message_1.
 
 Note 2. The content of the fields of message_1 may be different when sent the second time, in particular the ephemeral key MUST be different.
 
@@ -1286,6 +1282,15 @@ Initiator                                                   Responder
 ~~~~~~~~~~~
 {: #fig-error2 title="Cipher Suite Negotiation Example 2."}
 {: artwork-align="center"}
+
+
+## Unknown Credential Referenced
+
+Error code 3 is used for errors due to a received credential identifier (ID_CRED_R in message_2 or ID_CRED_I message_3) containing a reference to a credential which the receiving endpoint does not have access to. The intent with this error code is that the endpoint who sent the credential identifier should for the next EDHOC session try another credential identifier supported according to the application profile.
+
+For example, an application profile could list x5t and x5chain as supported credential identifiers, and state that x5t should be used if it can be assumed that the X.509 certificate is available at the receiving side. This error code thus enables the certificate chain to be sent only when needed, bearing in mind that error messages are not protected so an adversary can try to cause unnecessary large credential identifiers.
+
+For the error code 3, the error information SHALL be the CBOR simple value `true` (0xf5). Error code 3 MUST NOT be used when the received credential identifier type is not supported.
 
 # Compliance Requirements {#mti}
 
@@ -1346,6 +1351,7 @@ Repudiation: If an endpoint authenticates with a signature, the other endpoint c
 Earlier versions of EDHOC have been formally analyzed {{Bruni18}} {{Norrman20}} {{CottierPointcheval22}} {{Jacomme23}} {{GuentherIlunga22}} and the specification has been updated based on the analysis.
 
 ## Cryptographic Considerations {#crypto}
+
 The SIGMA protocol requires that the encryption of message_3 provides confidentiality against active attackers and EDHOC message_4 relies on the use of
 authenticated encryption. Hence the message authenticating functionality of the authenticated encryption in EDHOC is critical: authenticated encryption MUST NOT be replaced by plain encryption only, even if authentication is provided at another level or through a different mechanism.
 
@@ -1355,7 +1361,7 @@ As discussed in {{SIGMA}}, the encryption of message_2 does only need to protect
 
 Requirements for how to securely generate, validate, and process the ephemeral public keys depend on the elliptic curve. For X25519 and X448, the requirements are defined in {{RFC7748}}. For secp256r1, secp384r1, and secp521r1, the requirements are defined in Section 5 of {{SP-800-56A}}. For secp256r1, secp384r1, and secp521r1, at least partial public-key validation MUST be done.
 
-As noted in Section 12 of {{RFC9052}} the use of a single key for multiple algorithms is strongly discouraged unless proven secure by a dedicated cryptographic analysis. In particular this recommendation applies to using the same private key for static Diffie-Hellman authentication and digital signature authentication. A preliminary conjecture is that a minor change to EDHOC may be sufficient to fit the analysis of secure shared signature and ECDH key usage in {{Degabriele11}} and {{Thormarker21}}.
+The same authentication credential MAY be used for both the Initiator and Responder roles. As noted in Section 12 of {{RFC9052}} the use of a single key for multiple algorithms is strongly discouraged unless proven secure by a dedicated cryptographic analysis. In particular this recommendation applies to using the same private key for static Diffie-Hellman authentication and digital signature authentication. A preliminary conjecture is that a minor change to EDHOC may be sufficient to fit the analysis of secure shared signature and ECDH key usage in {{Degabriele11}} and {{Thormarker21}}.
 
 The property that a completed EDHOC exchange implies that another identity has been active is upheld as long as the Initiator does not have its own identity in the set of Responder identities it is allowed to communicate with. In Trust on first use (TOFU) use cases, see {{tofu}}, the Initiator should verify that the Responder's identity is not equal to its own. Any future EDHOC methods using e.g., pre-shared keys might need to mitigate this in other ways. However, an active attacker can gain information about the set of identities an Initiator is willing to communicate with. If the Initiator is willing to communicate with all identities except its own an attacker can determine that a guessed Initiator identity is correct. To not leak any long-term identifiers, using a freshly generated authentication key as identity in each initial TOFU exchange is RECOMMENDED.
 
@@ -1373,7 +1379,7 @@ Symmetric algorithms used in EDHOC such as SHA-256 and AES-CCM-16-64-128 are pra
 
 ## Unprotected Data and Privacy {#unprot-data}
 
-The Initiator and the Responder must make sure that unprotected data and metadata do not reveal any sensitive information. This also applies for encrypted data sent to an unauthenticated party. In particular, it applies to EAD_1, ID_CRED_R, EAD_2, and error messages. Using the same EAD_1 in several EDHOC sessions allows passive eavesdroppers to correlate the different sessions. Note that even if ead_value is encrypted outside of EDHOC, the ead_label in EAD_1 is revealed to passive attackers and the ead_label in EAD_2 is revealed to active attackers. Another consideration is that the list of supported cipher suites may potentially be used to identify the application. The Initiator and the Responder must also make sure that unauthenticated data does not trigger any harmful actions. In particular, this applies to EAD_1 and error messages.
+The Initiator and the Responder must make sure that unprotected data and metadata do not reveal any sensitive information. This also applies for encrypted data sent to an unauthenticated party. In particular, it applies to EAD_1, ID_CRED_R, EAD_2, and error messages. Using the same EAD_1 in several EDHOC sessions allows passive eavesdroppers to correlate the different sessions. Note that even if ead_value is encrypted outside of EDHOC, the ead_labels in EAD_1 is revealed to passive attackers and the ead_labels in EAD_2 is revealed to active attackers. Another consideration is that the list of supported cipher suites may potentially be used to identify the application. The Initiator and the Responder must also make sure that unauthenticated data does not trigger any harmful actions. In particular, this applies to EAD_1 and error messages.
 
 An attacker observing network traffic may use connection identifiers sent in clear in EDHOC or the subsequent application protocol to correlate packets sent on different paths or at different times. The attacker may use this information for traffic flow analysis or to track an endpoint. Application protocols using connection identifiers from EDHOC SHOULD provide mechanisms to update the connection identifiers and MAY provide mechanisms to issue several simultaneously active connection identifiers. See {{RFC9000}} for a non-constrained example of such mechanisms. Connection identifiers can e.g., be chosen randomly among the set of unused 1-byte connection identifiers. Connection identity privacy mechanisms are only useful when there are not fixed identifiers such as IP address or MAC address in the lower layers.
 
@@ -1410,7 +1416,7 @@ If two nodes unintentionally initiate two simultaneous EDHOC message exchanges w
 If supported by the device, it is RECOMMENDED that at least the long-term private keys are stored in a Trusted Execution Environment (TEE, see for example {{I-D.ietf-teep-architecture}}) and that sensitive operations using these keys are performed inside the TEE.  To achieve even higher security it is RECOMMENDED that additional operations such as ephemeral key generation, all computations of shared secrets, and storage of the PRK keys can be done inside the TEE. The use of a TEE aims at preventing code within that environment to be tampered with, and preventing data used by such code to be read or tampered with by code outside that environment.
 
 
-Note that HKDF-Expand has a relatively small maximum output length of 255 * hash_length, where hash_length is the output size in bytes of the EDHOC hash algorithm of the selected cipher suite. This means that when SHA-256 is used as hash algorithm, PLAINTEXT_2 cannot be longer than 8160 bytes. This is probably not a limitation for most intended applications, but to be able to support for example long certificate chains or large external authorization data, there is a backwards compatible method specified in {{large-plaintext_2}}.
+Note that HKDF-Expand has a relatively small maximum output length of 255 {{{⋅}}} hash_length, where hash_length is the output size in bytes of the EDHOC hash algorithm of the selected cipher suite. This means that when SHA-256 is used as hash algorithm, PLAINTEXT_2 cannot be longer than 8160 bytes. This is probably not a limitation for most intended applications, but to be able to support for example long certificate chains or large external authorization data, there is a backwards compatible method specified in {{large-plaintext_2}}.
 
 
 The sequence of transcript hashes in EDHOC (TH_2, TH_3, TH_4) does not make use of a so called running hash. This is a design choice as running hashes are often not supported on constrained platforms.
@@ -2785,6 +2791,7 @@ The authors want to thank
 {{{Michael Scharf}}},
 {{{Carsten Schürmann}}},
 {{{Ludwig Seitz}}},
+{{{Brian Sipos}}},
 {{{Stanislav Smyshlyaev}}},
 {{{Valery Smyslov}}},
 {{{Peter van der Stok}}},
