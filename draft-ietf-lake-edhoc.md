@@ -944,7 +944,7 @@ The processing steps are detailed below and in {{wrong-selected}}.
 The Initiator SHALL compose message_1 as follows:
 
 * Construct SUITES_I as an array of cipher suites supported by I in order of preference with the first cipher suite in the array being the most preferred by I, and the last being the one selected by I for this session. If the cipher suite most preferred by I is selected then SUITES_I contains only that cipher suite and is encoded as an int. All cipher suites, if any, preferred by I over the selected one MUST be included. (See also {{wrong-selected}}.)
-   * The selected suite is based on what the Initiator can assume to be supported by the Responder; if the Initiator previously received from the Responder an error message with error code 2 containing SUITES_R (see {{wrong-selected}}) indicating cipher suites supported by the Responder, then the Initiator SHOULD select its most preferred supported cipher suite among those (bearing in mind that error messages are not authenticated and may be forged).
+   * The selected suite is based on what the Initiator can assume to be supported by the Responder; if the Initiator previously received from the Responder an error message with error code 2 containing SUITES_R (see {{wrong-selected}}) indicating cipher suites supported by the Responder, then the Initiator SHOULD select its most preferred supported cipher suite among those (bearing in mind that error messages may be forged).
    * The Initiator MUST NOT change its order of preference for cipher suites, and MUST NOT omit a cipher suite preferred to the selected one because of previous error messages received from the Responder.
 
 * Generate an ephemeral ECDH key pair using the curve in the selected cipher suite and format it as a COSE_Key. Let G_X be the 'x' parameter of the COSE_Key.
@@ -1029,7 +1029,7 @@ The Initiator SHALL process message_2 in the following order:
 
 * Decrypt CIPHERTEXT_2, see {{asym-msg2-proc}}.
 
-* If all processing completed successfully, then make ID_CRED_R and (if present) EAD_2 available to the application for authentication- and EAD processing.
+* If all processing completed successfully, then make ID_CRED_R and (if present) EAD_2 available to the application for authentication- and EAD processing. When and how to perform authentication is up to the application.
 
 * Obtain the authentication credential (CRED_R) and the authentication key of R from the application (or by other means).
 
@@ -1092,8 +1092,7 @@ The Initiator SHALL compose message_3 as follows:
 
 *  Make the connection identifiers (C_I, C_R) and the application algorithms in the selected cipher suite available to the application.
 
- The Initiator SHOULD NOT persistently store PRK_out or application keys until the Initiator has verified message_4 or a message protected with a derived application key, such as an OSCORE message, from the Responder. This is similar to waiting for an acknowledgement (ACK) in a transport protocol.
-
+After creating message_3, the Initiator can compute PRK_out, see {{prkout}}, and derive application keys using the EDHOC_Exporter interface, see {{exporter}}. The Initiator SHOULD NOT persistently store PRK_out or application keys until the Initiator has verified message_4 or a message protected with a derived application key, such as an OSCORE message, from the Responder and the application has authenticated the Responder. This is similar to waiting for an acknowledgement (ACK) in a transport protocol. The Initiator SHOULD NOT send protected application data until the application has authenticated the Responder.
 
 ### Responder Processing of Message 3
 
@@ -1105,7 +1104,7 @@ The Responder SHALL process message_3 in the following order:
 
 * Decrypt and verify the COSE_Encrypt0 as defined in Sections 5.2 and 5.3 of {{RFC9052}}, with the EDHOC AEAD algorithm in the selected cipher suite, and the parameters defined in {{asym-msg3-proc}}.
 
-* If all processing completed successfully, then make ID_CRED_I and (if present) EAD_3 available to the application for authentication- and EAD processing.
+* If all processing completed successfully, then make ID_CRED_I and (if present) EAD_3 available to the application for authentication- and EAD processing. When and how to perform authentication is up to the application.
 
 * Obtain the authentication credential (CRED_I) and the authentication key of I from the application (or by other means).
 
@@ -1113,7 +1112,7 @@ The Responder SHALL process message_3 in the following order:
 
 *  Make the connection identifiers (C_I, C_R) and the application algorithms in the selected cipher suite available to the application.
 
-After verifying message_3, the Responder can compute PRK_out, see {{prkout}}, derive application keys using the EDHOC_Exporter interface, see {{exporter}}, persistently store the keying material, and send protected application data.
+After processing message_3, the Responder can compute PRK_out, see {{prkout}}, and derive application keys using the EDHOC_Exporter interface, see {{exporter}}. The Responder SHOULD NOT persistently store PRK_out or application keys until the application has authenticated the Initiator. The Responder SHOULD NOT send protected application data until the application has authenticated the Initiator.
 
 If any processing step fails, then the Responder MUST send an EDHOC error message back as defined in {{error}}, and the protocol MUST be discontinued.
 
@@ -1175,8 +1174,7 @@ After verifying message_4, the Initiator is assured that the Responder has calcu
 
 This section defines the format for error messages, and the processing associated with the currently defined error codes. Additional error codes may be registered, see {{error-code-reg}}.
 
-Many kinds of errors can occur during EDHOC processing. As in CoAP, an error can be triggered by errors in the received message or internal errors in the receiving endpoint. Except for processing and formatting errors, it is up to the implementation when to send an error message. Sending error messages is essential for debugging but MAY be skipped if, for example, a session cannot be found or due to denial-of-service reasons, see {{dos}}. Error messages in EDHOC are always fatal. After sending an error message, the sender MUST discontinue the protocol. The receiver SHOULD treat an error message as an indication that the other party likely has discontinued the protocol. But as the error message is not authenticated, a received error message might also have been sent by an attacker and the receiver MAY therefore try to continue the protocol.
-
+Many kinds of errors that can occur during EDHOC processing. As in CoAP, an error can be triggered by errors in the received message or internal errors in the receiving endpoint. Except for processing and formatting errors, it is up to the application when to send an error message. Sending error messages is essential for debugging but MAY be skipped if, for example, a session cannot be found or due to denial-of-service reasons, see {{dos}}. Error messages in EDHOC are always fatal. After sending an error message, the sender MUST discontinue the protocol. The receiver SHOULD treat an error message as an indication that the other party likely has discontinued the protocol. But since error messages might be forged, the receiver MAY try to continue the protocol.
 
 An EDHOC error message can be sent by either endpoint as a reply to any non-error EDHOC message. How errors at the EDHOC layer are transported depends on lower layers, which need to enable error messages to be sent and processed as intended.
 
