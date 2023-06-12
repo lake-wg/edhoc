@@ -524,7 +524,7 @@ EDHOC performs the following authentication related operations:
 
 Other authentication related verifications are out of scope for EDHOC, and is the responsibility of the application. In particular, the authentication credential needs to be validated in the context of the connection for which EDHOC is used, see {{auth-validation}}. EDHOC MUST allow the application to read received information about credential (ID_CRED_R, ID_CRED_I). EDHOC MUST have access to the authentication key and the authentication credential.
 
-Note that the type of authentication key, authentication credential, and the identification of the credential have a large impact on the message size. For example, the Signature_or_MAC field is much smaller with a static DH key than with a signature key. A CCS is much smaller than a self-signed certificate/CWT, but if it is possible to reference the credential with a COSE header like 'kid', then that is in turn much smaller than a CCS.
+Note that the type of authentication key, authentication credential, and the identification of the credential have a large impact on the message size. For example, the Signature_or_MAC field is much smaller with a static DH key than with a signature key. A CWT Claims Set (CCS) is much smaller than a self-signed certificate/CWT, but if it is possible to reference the credential with a COSE header like 'kid', then that is in turn much smaller than a CCS.
 
 ### Authentication Keys {#auth-keys}
 
@@ -553,7 +553,7 @@ It is RECOMMENDED that the COSE 'kid' parameter, when used to identify the authe
 * When the authentication credential is an X.509 certificate, CRED_x SHALL be the DER encoded certificate, encoded as a bstr {{RFC9360}}.
 * When the authentication credential is a C509 certificate, CRED_x SHALL be the C509Certificate {{I-D.ietf-cose-cbor-encoded-cert}}.
 * When the authentication credential is a CWT including a COSE_Key, CRED_x SHALL be the untagged CWT.
-* When the authentication credential includes a COSE_Key but is not in a CWT, CRED_x SHALL be an untagged CCS. This is how RPKs are encoded, see {{fig-ccs}} for an example.
+* When the authentication credential includes a COSE_Key but is not in a CWT, CRED_x SHALL be an untagged CWT Claims Set (CCS). This is how RPKs are encoded, see {{fig-ccs}} for an example.
    * Naked COSE_Keys are thus dressed as CCS when used in EDHOC, in its simplest form by prefixing the COSE_Key with 0xA108A101 (a map with a 'cnf' claim). In that case the resulting authentication credential contains no other identity than the public key itself, see {{identities}}.
 
 An example of CRED_x is shown below:
@@ -705,7 +705,7 @@ Note that padding is non-critical because the intended behaviour when receiving 
 
 ## Application Profile {#applicability}
 
-EDHOC requires certain parameters to be agreed upon between Initiator and Responder. Some parameters can be negotiated through the protocol execution (specifically, cipher suite, see {{cs}}) but other parameters are only communicated and may not be negotiated (e.g., which authentication method is used, see {{method}}). Yet other parameters need to be known out-of-band. The application decides which endpoint is Initiator and which is Responder.
+EDHOC requires certain parameters to be agreed upon between Initiator and Responder. Some parameters can be negotiated through the protocol execution (specifically, cipher suite, see {{cs}}) but other parameters are only communicated and may not be negotiated (e.g., which authentication method is used, see {{method}}). Yet other parameters need to be known out-of-band to ensure successful completion, e.g., whether message_4 is used or not. The application decides which endpoint is Initiator and which is Responder.
 
 The purpose of an application profile is to describe the intended use of EDHOC to allow for the relevant processing and verifications to be made, including things like:
 
@@ -718,7 +718,7 @@ The purpose of an application profile is to describe the intended use of EDHOC t
 6. Identifier used as the identity of the endpoint; see {{identities}}.
 7. If message_4 shall be sent/expected, and if not, how to ensure a protected application message is sent from the Responder to the Initiator; see {{m4}}.
 
-The application profile may also contain information about supported cipher suites. The procedure for selecting and verifying a cipher suite is still performed as described in {{asym-msg1-form}} and {{wrong-selected}}, but it may become simplified by this knowledge.
+The application profile may also contain information about supported cipher suites. The procedure for selecting and verifying a cipher suite is still performed as described in {{asym-msg1-form}} and {{wrong-selected}}, but it may become simplified by this knowledge. EDHOC messages can be processed without the application profile, i.e., the EDHOC messages includes information about the type and length of all fields.
 
 An example of an application profile is shown in {{appl-temp}}.
 
@@ -963,7 +963,8 @@ The processing steps are detailed below and in {{wrong-selected}}.
 The Initiator SHALL compose message_1 as follows:
 
 * Construct SUITES_I as an array of cipher suites supported by I in order of preference by I with the first cipher suite in the array being the most preferred by I, and the last being the one selected by I for this EDHOC session. If the cipher suite most preferred by I is selected then SUITES_I contains only that cipher suite and is encoded as an int. All cipher suites, if any, preferred by I over the selected one MUST be included. (See also {{wrong-selected}}.)
-   * The selected suite is based on what the Initiator can assume to be supported by the Responder; if the Initiator previously received from the Responder an error message with error code 2 containing SUITES_R (see {{wrong-selected}}) indicating cipher suites supported by the Responder, then the Initiator SHOULD select its most preferred supported cipher suite among those (bearing in mind that error messages are not authenticated and may be forged).
+   * The selected suite is based on what the Initiator can assume to be supported by the Responder; if the Initiator previously received from the Responder an error message with error code 2 containing SUITES_R (see {{wrong-selected}}) indicating cipher suites supported by the Responder, then the Initiator SHOULD select its most preferred supported cipher suite among those (bearing in mind that error messages may be forged).
+
    * The Initiator MUST NOT change its order of preference for cipher suites, and MUST NOT omit a cipher suite preferred to the selected one because of previous error messages received from the Responder.
 
 * Generate an ephemeral ECDH key pair using the curve in the selected cipher suite and format it as a COSE_Key. Let G_X be the 'x' parameter of the COSE_Key.
@@ -1048,7 +1049,7 @@ The Initiator SHALL process message_2 in the following order:
 
 * Decrypt CIPHERTEXT_2, see {{asym-msg2-proc}}.
 
-* If all processing completed successfully, then make ID_CRED_R and (if present) EAD_2 available to the application for authentication- and EAD processing.
+* If all processing completed successfully, then make ID_CRED_R and (if present) EAD_2 available to the application for authentication- and EAD processing. When and how to perform authentication is up to the application.
 
 * Obtain the authentication credential (CRED_R) and the authentication key of R from the application (or by other means).
 
@@ -1103,7 +1104,7 @@ The Initiator SHALL compose message_3 as follows:
 
    CIPHERTEXT_3 is the 'ciphertext' of COSE_Encrypt0.
 
-* Compute the transcript hash TH_4 = H(TH_3, PLAINTEXT_3, CRED_I) where H() is the EDHOC hash algorithm of the selected cipher suite. The input to the hash function is a CBOR Sequence. Note that TH_4 can be computed and cached already in the processing of message_3.
+* Compute the transcript hash TH_4 = H(TH_3, PLAINTEXT_3, CRED_I) where H() is the EDHOC hash algorithm of the selected cipher suite. The input to the hash function is a CBOR Sequence.
 
 * Calculate PRK_out as defined in {{fig-edhoc-kdf}}. The Initiator can now derive application keys using the EDHOC_Exporter interface, see {{exporter}}.
 
@@ -1111,8 +1112,7 @@ The Initiator SHALL compose message_3 as follows:
 
 *  Make the connection identifiers (C_I, C_R) and the application algorithms in the selected cipher suite available to the application.
 
- The Initiator SHOULD NOT persistently store PRK_out or application keys until the Initiator has verified message_4 or a message protected with a derived application key, such as an OSCORE message, from the Responder. This is similar to waiting for an acknowledgement (ACK) in a transport protocol.
-
+After creating message_3, the Initiator can compute PRK_out, see {{prkout}}, and derive application keys using the EDHOC_Exporter interface, see {{exporter}}. The Initiator SHOULD NOT persistently store PRK_out or application keys until the Initiator has verified message_4 or a message protected with a derived application key, such as an OSCORE message, from the Responder and the application has authenticated the Responder. This is similar to waiting for an acknowledgement (ACK) in a transport protocol. The Initiator SHOULD NOT send protected application data until the application has authenticated the Responder.
 
 ### Responder Processing of Message 3
 
@@ -1124,7 +1124,7 @@ The Responder SHALL process message_3 in the following order:
 
 * Decrypt and verify the COSE_Encrypt0 as defined in Sections 5.2 and 5.3 of {{RFC9052}}, with the EDHOC AEAD algorithm in the selected cipher suite, and the parameters defined in {{asym-msg3-proc}}.
 
-* If all processing completed successfully, then make ID_CRED_I and (if present) EAD_3 available to the application for authentication- and EAD processing.
+* If all processing completed successfully, then make ID_CRED_I and (if present) EAD_3 available to the application for authentication- and EAD processing. When and how to perform authentication is up to the application.
 
 * Obtain the authentication credential (CRED_I) and the authentication key of I from the application (or by other means).
 
@@ -1132,7 +1132,7 @@ The Responder SHALL process message_3 in the following order:
 
 *  Make the connection identifiers (C_I, C_R) and the application algorithms in the selected cipher suite available to the application.
 
-After verifying message_3, the Responder can compute PRK_out, see {{prkout}}, derive application keys using the EDHOC_Exporter interface, see {{exporter}}, persistently store the keying material, and send protected application data.
+After processing message_3, the Responder can compute PRK_out, see {{prkout}}, and derive application keys using the EDHOC_Exporter interface, see {{exporter}}. The Responder SHOULD NOT persistently store PRK_out or application keys until the application has authenticated the Initiator. The Responder SHOULD NOT send protected application data until the application has authenticated the Initiator.
 
 If any processing step fails, then the Responder MUST send an EDHOC error message back as defined in {{error}}, and the EDHOC session MUST be aborted.
 
@@ -1194,8 +1194,7 @@ After verifying message_4, the Initiator is assured that the Responder has calcu
 
 This section defines the format for error messages, and the processing associated with the currently defined error codes. Additional error codes may be registered, see {{error-code-reg}}.
 
-There are many kinds of errors that can occur during EDHOC processing. As in CoAP, an error can be triggered by errors in the received message or internal errors in the receiving endpoint. Except for processing and formatting errors, it is up to the implementation when to send an error message. Sending error messages is essential for debugging but MAY be skipped if, for example, an EDHOC session cannot be found or due to denial-of-service reasons, see {{dos}}. Error messages in EDHOC are always fatal. After sending an error message, the sender MUST abort the EDHOC session. The receiver SHOULD treat an error message as an indication that the other party likely has abort the EDHOC session. But as the error message is not authenticated, a received error message might also have been sent by an attacker and the receiver MAY therefore try to continue the EDHOC session.
-
+Many kinds of errors that can occur during EDHOC processing. As in CoAP, an error can be triggered by errors in the received message or internal errors in the receiving endpoint. Except for processing and formatting errors, it is up to the application when to send an error message. Sending error messages is essential for debugging but MAY be skipped if, for example, an EDHOC session cannot be found or due to denial-of-service reasons, see {{dos}}. Error messages in EDHOC are always fatal. After sending an error message, the sender MUST abort the EDHOC session. The receiver SHOULD treat an error message as an indication that the other party likely has aborted the EDHOC session.  But since error messages might be forged, the receiver MAY try to continue the EDHOC session.
 
 An EDHOC error message can be sent by either endpoint as a reply to any non-error EDHOC message. How errors at the EDHOC layer are transported depends on lower layers, which need to enable error messages to be sent and processed as intended.
 
@@ -1227,8 +1226,10 @@ The remainder of this section specifies the currently defined error codes, see {
 +----------+---------------+----------------------------------------+
 |        2 | suites        | Wrong selected cipher suite            |
 +----------+---------------+----------------------------------------+
+|        3 | true          | Unknown credential referenced          |
++----------+---------------+----------------------------------------+
 ~~~~~~~~~~~
-{: #fig-error-codes title="Error codes and error information included in the EDHOC error message."}
+{: #fig-error-codes title="EDHOC error codes and error information."}
 
 
 
@@ -1252,7 +1253,7 @@ After receiving SUITES_R, the Initiator can determine which cipher suite to sele
 
 If the Initiator intends to contact the Responder in the future, the Initiator SHOULD remember which selected cipher suite to use until the next message_1 has been sent, otherwise the Initiator and Responder will likely run into an infinite loop where the Initiator selects its most preferred cipher suite and the Responder sends an error with supported cipher suites. After a successful run of EDHOC, the Initiator MAY remember the selected cipher suite to use in future EDHOC sessions. Note that if the Initiator or Responder is updated with new cipher suite policies, any cached information may be outdated.
 
-Note that the Initiator's list of supported cipher suites and order of preference is fixed (see {{asym-msg1-form}} and {{init-proc-msg1}}). Furthermore, the Responder SHALL only accept message_1 if the selected cipher suite is the first cipher suite in SUITES_I that the Responder supports (see {{resp-proc-msg1}}). Following this procedure ensures that the selected cipher suite is the most preferred (by the Initiator) cipher suite supported by both parties.
+Note that the Initiator's list of supported cipher suites and order of preference is fixed (see {{asym-msg1-form}} and {{init-proc-msg1}}). Furthermore, the Responder SHALL only accept message_1 if the selected cipher suite is the first cipher suite in SUITES_I that the Responder also supports (see {{resp-proc-msg1}}). Following this procedure ensures that the selected cipher suite is the most preferred (by the Initiator) cipher suite supported by both parties. For examples, see {{ex-neg}}.
 
 If the selected cipher suite is not the first cipher suite which the Responder supports in SUITES_I received in message_1, then the Responder MUST abort the EDHOC session, see {{resp-proc-msg1}}. If SUITES_I in message_1 is manipulated, then the integrity verification of message_2 containing the transcript hash TH_2 will fail and the Initiator will abort the EDHOC session.
 
@@ -1281,7 +1282,7 @@ Initiator                                                   Responder
 
 In Example 2 ({{fig-error2}}), the Responder supports cipher suites 8 and 9 but not the more preferred (by the Initiator) cipher suites 5, 6 or 7. To illustrate the negotiation mechanics we let the Initiator first make a guess that the Responder supports suite 6 but not suite 5. Since the Responder supports neither 5 nor 6, it rejects the first message_1 with an error indicating support for suites 8 and 9 in SUITES_R (in any order). The Initiator also supports suites 8 and 9, and prefers suite 8, so therefore selects suite 8 in the second message_1. The Initiator prepends in SUITES_I the selected suite 8 with the more preferred suites in order of preference, in this case suites 5, 6 and 7, to mitigate a potential attack on the cipher suite negotiation.
 
-Note 1. If the Responder had supported suite 5, it would have included it in SUITES_R of the response, and it would in that case have become the selected and only suite in the second message_1.
+Note 1. If the Responder had supported suite 5, then the first message_1 would not have been accepted either, since the Responder observes that suite 5 is more preferred by the Initiator than the selected suite 6. In that case the Responder would have included suite 5 in SUITES_R of the response, and it would then have become the selected and only suite in the second message_1.
 
 Note 2. For each message_1 the Initiator MUST generate a new ephemeral ECDH key pair matching the selected cipher suite.
 
@@ -1301,6 +1302,15 @@ Initiator                                                   Responder
 ~~~~~~~~~~~
 {: #fig-error2 title="Cipher Suite Negotiation Example 2."}
 {: artwork-align="center"}
+
+## Unknown Credential Referenced
+
+Error code 3 is used for errors due to a received credential identifier (ID_CRED_R in message_2 or ID_CRED_I message_3) containing a reference to a credential which the receiving endpoint does not have access to. The intent with this error code is that the endpoint who sent the credential identifier should for the next EDHOC session try another credential identifier supported according to the application profile.
+
+For example, an application profile could list x5t and x5chain as supported credential identifiers, and state that x5t should be used if it can be assumed that the X.509 certificate is available at the receiving side. This error code thus enables the certificate chain to be sent only when needed, bearing in mind that error messages are not protected so an adversary can try to cause unnecessary large credential identifiers.
+
+For the error code 3, the error information SHALL be the CBOR simple value `true` (0xf5). Error code 3 MUST NOT be used when the received credential identifier type is not supported.
+
 
 # EDHOC Message Deduplication {#duplication}
 
@@ -2802,6 +2812,7 @@ The authors want to thank
 {{{Michael Scharf}}},
 {{{Carsten Schürmann}}},
 {{{Ludwig Seitz}}},
+{{{Brian Sipos}}},
 {{{Stanislav Smyshlyaev}}},
 {{{Valery Smyslov}}},
 {{{Peter van der Stok}}},
