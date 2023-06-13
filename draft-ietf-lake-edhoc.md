@@ -375,7 +375,7 @@ Initiator                                                   Responder
 +------------------------------------------------------------------>|
 |                             message_1                             |
 |                                                                   |
-|       G_Y, Enc( ID_CRED_R, Signature_or_MAC_2, C_R, EAD_2 )       |
+|       G_Y, Enc( C_R, ID_CRED_R, Signature_or_MAC_2, EAD_2 )       |
 |<------------------------------------------------------------------+
 |                             message_2                             |
 |                                                                   |
@@ -1007,7 +1007,7 @@ The Responder SHALL compose message_2 as follows:
 
 * CIPHERTEXT_2 is calculated by using the EDHOC_Expand function as a binary additive stream cipher over the following plaintext:
 
-   * PLAINTEXT_2 = ( ID_CRED_R / bstr / -24..23, Signature_or_MAC_2, C_R, ? EAD_2 )
+   * PLAINTEXT_2 = ( C_R, ID_CRED_R / bstr / -24..23, Signature_or_MAC_2 ? EAD_2 )
 
       * If ID_CRED_R contains a single 'kid' parameter, i.e., ID_CRED_R = { 4 : kid_R }, then the compact encoding is applied, see {{compact-kid}}.
       * C_R - variable length connection identifier. Note that connection identifiers are byte strings but certain values are represented as integers in the message, see {{bstr-repr}}.
