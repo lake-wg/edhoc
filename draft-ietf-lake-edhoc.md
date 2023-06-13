@@ -739,7 +739,7 @@ Other conditions may be part of the application profile, such as what is the tar
 
 ## Keys for EDHOC Message Processing
 
-EDHOC uses Extract-and-Expand {{RFC5869}} with the EDHOC hash algorithm in the selected cipher suite to derive keys used in message processing. This section defines EDHOC_Extract ({{extract}}) and EDHOC_Expand ({{expand}}), and how to use them to derive PRK_out ({{prkout}}) which is the shared secret session key resulting from a successful EDHOC exchange.
+EDHOC uses Extract-and-Expand {{RFC5869}} with the EDHOC hash algorithm in the selected cipher suite to derive keys used in message processing. This section defines EDHOC_Extract ({{extract}}) and EDHOC_Expand ({{expand}}), and how to use them to derive PRK_out ({{prkout}}) which is the shared secret session key resulting from a completed EDHOC session.
 
 EDHOC_Extract is used to derive fixed-length uniformly pseudorandom keys (PRK) from ECDH shared secrets. EDHOC_Expand is used to define EDHOC_KDF for generating MACs and for deriving output keying material (OKM) from PRKs.
 
@@ -875,7 +875,7 @@ PRK_exporter  = EDHOC_KDF( PRK_out, 10, h'',       hash_length )
 
 ### PRK_out {#prkout}
 
- The pseudorandom key PRK_out, derived as shown in {{fig-edhoc-kdf}}, is the output session key of a successful EDHOC exchange.
+ The pseudorandom key PRK_out, derived as shown in {{fig-edhoc-kdf}}, is the output session key of a completed EDHOC session.
 
  Keys for applications are derived using EDHOC_Exporter (see {{exporter}}) from PRK_exporter, which in turn is derived from PRK_out as shown in {{fig-edhoc-kdf}}. For the purpose of generating application keys, it is sufficient to store PRK_out or PRK_exporter. (Note that the word "store" used here does not imply that the application has access to the plaintext PRK_out since that may be reserved for code within a Trusted Execution Environment, see {{impl-cons}}).
 
@@ -924,7 +924,7 @@ EDHOC messages SHALL be processed according to the current protocol state. The f
 
 The message processing steps SHALL be processed in order, unless otherwise stated. If the processing fails for some reason then, typically, an error message is sent, the EDHOC session is aborted, and the protocol state erased. When the composition and sending of one message is completed and before the next message is received, error messages SHALL NOT be sent.
 
-After having successfully processed the last message (message_3 or message_4 depending on application profile) the EDHOC exchange is completed, after which no error messages are sent and EDHOC session output MAY be maintained even if error messages are received. Further details are provided in the following subsections and in {{error}}.
+After having successfully processed the last message (message_3 or message_4 depending on application profile) the EDHOC session is completed, after which no error messages are sent and EDHOC session output MAY be maintained even if error messages are received. Further details are provided in the following subsections and in {{error}}.
 
 Different instances of the same message MUST NOT be processed in one EDHOC session.  Note that processing will fail if the same message appears a second time for EDHOC processing in the same EDHOC session because the state of the protocol has moved on and now expects something else. Message deduplication MUST be done by the transport protocol (see {{transport}}) or, if not supported by the transport, as described in {{duplication}}.
 
@@ -1235,7 +1235,7 @@ The remainder of this section specifies the currently defined error codes, see {
 
 ## Success
 
-Error code 0 MAY be used internally in an application to indicate success, i.e., as a standard value in case of no error, e.g., in status reporting or log files. Error code 0 MUST NOT be used as part of the EDHOC message exchange flow. If an endpoint receives an error message with error code 0, then it MUST abort the EDHOC session and MUST NOT send an error message.
+Error code 0 MAY be used internally in an application to indicate success, i.e., as a standard value in case of no error, e.g., in status reporting or log files. Error code 0 MUST NOT be used as part of the EDHOC message exchange. If an endpoint receives an error message with error code 0, then it MUST abort the EDHOC session and MUST NOT send an error message.
 
 ## Unspecified Error
 
@@ -1251,7 +1251,7 @@ In contrast to SUITES_I, the order of the cipher suites in SUITES_R has no signi
 
 After receiving SUITES_R, the Initiator can determine which cipher suite to select (if any) for the next EDHOC run with the Responder.
 
-If the Initiator intends to contact the Responder in the future, the Initiator SHOULD remember which selected cipher suite to use until the next message_1 has been sent, otherwise the Initiator and Responder will likely run into an infinite loop where the Initiator selects its most preferred cipher suite and the Responder sends an error with supported cipher suites. After a successful run of EDHOC, the Initiator MAY remember the selected cipher suite to use in future EDHOC sessions. Note that if the Initiator or Responder is updated with new cipher suite policies, any cached information may be outdated.
+If the Initiator intends to contact the Responder in the future, the Initiator SHOULD remember which selected cipher suite to use until the next message_1 has been sent, otherwise the Initiator and Responder will likely run into an infinite loop where the Initiator selects its most preferred cipher suite and the Responder sends an error with supported cipher suites. After a completed EDHOC session, the Initiator MAY remember the selected cipher suite to use in future EDHOC sessions. Note that if the Initiator or Responder is updated with new cipher suite policies, any cached information may be outdated.
 
 Note that the Initiator's list of supported cipher suites and order of preference is fixed (see {{asym-msg1-form}} and {{init-proc-msg1}}). Furthermore, the Responder SHALL only accept message_1 if the selected cipher suite is the first cipher suite in SUITES_I that the Responder also supports (see {{resp-proc-msg1}}). Following this procedure ensures that the selected cipher suite is the most preferred (by the Initiator) cipher suite supported by both parties. For examples, see {{ex-neg}}.
 
@@ -1371,7 +1371,7 @@ As required by {{RFC7258}}, IETF protocols need to mitigate pervasive monitoring
 
 To limit the effect of breaches, it is important to limit the use of symmetric group keys for bootstrapping. EDHOC therefore strives to make the additional cost of using raw public keys and self-signed certificates as small as possible. Raw public keys and self-signed certificates are not a replacement for a public key infrastructure but SHOULD be used instead of symmetric group keys for bootstrapping.
 
-Compromise of the long-term keys (private signature or static DH keys) does not compromise the security of completed EDHOC exchanges. Compromising the private authentication keys of one party lets an active attacker impersonate that compromised party in EDHOC exchanges with other parties but does not let the attacker impersonate other parties in EDHOC exchanges with the compromised party. Compromise of the long-term keys does not enable a passive attacker to compromise future session keys (PRK_out). Compromise of the HDKF input parameters (ECDH shared secret) leads to compromise of all session keys derived from that compromised shared secret. Compromise of one session key does not compromise other session keys. Compromise of PRK_out leads to compromise of all keying material derived with the EDHOC_Exporter.
+Compromise of the long-term keys (private signature or static DH keys) does not compromise the security of completed EDHOC sessions. Compromising the private authentication keys of one party lets an active attacker impersonate that compromised party in EDHOC sessions with other parties but does not let the attacker impersonate other parties in EDHOC sessions with the compromised party. Compromise of the long-term keys does not enable a passive attacker to compromise future session keys (PRK_out). Compromise of the HDKF input parameters (ECDH shared secret) leads to compromise of all session keys derived from that compromised shared secret. Compromise of one session key does not compromise other session keys. Compromise of PRK_out leads to compromise of all keying material derived with the EDHOC_Exporter.
 
 Based on the cryptographic algorithms requirements {{sec_algs}}, EDHOC provides a minimum of 64-bit security against online brute force attacks and a minimum of 128-bit security against offline brute force attacks. To break 64-bit security against online brute force an attacker would on average have to send 4.3 billion messages per second for 68 years, which is infeasible in constrained IoT radio technologies. A forgery against a 64-bit MAC in EDHOC breaks the security of all future application data, while a forgery against a 64-bit MAC in the subsequent application protocol (e.g., OSCORE {{RFC8613}}) typically only breaks the security of the data in the forged packet.
 
@@ -1402,7 +1402,7 @@ Requirements for how to securely generate, validate, and process the ephemeral p
 
 The same authentication credential MAY be used for both the Initiator and Responder roles. As noted in Section 12 of {{RFC9052}} the use of a single key for multiple algorithms is strongly discouraged unless proven secure by a dedicated cryptographic analysis. In particular this recommendation applies to using the same private key for static Diffie-Hellman authentication and digital signature authentication. A preliminary conjecture is that a minor change to EDHOC may be sufficient to fit the analysis of secure shared signature and ECDH key usage in {{Degabriele11}} and {{Thormarker21}}.
 
-The property that a completed EDHOC exchange implies that another identity has been active is upheld as long as the Initiator does not have its own identity in the set of Responder identities it is allowed to communicate with. In Trust on first use (TOFU) use cases, see {{tofu}}, the Initiator should verify that the Responder's identity is not equal to its own. Any future EDHOC methods using e.g., pre-shared keys might need to mitigate this in other ways. However, an active attacker can gain information about the set of identities an Initiator is willing to communicate with. If the Initiator is willing to communicate with all identities except its own an attacker can determine that a guessed Initiator identity is correct. To not leak any long-term identifiers, using a freshly generated authentication key as identity in each initial TOFU exchange is RECOMMENDED.
+The property that a completed EDHOC session implies that another identity has been active is upheld as long as the Initiator does not have its own identity in the set of Responder identities it is allowed to communicate with. In Trust on first use (TOFU) use cases, see {{tofu}}, the Initiator should verify that the Responder's identity is not equal to its own. Any future EDHOC methods using e.g., pre-shared keys might need to mitigate this in other ways. However, an active attacker can gain information about the set of identities an Initiator is willing to communicate with. If the Initiator is willing to communicate with all identities except its own an attacker can determine that a guessed Initiator identity is correct. To not leak any long-term identifiers, using a freshly generated authentication key as identity in each initial TOFU session is RECOMMENDED.
 
 ## Cipher Suites and Cryptographic Algorithms {#sec_algs}
 
@@ -1450,7 +1450,7 @@ The Initiator and the Responder are responsible for verifying the integrity and 
 
 The Initiator and the Responder are allowed to select the connection identifier C_I and C_R, respectively, for the other party to use in the ongoing EDHOC session as well as in a subsequent application protocol (e.g., OSCORE {{RFC8613}}). The choice of connection identifier is not security critical in EDHOC but intended to simplify the retrieval of the right security context in combination with using short identifiers. If the wrong connection identifier of the other party is used in a protocol message it will result in the receiving party not being able to retrieve a security context (which will abort the EDHOC session) or retrieve the wrong security context (which also aborts the EDHOC session as the message cannot be verified).
 
-If two nodes unintentionally initiate two simultaneous EDHOC message exchanges with each other even if they only want to complete a single EDHOC message exchange, they MAY abort the EDHOC session with the lexicographically smallest G_X. Note that in cases where several EDHOC exchanges with different parameter sets (method, COSE headers, etc.) are used, an attacker can affect which parameter set will be used by blocking some of the parameter sets.
+If two nodes unintentionally initiate two simultaneous EDHOC sessions with each other even if they only want to complete a single EDHOC session, they MAY abort the EDHOC session with the lexicographically smallest G_X. Note that in cases where several EDHOC sessions with different parameter sets (method, COSE headers, etc.) are used, an attacker can affect which parameter set will be used by blocking some of the parameter sets.
 
 If supported by the device, it is RECOMMENDED that at least the long-term private keys are stored in a Trusted Execution Environment (TEE, see for example {{I-D.ietf-teep-architecture}}) and that sensitive operations using these keys are performed inside the TEE.  To achieve even higher security it is RECOMMENDED that additional operations such as ephemeral key generation, all computations of shared secrets, and storage of the PRK keys can be done inside the TEE. The use of a TEE aims at preventing code within that environment to be tampered with, and preventing data used by such code to be read or tampered with by code outside that environment.
 
@@ -1957,7 +1957,7 @@ In the forward message flow the CoAP client is the Initiator and the CoAP server
 
 * If EDHOC message_4 is used, or in case of an error message, it is sent from the server to the client in the payload of the response, with response codes analogously to message_2. In case of an error message sent in response to message_4, it is sent analogously to error message sent in response to message_2.
 
-An example of a successful EDHOC exchange over CoAP in the forward message flow is shown in {{fig-coap1}}.
+An example of a completed EDHOC session over CoAP in the forward message flow is shown in {{fig-coap1}}.
 
 ~~~~~~~~~~~~~~~~~~~~~~~ aasvg
 Client    Server
@@ -2003,7 +2003,7 @@ In the reverse message flow the CoAP client is the Responder and the CoAP server
 
 * If EDHOC message_4 is used, or in case of an error message, it is sent from the client to the server's resource in the payload of a POST request, prepended with the connection identifier C_I. In case of an error message sent in response to message_4, it is sent analogously to an error message sent in response to message_2.
 
-An example of a successful EDHOC exchange over CoAP in the reverse message flow is shown in {{fig-coap2}}.
+An example of a completed EDHOC session over CoAP in the reverse message flow is shown in {{fig-coap2}}.
 
 ~~~~~~~~~~~~~~~~~~~~~~~ aasvg
 Client    Server
