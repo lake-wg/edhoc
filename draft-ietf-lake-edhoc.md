@@ -2096,7 +2096,6 @@ message_1 = (
 
 message_2 = (
   G_Y_CIPHERTEXT_2 : bstr,
-  C_R : bstr / -24..23,
 )
 
 message_3 = (
