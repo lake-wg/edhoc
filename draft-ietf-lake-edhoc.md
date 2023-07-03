@@ -389,7 +389,7 @@ Initiator                                                   Responder
 +------------------------------------------------------------------>|
 |                             message_1                             |
 |                                                                   |
-|       G_Y, Enc( ID_CRED_R, Signature_or_MAC_2, EAD_2 ), C_R       |
+|       G_Y, Enc( C_R, ID_CRED_R, Signature_or_MAC_2, EAD_2 )       |
 |<------------------------------------------------------------------+
 |                             message_2                             |
 |                                                                   |
@@ -994,14 +994,12 @@ message_2 SHALL be a CBOR Sequence (see {{CBOR}}) as defined below
 ~~~~~~~~~~~ CDDL
 message_2 = (
   G_Y_CIPHERTEXT_2 : bstr,
-  C_R : bstr / -24..23,
 )
 ~~~~~~~~~~~
 
 where:
 
 * G_Y_CIPHERTEXT_2 - the concatenation of G_Y (i.e., the ephemeral public key of the Responder) and CIPHERTEXT_2.
-* C_R - variable length connection identifier. Note that connection identifiers are byte strings but certain values are represented as integers in the message, see {{bstr-repr}}.
 
 ### Responder Processing of Message 2 {#asym-msg2-proc}
 
@@ -1011,7 +1009,7 @@ The Responder SHALL compose message_2 as follows:
 
 * Choose a connection identifier C_R and store it for the length of the EDHOC session.
 
-* Compute the transcript hash TH_2 = H( G_Y, C_R, H(message_1) ) where H() is the EDHOC hash algorithm of the selected cipher suite. The input to the hash function is a CBOR Sequence. Note that H(message_1) can be computed and cached already in the processing of message_1.
+* Compute the transcript hash TH_2 = H( G_Y, H(message_1) ) where H() is the EDHOC hash algorithm of the selected cipher suite. The input to the hash function is a CBOR Sequence. Note that H(message_1) can be computed and cached already in the processing of message_1.
 
 * Compute MAC_2 as in {{expand}} with context_2 = << ID_CRED_R, TH_2, CRED_R, ? EAD_2 >> (see {{CBOR}} for notation)
    * If the Responder authenticates with a static Diffie-Hellman key (method equals 1 or 3), then mac_length_2 is the EDHOC MAC length of the selected cipher suite. If the Responder authenticates with a signature key (method equals 0 or 2), then mac_length_2 is equal to hash_length.
@@ -1029,9 +1027,10 @@ The Responder SHALL compose message_2 as follows:
 
 * CIPHERTEXT_2 is calculated by using the EDHOC_Expand function as a binary additive stream cipher over the following plaintext:
 
-   * PLAINTEXT_2 = ( ID_CRED_R / bstr / -24..23, Signature_or_MAC_2, ? EAD_2 )
+   * PLAINTEXT_2 = ( C_R, ID_CRED_R / bstr / -24..23, Signature_or_MAC_2, ? EAD_2 )
 
       * If ID_CRED_R contains a single 'kid' parameter, i.e., ID_CRED_R = { 4 : kid_R }, then the compact encoding is applied, see {{compact-kid}}.
+      * C_R - variable length connection identifier. Note that connection identifiers are byte strings but certain values are represented as integers in the message, see {{bstr-repr}}.
 
    * Compute KEYSTREAM_2 as in {{expand}}, where plaintext_length is the length of PLAINTEXT_2. For the case of plaintext_length exceeding the EDHOC_KDF output size, see {{large-plaintext_2}}.
 
@@ -2137,7 +2136,6 @@ message_1 = (
 
 message_2 = (
   G_Y_CIPHERTEXT_2 : bstr,
-  C_R : bstr / -24..23,
 )
 
 message_3 = (
@@ -2822,8 +2820,9 @@ The authors want to thank
 {{{Marco Tiloca}}},
 {{{Sean Turner}}},
 {{{Michel Veillette}}},
+{{{Mališa Vučinić}}},
 and
-{{{Mališa Vučinić}}}
+{{{Paul Wouters}}}
 for reviewing and commenting on intermediate versions of the draft. We are especially indebted to the late {{{Jim Schaad}}} for his continuous reviewing and implementation of early versions of this and other drafts.
 
 Work on this document has in part been supported by the H2020 project SIFIS-Home (grant agreement 952652).
