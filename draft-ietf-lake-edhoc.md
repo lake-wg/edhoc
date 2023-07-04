@@ -2487,6 +2487,20 @@ ABORTED <---------------- RCVD_M1
 
 RFC Editor: Please remove this appendix.
 
+* From -19 to -20
+  * C_R encrypted in message_2
+  * C_R removed from TH_2
+  * Error code for unknown referenced credential
+  * Error code 0 (success) explicitly reserved
+  * Message deduplication section moved from appendix to body
+  * Terminology
+    * discontinued -> aborted
+    * protocol run / exchange -> session
+  * Clarifications, in particular
+    * when to derive application keys
+    * the role of the application for authentication
+  * Updated references
+
 * From -18 to -19
   * Clarifications:
     * Relation to SIGMA
