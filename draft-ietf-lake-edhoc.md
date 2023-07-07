@@ -588,7 +588,7 @@ The ID_CRED fields are used to identify and optionally transport credentials:
 
 ID_CRED_x may contain the authentication credential CRED_x, for x = I or R, but for many settings it is not necessary to transport the authentication credential within EDHOC. For example, it may be pre-provisioned or acquired out-of-band over less constrained links. ID_CRED_I and ID_CRED_R do not have any cryptographic purpose in EDHOC since the authentication credentials are integrity protected.
 
-EDHOC relies on COSE for identification of credentials and supports all credential types for which COSE header parameters are defined including X.509 certificates ({{RFC9360}}), C509 certificates ({{I-D.ietf-cose-cbor-encoded-cert}}), CWT ({{cwt-header-param}}) and CWT Claims Set (CCS) ({{cwt-header-param}}).
+EDHOC relies on COSE for identification of credentials and supports all credential types for which COSE header parameters are defined including X.509 certificates ({{RFC9360}}), C509 certificates ({{I-D.ietf-cose-cbor-encoded-cert}}), CWT (see {{new-header-param}}) and CWT Claims Set (see {{new-header-param}}).
 
 ID_CRED_I and ID_CRED_R are of type COSE header_map, as defined in Section 3 of {{RFC9052}}, and contains one or more COSE header parameters. ID_CRED_I and ID_CRED_R MAY contain different header parameters. The header parameters typically provide some information about the format of the credential.
 
@@ -605,6 +605,15 @@ Note that COSE header parameters in ID_CRED_x are used to identify the message s
 As stated in Section 3.1 of {{RFC9052}}, applications MUST NOT assume that 'kid' values are unique and several keys associated with a 'kid' may need to be checked before the correct one is found. Applications might use additional information such as 'kid context' or lower layers to determine which key to try first. Applications should strive to make ID_CRED_x as unique as possible, since the recipient may otherwise have to try several keys.
 
 See {{COSE}} for more examples.
+
+#### COSE Header Parameters for CWT and CWT Claims Set {#new-header-param}
+
+This document registers two new COSE header parameters 'kcwt' and 'kccs' for use with CBOR Web Token (CWT, {{RFC8392}}) and CWT Claims Set (CCS, {{RFC8392}}), respectively. The CWT/CCS MUST contain a COSE_Key in a 'cnf' claim {{RFC8747}}. There may be any number of additional claims present in the CWT/CCS.
+
+CWTs sent in 'kcwt' are protected using a MAC or a signature and are similar to a certificate (when with public key cryptography) or a Kerberos ticket (when used with symmetric key cryptography). CCSs sent in 'kccs' are not protected and are therefore similar to raw public keys or self-signed certificates.
+
+Security considerations for 'kcwt' and 'kccs' are made in {{impl-cons}}.
+
 
 #### Compact Encoding of ID_CRED Fields for 'kid' {#compact-kid}
 
@@ -1445,7 +1454,13 @@ Appendix D of {{I-D.ietf-lwig-curve-representations}} describes how Montgomery c
 
 All private keys, symmetric keys, and IVs MUST be secret. Implementations should provide countermeasures to side-channel attacks such as timing attacks. Intermediate computed values such as ephemeral ECDH keys and ECDH shared secrets MUST be deleted after key derivation is completed.
 
-The Initiator and the Responder are responsible for verifying the integrity and validity of certificates. The selection of trusted CAs should be done very carefully and certificate revocation should be supported. The choice of revocation mechanism is left to the application. For example, in case of X.509 certificates, Certificate Revocation Lists {{RFC5280}} or OCSP {{RFC6960}} may be used. Verification of validity may require the use of a Real-Time Clock (RTC). The private authentication keys MUST be kept secret, only the Responder SHALL have access to the Responder's private authentication key and only the Initiator SHALL have access to the Initiator's private authentication key.
+The Initiator and the Responder are responsible for verifying the integrity and validity of certificates. The selection of trusted CAs should be done very carefully and certificate revocation should be supported. The choice of revocation mechanism is left to the application. For example, in case of X.509 certificates, Certificate Revocation Lists {{RFC5280}} or OCSP {{RFC6960}} may be used. Similar considerations as for certificates are needed for CWTs. The endpoints are responsible for verifying the integrity and validity of CWTs, and to handle revocation.
+
+The application needs to determine what trust anchors are relevant, and have a well-defined trust-establishment process. A  self-signed certificate or CWT appearing in the protocol cannot be a trigger to modify the set of trust anchors. One common way for a new trust anchor to be added to (or removed from) a device is by means firmware upgrade. See {{RFC9360}} for a longer discussion on trust and validation in constrained devices.
+
+The contents of the COSE header parameters 'kcwt' and 'kccs' defined in {{cwt-header-param}} must be processed as untrusted input. Endpoints that intend to rely on the assertions made by a CWT/CCS obtained from any of these methods need to validate the contents. For 'kccs', which enables transport of raw public keys, the data structure used does not include any protection or verification data. The use of 'kccs' must be handled as unauthenticated operations, e.g. trust on first use, with the limitations and caveats entailed, see {{tofu}}.
+
+Verification of validity may require the use of a Real-Time Clock (RTC). The private authentication keys MUST be kept secret, only the Responder SHALL have access to the Responder's private authentication key and only the Initiator SHALL have access to the Initiator's private authentication key.
 
 The Initiator and the Responder are allowed to select the connection identifier C_I and C_R, respectively, for the other party to use in the ongoing EDHOC session as well as in a subsequent application protocol (e.g., OSCORE {{RFC8613}}). The choice of connection identifier is not security critical in EDHOC but intended to simplify the retrieval of the right security context in combination with using short identifiers. If the wrong connection identifier of the other party is used in a protocol message it will result in the receiving party not being able to retrieve a security context (which will abort the EDHOC session) or retrieve the wrong security context (which also aborts the EDHOC session as the message cannot be verified).
 
@@ -1461,13 +1476,6 @@ The sequence of transcript hashes in EDHOC (TH_2, TH_3, TH_4) does not make use 
 
 When parsing a received EDHOC message, implementations MUST abort the EDHOC session if the message does not comply with the CDDL for that message. It is RECOMMENDED to abort the EDHOC session if the received EDHOC message is not encoded using deterministic CBOR.
 
-# CBOR Web Token (CWT) and CWT Claims Set (CCS)
-
-This document registers the two new COSE header parameters 'kcwt' and 'kccs' for use with CBOR Web Token (CWT) {{RFC8392}} and CWT Claims Set (CCS){{RFC8392}}, respectively. The CWT/CCS MUST contain a COSE_Key in a 'cnf' claim {{RFC8747}}. There may be any number of additional claims present in the CWT/CCS.
-
-CWTs sent in 'kcwt' are protected using a MAC or a signature and are similar to a certificate (when with public key cryptography) or a Kerberos ticket (when used with symmetric key cryptography). CCSs sent in 'kccs' are not protected and are therefore similar to raw public keys or self-signed certificates.
-
-Parties that intend to rely on the assertions made by a CWT/CCS obtained from any of these methods need to validate it unless EDHOC is used in some low security mode such as trust on first use, see {{tofu}}. Establishing trust in a CWT/CCS is a vital part of processing.  A major component of establishing trust is determining what the set of trust anchors are for the process.  A new self-signed certificate appearing on the client cannot be a trigger to modify the set of trust anchors, because a well-defined trust-establishment process is required. One common way for a new trust anchor to be added to (or removed from) a device is by doing a new firmware upgrade. See {{RFC9360}} for a longer discussion on trust and validation in constrained devices.
 
 # IANA Considerations {#iana}
 
