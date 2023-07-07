@@ -1461,6 +1461,13 @@ The sequence of transcript hashes in EDHOC (TH_2, TH_3, TH_4) does not make use 
 
 When parsing a received EDHOC message, implementations MUST abort the EDHOC session if the message does not comply with the CDDL for that message. It is RECOMMENDED to abort the EDHOC session if the received EDHOC message is not encoded using deterministic CBOR.
 
+# CBOR Web Token (CWT) and CWT Claims Set (CCS)
+
+This document registers the two new COSE header parameters 'kcwt' and 'kccs' for use with CBOR Web Token (CWT) {{RFC8392}} and CWT Claims Set (CCS){{RFC8392}}, respectively. The CWT/CCS MUST contain a COSE_Key in a 'cnf' claim {{RFC8747}}. There may be any number of additional claims present in the CWT/CCS.
+
+CWTs sent in 'kcwt' are protected using a MAC or a signature and are similar to a certificate (when with public key cryptography) or a Kerberos ticket (when used with symmetric key cryptography). CCSs sent in 'kccs' are not protected and are therefore similar to raw public keys or self-signed certificates.
+
+Parties that intend to rely on the assertions made by a CWT/CCS obtained from any of these methods need to validate it unless EDHOC is used in some low security mode such as trust on first use, see {{tofu}}. Establishing trust in a CWT/CCS is a vital part of processing.  A major component of establishing trust is determining what the set of trust anchors are for the process.  A new self-signed certificate appearing on the client cannot be a trigger to modify the set of trust anchors, because a well-defined trust-establishment process is required. One common way for a new trust anchor to be added to (or removed from) a device is by doing a new firmware upgrade. See {{RFC9360}} for a longer discussion on trust and validation in constrained devices.
 
 # IANA Considerations {#iana}
 
@@ -2499,6 +2506,7 @@ RFC Editor: Please remove this appendix.
   * Clarifications, in particular
     * when to derive application keys
     * the role of the application for authentication
+  * Security considerations for kccs and kcwt
   * Updated references
 
 * From -18 to -19
