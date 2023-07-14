@@ -1106,7 +1106,7 @@ R constructs the input needed to derive the EDHOC message_4 key, see {{Section 4
           = HKDF-Expand( PRK_4x3m, info, key_length )
 
   where key_length is the key length of the EDHOC AEAD algorithm,
-  and info for EDHOC_K_4 is:
+  and info for K_4 is:
 
     info =
     (
@@ -1135,7 +1135,7 @@ R constructs the input needed to derive the EDHOC message_4 nonce, see {{Section
                = HKDF-Expand( PRK_4x3m, info, iv_length )
 
   where length is the nonce length of EDHOC AEAD algorithm,
-  and info for EDHOC_IV_4 is:
+  and info for IV_4 is:
 
     info =
     (
@@ -2490,7 +2490,7 @@ R constructs the input needed to derive the EDHOC message_4 key, see {{Section 4
           = HKDF-Expand( PRK_4e3m, info, key_length )
 
 where key_length is the key length of the EDHOC AEAD algorithm,
-and info for EDHOC_K_4 is:
+and info for K_4 is:
 
     info =
     (
@@ -2518,7 +2518,7 @@ R constructs the input needed to derive the EDHOC message_4 nonce, see {{Section
                = HKDF-Expand( PRK_4e3m, info, iv_length )
 
 where iv_length is the nonce length of EDHOC AEAD algorithm,
-and info for EDHOC_IV_4 is:
+and info for IV_4 is:
 
     info =
     (
