@@ -51,6 +51,11 @@ author:
   street: SE-164 40 Stockholm
   country: Sweden
   email: marco.tiloca@ri.se
+-
+  name: Mališa Vučinić
+  initials: M
+  org: Inria
+  email: malisa.vucinic@inria.fr
 
 normative:
 
@@ -2812,6 +2817,6 @@ There are no IANA considerations.
 # Acknowledgments
 {: numbered="no"}
 
-The authors want to thank all people verifying EDHOC test vectors and/or contributing to the interoperability testing including: {{{Christian Amsüss}}}, {{{Timothy Claeys}}}, {{{Stefan Hristozov}}}, {{{Rikard Höglund}}}, {{{Christos Koulamas}}}, {{{Francesca Palombini}}}, {{{Lidia Pocero}}}, {{{Peter van der Stok}}}, {{{Michel Veillette}}}, and {{{Mališa Vučinić}}}.
+The authors want to thank all people verifying EDHOC test vectors and/or contributing to the interoperability testing including: {{{Christian Amsüss}}}, {{{Timothy Claeys}}}, {{{Stefan Hristozov}}}, {{{Rikard Höglund}}}, {{{Christos Koulamas}}}, {{{Francesca Palombini}}}, {{{Lidia Pocero}}}, {{{Peter van der Stok}}}, and {{{Michel Veillette}}}.
 
 --- fluff
