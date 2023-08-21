@@ -51,8 +51,7 @@ author:
   street: SE-164 40 Stockholm
   country: Sweden
   email: marco.tiloca@ri.se
--
-  name: Mališa Vučinić
+- name: Mališa Vučinić
   initials: M
   org: Inria
   email: malisa.vucinic@inria.fr
