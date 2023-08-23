@@ -449,10 +449,10 @@ To allow identifiers with minimal overhead on the wire, certain byte strings are
 The integers with one-byte CBOR encoding are -24, ..., 23, see {{fig-int-one-byte}}.
 
 ~~~~~~~~~~~
-Integer:                -24  -23   ...   -2   -1    0    1   ...   23
-CBOR encoding (1 byte):  37   36   ...   21   20   00   01   ...   17
+Integer:  -24  -23  ... -11  ...  -2   -1    0    1  ...  15  ...  23
+Encoding:  37   36  ...  2A  ...  21   20   00   01  ...  0F  ...  17
 ~~~~~~~~~~~
-{: #fig-int-one-byte title="One-Byte CBOR Encoded Integers"}
+{: #fig-int-one-byte title="One-byte hex encoding of CBOR integers."}
 {: artwork-align="center"}
 
 The byte strings which coincide with a one-byte CBOR encoding of an integer MUST be represented by the CBOR encoding of that integer. Other byte strings are simply encoded as CBOR byte strings.
@@ -733,7 +733,7 @@ An example of an application profile is shown in {{appl-temp}}.
 
 For some parameters, like METHOD, type of ID_CRED field or EAD, the receiver of an EDHOC message is able to verify compliance with the application profile, and if it needs to fail because of lack of compliance, to infer the reason why the EDHOC session failed.
 
-For other encodings, like the profiling of CRED_x in the case that it is not transported, it may not be possible to verify that lack of compliance with the application profile was the reason for failure: Integrity verification in message_2 or message_3 may fail not only because of wrong credential. For example, in case the Initiator uses a public key certificate by reference (i.e., not transported within the protocol) then both endpoints need to use an identical data structure as CRED_I or else the integrity verification will fail.
+For other encodings, like the profiling of CRED_x in the case that it is not transported, it may not be possible to verify that lack of compliance with the application profile was the reason for failure: Integrity verification in message_2 or message_3 may fail not only because of a wrong credential. For example, in case the Initiator uses a public key certificate by reference (i.e., not transported within the protocol) then both endpoints need to use an identical data structure as CRED_I or else the integrity verification will fail.
 
 Note that it is not necessary for the endpoints to specify a single transport for the EDHOC messages. For example, a mix of CoAP and HTTP may be used along the path, and this may still allow correlation between messages.
 
@@ -964,7 +964,7 @@ where:
 * C_I - variable length connection identifier. Note that connection identifiers are byte strings but certain values are represented as integers in the message, see {{bstr-repr}}.
 * EAD_1 - external authorization data, see {{AD}}.
 
-### Initiator Processing of Message 1 {#init-proc-msg1}
+### Initiator Composition of Message 1 {#init-proc-msg1}
 
 
 The processing steps are detailed below and in {{wrong-selected}}.
@@ -1010,7 +1010,7 @@ where:
 
 * G_Y_CIPHERTEXT_2 - the concatenation of G_Y (i.e., the ephemeral public key of the Responder) and CIPHERTEXT_2.
 
-### Responder Processing of Message 2 {#asym-msg2-proc}
+### Responder Composition of Message 2 {#asym-msg2-proc}
 
 The Responder SHALL compose message_2 as follows:
 
@@ -1079,7 +1079,7 @@ message_3 = (
 ~~~~~~~~~~~
 
 
-### Initiator Processing of Message 3 {#asym-msg3-proc}
+### Initiator Composition of Message 3 {#asym-msg3-proc}
 
 The Initiator SHALL compose message_3 as follows:
 
@@ -1164,7 +1164,7 @@ message_4 = (
 )
 ~~~~~~~~~~~
 
-### Responder Processing of Message 4 {#asym-msg4-proc}
+### Responder Composition of Message 4 {#asym-msg4-proc}
 
 The Responder SHALL compose message_4 as follows:
 
@@ -1247,7 +1247,7 @@ Error code 0 MAY be used internally in an application to indicate success, i.e.,
 
 ## Unspecified Error
 
-Error code 1 is used for errors that do not have a specific error code defined. ERR_INFO MUST be a text string containing a human-readable diagnostic message written in English, for example "Method not supported". The diagnostic text message is mainly intended for software engineers that during debugging need to interpret it in the context of the EDHOC specification. The diagnostic message SHOULD be provided to the calling application where it SHOULD be logged.
+Error code 1 is used for errors that do not have a specific error code defined. ERR_INFO MUST be a text string containing a human-readable diagnostic message which SHOULD be written in English, for example "Method not supported". The diagnostic text message is mainly intended for software engineers that during debugging need to interpret it in the context of the EDHOC specification. The diagnostic message SHOULD be provided to the calling application where it SHOULD be logged.
 
 ## Wrong Selected Cipher Suite {#wrong-selected}
 
