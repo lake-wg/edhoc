@@ -83,7 +83,6 @@ informative:
   RFC8446:
   RFC8937:
   RFC9000:
-  RFC9360:
   RFC9147:
   RFC9176:
   I-D.ietf-rats-eat:
