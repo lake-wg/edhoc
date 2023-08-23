@@ -83,6 +83,7 @@ informative:
   RFC8446:
   RFC8937:
   RFC9000:
+  RFC9360:
   RFC9147:
   RFC9176:
   I-D.ietf-rats-eat:
@@ -544,11 +545,9 @@ We use the notation CRED_x to refer to CRED_I or CRED_R.
 Requirements on CRED_x applies both to CRED_I and to CRED_R.
 The authentication credential typically also contains other parameters that needs to be verified by the application, see {{auth-validation}}, and in particular information about the identity ("subject") of the endpoint to prevent misbinding attacks, see {{identities}}.
 
-EDHOC relies on COSE for identification of credentials (see {{id_cred}}), for example X.509 certificates {{RFC5280}}, C509 certificates {{I-D.ietf-cose-cbor-encoded-cert}}, CWTs {{RFC8392}} and CWT Claims Sets (CCS) {{RFC8392}}. When the identified credential is a chain or a bag, the authentication credential CRED_x is just the end entity X.509 or C509 certificate / CWT. The Initiator and the Responder MAY use different types of authentication credentials, e.g., one uses an RPK and the other uses a public key certificate.
+EDHOC relies on COSE for identification of credentials (see {{id_cred}}), for example X.509 certificates {{RFC9360}}, C509 certificates {{I-D.ietf-cose-cbor-encoded-cert}}, CWTs {{RFC8392}} and CWT Claims Sets (CCS) {{RFC8392}}. When the identified credential is a chain or a bag, the authentication credential CRED_x is just the end entity X.509 or C509 certificate / CWT. In the choice between chain or bag it is RECOMMENDED to use a chain, since the certificates in a bag are unordered and may contain self-signed and extraneous certificates, which can add complexity to the process of extracting the end entity certificate. The Initiator and the Responder MAY use different types of authentication credentials, e.g., one uses an RPK and the other uses a public key certificate.
 
-Since CRED_R is used in the integrity verification, see {{asym-msg2-proc}}, it needs to be specified such that it is identical when used by Initiator or Responder. Similarly for CRED_I, see {{asym-msg3-proc}}. The Initiator and Responder are expected to agree on the specific encoding of the credentials, see {{applicability}}.
-
-It is RECOMMENDED that the COSE 'kid' parameter, when used to identify the authentication credential, refers to a specific encoding. The Initiator and Responder SHOULD use an available authentication credential (transported in EDHOC or otherwise provisioned) without re-encoding. If for some reason re-encoding of the authentication credential may occur, then a potential common encoding for CBOR based credentials is bytewise lexicographic order of their deterministic encodings as specified in Section 4.2.1 of {{RFC8949}}.
+Since CRED_R is used in the integrity verification, see {{asym-msg2-proc}}, it needs to be specified such that it is identical when used by Initiator or Responder. Similarly for CRED_I, see {{asym-msg3-proc}}. The Initiator and Responder are expected to agree on the specific encoding of the authentication credentials, see {{applicability}}. It is RECOMMENDED that the COSE 'kid' parameter, when used to identify the authentication credential, refers to a such a specific encoding of the authentication credential. The Initiator and Responder SHOULD use an available authentication credential (transported in EDHOC or otherwise provisioned) without re-encoding. If for some reason re-encoding of the authentication credential may occur, then a potential common encoding for CBOR based credentials is bytewise lexicographic order of their deterministic encodings as specified in Section 4.2.1 of {{RFC8949}}.
 
 * When the authentication credential is an X.509 certificate, CRED_x SHALL be the DER encoded certificate, encoded as a bstr {{RFC9360}}.
 * When the authentication credential is a C509 certificate, CRED_x SHALL be the C509Certificate {{I-D.ietf-cose-cbor-encoded-cert}}.
