@@ -1748,14 +1748,15 @@ IANA is requested to register the following entries in the "COSE Header Paramete
 | Name | Label | Value Type    | Description                        |
 +======+=======+===============+====================================+
 | kcwt | TBD1  | COSE_Messages | A CBOR Web Token (CWT) containing  |
-|      |       |               | a 'cnf' claim and possibly others. |
-|      |       |               | CWT is defined in RFC 8392 and     |
-|      |       |               | COSE_Messages is defined in RFC    |
-|      |       |               | 9052.                              |
+|      |       |               | a COSE_Key in a 'cnf' claim and    |
+|      |       |               | possibly other claims. CWT is      |
+|      |       |               | defined in RFC 8392. COSE_Messages |
+|      |       |               | is defined in RFC 9052.            |
 +------+-------+---------------+------------------------------------+
 | kccs | TBD2  | map           | A CWT Claims Set (CCS) containing  |
-|      |       |               | a COSE_Key in a 'cnf' claim. CWT   |
-|      |       |               | is defined in RFC 8392.            |
+|      |       |               | a COSE_Key in a 'cnf' claim and    |
+|      |       |               | possibly other claims. CCS is      |
+|      |       |               | defined in RFC 8392.               |
 +------+-------+---------------+------------------------------------+
 ~~~~~~~~~~~
 {: #fig-header-params title="COSE Header Parameter Labels"}
