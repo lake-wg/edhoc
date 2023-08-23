@@ -452,7 +452,7 @@ The integers with one-byte CBOR encoding are -24, ..., 23, see {{fig-int-one-byt
 Integer:  -24  -23  ... -11  ...  -2   -1    0    1  ...  15  ...  23
 Encoding:  37   36  ...  2A  ...  21   20   00   01  ...  0F  ...  17
 ~~~~~~~~~~~
-{: #fig-int-one-byte title="One-Byte CBOR Encoded Integers."}
+{: #fig-int-one-byte title="One-Byte CBOR Encoded Integers"}
 {: artwork-align="center"}
 
 The byte strings which coincide with a one-byte CBOR encoding of an integer MUST be represented by the CBOR encoding of that integer. Other byte strings are simply encoded as CBOR byte strings.
