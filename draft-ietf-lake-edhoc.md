@@ -422,7 +422,7 @@ The Initiator and the Responder need to have agreed on a single method to be use
 |           3 | Static DH Key      | Static DH Key      |
 +-------------+--------------------+--------------------+
 ~~~~~~~~~~~
-{: #fig-method-types title="Authentication Keys for Method Types"}
+{: #fig-method-types title="Authentication keys for method types."}
 {: artwork-align="center"}
 
 EDHOC does not have a dedicated message field to indicate the protocol version. Breaking changes to EDHOC can be introduced by specifying and registering new methods.
@@ -452,7 +452,7 @@ The integers with one-byte CBOR encoding are -24, ..., 23, see {{fig-int-one-byt
 Integer:                -24  -23   ...   -2   -1    0    1   ...   23
 CBOR encoding (1 byte):  37   36   ...   21   20   00   01   ...   17
 ~~~~~~~~~~~
-{: #fig-int-one-byte title="One-Byte CBOR Encoded Integers"}
+{: #fig-int-one-byte title="One-byte CBOR encoded integers."}
 {: artwork-align="center"}
 
 The byte strings which coincide with a one-byte CBOR encoding of an integer MUST be represented by the CBOR encoding of that integer. Other byte strings are simply encoded as CBOR byte strings.
@@ -1285,7 +1285,7 @@ Initiator                                                   Responder
 +------------------------------------------------------------------>|
 |                             message_1                             |
 ~~~~~~~~~~~
-{: #fig-error1 title="Cipher Suite Negotiation Example 1."}
+{: #fig-error1 title="Cipher suite negotiation example 1."}
 {: artwork-align="center"}
 
 In Example 2 ({{fig-error2}}), the Responder supports cipher suites 8 and 9 but not the more preferred (by the Initiator) cipher suites 5, 6 or 7. To illustrate the negotiation mechanics we let the Initiator first make a guess that the Responder supports suite 6 but not suite 5. Since the Responder supports neither 5 nor 6, it rejects the first message_1 with an error indicating support for suites 8 and 9 in SUITES_R (in any order). The Initiator also supports suites 8 and 9, and prefers suite 8, so therefore selects suite 8 in the second message_1. The Initiator prepends in SUITES_I the selected suite 8 with the more preferred suites in order of preference, in this case suites 5, 6 and 7, to mitigate a potential attack on the cipher suite negotiation.
@@ -1308,7 +1308,7 @@ Initiator                                                   Responder
 +------------------------------------------------------------------>|
 |                             message_1                             |
 ~~~~~~~~~~~
-{: #fig-error2 title="Cipher Suite Negotiation Example 2."}
+{: #fig-error2 title="Cipher suite negotiation example 2."}
 {: artwork-align="center"}
 
 ## Unknown Credential Referenced
@@ -1508,7 +1508,7 @@ Reference: [[this document]]
 +-------------+------------------------------+-------------------+
 
 ~~~~~~~~~~~
-{: #fig-exporter-label title="EDHOC Exporter Label"}
+{: #fig-exporter-label title="EDHOC exporter label."}
 
 
 ~~~~~~~~~~~ aasvg
@@ -1725,7 +1725,7 @@ The columns of the registry are Name, Label, Description, and Reference, where L
 |           |       | CBOR byte string       | Section 3.8.1     |
 +-----------+-------+------------------------+-------------------+
 ~~~~~~~~~~~
-{: #fig-ead-labels title="EAD Labels"}
+{: #fig-ead-labels title="EAD labels."}
 
 ~~~~~~~~~~~ aasvg
 
@@ -1756,7 +1756,7 @@ IANA is requested to register the following entries in the "COSE Header Paramete
 |           |       |                | a 'cnf' claim             |
 +-----------+-------+----------------+---------------------------+
 ~~~~~~~~~~~
-{: #fig-header-params title="COSE Header Parameter Labels"}
+{: #fig-header-params title="COSE header parameter labels."}
 
 ## The Well-Known URI Registry {#well-known}
 
@@ -1928,7 +1928,7 @@ longer than the default oscore_salt_length.
 | Responder      |    C_I    |     C_R      |
 +----------------+-----------+--------------+
 ~~~~~~~~~~~
-{: #fig-edhoc-oscore-id-mapping title="Usage of connection identifiers in OSCORE" artwork-align="center"}
+{: #fig-edhoc-oscore-id-mapping title="Usage of connection identifiers in OSCORE." artwork-align="center"}
 
 Client and Server SHALL use the parameters above to establish an OSCORE Security Context, as per Section 3.2.1 of {{RFC8613}}.
 
@@ -2122,7 +2122,7 @@ For a complete specification and more examples, see {{RFC8949}} and {{RFC8610}}.
  1, 2, true          0x0102f5             sequence
 -----------------------------------------------------------
 ~~~~~~~~~~~~~~~~~~~~~~~
-{: #fig-cbor-examples title="Examples of use of CBOR and CDDL" artwork-align="center"}
+{: #fig-cbor-examples title="Examples of use of CBOR and CDDL." artwork-align="center"}
 
 ## CDDL Definitions {#CDDL}
 
