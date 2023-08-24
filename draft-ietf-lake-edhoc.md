@@ -1940,13 +1940,13 @@ longer than the default oscore_salt_length.
 * The relationship between identifiers in OSCORE and EDHOC is specified in {{ci-oscore}}. The OSCORE Sender ID and Recipient ID SHALL be determined by the EDHOC connection identifiers C_R and C_I for the EDHOC session as shown in {{fig-edhoc-oscore-id-mapping}}.
 
 ~~~~~~~~~~~ aasvg
-+----------------+-----------+--------------+
-| EDHOC \ OSCORE | Sender ID | Recipient ID |
-+----------------+-----------+--------------+
-| Initiator      |    C_R    |     C_I      |
-+----------------+-----------+--------------+
-| Responder      |    C_I    |     C_R      |
-+----------------+-----------+--------------+
++-----------------+------------------+---------------------+
+|                 | OSCORE Sender ID | OSCORE Recipient ID |
++-----------------+------------------+---------------------+
+| EDHOC Initiator |        C_R       |         C_I         |
++-----------------+------------------+---------------------+
+| EDHOC Responder |        C_I       |         C_R         |
++-----------------+------------------+---------------------+
 ~~~~~~~~~~~
 {: #fig-edhoc-oscore-id-mapping title="Usage of connection identifiers in OSCORE." artwork-align="center"}
 
