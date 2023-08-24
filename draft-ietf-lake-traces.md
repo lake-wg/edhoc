@@ -23,38 +23,30 @@ author:
 - name: Göran Selander
   surname: Selander
   org: Ericsson
-  abbrev: Ericsson
-  street: SE-164 40 Stockholm
   country: Sweden
   email: goran.selander@ericsson.com
 - name: John Preuß Mattsson
   initials: J
   surname: Preuß Mattsson
   org: Ericsson
-  abbrev: Ericsson
-  street: SE-164 40 Stockholm
   country: Sweden
   email: john.mattsson@ericsson.com
 - name: Marek Serafin
   initials: M
   surname: Serafin
   org: ASSA ABLOY
-  abbrev: ASSA ABLOY
-  street: 32-080 Zabierzów
   country: Poland
   email: marek.serafin@assaabloy.com
 - name: Marco Tiloca
   initials: M
   surname: Tiloca
   org: RISE
-  abbrev: RISE
-  street: SE-164 40 Stockholm
   country: Sweden
   email: marco.tiloca@ri.se
--
-  name: Mališa Vučinić
+- name: Mališa Vučinić
   initials: M
   org: Inria
+  country: France
   email: malisa.vucinic@inria.fr
 
 normative:
