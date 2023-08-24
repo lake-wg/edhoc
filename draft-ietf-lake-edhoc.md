@@ -1761,17 +1761,20 @@ The columns of the registry are Name, Label, Description, and Reference, where L
 IANA is requested to register the following entries in the "COSE Header Parameters" registry under the registry group "CBOR Object Signing and Encryption (COSE)" (see {{fig-header-params}}): The value of the 'kcwt' header parameter is a COSE Web Token (CWT) {{RFC8392}}, and the value of the 'kccs' header parameter is a CWT Claims Set (CCS), see {{term}}. The CWT/CCS must contain a COSE_Key in a 'cnf' claim {{RFC8747}}. The Value Registry for this item is empty and omitted from the table below.
 
 ~~~~~~~~~~~ aasvg
-+-----------+-------+----------------+---------------------------+
-| Name      | Label | Value Type     | Description               |
-+===========+=======+================+===========================+
-| kcwt      | TBD1  | COSE_Messages  | A CBOR Web Token (CWT)    |
-|           |       |                | containing a COSE_Key in  |
-|           |       |                | a 'cnf' claim             |
-+-----------+-------+----------------+---------------------------+
-| kccs      | TBD2  | map / #6(map)  | A CWT Claims Set (CCS)    |
-|           |       |                | containing a COSE_Key in  |
-|           |       |                | a 'cnf' claim             |
-+-----------+-------+----------------+---------------------------+
++------+-------+---------------+------------------------------------+
+| Name | Label | Value Type    | Description                        |
++======+=======+===============+====================================+
+| kcwt | TBD1  | COSE_Messages | A CBOR Web Token (CWT) containing  |
+|      |       |               | a COSE_Key in a 'cnf' claim and    |
+|      |       |               | possibly other claims. CWT is      |
+|      |       |               | defined in RFC 8392. COSE_Messages |
+|      |       |               | is defined in RFC 9052.            |
++------+-------+---------------+------------------------------------+
+| kccs | TBD2  | map           | A CWT Claims Set (CCS) containing  |
+|      |       |               | a COSE_Key in a 'cnf' claim and    |
+|      |       |               | possibly other claims. CCS is      |
+|      |       |               | defined in RFC 8392.               |
++------+-------+---------------+------------------------------------+
 ~~~~~~~~~~~
 {: #fig-header-params title="COSE Header Parameter Labels"}
 
