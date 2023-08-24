@@ -1049,7 +1049,7 @@ The Responder SHALL compose message_2 as follows:
 
    * payload = MAC_2
 
-* CIPHERTEXT_2 is calculated by using the EDHOC_Expand function as a binary additive stream cipher over the following plaintext:
+* CIPHERTEXT_2 is calculated with a binary additive stream cipher, using a keystream generated with EDHOC_Expand, over the following plaintext:
 
    * PLAINTEXT_2 = ( C_R, ID_CRED_R / bstr / -24..23, Signature_or_MAC_2, ? EAD_2 )
 
