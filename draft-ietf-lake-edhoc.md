@@ -509,8 +509,7 @@ EDHOC is not bound to a particular transport layer and can even be used in envir
 * denial-of-service mitigation,
 * message correlation, see {{ci-edhoc}}.
 
-EDHOC does not require error free transport since a change in message content is detected through the transcript hashes in a subsequent integrity verification, see {{asym}}.
-The transport does not require additional means to handle message reordering because of the lockstep processing of EDHOC.
+EDHOC does not require error free transport since a change in message content is detected through the transcript hashes in a subsequent integrity verification, see {{asym}}. The transport does not require additional means to handle message reordering because of the lockstep processing of EDHOC.
 
 EDHOC is designed to enable an authenticated key exchange with small messages, where the minimum message sizes are of the order illustrated in the first column of {{fig-sizes}}. There is no maximum message size specified by the protocol; this is for example dependent on the size of authentication credentials (if they are transported, see {{auth-key-id}}).
 
