@@ -85,6 +85,7 @@ informative:
   RFC9000:
   RFC9147:
   RFC9176:
+  RFC9397:
   I-D.ietf-rats-eat:
   I-D.ietf-lake-reqs:
   I-D.ietf-lake-traces:
@@ -96,7 +97,7 @@ informative:
   I-D.irtf-cfrg-det-sigs-with-noise:
   I-D.selander-lake-authz:
   I-D.arkko-arch-internet-threat-model-guidance:
-  I-D.ietf-teep-architecture:
+
 
   SP-800-56A:
     target: https://doi.org/10.6028/NIST.SP.800-56Ar3
@@ -167,8 +168,8 @@ informative:
     date: May 2009
 
   SIGMA:
-    target: https://webee.technion.ac.il/~hugo/sigma-pdf.pdf
-    title: SIGMA - The 'SIGn-and-MAc' Approach to Authenticated Diffie-Hellman and Its Use in the IKE-Protocols (Long version)
+    target: https://www.iacr.org/cryptodb/archive/2003/CRYPTO/1495/1495.pdf
+    title: SIGMA - The 'SIGn-and-MAc' Approach to Authenticated Diffie-Hellman and Its Use in the IKE-Protocols
     author:
       -
         ins: H. Krawczyk
@@ -191,7 +192,7 @@ informative:
     date: April 2021
 
   CNSA:
-    target: https://apps.nsa.gov/iaarchive/programs/iad-initiatives/cnsa-suite.cfm
+    target: https://en.wikipedia.org/wiki/Commercial_National_Security_Algorithm_Suite
     title: Commercial National Security Algorithm Suite
     author:
       -
@@ -259,7 +260,7 @@ informative:
     date: November 2018
 
   CborMe:
-    target: http://cbor.me/
+    target: https://cbor.me/
     title: CBOR Playground
     author:
       -
@@ -501,9 +502,10 @@ Cryptographically, EDHOC does not put requirements on the lower layers. EDHOC is
 * message reordering,
 * message duplication,
 * flow control,
+* congestion control,
 * fragmentation and reassembly,
 * demultiplexing EDHOC messages from other types of messages,
-* denial-of-service protection,
+* denial-of-service mitigation,
 * message correlation, see {{ci-edhoc}}.
 
 EDHOC does not require error free transport since a change in message content is detected through the transcript hashes in a subsequent integrity verification, see {{asym}}.
@@ -519,7 +521,7 @@ Correlation between EDHOC messages is needed to facilitate the retrieval of prot
 
 Correlation may be based on existing mechanisms in the transport protocol, for example, the CoAP Token may be used to correlate EDHOC messages in a CoAP response and in an associated CoAP request. The connection identifiers may also be used to correlate EDHOC messages.
 
-If correlation between consecutive messages is not provided by other means then the transport binding SHOULD mandate prepending of an appropriate connection identifier (when available from the EDHOC protocol) to the EDHOC message. If message_1 indication is not provided by other means, then the transport binding SHOULD mandate prepending of message_1 with the CBOR simple value `true` (0xf5), as a unique dummy identifier.
+If correlation between consecutive messages is not provided by other means then the transport binding SHOULD mandate prepending of an appropriate connection identifier (when available from the EDHOC protocol) to the EDHOC message. If message_1 indication is not provided by other means, then the transport binding SHOULD mandate prepending of message_1 with the CBOR simple value `true` (0xf5).
 
 Transport of EDHOC in CoAP payloads is described in {{coap}}, including how to use connection identifiers and message_1 indication with CoAP. A similar construction is possible for other client-server protocols. Protocols that do not provide any correlation at all can prescribe prepending of the peer's connection identifier to all messages.
 
@@ -667,7 +669,7 @@ EDHOC can be used with all algorithms and curves defined for COSE. Implementatio
 
 *   Cipher suite 6, based on AES-GCM, is for general non-constrained applications. It consists of high performance algorithms that are widely used in non-constrained applications.
 
-*   Cipher suites 24 and 25 are intended for high security applications such as government use and financial applications. These cipher suites do not share any algorithms. Cipher suite 24 consists of algorithms from the CNSA suite {{CNSA}}.
+*   Cipher suites 24 and 25 are intended for high security applications such as government use and financial applications. These cipher suites do not share any algorithms. Cipher suite 24 consists of algorithms from the CNSA 1.0 suite {{CNSA}}.
 
 The different methods ({{method}}) use the same cipher suites, but some algorithms are not used in some methods. The EDHOC signature algorithm is not used in methods without signature authentication.
 
@@ -918,7 +920,7 @@ where
 * context is a bstr defined by the application
 * length is a uint defined by the application
 
-The (exporter_label, context) pair used in EDHOC_Exporter must be unique, i.e., an (exporter_label, context) MUST NOT be used for two different purposes. However an application can re-derive the same key several times as long as it is done in a secure way. For example, in most encryption algorithms the same key can be reused with different nonces. The context can for example be the empty CBOR byte string.
+The (exporter_label, context) pair used in EDHOC_Exporter must be unique, i.e., an (exporter_label, context) MUST NOT be used for two different purposes. However, an application can re-derive the same key several times as long as it is done securely. For example, in most encryption algorithms the same key can be reused with different nonces. The context can for example be the empty CBOR byte string.
 
 Examples of use of the EDHOC_Exporter are given in {{transfer}}.
 
@@ -939,7 +941,7 @@ EDHOC messages SHALL be processed according to the current protocol state. The f
 
 1. Detect that an EDHOC message has been received, for example by means of port number, URI, or media type ({{applicability}}).
 
-2. Retrieve the protocol state according to the message correlation, see {{ci-edhoc}}. If there is no protocol state, in the case of message_1, a new protocol state is created. The Responder endpoint needs to make use of available Denial-of-Service mitigation ({{dos}}).
+2. Retrieve the protocol state according to the message correlation, see {{ci-edhoc}}. If there is no protocol state, in the case of message_1, a new protocol state is created. The Responder endpoint needs to make use of available denial-of-service mitigation ({{dos}}).
 
 3. If the message received is an error message, then process it according to {{error}}, else process it as the expected next message according to the protocol state.
 
@@ -1132,7 +1134,7 @@ The Initiator SHALL compose message_3 as follows:
 
 *  Make the connection identifiers (C_I, C_R) and the application algorithms in the selected cipher suite available to the application.
 
-After creating message_3, the Initiator can compute PRK_out, see {{prkout}}, and derive application keys using the EDHOC_Exporter interface, see {{exporter}}. The Initiator SHOULD NOT persistently store PRK_out or application keys until the Initiator has verified message_4 or a message protected with a derived application key, such as an OSCORE message, from the Responder and the application has authenticated the Responder. This is similar to waiting for an acknowledgement (ACK) in a transport protocol. The Initiator SHOULD NOT send protected application data until the application has authenticated the Responder.
+After creating message_3, the Initiator can compute PRK_out, see {{prkout}}, and derive application keys using the EDHOC_Exporter interface, see {{exporter}}. The Initiator SHOULD NOT persistently store PRK_out or application keys until the Initiator has verified message_4 or a message protected with a derived application key, such as an OSCORE message, from the Responder and the application has authenticated the Responder. This is similar to waiting for an acknowledgment (ACK) in a transport protocol. The Initiator SHOULD NOT send protected application data until the application has authenticated the Responder.
 
 ### Responder Processing of Message 3
 
@@ -1300,7 +1302,7 @@ Initiator                                                   Responder
 {: #fig-error1 title="Cipher Suite Negotiation Example 1."}
 {: artwork-align="center"}
 
-In Example 2 ({{fig-error2}}), the Responder supports cipher suites 8 and 9 but not the more preferred (by the Initiator) cipher suites 5, 6 or 7. To illustrate the negotiation mechanics we let the Initiator first make a guess that the Responder supports suite 6 but not suite 5. Since the Responder supports neither 5 nor 6, it rejects the first message_1 with an error indicating support for suites 8 and 9 in SUITES_R (in any order). The Initiator also supports suites 8 and 9, and prefers suite 8, so therefore selects suite 8 in the second message_1. The Initiator prepends in SUITES_I the selected suite 8 with the more preferred suites in order of preference, in this case suites 5, 6 and 7, to mitigate a potential attack on the cipher suite negotiation.
+In Example 2 ({{fig-error2}}), the Responder supports cipher suites 8 and 9 but not the more preferred (by the Initiator) cipher suites 5, 6 or 7. To illustrate the negotiation mechanics we let the Initiator first make a guess that the Responder supports suite 6 but not suite 5. Since the Responder supports neither 5 nor 6, it rejects the first message_1 with an error indicating support for suites 8 and 9 in SUITES_R (in any order). The Initiator also supports suites 8 and 9, and prefers suite 8, so selects suite 8 in the second message_1. The Initiator prepends in SUITES_I the selected suite 8 with the more preferred suites in order of preference, in this case suites 5, 6 and 7, to mitigate a potential attack on the cipher suite negotiation.
 
 Note 1. If the Responder had supported suite 5, then the first message_1 would not have been accepted either, since the Responder observes that suite 5 is more preferred by the Initiator than the selected suite 6. In that case the Responder would have included suite 5 in SUITES_R of the response, and it would then have become the selected and only suite in the second message_1.
 
@@ -1336,7 +1338,7 @@ For the error code 3, the error information SHALL be the CBOR simple value `true
 
 EDHOC by default assumes that message duplication is handled by the transport, in this section exemplified with CoAP, see {{coap}}.
 
-Deduplication of CoAP messages is described in Section 4.5 of {{RFC7252}}. This handles the case when the same Confirmable (CON) message is received multiple times due to missing acknowledgement on the CoAP messaging layer. The recommended processing in {{RFC7252}} is that the duplicate message is acknowledged (ACK), but the received message is only processed once by the CoAP stack.
+Deduplication of CoAP messages is described in Section 4.5 of {{RFC7252}}. This handles the case when the same Confirmable (CON) message is received multiple times due to missing acknowledgment on the CoAP messaging layer. The recommended processing in {{RFC7252}} is that the duplicate message is acknowledged (ACK), but the received message is only processed once by the CoAP stack.
 
 Message deduplication is resource demanding and therefore not supported in all CoAP implementations. Since EDHOC is targeting constrained environments, it is desirable that EDHOC can optionally support transport layers which do not handle message duplication. Special care is needed to avoid issues with duplicate messages, see {{proc-outline}}.
 
@@ -1412,7 +1414,7 @@ Earlier versions of EDHOC have been formally analyzed {{Bruni18}} {{Norrman20}} 
 ## Cryptographic Considerations {#crypto}
 
 The SIGMA protocol requires that the encryption of message_3 provides confidentiality against active attackers and EDHOC message_4 relies on the use of
-authenticated encryption. Hence the message authenticating functionality of the authenticated encryption in EDHOC is critical: authenticated encryption MUST NOT be replaced by plain encryption only, even if authentication is provided at another level or through a different mechanism.
+authenticated encryption. Hence, the message authenticating functionality of the authenticated encryption in EDHOC is critical: authenticated encryption MUST NOT be replaced by plain encryption only, even if authentication is provided at another level or through a different mechanism.
 
 To reduce message overhead EDHOC does not use explicit nonces and instead relies on the ephemeral public keys to provide randomness to each EDHOC session. A good amount of randomness is important for the key generation, to provide liveness, and to protect against interleaving attacks. For this reason, the ephemeral keys MUST NOT be used in more than one EDHOC message, and both parties SHALL generate fresh random ephemeral key pairs. Note that an ephemeral key may be used to calculate several ECDH shared secrets. When static Diffie-Hellman authentication is used the same ephemeral key is used in both ephemeral-ephemeral and ephemeral-static ECDH.
 
@@ -1454,7 +1456,9 @@ The fields ID_CRED_I, ID_CRED_R, EAD_2, EAD_3, and EAD_4 have variable length, a
 
 ## Denial-of-Service {#dos}
 
-EDHOC itself does not provide countermeasures against Denial-of-Service attacks. In particular, by sending a number of new or replayed message_1 an attacker may cause the Responder to allocate state, perform cryptographic operations, and amplify messages. To mitigate such attacks, an implementation SHOULD make use of available lower layer mechanisms. For instance, when EDHOC is transferred as an exchange of CoAP messages, the CoAP server can use the Echo option defined in {{RFC9175}} which forces the CoAP client to demonstrate reachability at its apparent network address. To avoid an additional roundtrip the Initiator can reduce the amplification factor by padding message_1, i.e., using EAD_1, see {{padding}}.
+EDHOC itself does not provide countermeasures against denial-of-service attacks. In particular, by sending a number of new or replayed message_1 an attacker may cause the Responder to allocate state, perform cryptographic operations, and amplify messages. To mitigate such attacks, an implementation SHOULD make use of available lower layer mechanisms. For instance, when EDHOC is transferred as an exchange of CoAP messages, the CoAP server can use the Echo option defined in {{RFC9175}} which forces the CoAP client to demonstrate reachability at its apparent network address. To avoid an additional roundtrip the Initiator can reduce the amplification factor by padding message_1, i.e., using EAD_1, see {{padding}}.
+Note that while the Echo option mitigates some resource exhaustion aspects of
+spoofing, it does not protect against a distributed denial-of-service attack made by real, potentially compromised, clients. Similarly, limiting amplification only reduces the impact, which still may be significant because of a large number of clients engaged in the attack.
 
 An attacker can also send faked message_2, message_3, message_4, or error in an attempt to trick the receiving party to send an error message and abort the EDHOC session. EDHOC implementations MAY evaluate if a received message is likely to have been forged by an attacker and ignore it without sending an error message or aborting the EDHOC session.
 
@@ -1464,7 +1468,7 @@ The availability of a secure random number generator is essential for the securi
 
 For many constrained IoT devices it is problematic to support several crypto primitives. Existing devices can be expected to support either ECDSA or EdDSA. If ECDSA is supported, "deterministic ECDSA" as specified in {{RFC6979}} MAY be used. Pure deterministic elliptic-curve signatures such as deterministic ECDSA and EdDSA have gained popularity over randomized ECDSA as their security do not depend on a source of high-quality randomness. Recent research has however found that implementations of these signature algorithms may be vulnerable to certain side-channel and fault injection attacks due to their determinism. See e.g., Section 1 of {{I-D.irtf-cfrg-det-sigs-with-noise}} for a list of attack papers. As suggested in Section 2.1.1 of {{RFC9053}} this can be addressed by combining randomness and determinism.
 
-Appendix D of {{I-D.ietf-lwig-curve-representations}} describes how Montgomery curves such as X25519 and X448 and (twisted) Edwards curves as curves such as Ed25519 and Ed448 can mapped to and from short-Weierstrass form for implementation on platforms that accelerate elliptic curve group operations in short-Weierstrass form.
+Appendix D of {{I-D.ietf-lwig-curve-representations}} describes how Montgomery curves such as X25519 and X448 and (twisted) Edwards curves as curves such as Ed25519 and Ed448 can be mapped to and from short-Weierstrass form for implementation on platforms that accelerate elliptic curve group operations in short-Weierstrass form.
 
 All private keys, symmetric keys, and IVs MUST be secret. Only the Responder SHALL have access to the Responder's private authentication key and only the Initiator SHALL have access to the Initiator's private authentication key. Implementations should provide countermeasures to side-channel attacks such as timing attacks. Intermediate computed values such as ephemeral ECDH keys and ECDH shared secrets MUST be deleted after key derivation is completed.
 
@@ -1478,13 +1482,13 @@ The Initiator and the Responder are allowed to select the connection identifier 
 
 If two nodes unintentionally initiate two simultaneous EDHOC sessions with each other even if they only want to complete a single EDHOC session, they MAY abort the EDHOC session with the lexicographically smallest G_X. Note that in cases where several EDHOC sessions with different parameter sets (method, COSE headers, etc.) are used, an attacker can affect which parameter set will be used by blocking some of the parameter sets.
 
-If supported by the device, it is RECOMMENDED that at least the long-term private keys are stored in a Trusted Execution Environment (TEE, see for example {{I-D.ietf-teep-architecture}}) and that sensitive operations using these keys are performed inside the TEE.  To achieve even higher security it is RECOMMENDED that additional operations such as ephemeral key generation, all computations of shared secrets, and storage of the PRK keys can be done inside the TEE. The use of a TEE aims at preventing code within that environment to be tampered with, and preventing data used by such code to be read or tampered with by code outside that environment.
+If supported by the device, it is RECOMMENDED that at least the long-term private keys are stored in a Trusted Execution Environment (TEE, see for example {{RFC9397}}) and that sensitive operations using these keys are performed inside the TEE.  To achieve even higher security it is RECOMMENDED that additional operations such as ephemeral key generation, all computations of shared secrets, and storage of the PRK keys can be done inside the TEE. The use of a TEE aims at preventing code within that environment to be tampered with, and preventing data used by such code to be read or tampered with by code outside that environment.
 
 
 Note that HKDF-Expand has a relatively small maximum output length of 255 {{{⋅}}} hash_length, where hash_length is the output size in bytes of the EDHOC hash algorithm of the selected cipher suite. This means that when SHA-256 is used as hash algorithm, PLAINTEXT_2 cannot be longer than 8160 bytes. This is probably not a limitation for most intended applications, but to be able to support for example long certificate chains or large external authorization data, there is a backwards compatible method specified in {{large-plaintext_2}}.
 
 
-The sequence of transcript hashes in EDHOC (TH_2, TH_3, TH_4) does not make use of a so called running hash. This is a design choice as running hashes are often not supported on constrained platforms.
+The sequence of transcript hashes in EDHOC (TH_2, TH_3, TH_4) does not make use of a so-called running hash. This is a design choice as running hashes are often not supported on constrained platforms.
 
 When parsing a received EDHOC message, implementations MUST abort the EDHOC session if the message does not comply with the CDDL for that message. It is RECOMMENDED to abort the EDHOC session if the received EDHOC message is not encoded using deterministic CBOR.
 
@@ -1948,19 +1952,19 @@ From then on, Client and Server retrieve the OSCORE protocol state using the Rec
 
 ## Transferring EDHOC over CoAP {#coap}
 
-This section specifies how EDHOC can be transferred as an exchange of CoAP {{RFC7252}} messages. CoAP provides a reliable transport that can preserve packet ordering, flow control, and handle message duplication. CoAP can also perform fragmentation and protect against denial-of-service attacks. The underlying CoAP transport should be used in reliable mode, in particular when fragmentation is used, to avoid, e.g., situations with hanging endpoints waiting for each other.
+This section specifies how EDHOC can be transferred as an exchange of CoAP {{RFC7252}} messages. CoAP provides a reliable transport that can preserve packet ordering, provides flow and congestion control, and handles message duplication. CoAP can also perform fragmentation and mitigate certain denial-of-service attacks. The underlying CoAP transport should be used in reliable mode, in particular when fragmentation is used, to avoid, e.g., situations with hanging endpoints waiting for each other.
 
-EDHOC may run with the Initiator either being CoAP client or CoAP server. We denote the former by the "forward message flow" (see {{forward}}) and the latter by the "reverse message flow" (see {{reverse}}). By default we assume the forward message flow, but the roles SHOULD be chosen to protect the most sensitive identity, see {{security}}.
+EDHOC may run with the Initiator either being CoAP client or CoAP server. We denote the former by the "forward message flow" (see {{forward}}) and the latter by the "reverse message flow" (see {{reverse}}). By default, we assume the forward message flow, but the roles SHOULD be chosen to protect the most sensitive identity, see {{security}}.
 
  According to this specification, EDHOC is transferred in POST requests to the Uri-Path: "/.well-known/edhoc" (see {{well-known}}), and 2.04 (Changed) responses. An application may define its own path that can be discovered, e.g., using a resource directory {{RFC9176}}. Client applications can use the resource type "core.edhoc" to discover a server's EDHOC resource, i.e., where to send a request for executing the EDHOC protocol, see {{rt}}. An alternative transfer of the forward message flow is specified in {{I-D.ietf-core-oscore-edhoc}}.
 
-In order for the server to correlate a message received from a client to a message previously sent in the same EDHOC session over CoAP, messages sent by the client SHALL be prepended with the CBOR serialization of the connection identifier which the server has selected, see {{ci-edhoc}}. This applies both to the forward and the reverse message flows. To indicate a new EDHOC session in the forward message flow, message_1 SHALL be prepended with the CBOR simple value `true` (0xf5), as a dummy identifier. Even if CoAP is carried over a reliable transport protocol such as TCP, the prepending of identifiers specified here SHALL be practiced to enable interoperability independent of how CoAP is transported.
+In order for the server to correlate a message received from a client to a message previously sent in the same EDHOC session over CoAP, messages sent by the client SHALL be prepended with the CBOR serialization of the connection identifier which the server has selected, see {{ci-edhoc}}. This applies both to the forward and the reverse message flows. To indicate a new EDHOC session in the forward message flow, message_1 SHALL be prepended with the CBOR simple value `true` (0xf5). Even if CoAP is carried over a reliable transport protocol such as TCP, the prepending of identifiers specified here SHALL be practiced to enable interoperability independent of how CoAP is transported.
 
 The prepended identifiers are encoded in CBOR and thus self-delimiting. The representation of identifiers described in {{bstr-repr}} SHALL be used. They are sent in front of the actual EDHOC message to keep track of messages in an EDHOC session, and only the part of the body following the identifier is used for EDHOC processing. In particular, the connection identifiers within the EDHOC messages are not impacted by the prepended identifiers.
 
  An EDHOC message has media type application/edhoc+cbor-seq, whereas an EDHOC message prepended by a connection identifier has media type application/cid-edhoc+cbor-seq, see {{content-format}}.
 
-To protect against denial-of-service attacks, the CoAP server MAY respond to the first POST request with a 4.01 (Unauthorized) containing an Echo option {{RFC9175}}. This forces the Initiator to demonstrate reachability at its apparent network address. If message fragmentation is needed, the EDHOC messages may be fragmented using the CoAP Block-Wise Transfer mechanism {{RFC7959}}.
+To mitigate certain denial-of-service attacks, the CoAP server MAY respond to the first POST request with a 4.01 (Unauthorized) containing an Echo option {{RFC9175}}. This forces the Initiator to demonstrate reachability at its apparent network address. If message fragmentation is needed, the EDHOC messages may be fragmented using the CoAP Block-Wise Transfer mechanism {{RFC7959}}.
 
 EDHOC error messages need to be transported in response to a message that failed (see {{error}}). EDHOC error messages transported with CoAP are carried in the payload.
 
@@ -1975,7 +1979,7 @@ In the forward message flow the CoAP client is the Initiator and the CoAP server
 
  In the forward message flow, the CoAP Token enables correlation on the Initiator (client) side, and the prepended C_R enables correlation on the Responder (server) side.
 
-* EDHOC message_1 is sent in the payload of a POST request from the client to the server's resource for EDHOC, prepended with the dummy identifier `true` (0xf5) indicating a new EDHOC session.
+* EDHOC message_1 is sent in the payload of a POST request from the client to the server's resource for EDHOC, prepended with the identifier `true` (0xf5) indicating a new EDHOC session.
 
 * EDHOC message_2 or the EDHOC error message is sent from the server to the client in the payload of the response, in the former case with response code 2.04 (Changed), in the latter with response code as specified in {{edhoc-oscore-over-coap}}.
 
@@ -2075,12 +2079,12 @@ In EDHOC, compact representation is used for the ephemeral public keys (G_X and 
 
 The encoding of the point at infinity is not supported.
 
-Compact representation does not change any requirements on validation, see {{crypto}}. Using compact representation has some security benefits. An implementation does not need to check that the point is not the point at infinity (the identity element). Similarly, as not even the sign of the y-coordinate is encoded, compact representation trivially avoids so called "benign malleability" attacks where an attacker changes the sign, see {{SECG}}.
+Compact representation does not change any requirements on validation, see {{crypto}}. Using compact representation has some security benefits. An implementation does not need to check that the point is not the point at infinity (the identity element). Similarly, as not even the sign of the y-coordinate is encoded, compact representation trivially avoids so-called "benign malleability" attacks where an attacker changes the sign, see {{SECG}}.
 
 The following may be needed for validation or compatibility with APIs that do not support compact representation or do not support the full {{SECG}} format:
 
 * If a compressed y-coordinate is required, then the value ~yp set to zero can be used. The compact representation described above can in such a case be transformed into the SECG point compressed format by prepending it with the single byte 0x02 (i.e., M = 0x02 \|\| X).
-* If a uncompressed y-coordinate is required, then a y-coordinate has to be calculated following Section 2.3.4 of {{SECG}} or Appendix C of {{RFC6090}}. Any of the square roots (see {{SECG}} or {{RFC6090}}) can be used. The uncompressed SECG format is M = 0x04 \|\| X \|\| Y.
+* If an uncompressed y-coordinate is required, then a y-coordinate has to be calculated following Section 2.3.4 of {{SECG}} or Appendix C of {{RFC6090}}. Any of the square roots (see {{SECG}} or {{RFC6090}}) can be used. The uncompressed SECG format is M = 0x04 \|\| X \|\| Y.
 
 For example: The curve P-256 has the parameters (using the notation in {{RFC6090}})
 
@@ -2109,7 +2113,7 @@ This Appendix is intended to help implementors not familiar with CBOR {{RFC8949}
 
 The Concise Binary Object Representation (CBOR) {{RFC8949}} is a data format designed for small code size and small message size. CBOR builds on the JSON data model but extends it by e.g., encoding binary data directly without base64 conversion. In addition to the binary CBOR encoding, CBOR also has a diagnostic notation that is readable and editable by humans. The Concise Data Definition Language (CDDL) {{RFC8610}} provides a way to express structures for protocol messages and APIs that use CBOR. {{RFC8610}} also extends the diagnostic notation.
 
-CBOR data items are encoded to or decoded from byte strings using a type-length-value encoding scheme, where the three highest order bits of the initial byte contain information about the major type. CBOR supports several different types of data items, in addition to integers (int, uint), simple values, byte strings (bstr), and text strings (tstr), CBOR also supports arrays \[\]  of data items, maps {} of pairs of data items, and sequences {{RFC8742}} of data items. Some examples are given below.
+CBOR data items are encoded to or decoded from byte strings using a type-length-value encoding scheme, where the three highest order bits of the initial byte contain information about the major type. CBOR supports several types of data items, in addition to integers (int, uint), simple values, byte strings (bstr), and text strings (tstr), CBOR also supports arrays \[\]  of data items, maps {} of pairs of data items, and sequences {{RFC8742}} of data items. Some examples are given below.
 
 The EDHOC specification sometimes use CDDL names in CBOR diagnostic notation as in e.g., << ID_CRED_R, ? EAD_2 >>. This means that EAD_2 is optional and that ID_CRED_R and EAD_2 should be substituted with their values before evaluation. I.e., if ID_CRED_R = { 4 : h'' } and EAD_2 is omitted then << ID_CRED_R, ? EAD_2 >> = << { 4 : h'' } >>, which encodes to 0x43a10440. We also make use of the occurrence symbol "\*", like in e.g.,  2* int, meaning two or more CBOR integers.
 
@@ -2138,7 +2142,7 @@ For a complete specification and more examples, see {{RFC8949}} and {{RFC8610}}.
 
 ## CDDL Definitions {#CDDL}
 
-This sections compiles the CDDL definitions for ease of reference.
+This section compiles the CDDL definitions for ease of reference.
 
 ~~~~~~~~~~~ CDDL
 suites = [ 2* int ] / int
@@ -2229,7 +2233,7 @@ ID_CRED_x MAY also identify the credential by value. For example, a certificate 
 
 # Authentication Related Verifications {#auth-validation}
 
-EDHOC performs certain authentication related operations, see {{auth-key-id}}, but in general it is necessary to make additional verifications beyond EDHOC message processing. What verifications are needed depend on the deployment, in particular the trust model and the security policies, but most commonly it can be expressed in terms of verifications of credential content.
+EDHOC performs certain authentication related operations, see {{auth-key-id}}, but in general it is necessary to make additional verifications beyond EDHOC message processing. Which verifications that are needed depend on the deployment, in particular the trust model and the security policies, but most commonly it can be expressed in terms of verifications of credential content.
 
  EDHOC assumes the existence of mechanisms (certification authority or other trusted third party, pre-provisioning, etc.) for generating and distributing authentication credentials and other credentials, as well as the existence of trust anchors (CA certificates, trusted public keys, etc.). For example, a public key certificate or CWT may rely on a trusted third party whose public key is pre-provisioned, whereas a CCS or a self-signed certificate/CWT may be used when trust in the public key can be achieved by other means, or in the case of Trust on first use, see {{tofu}}.
 
@@ -2282,7 +2286,7 @@ The application may need to verify that the credentials are not revoked, see {{i
 
 ## Unauthenticated Operation {#tofu}
 
-EDHOC might be used without authentication by allowing the Initiator or Responder to communicate with any identity except its own. Note that EDHOC without mutual authentication is vulnerable to man-in-the-middle attacks and therefore unsafe for general use. However, it is possible to later establish a trust relationship with an unknown or not-yet-trusted endpoint. Some examples:
+EDHOC might be used without authentication by allowing the Initiator or Responder to communicate with any identity except its own. Note that EDHOC without mutual authentication is vulnerable to active on-path attacks and therefore unsafe for general use. However, it is possible to later establish a trust relationship with an unknown or not-yet-trusted endpoint. Some examples:
 
 * The EDHOC authentication credential can be verified out-of-band at a later stage.
 * The EDHOC session key can be bound to an identity out-of-band at a later stage.
@@ -2420,7 +2424,7 @@ The Initiator prepares and processes message_3 for sending. If any processing er
 
 If the application profile includes message_4, then the Initiator waits for message_4. If the incoming message is an error message then the Initiator transitions from COMPLETED to ABORTED. Upon receiving a non-error message, the Initiator transitions from COMPLETED (="WAIT_M4") to RCVD_M4 and processes the message. If a processing error occurs on message_4, then the Initiator transitions from RCVD_M4 to ABORTED. In case of successful processing of message_4, the Initiator transitions from RCVD_M4 to PERSISTED (="VRFD_M4").
 
-If the application profile does not include message_4, then the Initiator waits for an incoming application message. If the decryption and verification of the application message is successful, then the the Initiator transitions from COMPLETED to PERSISTED.
+If the application profile does not include message_4, then the Initiator waits for an incoming application message. If the decryption and verification of the application message is successful, then the Initiator transitions from COMPLETED to PERSISTED.
 
 ~~~~~~~~~~~~~~~~~~~~~~~ aasvg
     +- - - - - - - - - -> START
