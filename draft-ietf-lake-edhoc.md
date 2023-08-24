@@ -116,6 +116,16 @@ informative:
         ins: R. Davis
     date: April 2018
 
+  SP-800-108:
+    target: https://doi.org/10.6028/NIST.SP.800-108r1
+    title: Recommendation for Key Derivation Using Pseudorandom Functions
+    seriesinfo:
+      "NIST": "Special Publication 800-108 Revision 1"
+    author:
+      -
+        ins: L. Chen
+    date: August 2022
+
   SP800-185:
     target: https://doi.org/10.6028/NIST.SP.800-185
     title: SHA-3 Derived Functions cSHAKE, KMAC, TupleHash and ParallelHash
@@ -1414,6 +1424,8 @@ The same authentication credential MAY be used for both the Initiator and Respon
 
 The property that a completed EDHOC session implies that another identity has been active is upheld as long as the Initiator does not have its own identity in the set of Responder identities it is allowed to communicate with. In Trust on first use (TOFU) use cases, see {{tofu}}, the Initiator should verify that the Responder's identity is not equal to its own. Any future EDHOC methods using e.g., pre-shared keys might need to mitigate this in other ways. However, an active attacker can gain information about the set of identities an Initiator is willing to communicate with. If the Initiator is willing to communicate with all identities except its own an attacker can determine that a guessed Initiator identity is correct. To not leak any long-term identifiers, using a freshly generated authentication key as identity in each initial TOFU session is RECOMMENDED.
 
+NIST SP 800-56A {{SP-800-56A}} forbids deriving secret and non-secret randomness from the same KDF instance, but this decision has been criticized by Krawczyk {{HKDFpaper}} and doing so is common practice. In addition to IVs, other examples are the challenge in EAP-TTLS, the RAND in 3GPP AKAs, and the Session-Id in EAP-TLS 1.3. Note that part of KEYSTREAM_2 is also non-secret randomness as it is known or predictable to an attacker. The more recent NIST SP 800-108 {{SP-800-108}} aligns with {{HKDFpaper}} and states that for a secure KDF, the revelation of one portion of the derived keying material must not degrade the security of any other portion of that keying material.
+
 ## Cipher Suites and Cryptographic Algorithms {#sec_algs}
 
 When using private cipher suite or registering new cipher suites, the choice of key length used in the different algorithms needs to be harmonized, so that a sufficient security level is maintained for authentication credentials, the EDHOC session, and the protection of application data. The Initiator and the Responder should enforce a minimum security level.
@@ -1449,8 +1461,6 @@ An attacker can also send faked message_2, message_3, message_4, or error in an 
 ## Implementation Considerations {#impl-cons}
 
 The availability of a secure random number generator is essential for the security of EDHOC. If no true random number generator is available, a random seed MUST be provided from an external source and used with a cryptographically secure pseudorandom number generator. As each pseudorandom number must only be used once, an implementation needs to get a unique input to the pseudorandom number generator after reboot, or continuously store state in nonvolatile memory. Appendix B.1.1 in {{RFC8613}} describes issues and solution approaches for writing to nonvolatile memory. Intentionally or unintentionally weak or predictable pseudorandom number generators can be abused or exploited for malicious purposes. {{RFC8937}} describes a way for security protocol implementations to augment their (pseudo)random number generators using a long-term private key and a deterministic signature function. This improves randomness from broken or otherwise subverted random number generators. The same idea can be used with other secrets and functions such as a Diffie-Hellman function or a symmetric secret and a PRF like HMAC or KMAC. It is RECOMMENDED to not trust a single source of randomness and to not put unaugmented random numbers on the wire.
-
-Implementations might consider deriving secret and non-secret randomness from different PRNG/PRF/KDF instances to limit the damage if the PRNG/PRF/KDF turns out to be fundamentally broken. NIST generally forbids deriving secret and non-secret randomness from the same KDF instance, but this decision has been criticized by Krawczyk {{HKDFpaper}} and doing so is common practice. In addition to IVs, other examples are the challenge in EAP-TTLS, the RAND in 3GPP AKAs, and the Session-Id in EAP-TLS 1.3. Note that part of KEYSTREAM_2 is also non-secret randomness as it is known or predictable to an attacker. As explained by Krawczyk, if any attack is mitigated by the NIST requirement it would mean that the KDF is fully broken and would have to be replaced anyway.
 
 For many constrained IoT devices it is problematic to support several crypto primitives. Existing devices can be expected to support either ECDSA or EdDSA. If ECDSA is supported, "deterministic ECDSA" as specified in {{RFC6979}} MAY be used. Pure deterministic elliptic-curve signatures such as deterministic ECDSA and EdDSA have gained popularity over randomized ECDSA as their security do not depend on a source of high-quality randomness. Recent research has however found that implementations of these signature algorithms may be vulnerable to certain side-channel and fault injection attacks due to their determinism. See e.g., Section 1 of {{I-D.irtf-cfrg-det-sigs-with-noise}} for a list of attack papers. As suggested in Section 2.1.1 of {{RFC9053}} this can be addressed by combining randomness and determinism.
 
