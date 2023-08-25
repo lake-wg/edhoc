@@ -321,7 +321,7 @@ Examples of EDHOC message sizes are shown in {{fig-sizes}}, using different kind
 
 ## Document Structure
 
-The remainder of the document is organized as follows: {{background}} outlines EDHOC authenticated with signature keys, {{overview}} describes the protocol elements of EDHOC, including formatting of the ephemeral public keys, {{key-der}} specifies the key derivation, {{asym}} specifies message processing for EDHOC authenticated with signature keys or static Diffie-Hellman keys, {{error}} describes the error messages, {{duplication}} shows how it is possible to support message deduplication in EDHOC, and {{mti}} lists compliance requirements. Note that normative text is also used in appendices, in particular {{transfer}}.
+The remainder of the document is organized as follows: {{background}} outlines EDHOC authenticated with signature keys, {{overview}} describes the protocol elements of EDHOC, including formatting of the ephemeral public keys, {{key-der}} specifies the key derivation, {{asym}} specifies message processing for EDHOC authenticated with signature keys or static Diffie-Hellman keys, {{error}} describes the error messages, {{duplication}} describes EDHOC support for transport that does not handle message duplication, and {{mti}} lists compliance requirements. Note that normative text is also used in appendices, in particular {{transfer}}.
 
 
 ## Terminology and Requirements Language {#term}
@@ -480,7 +480,7 @@ For example:
 * 0x38 is represented by 0x4138 (CBOR encoding of the byte string 0x38).
 * 0xABCD is represented by 0x42ABCD (CBOR encoding of the byte string 0xABCD).
 
-One way to view this representation of byte strings is as a transport encoding: a byte string which parses as the one-byte CBOR encoding of an integer (i.e., integer in the interval -24, ..., 23) is just copied directly into the message, a byte string which does not is encoded as a CBOR byte string during transport.
+One may view this representation of byte strings as a transport encoding: a byte string which parses as the one-byte CBOR encoding of an integer (i.e., integer in the interval -24, ..., 23) is just copied directly into the message, a byte string which does not is encoded as a CBOR byte string during transport.
 
 Implementation Note: When implementing the byte string identifier representation, it can in some programming languages help to define a new type, or other data structure, which (in its user facing API) behaves like a byte string, but when serializing to CBOR produces a CBOR byte string or a CBOR integer depending on its value.
 
