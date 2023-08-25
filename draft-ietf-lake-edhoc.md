@@ -498,7 +498,7 @@ Examples:
 
 Cryptographically, EDHOC does not put requirements on the underlying layers. Received messages are processed as the expected next message according to protocol state, see {{asym}}. If processing fails for any reason then, typically, an error message is attempted to be sent and the EDHOC session is aborted.
 
-EDHOC is not bound to a particular transport layer and can even be used in environments without IP. Ultimately, the application is free to choose how to transport EDHOC messages including errors. In order to avoid unnecessary message processing or protocol termination, it is preferred to use reliable transport such as CoAP in reliable mode, which is the default transport, see {{coap}}. The transport is responsible to handle:
+EDHOC is not bound to a particular transport layer and can even be used in environments without IP. Ultimately, the application is free to choose how to transport EDHOC messages including errors. In order to avoid unnecessary message processing or protocol termination, it is RECOMMENDED to use reliable transport, such as CoAP in reliable mode, which is the default transport, see {{coap}}. In general, the transport SHOULD handle:
 
 * message loss,
 * message duplication, see {{duplication}} for an alternative,
