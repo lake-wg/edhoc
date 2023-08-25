@@ -2522,6 +2522,22 @@ ABORTED <---------------- RCVD_M1
 
 RFC Editor: Please remove this appendix.
 
+* From -20 to -21
+
+  * Recommendation to use chain instead of bag
+  * Improved text about
+    * denial-of-service
+    * deriving secret and non-secret randomness from the same KDF instance
+    * practical security against quantum computers
+  * Clarifications, including
+    * several updates section 3.4. Transport
+    * descriptions in COSE IANA registration
+    * encoding in Figure 5, reading of Figure 17
+  * Removed term "dummy"
+  * Harmonizing captions
+  * Updated references
+  * Acknowledgments
+
 * From -19 to -20
   * C_R encrypted in message_2
   * C_R removed from TH_2
