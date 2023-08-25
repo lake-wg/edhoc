@@ -70,7 +70,7 @@ informative:
 
   SP-800-186:
     target: https://doi.org/10.6028/NIST.SP.800-186
-    title: Recommendations for Discrete Logarithm-based Cryptography: Elliptic Curve Domain Parameters
+    title: "Recommendations for Discrete Logarithm-based Cryptography: Elliptic Curve Domain Parameters"
     seriesinfo:
       "NIST": "Special Publication 800-186"
     author:
