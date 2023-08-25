@@ -2522,6 +2522,10 @@ ABORTED <---------------- RCVD_M1
 
 RFC Editor: Please remove this appendix.
 
+* From -21 to -22
+
+  * Normative text on transport capabilities.
+
 * From -20 to -21
 
   * Recommendation to use chain instead of bag
