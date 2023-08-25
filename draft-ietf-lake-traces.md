@@ -61,7 +61,7 @@ informative:
   RFC8949:
 
   CborMe:
-    target: http://cbor.me/
+    target: https://cbor.me/
     title: CBOR Playground
     author:
       -
