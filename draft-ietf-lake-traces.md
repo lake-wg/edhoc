@@ -465,7 +465,7 @@ info for MAC_2 is:
      32
     )
 
-where the last value is the output size of the EDHOC hash algorithm.
+where the last value is the output size of the EDHOC hash algorithm in bytes.
 
 ~~~~~~~~
 info for MAC_2 (CBOR Sequence) (297 bytes)
@@ -834,7 +834,7 @@ info for MAC_3 is:
      32
     )
 
-where the last value is the output size of the EDHOC hash algorithm.
+where the last value is the output size of the EDHOC hash algorithm in bytes.
 
 ~~~~~~~~
 info for MAC_3 (CBOR Sequence) (297 bytes)
