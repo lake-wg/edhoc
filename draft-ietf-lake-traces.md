@@ -68,6 +68,24 @@ informative:
         ins: C. Bormann
     date: Aug 2023
 
+  SP-800-186:
+    target: https://doi.org/10.6028/NIST.SP.800-186
+    title: Recommendations for Discrete Logarithm-based Cryptography: Elliptic Curve Domain Parameters
+    seriesinfo:
+      "NIST": "Special Publication 800-186"
+    author:
+      -
+        ins: L. Chen
+      -
+        ins: D. Moody
+      -
+        ins: K. Randall
+      -
+        ins: A. Regenscheid
+      -
+        ins: A. Robinson
+    date: February 2023
+
 --- abstract
 
 This document contains some example traces of Ephemeral Diffie-Hellman Over COSE (EDHOC).
@@ -82,7 +100,7 @@ The document contains two traces:
 
 * {{sec-trace-1}} - Authentication with signature keys identified by the hash value of the X.509 certificates (provided in {{certs}}). The endpoints use EdDSA {{RFC8032}} for authentication and X25519 {{RFC7748}} for ephemeral-ephemeral Diffie-Hellman key exchange.
 
-* {{sec-trace-2}} - Authentication with static Diffie-Hellman keys identified by short key identifiers labelling CWT Claim Sets (CCSs) {{RFC8392}}. The endpoints use NIST P-256 (FIPS PUB 186-4) for both ephemeral-ephemeral and static-ephemeral Diffie-Hellman key exchange. This trace also illustrates the cipher suite negotiation, and provides an example of low protocol overhead, with messages sizes of (39, 45, 19) bytes.
+* {{sec-trace-2}} - Authentication with static Diffie-Hellman keys identified by short key identifiers labelling CWT Claim Sets (CCSs) {{RFC8392}}. The endpoints use NIST P-256 {{SP-800-186}} for both ephemeral-ephemeral and static-ephemeral Diffie-Hellman key exchange. This trace also illustrates the cipher suite negotiation, and provides an example of low protocol overhead, with messages sizes of (39, 45, 19) bytes.
 
 The traces in this draft are valid for version -22 of {{I-D.ietf-lake-edhoc}}. The traces has been verified by two independent implementations.
 
