@@ -582,7 +582,7 @@ The input needed to calculate KEYSTREAM_2 is defined in {{Section 4.1.2 of I-D.i
     KEYSTREAM_2 = EDHOC_KDF( PRK_2e, 0, TH_2, plaintext_length ) =
                 = HKDF-Expand( PRK_2e, info, plaintext_length )
 
-where plaintext_length is the length in bytes of PLAINTEXT_2, and info for KEYSTREAM_2 is:
+where plaintext_length is the length in bytes of PLAINTEXT_2 in bytes, and info for KEYSTREAM_2 is:
 
     info =
     (
