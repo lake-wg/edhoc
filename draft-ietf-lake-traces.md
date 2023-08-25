@@ -62,11 +62,11 @@ informative:
 
   CborMe:
     target: https://cbor.me/
-    title: CBOR Playground
+    title: CBOR playground
     author:
       -
         ins: C. Bormann
-    date: May 2018
+    date: Aug 2023
 
 --- abstract
 
