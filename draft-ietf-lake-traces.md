@@ -117,7 +117,7 @@ NOTE 2. If not clear from the context, remember that CBOR sequences and CBOR arr
 NOTE 3. When the protocol transporting EDHOC messages does not inherently provide correlation across all messages, like CoAP {{RFC7252}}, then some messages typically are prepended with connection identifiers and potentially a message_1 indicator (see {{Sections 3.4.1 and A.2 of I-D.ietf-lake-edhoc}}). Those bytes are not included in the traces in this document.
 
 
-# Authentication with signatures, X.509 certificates identified by 'x5t' # {#sec-trace-1}
+# Authentication with Signatures, X.509 Certificates Identified by 'x5t' # {#sec-trace-1}
 
 In this example the Initiator (I) and Responder (R) are authenticated with digital signatures (METHOD = 0). Both the Initiator and the Responder support cipher suite 0, which determines the algorithms:
 
@@ -128,7 +128,6 @@ In this example the Initiator (I) and Responder (R) are authenticated with digit
 * EDHOC signature algorithm = EdDSA
 * Application AEAD algorithm = AES-CCM-16-64-128
 * Application hash algorithm = SHA-256
-
 
 The public keys are represented with X.509 certificates identified by the COSE header parameter 'x5t'.
 
@@ -175,11 +174,11 @@ G_X (CBOR Data Item) (34 bytes)
 The Initiator selects its connection identifier C_I to be the byte string 0x2d, which since it is represented by the 1-byte CBOR int -14 is encoded as 0x2d:
 
 ~~~~~~~~
-C_I (Raw Value) (Connection identifier chosen by I) (1 byte)
+C_I (Raw Value) (Connection identifier chosen by Initiator) (1 byte)
 2d
 ~~~~~~~~
 ~~~~~~~~
-C_I (CBOR Data Item) (Connection identifier chosen by I) (1 byte)
+C_I (CBOR Data Item) (Connection identifier chosen by Initiator) (1 byte)
 2d
 ~~~~~~~~
 
@@ -235,11 +234,11 @@ G_Y (CBOR Data Item) (34 bytes)
 The Responder selects its connection identifier C_R to be the byte string 0x18, which since it is not represented as a 1-byte CBOR int is encoded as h'18' = 0x4118:
 
 ~~~~~~~~
-C_R (Raw Value) (Connection identifier chosen by R) (1 byte)
+C_R (Raw Value) (Connection identifier chosen by Responder) (1 byte)
 18
 ~~~~~~~~
 ~~~~~~~~
-C_R (CBOR Data Item) (Connection identifier chosen by R) (2 bytes)
+C_R (CBOR Data Item) (Connection identifier chosen by Responder) (2 bytes)
 41 18
 ~~~~~~~~
 
@@ -1513,7 +1512,7 @@ OSCORE Master Salt after KeyUpdate (Raw Value) (8 bytes)
 
 
 
-# Authentication with static DH, CCS identified by 'kid' # {#sec-trace-2}
+# Authentication with Static DH, CCS Identified by 'kid' # {#sec-trace-2}
 
 In this example the Initiator and the Responder are authenticated with ephemeral-static Diffie-Hellman (METHOD = 3). The Initiator supports cipher suites 6 and 2 (in order of preference) and the Responder only supports cipher suite 2. After an initial negotiation message exchange, cipher suite 2 is used, which determines the algorithms:
 
@@ -1569,11 +1568,11 @@ f3 26 20 b7 49 be e8 d2 78 ef a9
 The Initiator selects its connection identifier C_I to be the byte string 0x0e, which since it is represented by the 1-byte CBOR int 14 is encoded as 0x0e:
 
 ~~~~~~~~
-C_I (Raw Value) (Connection identifier chosen by I) (1 byte)
+C_I (Raw Value) (Connection identifier chosen by Initiator) (1 byte)
 0e
 ~~~~~~~~
 ~~~~~~~~
-C_I (CBOR Data Item) (Connection identifier chosen by I) (1 byte)
+C_I (CBOR Data Item) (Connection identifier chosen by Initiator) (1 byte)
 0e
 ~~~~~~~~
 
@@ -1667,11 +1666,11 @@ G_X (CBOR Data Item) (34 bytes)
 The Initiator selects its connection identifier C_I to be the byte string 0x37, which since it is represented by the 1-byte CBOR int -24 is encoded as 0x37:
 
 ~~~~~~~~
-C_I (Raw Value) (Connection identifier chosen by I) (1 byte)
+C_I (Raw Value) (Connection identifier chosen by Initiator) (1 byte)
 37
 ~~~~~~~~
 ~~~~~~~~
-C_I (CBOR Data Item) (Connection identifier chosen by I) (1 byte)
+C_I (CBOR Data Item) (Connection identifier chosen by Initiator) (1 byte)
 37
 ~~~~~~~~
 
@@ -1734,11 +1733,11 @@ G_Y (CBOR Data Item) (34 bytes)
 The Responder selects its connection identifier C_R to be the byte string 0x27, which since it is represented by the 1-byte CBOR int -8 is encoded as 0x27:
 
 ~~~~~~~~
-C_R (raw value) (Connection identifier chosen by R) (1 byte)
+C_R (raw value) (Connection identifier chosen by Responder) (1 byte)
 27
 ~~~~~~~~
 ~~~~~~~~
-C_R (CBOR Data Item) (Connection identifier chosen by R) (1 byte)
+C_R (CBOR Data Item) (Connection identifier chosen by Responder) (1 byte)
 27
 ~~~~~~~~
 
