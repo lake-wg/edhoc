@@ -174,11 +174,13 @@ G_X (CBOR Data Item) (34 bytes)
 The Initiator selects its connection identifier C_I to be the byte string 0x2d, which since it is represented by the 1-byte CBOR int -14 is encoded as 0x2d:
 
 ~~~~~~~~
-C_I (Raw Value) (Connection identifier chosen by Initiator) (1 byte)
+Connection identifier chosen by Initiator
+C_I (Raw Value) (1 byte)
 2d
 ~~~~~~~~
 ~~~~~~~~
-C_I (CBOR Data Item) (Connection identifier chosen by Initiator) (1 byte)
+Connection identifier chosen by Initiator
+C_I (CBOR Data Item) (1 byte)
 2d
 ~~~~~~~~
 
@@ -234,11 +236,13 @@ G_Y (CBOR Data Item) (34 bytes)
 The Responder selects its connection identifier C_R to be the byte string 0x18, which since it is not represented as a 1-byte CBOR int is encoded as h'18' = 0x4118:
 
 ~~~~~~~~
-C_R (Raw Value) (Connection identifier chosen by Responder) (1 byte)
+Connection identifier chosen by Responder
+C_R (Raw Value) (1 byte)
 18
 ~~~~~~~~
 ~~~~~~~~
-C_R (CBOR Data Item) (Connection identifier chosen by Responder) (2 bytes)
+Connection identifier chosen by Responder
+C_R (CBOR Data Item) (2 bytes)
 41 18
 ~~~~~~~~
 
@@ -355,8 +359,8 @@ CRED_R is identified by a 64-bit hash:
 where the COSE header value 34 ('x5t') indicates a hash of an X.509 certficate,
 and the COSE algorithm -15 indicates the hash algorithm SHA-256 truncated to 64 bits.
 
-ID_CRED_R (CBOR Data Item) (14 bytes)
 ~~~~~~~~
+ID_CRED_R (CBOR Data Item) (14 bytes)
 a1 18 22 82 2e 48 79 f2 a4 1b 51 0c 1f 9b
 ~~~~~~~~
 
@@ -1568,11 +1572,13 @@ f3 26 20 b7 49 be e8 d2 78 ef a9
 The Initiator selects its connection identifier C_I to be the byte string 0x0e, which since it is represented by the 1-byte CBOR int 14 is encoded as 0x0e:
 
 ~~~~~~~~
-C_I (Raw Value) (Connection identifier chosen by Initiator) (1 byte)
+Connection identifier chosen by Initiator
+C_I (Raw Value) (1 byte)
 0e
 ~~~~~~~~
 ~~~~~~~~
-C_I (CBOR Data Item) (Connection identifier chosen by Initiator) (1 byte)
+Connection identifier chosen by Initiator
+C_I (CBOR Data Item) (1 byte)
 0e
 ~~~~~~~~
 
@@ -1666,11 +1672,13 @@ G_X (CBOR Data Item) (34 bytes)
 The Initiator selects its connection identifier C_I to be the byte string 0x37, which since it is represented by the 1-byte CBOR int -24 is encoded as 0x37:
 
 ~~~~~~~~
-C_I (Raw Value) (Connection identifier chosen by Initiator) (1 byte)
+Connection identifier chosen by Initiator
+C_I (Raw Value) (1 byte)
 37
 ~~~~~~~~
 ~~~~~~~~
-C_I (CBOR Data Item) (Connection identifier chosen by Initiator) (1 byte)
+Connection identifier chosen by Initiator
+C_I (CBOR Data Item) (1 byte)
 37
 ~~~~~~~~
 
@@ -1733,11 +1741,13 @@ G_Y (CBOR Data Item) (34 bytes)
 The Responder selects its connection identifier C_R to be the byte string 0x27, which since it is represented by the 1-byte CBOR int -8 is encoded as 0x27:
 
 ~~~~~~~~
-C_R (raw value) (Connection identifier chosen by Responder) (1 byte)
+Connection identifier chosen by Responder
+C_R (raw value) (1 byte)
 27
 ~~~~~~~~
 ~~~~~~~~
-C_R (CBOR Data Item) (Connection identifier chosen by Responder) (1 byte)
+Connection identifier chosen by Responder
+C_R (CBOR Data Item) (1 byte)
 27
 ~~~~~~~~
 
