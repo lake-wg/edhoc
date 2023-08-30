@@ -2871,7 +2871,7 @@ Invalid message_1 (36 bytes)
 a0 9c 20 81 49 76 ab 21 12 22 48 fc 0e
 ~~~~~~~~
 
-Invalid x-coordinate in G_X as x ≥ p
+Invalid x-coordinate in G_X as x {{{≥}}} p
 
 ~~~~~~~~
 Invalid message_1 (37 bytes)
