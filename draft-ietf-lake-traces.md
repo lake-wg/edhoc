@@ -2821,7 +2821,7 @@ OSCORE Master Salt after KeyUpdate (Raw Value) (8 bytes)
 
 # Invalid Traces  {#sec-trace-invalid}
 
-These examples are examples of invalid message_1, which a compliant Responder implementation must or should reject according to {{I-D.ietf-lake-edhoc}}, {{RFC9053}}, and {{SP-800-56A}}.
+This section contains examples of invalid message_1, which a compliant Responder implementation must or should reject according to {{I-D.ietf-lake-edhoc}}, {{RFC9053}}, and {{SP-800-56A}}.
 
 Invalid encoding of C_I = 0x0e
 
