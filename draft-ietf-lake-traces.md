@@ -59,6 +59,7 @@ informative:
   RFC8032:
   RFC8392:
   RFC8949:
+  RFC9053:
 
   CborMe:
     target: https://cbor.me/
@@ -67,6 +68,24 @@ informative:
       -
         ins: C. Bormann
     date: Aug 2023
+
+  SP-800-56A:
+    target: https://doi.org/10.6028/NIST.SP.800-56Ar3
+    title: Recommendation for Pair-Wise Key-Establishment Schemes Using Discrete Logarithm Cryptography
+    seriesinfo:
+      "NIST": "Special Publication 800-56A Revision 3"
+    author:
+      -
+        ins: E. Barker
+      -
+        ins: L. Chen
+      -
+        ins: A. Roginsky
+      -
+        ins: A. Vassilev
+      -
+        ins: R. Davis
+    date: April 2018
 
   SP-800-186:
     target: https://doi.org/10.6028/NIST.SP.800-186
