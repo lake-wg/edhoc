@@ -2909,15 +2909,22 @@ Invalid message_2 (46 bytes)
 Invalid encoding of ID_CRED_R in PLAINTEXT_2
 
 ~~~~~~~~
-PLAINTEXT_2 (14 bytes)
+Invalid  PLAINTEXT_2 (14 bytes)
 27 a1 04 41 32 48 fa 5e fa 2e bf 92 0b f3
 ~~~~~~~~
 
 Invalid encoding of ID_CRED_R in PLAINTEXT_2
 
 ~~~~~~~~
-PLAINTEXT_2 (11 bytes)
+Invalid PLAINTEXT_2 (12 bytes)
 27 41 32 48 fa 5e fa 2e bf 92 0b f3
+~~~~~~~~
+
+Invalid length of third element (Signature_or_MAC_2).
+
+~~~~~~~~
+Invalid PLAINTEXT_2 (7 bytes)
+27 32 44 fa 5e fa 2e
 ~~~~~~~~
 
 # Security Considerations {#security}
