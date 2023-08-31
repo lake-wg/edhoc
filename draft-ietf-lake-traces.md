@@ -2906,6 +2906,20 @@ Invalid message_2 (46 bytes)
 42 2c 8e a0 f9 55 a1 3a 4f f5 d5 4B 98 62 a1 1d e4 2a 95 d7 85 38 6a
 ~~~~~~~~
 
+Invalid encoding of ID_CRED_R in PLAINTEXT_2
+
+~~~~~~~~
+PLAINTEXT_2 (14 bytes)
+27 a1 04 41 32 48 fa 5e fa 2e bf 92 0b f3
+~~~~~~~~
+
+Invalid encoding of ID_CRED_R in PLAINTEXT_2
+
+~~~~~~~~
+PLAINTEXT_2 (11 bytes)
+27 41 32 48 fa 5e fa 2e bf 92 0b f3
+~~~~~~~~
+
 # Security Considerations {#security}
 
 This document contains examples of EDHOC {{I-D.ietf-lake-edhoc}} whose security considerations apply. The keys printed in these examples cannot be considered secret and must not be used.
