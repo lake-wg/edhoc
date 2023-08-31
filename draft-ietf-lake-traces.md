@@ -2906,14 +2906,14 @@ Invalid message_2 (46 bytes)
 42 2c 8e a0 f9 55 a1 3a 4f f5 d5 4B 98 62 a1 1d e4 2a 95 d7 85 38 6a
 ~~~~~~~~
 
-Invalid encoding of ID_CRED_R in PLAINTEXT_2
+Invalid encoding a1 04 42 32 10 of ID_CRED_R in PLAINTEXT_2. Correct encoding is 42 32 10 according to {{Section 3.5.3.2 of I-D.ietf-lake-edhoc}}.
 
 ~~~~~~~~
 Invalid  PLAINTEXT_2 (15 bytes)
 27 a1 04 42 32 10 48 fa 5e fa 2e bf 92 0b f3
 ~~~~~~~~
 
-Invalid encoding of ID_CRED_R in PLAINTEXT_2
+Invalid encoding 41 32 of ID_CRED_R in PLAINTEXT_2. Correct encoding is 32 according to {{Section 3.5.3.2 of I-D.ietf-lake-edhoc}}.
 
 ~~~~~~~~
 Invalid PLAINTEXT_2 (12 bytes)
