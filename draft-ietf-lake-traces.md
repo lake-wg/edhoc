@@ -123,7 +123,7 @@ The document contains two traces:
 
 The traces in this draft are valid for version -22 of {{I-D.ietf-lake-edhoc}}. The traces has been verified by two independent implementations.
 
-Examples of invalid EDHOC messages, which a compliant Responder implementation must or should reject according to {{I-D.ietf-lake-edhoc}} are found in {{sec-trace-invalid}}.
+Examples of invalid EDHOC messages, which a compliant implementation must or should reject according to {{I-D.ietf-lake-edhoc}} are found in {{sec-trace-invalid}}.
 
 # Setup
 
@@ -2840,7 +2840,7 @@ OSCORE Master Salt after KeyUpdate (Raw Value) (8 bytes)
 
 # Invalid Traces  {#sec-trace-invalid}
 
-This section contains examples of invalid message_1, which a compliant Responder implementation must or should reject according to {{I-D.ietf-lake-edhoc}}, {{RFC9053}}, and {{SP-800-56A}}.
+This section contains examples of invalid messages, which a compliant implementation must or should reject according to {{I-D.ietf-lake-edhoc}}, {{RFC9053}}, and {{SP-800-56A}}.
 
 Invalid encoding of C_I = 0x0e
 
