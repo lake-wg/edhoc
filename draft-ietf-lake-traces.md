@@ -2898,7 +2898,7 @@ Invalid message_1 (37 bytes)
 f6 73 92 4e 58 d5 4c a7 7a 5e 7d 4d 4a 0e
 ~~~~~~~~
 
-Invalid number of elements in the CBOR sequence. Corrent number of elements is 1 according to Section 5.3.1 of {{I-D.ietf-lake-edhoc}}.
+Invalid number of elements in the CBOR sequence. Correct number of elements is 1 according to Section 5.3.1 of {{I-D.ietf-lake-edhoc}}.
 
 ~~~~~~~~
 Invalid message_2 (46 bytes)
