@@ -2898,7 +2898,7 @@ Invalid message_1 (37 bytes)
 f6 73 92 4e 58 d5 4c a7 7a 5e 7d 4d 4a 0e
 ~~~~~~~~
 
-Invalid number of elements in the CBOR sequence. Corrent number of elements is 1 according to {{Section 5.3.1 of SP-800-56A}}.
+Invalid number of elements in the CBOR sequence. Corrent number of elements is 1 according to {{Section 5.3.1 of I-D.ietf-lake-edhoc}}.
 
 ~~~~~~~~
 Invalid message_2 (46 bytes)
@@ -2920,7 +2920,7 @@ Invalid PLAINTEXT_2 (12 bytes)
 27 41 32 48 fa 5e fa 2e bf 92 0b f3
 ~~~~~~~~
 
-Invalid length of third element (Signature_or_MAC_2).
+Invalid length of third element (Signature_or_MAC_2). The length of Signature_or_MAC_2 is given by the cipher suite and the MAC length is at least 8 bytes according to {{Section 9.3 of I-D.ietf-lake-edhoc}}.
 
 ~~~~~~~~
 Invalid PLAINTEXT_2 (7 bytes)
