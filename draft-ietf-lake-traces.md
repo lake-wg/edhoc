@@ -2840,7 +2840,7 @@ OSCORE Master Salt after KeyUpdate (Raw Value) (8 bytes)
 
 # Invalid Traces  {#sec-trace-invalid}
 
-This section contains examples of invalid messages, which a compliant implementation must or should reject according to {{I-D.ietf-lake-edhoc}}, {{RFC9053}}, and {{SP-800-56A}}.
+This section contains examples of invalid messages, which a compliant implementation must or should reject according to {{I-D.ietf-lake-edhoc}}, {{RFC9053}}, and {{SP-800-56A}}. This is just a small set of examples of different reasons a message might be invalid. The same types of invalidities applies to other fields and messages as well. Implementations should make sure to check for similar types of in invalidities in all EHDOC fields and messages.
 
 Invalid encoding of C_I = 0x0e
 
