@@ -2842,7 +2842,7 @@ OSCORE Master Salt after KeyUpdate (Raw Value) (8 bytes)
 
 This section contains examples of invalid messages, which a compliant implementation must or should reject according to {{I-D.ietf-lake-edhoc}}, {{RFC9053}}, and {{SP-800-56A}}. This is just a small set of examples of different reasons a message might be invalid. The same types of invalidities applies to other fields and messages as well. Implementations should make sure to check for similar types of in invalidities in all EHDOC fields and messages.
 
-Invalid encoding 41 0e of C_I = 0x0e. Correct encoding is 0e according to {{Section 3.3.2 of I-D.ietf-lake-edhoc}}.
+Invalid encoding 41 0e of C_I = 0x0e. Correct encoding is 0e according to Section 3.3.2 of {{I-D.ietf-lake-edhoc}}.
 
 ~~~~~~~~
 Invalid message_1 (38 bytes)
@@ -2850,7 +2850,7 @@ Invalid message_1 (38 bytes)
 8f 65 f3 26 20 b7 49 be e8 d2 78 ef a9 41 0e
 ~~~~~~~~
 
-Invalid encoding of message_1 as array. Correct encoding is a CBOR sequence according to {{Section 5.2.1 of I-D.ietf-lake-edhoc}}.
+Invalid encoding of message_1 as array. Correct encoding is a CBOR sequence according to Section 5.2.1 of {{I-D.ietf-lake-edhoc}}.
 
 ~~~~~~~~
 Invalid message_1 (38 bytes)
@@ -2858,7 +2858,7 @@ Invalid message_1 (38 bytes)
 3d 8f 65 f3 26 20 b7 49 be e8 d2 78 ef a9 0e
 ~~~~~~~~
 
-Invalid 16-bit encoding 19 00 03 of METHOD = 3. Correct is the deterministic encoding  03 according to {{Section 1.4 of I-D.ietf-lake-edhoc}}.
+Invalid 16-bit encoding 19 00 03 of METHOD = 3. Correct is the deterministic encoding  03 according to Section 1.4 of {{I-D.ietf-lake-edhoc}}.
 
 ~~~~~~~~
 Invalid message_1 (39 bytes)
@@ -2866,7 +2866,7 @@ Invalid message_1 (39 bytes)
 5b 3d 8f 65 f3 26 20 b7 49 be e8 d2 78 ef a9 0e
 ~~~~~~~~
 
-Invalid type of the third element (G_X). Correct encoding is a byte string according to {{Section 5.2.1 of I-D.ietf-lake-edhoc}}.
+Invalid type of the third element (G_X). Correct encoding is a byte string according to Section 5.2.1 of {{I-D.ietf-lake-edhoc}}.
 
 ~~~~~~~~
 Invalid message_1 (37 bytes)
@@ -2874,7 +2874,7 @@ Invalid message_1 (37 bytes)
 61 64 65 6E 20 73 77 61 6C 6C 6F 77 20 0e
 ~~~~~~~~
 
-Invalid length of third element (G_X).  Correct encoding is with leading zeros according to {{Section 3.7 of I-D.ietf-lake-edhoc}} and {{Section 7.1.1 of I-D.ietf-lake-edhoc}}.
+Invalid length of third element (G_X).  Correct encoding is with leading zeros according to Section 3.7 of {{I-D.ietf-lake-edhoc}} and Section 7.1.1 of {{I-D.ietf-lake-edhoc}}.
 
 ~~~~~~~~
 Invalid message_1 (36 bytes)
@@ -2882,7 +2882,7 @@ Invalid message_1 (36 bytes)
 a0 9c 20 81 49 76 ab 21 12 22 48 fc 0e
 ~~~~~~~~
 
-Invalid x-coordinate in G_X as x {{{≥}}} p. Requirement that x < p according to {{Section 9.2 of I-D.ietf-lake-edhoc}} and {{Section 5.6.2.3 of SP-800-56A}}.
+Invalid x-coordinate in G_X as x {{{≥}}} p. Requirement that x < p according to Section 9.2 of {{I-D.ietf-lake-edhoc}} and Section 5.6.2.3 of {{SP-800-56A}}.
 
 ~~~~~~~~
 Invalid message_1 (37 bytes)
@@ -2890,7 +2890,7 @@ Invalid message_1 (37 bytes)
 00 ff ff ff ff ff ff ff ff ff ff ff ff 0e
 ~~~~~~~~
 
-Invalid x-coordinate in (G_X) not corresponding to a point on the P-256 curve. Requirement that y<sup>2</sup> {{{≡}}} x<sup>3</sup> + a {{{⋅}}} x + b (mod p) according to {{Section 9.2 of I-D.ietf-lake-edhoc}} and {{Section 5.6.2.3 of SP-800-56A}}.
+Invalid x-coordinate in (G_X) not corresponding to a point on the P-256 curve. Requirement that y<sup>2</sup> {{{≡}}} x<sup>3</sup> + a {{{⋅}}} x + b (mod p) according to Section 9.2 of {{I-D.ietf-lake-edhoc}} and Section 5.6.2.3 of {{SP-800-56A}}.
 
 ~~~~~~~~
 Invalid message_1 (37 bytes)
@@ -2898,7 +2898,7 @@ Invalid message_1 (37 bytes)
 f6 73 92 4e 58 d5 4c a7 7a 5e 7d 4d 4a 0e
 ~~~~~~~~
 
-Invalid number of elements in the CBOR sequence. Corrent number of elements is 1 according to {{Section 5.3.1 of I-D.ietf-lake-edhoc}}.
+Invalid number of elements in the CBOR sequence. Corrent number of elements is 1 according to Section 5.3.1 of {{I-D.ietf-lake-edhoc}}.
 
 ~~~~~~~~
 Invalid message_2 (46 bytes)
@@ -2906,21 +2906,21 @@ Invalid message_2 (46 bytes)
 42 2c 8e a0 f9 55 a1 3a 4f f5 d5 4B 98 62 a1 1d e4 2a 95 d7 85 38 6a
 ~~~~~~~~
 
-Invalid encoding a1 04 42 32 10 of ID_CRED_R in PLAINTEXT_2. Correct encoding is 42 32 10 according to {{Section 3.5.3.2 of I-D.ietf-lake-edhoc}}.
+Invalid encoding a1 04 42 32 10 of ID_CRED_R in PLAINTEXT_2. Correct encoding is 42 32 10 according to Section 3.5.3.2 of {{I-D.ietf-lake-edhoc}}.
 
 ~~~~~~~~
 Invalid  PLAINTEXT_2 (15 bytes)
 27 a1 04 42 32 10 48 fa 5e fa 2e bf 92 0b f3
 ~~~~~~~~
 
-Invalid encoding 41 32 of ID_CRED_R in PLAINTEXT_2. Correct encoding is 32 according to {{Section 3.5.3.2 of I-D.ietf-lake-edhoc}}.
+Invalid encoding 41 32 of ID_CRED_R in PLAINTEXT_2. Correct encoding is 32 according to Section 3.5.3.2 of {{I-D.ietf-lake-edhoc}}.
 
 ~~~~~~~~
 Invalid PLAINTEXT_2 (12 bytes)
 27 41 32 48 fa 5e fa 2e bf 92 0b f3
 ~~~~~~~~
 
-Invalid length of third element (Signature_or_MAC_2). The length of Signature_or_MAC_2 is given by the cipher suite and the MAC length is at least 8 bytes according to {{Section 9.3 of I-D.ietf-lake-edhoc}}.
+Invalid length of third element (Signature_or_MAC_2). The length of Signature_or_MAC_2 is given by the cipher suite and the MAC length is at least 8 bytes according to Section 9.3 of {{I-D.ietf-lake-edhoc}}.
 
 ~~~~~~~~
 Invalid PLAINTEXT_2 (7 bytes)
