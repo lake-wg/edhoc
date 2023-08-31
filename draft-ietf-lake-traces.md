@@ -2909,7 +2909,7 @@ Invalid message_2 (46 bytes)
 Invalid encoding a1 04 42 32 10 of ID_CRED_R in PLAINTEXT_2. Correct encoding is 42 32 10 according to Section 3.5.3.2 of {{I-D.ietf-lake-edhoc}}.
 
 ~~~~~~~~
-Invalid  PLAINTEXT_2 (15 bytes)
+Invalid PLAINTEXT_2 (15 bytes)
 27 a1 04 42 32 10 48 fa 5e fa 2e bf 92 0b f3
 ~~~~~~~~
 
