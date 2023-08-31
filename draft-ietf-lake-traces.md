@@ -2846,7 +2846,7 @@ Invalid encoding of C_I = 0x0e
 
 ~~~~~~~~
 Invalid message_1 (38 bytes)
-03 06 58 20 74 1a 13 d7 ba 04 8f bb 61 5e 94 38 6a a3 b6 1b ea 5b 3d
+03 02 58 20 74 1a 13 d7 ba 04 8f bb 61 5e 94 38 6a a3 b6 1b ea 5b 3d
 8f 65 f3 26 20 b7 49 be e8 d2 78 ef a9 41 0e
 ~~~~~~~~
 
@@ -2854,7 +2854,7 @@ Invalid encoding as array instead of CBOR sequence.
 
 ~~~~~~~~
 Invalid message_1 (38 bytes)
-84 03 06 58 20 74 1a 13 d7 ba 04 8f bb 61 5e 94 38 6a a3 b6 1b ea 5b
+84 03 02 58 20 74 1a 13 d7 ba 04 8f bb 61 5e 94 38 6a a3 b6 1b ea 5b
 3d 8f 65 f3 26 20 b7 49 be e8 d2 78 ef a9 0e
 ~~~~~~~~
 
@@ -2862,7 +2862,7 @@ Invalid 16-bit encoding of METHOD = 3
 
 ~~~~~~~~
 Invalid message_1 (39 bytes)
-19 00 03 06 58 20 74 1a 13 d7 ba 04 8f bb 61 5e 94 38 6a a3 b6 1b ea
+19 00 03 02 58 20 74 1a 13 d7 ba 04 8f bb 61 5e 94 38 6a a3 b6 1b ea
 5b 3d 8f 65 f3 26 20 b7 49 be e8 d2 78 ef a9 0e
 ~~~~~~~~
 
@@ -2870,7 +2870,7 @@ Invalid type of the third element (G_X).
 
 ~~~~~~~~
 Invalid message_1 (37 bytes)
-03 06 78 20 20 61 69 72 20 73 70 65 65 64 20 6F 66 20 61 20 75 6E 6C
+03 02 78 20 20 61 69 72 20 73 70 65 65 64 20 6F 66 20 61 20 75 6E 6C
 61 64 65 6E 20 73 77 61 6C 6C 6F 77 20 0e
 ~~~~~~~~
 
@@ -2878,7 +2878,7 @@ Invalid length of third element (G_X). Leading-zeros not preserved.
 
 ~~~~~~~~
 Invalid message_1 (36 bytes)
-03 06 58 1f d9 69 77 25 d2 3a 68 8b 12 d1 c7 e0 10 8a 08 c9 f7 1a 85
+03 02 58 1f d9 69 77 25 d2 3a 68 8b 12 d1 c7 e0 10 8a 08 c9 f7 1a 85
 a0 9c 20 81 49 76 ab 21 12 22 48 fc 0e
 ~~~~~~~~
 
@@ -2886,7 +2886,7 @@ Invalid x-coordinate in G_X as x {{{≥}}} p
 
 ~~~~~~~~
 Invalid message_1 (37 bytes)
-03 06 58 20 ff ff ff ff 00 00 00 01 00 00 00 00 00 00 00 00 00 00 00
+03 02 58 20 ff ff ff ff 00 00 00 01 00 00 00 00 00 00 00 00 00 00 00
 00 ff ff ff ff ff ff ff ff ff ff ff ff 0e
 ~~~~~~~~
 
@@ -2894,7 +2894,7 @@ Invalid x-coordinate in (G_X) not corresponding to a point on the P-256 curve.
 
 ~~~~~~~~
 Invalid message_1 (37 bytes)
-03 06 58 20 a0 4e 73 60 1d f5 44 a7 0b a7 ea 1e 57 03 0f 7d 4b 4e b7
+03 02 58 20 a0 4e 73 60 1d f5 44 a7 0b a7 ea 1e 57 03 0f 7d 4b 4e b7
 f6 73 92 4e 58 d5 4c a7 7a 5e 7d 4d 4a 0e
 ~~~~~~~~
 
