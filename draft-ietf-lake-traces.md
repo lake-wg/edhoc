@@ -2909,8 +2909,8 @@ Invalid message_2 (46 bytes)
 Invalid encoding of ID_CRED_R in PLAINTEXT_2
 
 ~~~~~~~~
-Invalid  PLAINTEXT_2 (14 bytes)
-27 a1 04 41 32 48 fa 5e fa 2e bf 92 0b f3
+Invalid  PLAINTEXT_2 (15 bytes)
+27 a1 04 42 32 10 48 fa 5e fa 2e bf 92 0b f3
 ~~~~~~~~
 
 Invalid encoding of ID_CRED_R in PLAINTEXT_2
