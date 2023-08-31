@@ -2850,14 +2850,6 @@ Invalid message_1 (38 bytes)
 8f 65 f3 26 20 b7 49 be e8 d2 78 ef a9 41 0e
 ~~~~~~~~
 
-Invalid number of elements in the CBOR sequence.
-
-~~~~~~~~
-Invalid message_1 (38 bytes)
-03 06 58 20 74 1a 13 d7 ba 04 8f bb 61 5e 94 38 6a a3 b6 1b ea 5b 3d
-8f 65 f3 26 20 b7 49 be e8 d2 78 ef a9 0e 0f
-~~~~~~~~
-
 Invalid encoding as array instead of CBOR sequence.
 
 ~~~~~~~~
