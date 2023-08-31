@@ -2898,6 +2898,14 @@ Invalid message_1 (37 bytes)
 f6 73 92 4e 58 d5 4c a7 7a 5e 7d 4d 4a 0e
 ~~~~~~~~
 
+Invalid number of elements in the CBOR sequence
+
+~~~~~~~~
+Invalid message_2 (46 bytes)
+58 20 41 97 01 d7 f0 0a 26 c2 dc 58 7a 36 dd 75 25 49 f3 37 63 c8 93
+42 2c 8e a0 f9 55 a1 3a 4f f5 d5 4B 98 62 a1 1d e4 2a 95 d7 85 38 6a
+~~~~~~~~
+
 # Security Considerations {#security}
 
 This document contains examples of EDHOC {{I-D.ietf-lake-edhoc}} whose security considerations apply. The keys printed in these examples cannot be considered secret and must not be used.
