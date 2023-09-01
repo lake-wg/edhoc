@@ -2840,7 +2840,7 @@ OSCORE Master Salt after KeyUpdate (Raw Value) (8 bytes)
 
 # Invalid Traces  {#sec-trace-invalid}
 
-This section contains examples of invalid messages, which a compliant implementation must not compose and must or should reject according to {{I-D.ietf-lake-edhoc}}, {{RFC9053}}, and {{SP-800-56A}}. This is just a small set of examples of different reasons a message might be invalid. The same types of invalidities applies to other fields and messages as well. Implementations should make sure to check for similar types of invalidities in all EHDOC fields and messages.
+This section contains examples of invalid messages, which a compliant implementation must not compose and must or should reject according to {{I-D.ietf-lake-edhoc}}, {{RFC8949}}, {{RFC9053}}, and {{SP-800-56A}}. This is just a small set of examples of different reasons a message might be invalid. The same types of invalidities applies to other fields and messages as well. Implementations should make sure to check for similar types of invalidities in all EHDOC fields and messages.
 
 Invalid encoding of message_1 as array. Correct encoding is a CBOR sequence according to Section 5.2.1 of {{I-D.ietf-lake-edhoc}}.
 
@@ -2850,7 +2850,7 @@ Invalid message_1 (38 bytes)
 3d 8f 65 f3 26 20 b7 49 be e8 d2 78 ef a9 0e
 ~~~~~~~~
 
-Invalid 16-bit encoding 19 00 03 of METHOD = 3. Correct is the deterministic encoding 03 according to Section 1.4 of {{I-D.ietf-lake-edhoc}}.
+Invalid 16-bit encoding 19 00 03 of METHOD = 3. Correct is the deterministic encoding 03 according to Section 1.4 of {{I-D.ietf-lake-edhoc}} and Section 4.2.1 of {{RFC8949}}.
 
 ~~~~~~~~
 Invalid message_1 (39 bytes)
