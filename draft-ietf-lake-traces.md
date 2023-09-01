@@ -2850,7 +2850,7 @@ Invalid message_1 (38 bytes)
 3d 8f 65 f3 26 20 b7 49 be e8 d2 78 ef a9 0e
 ~~~~~~~~
 
-Invalid 16-bit encoding 19 00 03 of METHOD = 3. Correct is the deterministic encoding 03 according to Section 1.4 of {{I-D.ietf-lake-edhoc}} and Section 4.2.1 of {{RFC8949}}.
+Invalid 16-bit encoding 19 00 03 of METHOD = 3. Correct is the deterministic encoding 03 according to Section 3.1 of {{I-D.ietf-lake-edhoc}} and Section 4.2.1 of {{RFC8949}}.
 
 ~~~~~~~~
 Invalid message_1 (39 bytes)
