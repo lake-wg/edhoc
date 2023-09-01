@@ -2936,6 +2936,14 @@ Invalid PLAINTEXT_2 (12 bytes)
 27 41 32 48 fa 5e fa 2e bf 92 0b f3
 ~~~~~~~~
 
+Invalid encoding of the map ID_CRED_R in PLAINTEXT_2. Correct is the deterministic bytewise lexicographic order encoding according to Section 1.4 of {{I-D.ietf-lake-edhoc}} and Section 4.2.1 of {{RFC8949}}.
+
+~~~~~~~~
+Invalid PLAINTEXT_2 (25 bytes)
+27 A2 0A 46 6D 6F 72 64 6F 72 04 44 72 69 6E 67 48 fa 5e fa 2e bf 92
+0b f3
+~~~~~~~~
+
 Invalid length of third element (Signature_or_MAC_2). The length of Signature_or_MAC_2 is given by the cipher suite and the MAC length is at least 8 bytes according to Section 9.3 of {{I-D.ietf-lake-edhoc}}.
 
 ~~~~~~~~
