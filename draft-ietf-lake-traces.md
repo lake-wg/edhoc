@@ -2866,7 +2866,7 @@ Invalid message_1 (38 bytes)
 8f 65 f3 26 20 b7 49 be e8 d2 78 ef a9 41 0e
 ~~~~~~~~
 
-Invalid array encoding 81 02 of SUITES_I = 2. Correct encoding is 02 according to Section 5.2.1 of {{I-D.ietf-lake-edhoc}}.
+Invalid array encoding 81 02 of SUITES_I = 2. Correct encoding is 02 according to Section 5.2.2 of {{I-D.ietf-lake-edhoc}}.
 
 ~~~~~~~~
 Invalid message_1 (38 bytes)
