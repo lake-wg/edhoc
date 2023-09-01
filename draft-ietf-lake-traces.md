@@ -2842,14 +2842,6 @@ OSCORE Master Salt after KeyUpdate (Raw Value) (8 bytes)
 
 This section contains examples of invalid messages, which a compliant implementation must not compose and must or should reject according to {{I-D.ietf-lake-edhoc}}, {{RFC9053}}, and {{SP-800-56A}}. This is just a small set of examples of different reasons a message might be invalid. The same types of invalidities applies to other fields and messages as well. Implementations should make sure to check for similar types of invalidities in all EHDOC fields and messages.
 
-Invalid encoding 41 0e of C_I = 0x0e. Correct encoding is 0e according to Section 3.3.2 of {{I-D.ietf-lake-edhoc}}.
-
-~~~~~~~~
-Invalid message_1 (38 bytes)
-03 02 58 20 74 1a 13 d7 ba 04 8f bb 61 5e 94 38 6a a3 b6 1b ea 5b 3d
-8f 65 f3 26 20 b7 49 be e8 d2 78 ef a9 41 0e
-~~~~~~~~
-
 Invalid encoding of message_1 as array. Correct encoding is a CBOR sequence according to Section 5.2.1 of {{I-D.ietf-lake-edhoc}}.
 
 ~~~~~~~~
@@ -2866,6 +2858,30 @@ Invalid message_1 (39 bytes)
 5b 3d 8f 65 f3 26 20 b7 49 be e8 d2 78 ef a9 0e
 ~~~~~~~~
 
+Invalid encoding 41 0e of C_I = 0x0e. Correct encoding is 0e according to Section 3.3.2 of {{I-D.ietf-lake-edhoc}}.
+
+~~~~~~~~
+Invalid message_1 (38 bytes)
+03 02 58 20 74 1a 13 d7 ba 04 8f bb 61 5e 94 38 6a a3 b6 1b ea 5b 3d
+8f 65 f3 26 20 b7 49 be e8 d2 78 ef a9 41 0e
+~~~~~~~~
+
+Invalid array encoding 81 02 of SUITES_I = 2. Correct encoding is 02 according to Section 5.2.1 of {{I-D.ietf-lake-edhoc}}.
+
+~~~~~~~~
+Invalid message_1 (38 bytes)
+03 81 02 58 20 74 1a 13 d7 ba 04 8f bb 61 5e 94 38 6a a3 b6 1b ea 5b
+3d 8f 65 f3 26 20 b7 49 be e8 d2 78 ef a9 0e
+~~~~~~~~
+
+Invalid length of the third element (G_X). Selected cipher suite is cipher suite 24 with curve P-384 according to Sections 5.2.2, and 10.2 of {{I-D.ietf-lake-edhoc}}. Correct length of x-coordinate is 48 bytes according to Section 3.7 of {{I-D.ietf-lake-edhoc}} and Section 7.1.1 of {{RFC9053}}.
+
+~~~~~~~~
+Invalid message_1 (40 bytes)
+03 82 02 18 18 58 20 74 1a 13 d7 ba 04 8f bb 61 5e 94 38 6a a3 b6 1b
+ea 5b 3d 8f 65 f3 26 20 b7 49 be e8 d2 78 ef a9 0e
+~~~~~~~~
+
 Invalid type of the third element (G_X). Correct encoding is a byte string according to Section 5.2.1 of {{I-D.ietf-lake-edhoc}}.
 
 ~~~~~~~~
@@ -2874,7 +2890,7 @@ Invalid message_1 (37 bytes)
 61 64 65 6E 20 73 77 61 6C 6C 6F 77 20 0e
 ~~~~~~~~
 
-Invalid length of third element (G_X).  Correct encoding is with leading zeros according to Section 3.7 of {{I-D.ietf-lake-edhoc}} and Section 7.1.1 of {{I-D.ietf-lake-edhoc}}.
+Invalid length of third element (G_X). Correct encoding is with leading zeros according to Section 3.7 of {{I-D.ietf-lake-edhoc}} and Section 7.1.1 of {{RFC9053}}.
 
 ~~~~~~~~
 Invalid message_1 (36 bytes)
