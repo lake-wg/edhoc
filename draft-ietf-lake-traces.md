@@ -2936,7 +2936,7 @@ Invalid PLAINTEXT_2 (12 bytes)
 27 41 32 48 fa 5e fa 2e bf 92 0b f3
 ~~~~~~~~
 
-Invalid encoding of the map ID_CRED_R in PLAINTEXT_2. Correct is the deterministic bytewise lexicographic order encoding according to Section 1.4 of {{I-D.ietf-lake-edhoc}} and Section 4.2.1 of {{RFC8949}}.
+Invalid encoding of the map ID_CRED_R in PLAINTEXT_2. Correct is the deterministic bytewise lexicographic order encoding according to Section 3.1 of {{I-D.ietf-lake-edhoc}} and Section 4.2.1 of {{RFC8949}}.
 
 ~~~~~~~~
 Invalid PLAINTEXT_2 (25 bytes)
