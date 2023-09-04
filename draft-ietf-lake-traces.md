@@ -2884,6 +2884,16 @@ Invalid message_1 (38 bytes)
 3d 8f 65 f3 26 20 b7 49 be e8 d2 78 ef a9 0e
 ~~~~~~~~
 
+### Invalid array encoding of SUITES_I
+
+Invalid indefinite-length array encoding 9F 06 02 FF of SUITES_I = [6, 2]. Correct encoding is 82 06 02 according to Section 5.2.2 of {{I-D.ietf-lake-edhoc}}.
+
+~~~~~~~~
+Invalid message_1 (40 bytes)
+03 9F 06 02 FF 58 20 74 1a 13 d7 ba 04 8f bb 61 5e 94 38 6a a3 b6 1b
+ea 5b 3d 8f 65 f3 26 20 b7 49 be e8 d2 78 ef a9 0e
+~~~~~~~~
+
 ### Invalid length of G_X
 
 Invalid length of the third element (G_X). Selected cipher suite is cipher suite 24 with curve P-384 according to Sections 5.2.2, and 10.2 of {{I-D.ietf-lake-edhoc}}. Correct length of x-coordinate is 48 bytes according to Section 3.7 of {{I-D.ietf-lake-edhoc}} and Section 7.1.1 of {{RFC9053}}.
