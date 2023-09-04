@@ -2856,7 +2856,7 @@ Invalid message_1 (38 bytes)
 
 ### Non-deterministic CBOR encoding of METHOD
 
-Invalid 16-bit encoding 19 00 03 of METHOD = 3. Correct is the deterministic encoding 03 according to Section 3.1 of {{I-D.ietf-lake-edhoc}} and Section 4.2.1 of {{RFC8949}}.
+Invalid 16-bit encoding 19 00 03 of METHOD = 3. Correct is the deterministic encoding 03 according to Section 3.1 of {{I-D.ietf-lake-edhoc}} and Section 4.2.1 of {{RFC8949}}, which states that the arguments for integers, lengths in major types 2 through 5, and tags MUST be as short as possible.
 
 ~~~~~~~~
 Invalid message_1 (39 bytes)
