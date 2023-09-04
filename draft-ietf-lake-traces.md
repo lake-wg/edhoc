@@ -51,9 +51,10 @@ author:
 
 normative:
 
+  I-D.ietf-lake-edhoc:
+
 informative:
 
-  I-D.ietf-lake-edhoc:
   RFC7252:
   RFC7748:
   RFC8032:
