@@ -459,7 +459,7 @@ If connection identifiers are used by an application protocol for which EDHOC es
 
 ### Representation of Byte String Identifiers {#bstr-repr}
 
-To allow identifiers with minimal overhead on the wire, certain byte strings are defined to have integer representations.
+To allow identifiers with minimal overhead on the wire, certain byte strings used in connection identifiers and credential identifiers (see Section {{id_cred}}) are defined to have integer representations.
 
 The integers with one-byte CBOR encoding are -24, ..., 23, see {{fig-int-one-byte}}.
 
