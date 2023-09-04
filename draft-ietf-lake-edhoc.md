@@ -392,7 +392,7 @@ To simplify for implementors, the use of CBOR and COSE in EDHOC is summarized in
 
 The EDHOC protocol consists of three mandatory messages (message_1, message_2, message_3), an optional fourth message (message_4), and an error message, between an Initiator (I) and a Responder (R). The odd messages are sent by I, the even by R. Both I and R can send error messages.
 The roles have slightly different security properties which should be considered when the roles are assigned, see {{sec-prop}}.
-All EDHOC messages are CBOR Sequences {{RFC8742}}, and are deterministically encoded. {{fig-flow}} illustrates an EDHOC message flow with the optional fourth message as well as the content of each message. The protocol elements in the figure are introduced in {{overview}} and {{asym}}. Message formatting and processing are specified in {{asym}} and {{error}}.
+All EDHOC messages are CBOR Sequences {{RFC8742}}, and are encoded using deterministically encoded CBOR as specified in Section 4.2.1 of {{RFC8949}}. {{fig-flow}} illustrates an EDHOC message flow with the optional fourth message as well as the content of each message. The protocol elements in the figure are introduced in {{overview}} and {{asym}}. Message formatting and processing are specified in {{asym}} and {{error}}.
 
 Application data may be protected using the agreed application algorithms (AEAD, hash) in the selected cipher suite (see {{cs}}) and the application can make use of the established connection identifiers C_I and C_R (see {{ci}}). Media types that may be used for EDHOC are defined in {{media-type}}.
 
