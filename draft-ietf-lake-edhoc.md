@@ -2174,7 +2174,7 @@ message_2 = (
 )
 
 PLAINTEXT_2 = (
-  ID_CRED_R = map / bstr / -24..23,
+  ID_CRED_R : map / bstr / -24..23,
   Signature_or_MAC_2 : bstr,
   ? EAD_2,
 )
@@ -2184,7 +2184,7 @@ message_3 = (
 )
 
 PLAINTEXT_3 = (
-  ID_CRED_I = map / bstr / -24..23,
+  ID_CRED_I : map / bstr / -24..23,
   Signature_or_MAC_3 : bstr,
   ? EAD_3,
 )
