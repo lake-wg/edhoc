@@ -2173,12 +2173,28 @@ message_2 = (
   G_Y_CIPHERTEXT_2 : bstr,
 )
 
+PLAINTEXT_2 = (
+  ID_CRED_R = map / bstr / -24..23,
+  Signature_or_MAC_2 : bstr,
+  ? EAD_2,
+)
+
 message_3 = (
   CIPHERTEXT_3 : bstr,
 )
 
+PLAINTEXT_3 = (
+  ID_CRED_I = map / bstr / -24..23,
+  Signature_or_MAC_3 : bstr,
+  ? EAD_3,
+)
+
 message_4 = (
   CIPHERTEXT_4 : bstr,
+)
+
+PLAINTEXT_4 = (
+  ? EAD_4,
 )
 
 error = (
