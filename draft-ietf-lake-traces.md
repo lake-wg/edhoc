@@ -123,7 +123,7 @@ The document contains two traces:
 
 The traces in this draft are valid for version -22 of {{I-D.ietf-lake-edhoc}}. The traces has been verified by two independent implementations.
 
-Examples of of different types of invalid EDHOC messages are found in {{sec-trace-invalid}}.
+Examples of invalid EDHOC messages are found in {{sec-trace-invalid}}.
 
 # Setup
 
@@ -2840,7 +2840,7 @@ OSCORE Master Salt after KeyUpdate (Raw Value) (8 bytes)
 
 # Invalid Traces  {#sec-trace-invalid}
 
-This section contains different examples of invalid messages, which a compliant implementation will not compose and must or may reject according to {{I-D.ietf-lake-edhoc}}, {{RFC8949}}, {{RFC9053}}, and {{SP-800-56A}}. This is just a small set of examples of different reasons a message might be invalid. The same types of invalidities applies to other fields and messages as well. Implementations should make sure to check for similar types of invalidities in all EHDOC fields and messages.
+This section contains examples of invalid messages, which a compliant implementation will not compose and must or may reject according to {{I-D.ietf-lake-edhoc}}, {{RFC8949}}, {{RFC9053}}, and {{SP-800-56A}}. This is just a small set of examples of different reasons a message might be invalid. The same types of invalidities applies to other fields and messages as well. Implementations should make sure to check for similar types of invalidities in all EHDOC fields and messages.
 
 ## Encoding Errors
 
