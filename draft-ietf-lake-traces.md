@@ -2976,7 +2976,7 @@ a0 9c 20 81 49 76 ab 21 12 22 48 fc 0e
 ## Non-deterministic CBOR
 
 
-### Unnecssary long encoding
+### Unnecessary long encoding
 
 Invalid 16-bit encoding 19 00 03 of METHOD = 3. Correct is the deterministic encoding 03 according to Section 3.1 of {{I-D.ietf-lake-edhoc}} and Section 4.2.1 of {{RFC8949}}, which states that the arguments for integers, lengths in major types 2 through 5, and tags MUST be as short as possible.
 
