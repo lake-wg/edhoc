@@ -2960,7 +2960,7 @@ Curve25519 point of low order which fails the all-zero output check. Requirement
 Invalid message_1 (37 bytes)
 03 00 58 20 ed ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
 ff ff ff ff ff ff ff ff ff ff ff ff 7f 0e
-~~~~~~~~          
+~~~~~~~~
 
 ### Error in length of MAC
 
