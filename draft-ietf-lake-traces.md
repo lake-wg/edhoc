@@ -2952,6 +2952,15 @@ Invalid message_1 (37 bytes)
 f6 73 92 4e 58 d5 4c a7 7a 5e 7d 4d 4a 0e
 ~~~~~~~~
 
+### Curve point of low order
+
+Curve25519 point of low order which fails the all-zero output check. Requirement to perform the all-zero output check according to Section 9.2 of {{I-D.ietf-lake-edhoc}}.
+
+~~~~~~~~
+Invalid message_1 (37 bytes)
+03 00 58 20 ed ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+ff ff ff ff ff ff ff ff ff ff ff ff 7f 0e
+~~~~~~~~          
 
 ### Error in length of MAC
 
