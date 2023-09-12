@@ -1491,7 +1491,7 @@ Note that HKDF-Expand has a relatively small maximum output length of 255 {{{⋅
 
 The sequence of transcript hashes in EDHOC (TH_2, TH_3, TH_4) does not make use of a so-called running hash. This is a design choice as running hashes are often not supported on constrained platforms.
 
-When parsing a received EDHOC message, implementations MUST abort the EDHOC session if the message does not comply with the CDDL for that message. Implementations are not required to support all non-deterministic encodings and MAY abort the EDHOC session if the received EDHOC message is not encoded using deterministic CBOR. Implementations MUST abort the EDHOC session if validation of a received public key fails.
+When parsing a received EDHOC message, implementations MUST abort the EDHOC session if the message does not comply with the CDDL for that message. Implementations are not required to support all non-deterministic encodings and MAY abort the EDHOC session if the received EDHOC message is not encoded using deterministic CBOR. Implementations MUST abort the EDHOC session if validation of a received public key fails or if any cryptographic field has the wrong length.
 
 # IANA Considerations {#iana}
 
