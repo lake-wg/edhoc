@@ -51,9 +51,10 @@ author:
 
 normative:
 
+  I-D.ietf-lake-edhoc:
+
 informative:
 
-  I-D.ietf-lake-edhoc:
   RFC7252:
   RFC7748:
   RFC8032:
@@ -115,6 +116,12 @@ This document contains some example traces of Ephemeral Diffie-Hellman Over COSE
 
 EDHOC {{I-D.ietf-lake-edhoc}} is a lightweight authenticated key exchange protocol designed for highly constrained settings. This document contains annotated traces of EDHOC protocol runs, with input, output, and intermediate processing results to simplify testing of implementations.
 
+## Setup
+
+EDHOC is run between an Initiator (I) and a Responder (R). The private/public key pairs and credentials of the Initiator and the Responder required to produce the protocol messages are shown in the traces when needed for the calculations.
+
+EDHOC messages and intermediate results are encoded in CBOR {{RFC8949}} and can therefore be displayed in CBOR diagnostic notation using, e.g., the CBOR playground {{CborMe}}, which makes them easy to parse for humans. Credentials can also be encoded in CBOR, e.g. CBOR Web Tokens (CWT) {{RFC8392}}.
+
 The document contains two traces:
 
 * {{sec-trace-1}} - Authentication with signature keys identified by the hash value of the X.509 certificates (provided in {{certs}}). The endpoints use EdDSA {{RFC8032}} for authentication and X25519 {{RFC7748}} for ephemeral-ephemeral Diffie-Hellman key exchange.
@@ -125,17 +132,16 @@ The traces in this draft are valid for version -22 of {{I-D.ietf-lake-edhoc}}. T
 
 Examples of invalid EDHOC messages are found in {{sec-trace-invalid}}.
 
-# Setup
-
-EDHOC is run between an Initiator (I) and a Responder (R). The private/public key pairs and credentials of the Initiator and the Responder required to produce the protocol messages are shown in the traces when needed for the calculations.
-
-EDHOC messages and intermediate results are encoded in CBOR {{RFC8949}} and can therefore be displayed in CBOR diagnostic notation using, e.g., the CBOR playground {{CborMe}}, which makes them easy to parse for humans.
-
 NOTE 1. The same name is used for hexadecimal byte strings and their CBOR encodings. The traces contain both the raw byte strings and the corresponding CBOR encoded data items.
 
 NOTE 2. If not clear from the context, remember that CBOR sequences and CBOR arrays assume CBOR encoded data items as elements.
 
 NOTE 3. When the protocol transporting EDHOC messages does not inherently provide correlation across all messages, like CoAP {{RFC7252}}, then some messages typically are prepended with connection identifiers and potentially a message_1 indicator (see {{Sections 3.4.1 and A.2 of I-D.ietf-lake-edhoc}}). Those bytes are not included in the traces in this document.
+
+
+## Terminology and Requirements Language {#term}
+
+{::boilerplate bcp14}
 
 
 # Authentication with Signatures, X.509 Certificates Identified by 'x5t' # {#sec-trace-1}
@@ -1466,15 +1472,15 @@ OSCORE Master Salt after KeyUpdate (Raw Value) (8 bytes)
             Public Key Algorithm: ED25519
                 ED25519 Public-Key:
                 pub:
-                    a1:db:47:b9:51:84:85:4a:d1:2a:0c:1a:35:4e:41:
-                    8a:ac:e3:3a:a0:f2:c6:62:c0:0b:3a:c5:5d:e9:2f:
-                    93:59
+                    a1 db 47 b9 51 84 85 4a d1 2a 0c 1a 35 4e 41
+                    8a ac e3 3a a0 f2 c6 62 c0 0b 3a c5 5d e9 2f
+                    93 59
         Signature Algorithm: ED25519
         Signature Value:
-            b7:23:bc:01:ea:b0:92:8e:8b:2b:6c:98:de:19:cc:38:23:d4:
-            6e:7d:69:87:b0:32:47:8f:ec:fa:f1:45:37:a1:af:14:cc:8b:
-            e8:29:c6:b7:30:44:10:18:37:eb:4a:bc:94:95:65:d8:6d:ce:
-            51:cf:ae:52:ab:82:c1:52:cb:02
+            b7 23 bc 01 ea b0 92 8e 8b 2b 6c 98 de 19 cc 38 23 d4
+            6e 7d 69 87 b0 32 47 8f ec fa f1 45 37 a1 af 14 cc 8b
+            e8 29 c6 b7 30 44 10 18 37 eb 4a bc 94 95 65 d8 6d ce
+            51 cf ae 52 ab 82 c1 52 cb 02
 ~~~~~~~~
 
 ### Initiator Certificate {#init-cer}
@@ -1492,15 +1498,15 @@ OSCORE Master Salt after KeyUpdate (Raw Value) (8 bytes)
             Public Key Algorithm: ED25519
                 ED25519 Public-Key:
                 pub:
-                    ed:06:a8:ae:61:a8:29:ba:5f:a5:45:25:c9:d0:7f:
-                    48:dd:44:a3:02:f4:3e:0f:23:d8:cc:20:b7:30:85:
-                    14:1e
+                    ed 06 a8 ae 61 a8 29 ba 5f a5 45 25 c9 d0 7f
+                    48 dd 44 a3 02 f4 3e 0f 23 d8 cc 20 b7 30 85
+                    14 1e
         Signature Algorithm: ED25519
         Signature Value:
-            52:12:41:d8:b3:a7:70:99:6b:cf:c9:b9:ea:d4:e7:e0:a1:c0:
-            db:35:3a:3b:df:29:10:b3:92:75:ae:48:b7:56:01:59:81:85:
-            0d:27:db:67:34:e3:7f:67:21:22:67:dd:05:ee:ff:27:b9:e7:
-            a8:13:fa:57:4b:72:a0:0b:43:0b
+            52 12 41 d8 b3 a7 70 99 6b cf c9 b9 ea d4 e7 e0 a1 c0
+            db 35 3a 3b df 29 10 b3 92 75 ae 48 b7 56 01 59 81 85
+            0d 27 db 67 34 e3 7f 67 21 22 67 dd 05 ee ff 27 b9 e7
+            a8 13 fa 57 4b 72 a0 0b 43 0b
 ~~~~~~~~
 
 
@@ -1519,9 +1525,9 @@ OSCORE Master Salt after KeyUpdate (Raw Value) (8 bytes)
             Public Key Algorithm: ED25519
                 ED25519 Public-Key:
                 pub:
-                    2b:7b:3e:80:57:c8:64:29:44:d0:6a:fe:7a:71:d1:
-                    c9:bf:96:1b:62:92:ba:c4:b0:4f:91:66:9b:bb:71:
-                    3b:e4
+                    2b 7b 3e 80 57 c8 64 29 44 d0 6a fe 7a 71 d1
+                    c9 bf 96 1b 62 92 ba c4 b0 4f 91 66 9b bb 71
+                    3b e4
         X509v3 extensions:
             X509v3 Key Usage: critical
                 Certificate Sign
@@ -1529,10 +1535,10 @@ OSCORE Master Salt after KeyUpdate (Raw Value) (8 bytes)
                 CA:TRUE
         Signature Algorithm: ED25519
         Signature Value:
-            4b:b5:2b:bf:15:39:b7:1a:4a:af:42:97:78:f2:9e:da:7e:81:
-            46:80:69:8f:16:c4:8f:2a:6f:a4:db:e8:25:41:c5:82:07:ba:
-            1b:c9:cd:b0:c2:fa:94:7f:fb:f0:f0:ec:0e:e9:1a:7f:f3:7a:
-            94:d9:25:1f:a5:cd:f1:e6:7a:0f
+            4b b5 2b bf 15 39 b7 1a 4a af 42 97 78 f2 9e da 7e 81
+            46 80 69 8f 16 c4 8f 2a 6f a4 db e8 25 41 c5 82 07 ba
+            1b c9 cd b0 c2 fa 94 7f fb f0 f0 ec 0e e9 1a 7f f3 7a
+            94 d9 25 1f a5 cd f1 e6 7a 0f
 ~~~~~~~~
 
 
@@ -3019,7 +3025,7 @@ Invalid PLAINTEXT_2 (25 bytes)
 
 # Security Considerations {#security}
 
-This document contains examples of EDHOC {{I-D.ietf-lake-edhoc}} whose security considerations apply. The keys printed in these examples cannot be considered secret and must not be used.
+This document contains examples of EDHOC {{I-D.ietf-lake-edhoc}} whose security considerations apply. The keys printed in these examples cannot be considered secret and MUST not be used.
 
 # IANA Considerations {#iana}
 
