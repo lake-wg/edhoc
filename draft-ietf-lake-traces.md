@@ -60,6 +60,7 @@ informative:
   RFC8032:
   RFC8392:
   RFC8949:
+  RFC9053:
 
   CborMe:
     target: https://cbor.me/
@@ -68,6 +69,24 @@ informative:
       -
         ins: C. Bormann
     date: Aug 2023
+
+  SP-800-56A:
+    target: https://doi.org/10.6028/NIST.SP.800-56Ar3
+    title: Recommendation for Pair-Wise Key-Establishment Schemes Using Discrete Logarithm Cryptography
+    seriesinfo:
+      "NIST": "Special Publication 800-56A Revision 3"
+    author:
+      -
+        ins: E. Barker
+      -
+        ins: L. Chen
+      -
+        ins: A. Roginsky
+      -
+        ins: A. Vassilev
+      -
+        ins: R. Davis
+    date: April 2018
 
   SP-800-186:
     target: https://doi.org/10.6028/NIST.SP.800-186
@@ -110,6 +129,8 @@ The document contains two traces:
 * {{sec-trace-2}} - Authentication with static Diffie-Hellman keys identified by short key identifiers labelling CWT Claim Sets (CCSs) {{RFC8392}}. The endpoints use NIST P-256 {{SP-800-186}} for both ephemeral-ephemeral and static-ephemeral Diffie-Hellman key exchange. This trace also illustrates the cipher suite negotiation, and provides an example of low protocol overhead, with messages sizes of (39, 45, 19) bytes.
 
 The traces in this draft are valid for version -22 of {{I-D.ietf-lake-edhoc}}. The traces has been verified by two independent implementations.
+
+Examples of invalid EDHOC messages are found in {{sec-trace-invalid}}.
 
 NOTE 1. The same name is used for hexadecimal byte strings and their CBOR encodings. The traces contain both the raw byte strings and the corresponding CBOR encoded data items.
 
@@ -2821,6 +2842,184 @@ where info and salt_length are unchanged as in {{oscore-param}}.
 ~~~~~~~~
 OSCORE Master Salt after KeyUpdate (Raw Value) (8 bytes)
 73 ce 79 24 59 40 36 80
+~~~~~~~~
+
+# Invalid Traces  {#sec-trace-invalid}
+
+This section contains examples of invalid messages, which a compliant implementation will not compose and must or may reject according to {{I-D.ietf-lake-edhoc}}, {{RFC8949}}, {{RFC9053}}, and {{SP-800-56A}}. This is just a small set of examples of different reasons a message might be invalid. The same types of invalidities applies to other fields and messages as well. Implementations should make sure to check for similar types of invalidities in all EHDOC fields and messages.
+
+## Encoding Errors
+
+### Surplus array encoding of message
+
+Invalid encoding of message_1 as array. Correct encoding is a CBOR sequence according to Section 5.2.1 of {{I-D.ietf-lake-edhoc}}.
+
+~~~~~~~~
+Invalid message_1 (38 bytes)
+84 03 02 58 20 74 1a 13 d7 ba 04 8f bb 61 5e 94 38 6a a3 b6 1b ea 5b
+3d 8f 65 f3 26 20 b7 49 be e8 d2 78 ef a9 0e
+~~~~~~~~
+
+### Surplus bstr encoding of connection identifier
+
+Invalid encoding 41 0e of C_I = 0x0e. Correct encoding is 0e according to Section 3.3.2 of {{I-D.ietf-lake-edhoc}}.
+
+~~~~~~~~
+Invalid message_1 (38 bytes)
+03 02 58 20 74 1a 13 d7 ba 04 8f bb 61 5e 94 38 6a a3 b6 1b ea 5b 3d
+8f 65 f3 26 20 b7 49 be e8 d2 78 ef a9 41 0e
+~~~~~~~~
+
+
+### Surplus array encoding of ciphersuite
+
+Invalid array encoding 81 02 of SUITES_I = 2. Correct encoding is 02 according to Section 5.2.2 of {{I-D.ietf-lake-edhoc}}.
+
+~~~~~~~~
+Invalid message_1 (38 bytes)
+03 81 02 58 20 74 1a 13 d7 ba 04 8f bb 61 5e 94 38 6a a3 b6 1b ea 5b
+3d 8f 65 f3 26 20 b7 49 be e8 d2 78 ef a9 0e
+~~~~~~~~
+
+
+### Text string encoding of ephemeral key
+
+Invalid type of the third element (G_X). Correct encoding is a byte string according to Section 5.2.1 of {{I-D.ietf-lake-edhoc}}.
+
+~~~~~~~~
+Invalid message_1 (37 bytes)
+03 02 78 20 20 61 69 72 20 73 70 65 65 64 20 6F 66 20 61 20 75 6E 6C
+61 64 65 6E 20 73 77 61 6C 6C 6F 77 20 0e
+~~~~~~~~
+
+
+### Wrong number of CBOR sequence elements
+
+Invalid number of elements in the CBOR sequence. Correct number of elements is 1 according to Section 5.3.1 of {{I-D.ietf-lake-edhoc}}.
+
+~~~~~~~~
+Invalid message_2 (46 bytes)
+58 20 41 97 01 d7 f0 0a 26 c2 dc 58 7a 36 dd 75 25 49 f3 37 63 c8 93
+42 2c 8e a0 f9 55 a1 3a 4f f5 d5 4B 98 62 a1 1d e4 2a 95 d7 85 38 6a
+~~~~~~~~
+
+
+### Surplus map encoding of ID_CRED field
+
+Invalid encoding a1 04 42 32 10 of ID_CRED_R in PLAINTEXT_2. Correct encoding is 42 32 10 according to Section 3.5.3.2 of {{I-D.ietf-lake-edhoc}}.
+
+~~~~~~~~
+Invalid PLAINTEXT_2 (15 bytes)
+27 a1 04 42 32 10 48 fa 5e fa 2e bf 92 0b f3
+~~~~~~~~
+
+### Surplus bstr encoding of ID_CRED field
+
+Invalid encoding 41 32 of ID_CRED_R in PLAINTEXT_2. Correct encoding is 32 according to Section 3.5.3.2 of {{I-D.ietf-lake-edhoc}}.
+
+~~~~~~~~
+Invalid PLAINTEXT_2 (12 bytes)
+27 41 32 48 fa 5e fa 2e bf 92 0b f3
+~~~~~~~~
+
+
+## Crypto-related Errors
+
+
+
+### Error in length of ephemeral key
+
+Invalid length of the third element (G_X). Selected cipher suite is cipher suite 24 with curve P-384 according to Sections 5.2.2, and 10.2 of {{I-D.ietf-lake-edhoc}}. Correct length of x-coordinate is 48 bytes according to Section 3.7 of {{I-D.ietf-lake-edhoc}} and Section 7.1.1 of {{RFC9053}}.
+
+~~~~~~~~
+Invalid message_1 (40 bytes)
+03 82 02 18 18 58 20 74 1a 13 d7 ba 04 8f bb 61 5e 94 38 6a a3 b6 1b
+ea 5b 3d 8f 65 f3 26 20 b7 49 be e8 d2 78 ef a9 0e
+~~~~~~~~
+
+
+### Error in elliptic curve representation
+
+Invalid x-coordinate in G_X as x {{{≥}}} p. Requirement that x < p according to Section 9.2 of {{I-D.ietf-lake-edhoc}} and Section 5.6.2.3 of {{SP-800-56A}}.
+
+~~~~~~~~
+Invalid message_1 (37 bytes)
+03 02 58 20 ff ff ff ff 00 00 00 01 00 00 00 00 00 00 00 00 00 00 00
+00 ff ff ff ff ff ff ff ff ff ff ff ff 0e
+~~~~~~~~
+
+### Error in elliptic curve point
+
+Invalid x-coordinate in (G_X) not corresponding to a point on the P-256 curve. Requirement that y<sup>2</sup> {{{≡}}} x<sup>3</sup> + a {{{⋅}}} x + b (mod p) according to Section 9.2 of {{I-D.ietf-lake-edhoc}} and Section 5.6.2.3 of {{SP-800-56A}}.
+
+~~~~~~~~
+Invalid message_1 (37 bytes)
+03 02 58 20 a0 4e 73 60 1d f5 44 a7 0b a7 ea 1e 57 03 0f 7d 4b 4e b7
+f6 73 92 4e 58 d5 4c a7 7a 5e 7d 4d 4a 0e
+~~~~~~~~
+
+### Curve point of low order
+
+Curve25519 point of low order which fails the all-zero output check. Requirement to perform the all-zero output check according to Section 9.2 of {{I-D.ietf-lake-edhoc}}.
+
+~~~~~~~~
+Invalid message_1 (37 bytes)
+03 00 58 20 ed ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+ff ff ff ff ff ff ff ff ff ff ff ff 7f 0e
+~~~~~~~~
+
+### Error in length of MAC
+
+Invalid length of third element (Signature_or_MAC_2). The length of Signature_or_MAC_2 is given by the cipher suite and the MAC length is at least 8 bytes according to Section 9.3 of {{I-D.ietf-lake-edhoc}}.
+
+~~~~~~~~
+Invalid PLAINTEXT_2 (7 bytes)
+27 32 44 fa 5e fa 2e
+~~~~~~~~
+
+### Error in elliptic curve encoding
+
+Invalid encoding of third element (G_X). Correct encoding is with leading zeros according to Section 3.7 of {{I-D.ietf-lake-edhoc}} and Section 7.1.1 of {{RFC9053}}.
+
+~~~~~~~~
+Invalid message_1 (36 bytes)
+03 02 58 1f d9 69 77 25 d2 3a 68 8b 12 d1 c7 e0 10 8a 08 c9 f7 1a 85
+a0 9c 20 81 49 76 ab 21 12 22 48 fc 0e
+~~~~~~~~
+
+
+## Non-deterministic CBOR
+
+
+### Unnecessary long encoding
+
+Invalid 16-bit encoding 19 00 03 of METHOD = 3. Correct is the deterministic encoding 03 according to Section 3.1 of {{I-D.ietf-lake-edhoc}} and Section 4.2.1 of {{RFC8949}}, which states that the arguments for integers, lengths in major types 2 through 5, and tags MUST be as short as possible.
+
+~~~~~~~~
+Invalid message_1 (39 bytes)
+19 00 03 02 58 20 74 1a 13 d7 ba 04 8f bb 61 5e 94 38 6a a3 b6 1b ea
+5b 3d 8f 65 f3 26 20 b7 49 be e8 d2 78 ef a9 0e
+~~~~~~~~
+
+
+### Indefinite-length array encoding
+
+Invalid indefinite-length array encoding 9F 06 02 FF of SUITES_I = [6, 2]. Correct encoding is 82 06 02 according to Section 5.2.2 of {{I-D.ietf-lake-edhoc}}.
+
+~~~~~~~~
+Invalid message_1 (40 bytes)
+03 9F 06 02 FF 58 20 74 1a 13 d7 ba 04 8f bb 61 5e 94 38 6a a3 b6 1b
+ea 5b 3d 8f 65 f3 26 20 b7 49 be e8 d2 78 ef a9 0e
+~~~~~~~~
+
+### Non-lexicographic order of map
+
+Invalid encoding of the map ID_CRED_R in PLAINTEXT_2. Correct is the deterministic bytewise lexicographic order encoding according to Section 3.1 of {{I-D.ietf-lake-edhoc}} and Section 4.2.1 of {{RFC8949}}.
+
+~~~~~~~~
+Invalid PLAINTEXT_2 (25 bytes)
+27 A2 0A 46 6D 6F 72 64 6F 72 04 44 72 69 6E 67 48 fa 5e fa 2e bf 92
+0b f3
 ~~~~~~~~
 
 
