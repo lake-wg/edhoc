@@ -3025,7 +3025,7 @@ Invalid PLAINTEXT_2 (25 bytes)
 
 # Security Considerations {#security}
 
-This document contains examples of EDHOC {{I-D.ietf-lake-edhoc}} whose security considerations apply. The keys printed in these examples cannot be considered secret and MUST not be used.
+This document contains examples of EDHOC {{I-D.ietf-lake-edhoc}} whose security considerations apply. The keys printed in these examples cannot be considered secret and MUST NOT be used.
 
 # IANA Considerations {#iana}
 
