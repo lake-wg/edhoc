@@ -114,7 +114,7 @@ This document contains some example traces of Ephemeral Diffie-Hellman Over COSE
 
 # Introduction
 
-EDHOC {{I-D.ietf-lake-edhoc}} is a lightweight authenticated key exchange protocol designed for highly constrained settings. This document contains annotated traces of EDHOC protocol runs, with input, output, and intermediate processing results to simplify testing of implementations. The traces have been verified by two independent implementations.
+EDHOC {{I-D.ietf-lake-edhoc}} is a lightweight authenticated key exchange protocol designed for highly constrained settings. This document contains annotated traces of EDHOC sessions, with input, output, and intermediate processing results to simplify testing of implementations. The traces have been verified by two independent implementations.
 
 ## Setup
 
