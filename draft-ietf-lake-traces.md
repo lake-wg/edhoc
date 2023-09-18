@@ -114,7 +114,7 @@ This document contains some example traces of Ephemeral Diffie-Hellman Over COSE
 
 # Introduction
 
-EDHOC {{I-D.ietf-lake-edhoc}} is a lightweight authenticated key exchange protocol designed for highly constrained settings. This document contains annotated traces of EDHOC protocol runs, with input, output, and intermediate processing results to simplify testing of implementations.
+EDHOC {{I-D.ietf-lake-edhoc}} is a lightweight authenticated key exchange protocol designed for highly constrained settings. This document contains annotated traces of EDHOC protocol runs, with input, output, and intermediate processing results to simplify testing of implementations. The traces have been verified by two independent implementations.
 
 ## Setup
 
@@ -127,8 +127,6 @@ The document contains two traces:
 * {{sec-trace-1}} - Authentication with signature keys identified by the hash value of the X.509 certificates (provided in {{certs}}). The endpoints use EdDSA {{RFC8032}} for authentication and X25519 {{RFC7748}} for ephemeral-ephemeral Diffie-Hellman key exchange.
 
 * {{sec-trace-2}} - Authentication with static Diffie-Hellman keys identified by short key identifiers labelling CWT Claim Sets (CCSs) {{RFC8392}}. The endpoints use NIST P-256 {{SP-800-186}} for both ephemeral-ephemeral and static-ephemeral Diffie-Hellman key exchange. This trace also illustrates the cipher suite negotiation, and provides an example of low protocol overhead, with messages sizes of (39, 45, 19) bytes.
-
-The traces in this draft are valid for version -22 of {{I-D.ietf-lake-edhoc}}. The traces has been verified by two independent implementations.
 
 Examples of invalid EDHOC messages are found in {{sec-trace-invalid}}.
 
