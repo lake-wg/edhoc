@@ -605,7 +605,7 @@ ID_CRED_x may contain the authentication credential CRED_x, for x = I or R, but 
 
 EDHOC relies on COSE for identification of credentials and supports all credential types for which COSE header parameters are defined including X.509 certificates ({{RFC9360}}), C509 certificates ({{I-D.ietf-cose-cbor-encoded-cert}}), CWT (see {{new-header-param}}) and CWT Claims Set (see {{new-header-param}}).
 
-ID_CRED_I and ID_CRED_R are of type COSE header_map, as defined in Section 3 of {{RFC9052}}, and contains one or more COSE header parameters. ID_CRED_I and ID_CRED_R MAY contain different header parameters. The header parameters typically provide some information about the format of the credential.
+ID_CRED_I and ID_CRED_R are of type COSE header_map, as defined in Section 3 of {{RFC9052}}, and contains one or more COSE header parameters. If a map contains several header paramerers, the labels do not need to be sorted in bytewise lexicographic order. ID_CRED_I and ID_CRED_R MAY contain different header parameters. The header parameters typically provide some information about the format of the credential.
 
 Example: X.509 certificates can be identified by a hash value using the 'x5t' parameter, see Section 2 of {{RFC9360}}:
 
