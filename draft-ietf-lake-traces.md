@@ -2999,7 +2999,6 @@ Invalid message_1 (39 bytes)
 5b 3d 8f 65 f3 26 20 b7 49 be e8 d2 78 ef a9 0e
 ~~~~~~~~
 
-
 ### Indefinite-length array encoding
 
 Invalid indefinite-length array encoding 9F 06 02 FF of SUITES_I = [6, 2]. Correct encoding is 82 06 02 according to Section 5.2.2 of {{I-D.ietf-lake-edhoc}}.
@@ -3009,17 +3008,6 @@ Invalid message_1 (40 bytes)
 03 9F 06 02 FF 58 20 74 1a 13 d7 ba 04 8f bb 61 5e 94 38 6a a3 b6 1b
 ea 5b 3d 8f 65 f3 26 20 b7 49 be e8 d2 78 ef a9 0e
 ~~~~~~~~
-
-### Non-lexicographic order of map
-
-Invalid encoding of the map ID_CRED_R in PLAINTEXT_2. Correct is the deterministic bytewise lexicographic order encoding according to Section 3.1 of {{I-D.ietf-lake-edhoc}} and Section 4.2.1 of {{RFC8949}}.
-
-~~~~~~~~
-Invalid PLAINTEXT_2 (25 bytes)
-27 A2 0A 46 6D 6F 72 64 6F 72 04 44 72 69 6E 67 48 fa 5e fa 2e bf 92
-0b f3
-~~~~~~~~
-
 
 # Security Considerations {#security}
 
