@@ -5,13 +5,13 @@
 LAKE Working Group                                           G. Selander
 Internet-Draft                                         J. Preuß Mattsson
 Intended status: Informational                                  Ericsson
-Expires: 4 April 2024                                         M. Serafin
+Expires: 13 July 2024                                         M. Serafin
                                                               ASSA ABLOY
                                                                M. Tiloca
                                                                     RISE
                                                               M. Vučinić
                                                                    Inria
-                                                          2 October 2023
+                                                         10 January 2024
 
 
                             Traces of EDHOC
@@ -49,11 +49,11 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 4 April 2024.
+   This Internet-Draft will expire on 13 July 2024.
 
 Copyright Notice
 
-   Copyright (c) 2023 IETF Trust and the persons identified as the
+   Copyright (c) 2024 IETF Trust and the persons identified as the
    document authors.  All rights reserved.
 
    This document is subject to BCP 78 and the IETF Trust's Legal
@@ -68,27 +68,32 @@ Copyright Notice
 Table of Contents
 
    1.  Introduction
-   2.  Setup
-   3.  Authentication with Signatures, X.509 Certificates Identified
+     1.1.  Setup
+     1.2.  Terminology and Requirements Language
+   2.  Authentication with Signatures, X.509 Certificates Identified
            by 'x5t'
-     3.1.  message_1
-     3.2.  message_2
-     3.3.  message_3
-     3.4.  message_4
-     3.5.  PRK_out and PRK_exporter
-     3.6.  OSCORE Parameters
-     3.7.  Key Update
-     3.8.  Certificates
-   4.  Authentication with Static DH, CCS Identified by 'kid'
-     4.1.  message_1 (first time)
-     4.2.  error
-     4.3.  message_1 (second time)
-     4.4.  message_2
-     4.5.  message_3
-     4.6.  message_4
-     4.7.  PRK_out and PRK_exporter
-     4.8.  OSCORE Parameters
-     4.9.  Key Update
+     2.1.  message_1
+     2.2.  message_2
+     2.3.  message_3
+     2.4.  message_4
+     2.5.  PRK_out and PRK_exporter
+     2.6.  OSCORE Parameters
+     2.7.  Key Update
+     2.8.  Certificates
+   3.  Authentication with Static DH, CCS Identified by 'kid'
+     3.1.  message_1 (first time)
+     3.2.  error
+     3.3.  message_1 (second time)
+     3.4.  message_2
+     3.5.  message_3
+     3.6.  message_4
+     3.7.  PRK_out and PRK_exporter
+     3.8.  OSCORE Parameters
+     3.9.  Key Update
+   4.  Invalid Traces
+     4.1.  Encoding Errors
+     4.2.  Crypto-related Errors
+     4.3.  Non-deterministic CBOR
    5.  Security Considerations
    6.  IANA Considerations
    7.  References
@@ -101,30 +106,12 @@ Table of Contents
 
    EDHOC [I-D.ietf-lake-edhoc] is a lightweight authenticated key
    exchange protocol designed for highly constrained settings.  This
-   document contains annotated traces of EDHOC protocol runs, with
-   input, output, and intermediate processing results to simplify
-   testing of implementations.
+   document contains annotated traces of EDHOC sessions, with input,
+   output, and intermediate processing results to simplify testing of
+   implementations.  The traces have been verified by two independent
+   implementations.
 
-   The document contains two traces:
-
-   *  Section 3 - Authentication with signature keys identified by the
-      hash value of the X.509 certificates (provided in Section 3.8).
-      The endpoints use EdDSA [RFC8032] for authentication and X25519
-      [RFC7748] for ephemeral-ephemeral Diffie-Hellman key exchange.
-
-   *  Section 4 - Authentication with static Diffie-Hellman keys
-      identified by short key identifiers labelling CWT Claim Sets
-      (CCSs) [RFC8392].  The endpoints use NIST P-256 [SP-800-186] for
-      both ephemeral-ephemeral and static-ephemeral Diffie-Hellman key
-      exchange.  This trace also illustrates the cipher suite
-      negotiation, and provides an example of low protocol overhead,
-      with messages sizes of (39, 45, 19) bytes.
-
-   The traces in this draft are valid for version -22 of
-   [I-D.ietf-lake-edhoc].  The traces has been verified by two
-   independent implementations.
-
-2.  Setup
+1.1.  Setup
 
    EDHOC is run between an Initiator (I) and a Responder (R).  The
    private/public key pairs and credentials of the Initiator and the
@@ -134,7 +121,25 @@ Table of Contents
    EDHOC messages and intermediate results are encoded in CBOR [RFC8949]
    and can therefore be displayed in CBOR diagnostic notation using,
    e.g., the CBOR playground [CborMe], which makes them easy to parse
-   for humans.
+   for humans.  Credentials can also be encoded in CBOR, e.g.  CBOR Web
+   Tokens (CWT) [RFC8392].
+
+   The document contains two traces:
+
+   *  Section 2 - Authentication with signature keys identified by the
+      hash value of the X.509 certificates (provided in Section 2.8).
+      The endpoints use EdDSA [RFC8032] for authentication and X25519
+      [RFC7748] for ephemeral-ephemeral Diffie-Hellman key exchange.
+
+   *  Section 3 - Authentication with static Diffie-Hellman keys
+      identified by short key identifiers labelling CWT Claim Sets
+      (CCSs) [RFC8392].  The endpoints use NIST P-256 [SP-800-186] for
+      both ephemeral-ephemeral and static-ephemeral Diffie-Hellman key
+      exchange.  This trace also illustrates the cipher suite
+      negotiation, and provides an example of low protocol overhead,
+      with messages sizes of (39, 45, 19) bytes.
+
+   Examples of invalid EDHOC messages are found in Section 4.
 
    NOTE 1.  The same name is used for hexadecimal byte strings and their
    CBOR encodings.  The traces contain both the raw byte strings and the
@@ -150,7 +155,15 @@ Table of Contents
    and A.2 of [I-D.ietf-lake-edhoc]).  Those bytes are not included in
    the traces in this document.
 
-3.  Authentication with Signatures, X.509 Certificates Identified by
+1.2.  Terminology and Requirements Language
+
+   The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+   "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and
+   "OPTIONAL" in this document are to be interpreted as described in
+   BCP 14 [RFC2119] [RFC8174] when, and only when, they appear in all
+   capitals, as shown here.
+
+2.  Authentication with Signatures, X.509 Certificates Identified by
     'x5t'
 
    In this example the Initiator (I) and Responder (R) are authenticated
@@ -174,7 +187,7 @@ Table of Contents
    The public keys are represented with X.509 certificates identified by
    the COSE header parameter 'x5t'.
 
-3.1.  message_1
+2.1.  message_1
 
    Both endpoints are authenticated with signatures, i.e., METHOD = 0:
 
@@ -236,7 +249,7 @@ Table of Contents
    00 00 58 20 31 f8 2c 7b 5b 9c bb f0 f1 94 d9 13 cc 12 ef 15 32 d3 28
    ef 32 63 2a 48 81 a1 c0 70 1e 23 7f 04 2d
 
-3.2.  message_2
+2.2.  message_2
 
    The Responder supports the most preferred and selected cipher suite
    0, so SUITES_I is acceptable.
@@ -372,7 +385,7 @@ Table of Contents
    a1 18 22 82 2e 48 79 f2 a4 1b 51 0c 1f 9b
 
    CRED_R is a CBOR byte string of the DER encoding of the X.509
-   certificate in Section 3.8.1:
+   certificate in Section 2.8.1:
 
    CRED_R (Raw Value) (241 bytes)
    30 81 ee 30 81 a1 a0 03 02 01 02 02 04 62 31 9e c4 30 05 06 03 2b 65
@@ -621,7 +634,7 @@ Table of Contents
    d0 25 a0 be 4d 26 a3 c2 0b 82 8e 9e 0e f5 65 a9 34 3d 81 d9 bb bd a9
    88
 
-3.3.  message_3
+2.3.  message_3
 
    Since METHOD = 0, the Initiator authenticates using signatures.
    Since the selected cipher suite is 0, the EDHOC signature algorithm
@@ -703,7 +716,7 @@ Table of Contents
    a1 18 22 82 2e 48 c2 4a b2 fd 76 43 c7 9f
 
    CRED_I is a CBOR byte string of the DER encoding of the X.509
-   certificate in Section 3.8.2:
+   certificate in Section 2.8.2:
 
    CRED_I (Raw Value) (241 bytes)
    30 81 ee 30 81 a1 a0 03 02 01 02 02 04 62 31 9e a0 30 05 06 03 2b 65
@@ -1015,7 +1028,7 @@ Table of Contents
    58 20 6b 13 32 5a 49 bd 9f 97 0d 31 91 ee 31 79 62 df 1d 44 38 c6 64
    15 ea a4 ce dd 62 b5 b4 9d 7b b7
 
-3.4.  message_4
+2.4.  message_4
 
    No external authorization data:
 
@@ -1112,7 +1125,7 @@ Table of Contents
    message_4 (CBOR Sequence) (9 bytes)
    48 ee 12 0e 8b 5e 2a 00 8f
 
-3.5.  PRK_out and PRK_exporter
+2.5.  PRK_out and PRK_exporter
 
    PRK_out is specified in Section 4.1.3 of [I-D.ietf-lake-edhoc].
 
@@ -1173,7 +1186,7 @@ Table of Contents
    ad 33 a8 f2 e0 6f ff 3e 5d 7e e1 10 9e db f2 b6 d2 56 4c b3 f4 08 68
    e6 46 11 e4 20 92 4c e4 09
 
-3.6.  OSCORE Parameters
+2.6.  OSCORE Parameters
 
    The derivation of OSCORE parameters is specified in Appendix A.1 of
    [I-D.ietf-lake-edhoc].
@@ -1258,7 +1271,7 @@ Table of Contents
    OSCORE Master Salt (Raw Value) (8 bytes)
    0e c0 9d 45 3b 08 98 34
 
-3.7.  Key Update
+2.7.  Key Update
 
    Key update is defined in Appendix H of [I-D.ietf-lake-edhoc].
 
@@ -1293,7 +1306,7 @@ Table of Contents
     PRK_exporter = EDHOC_KDF( PRK_out, 10, h'', hash_length ) =
                  = HKDF-Expand( PRK_out, info,  hash_length )
 
-   where info and hash_length are unchanged as in Section 3.5.
+   where info and hash_length are unchanged as in Section 2.5.
 
    PRK_exporter (Raw Value) (32 bytes)
    f0 4e 4c 40 1d e8 db 34 f7 b5 06 b2 33 10 9a 24 c4 9c 4b 09 65 d0 7c
@@ -1304,7 +1317,7 @@ Table of Contents
    OSCORE Master Secret =
    = HKDF-Expand(PRK_exporter, info, oscore_key_length)
 
-   where info and key_length are unchanged as in Section 3.6.
+   where info and key_length are unchanged as in Section 2.6.
 
    OSCORE Master Secret after KeyUpdate (Raw Value) (16 bytes)
    50 48 6d 75 82 3a 59 2d 1e fd 28 6a 70 7f e8 7d
@@ -1313,14 +1326,14 @@ Table of Contents
 
    OSCORE Master Salt = HKDF-Expand(PRK_exporter, info, salt_length)
 
-   where info and salt_length are unchanged as in Section 3.6.
+   where info and salt_length are unchanged as in Section 2.6.
 
    OSCORE Master Salt after KeyUpdate (Raw Value) (8 bytes)
    61 95 cb b1 ce 03 1c ae
 
-3.8.  Certificates
+2.8.  Certificates
 
-3.8.1.  Responder Certificate
+2.8.1.  Responder Certificate
 
            Version: 3 (0x2)
            Serial Number: 1647419076 (0x62319ec4)
@@ -1334,17 +1347,17 @@ Table of Contents
                Public Key Algorithm: ED25519
                    ED25519 Public-Key:
                    pub:
-                       a1:db:47:b9:51:84:85:4a:d1:2a:0c:1a:35:4e:41:
-                       8a:ac:e3:3a:a0:f2:c6:62:c0:0b:3a:c5:5d:e9:2f:
-                       93:59
+                       a1 db 47 b9 51 84 85 4a d1 2a 0c 1a 35 4e 41
+                       8a ac e3 3a a0 f2 c6 62 c0 0b 3a c5 5d e9 2f
+                       93 59
            Signature Algorithm: ED25519
            Signature Value:
-               b7:23:bc:01:ea:b0:92:8e:8b:2b:6c:98:de:19:cc:38:23:d4:
-               6e:7d:69:87:b0:32:47:8f:ec:fa:f1:45:37:a1:af:14:cc:8b:
-               e8:29:c6:b7:30:44:10:18:37:eb:4a:bc:94:95:65:d8:6d:ce:
-               51:cf:ae:52:ab:82:c1:52:cb:02
+               b7 23 bc 01 ea b0 92 8e 8b 2b 6c 98 de 19 cc 38 23 d4
+               6e 7d 69 87 b0 32 47 8f ec fa f1 45 37 a1 af 14 cc 8b
+               e8 29 c6 b7 30 44 10 18 37 eb 4a bc 94 95 65 d8 6d ce
+               51 cf ae 52 ab 82 c1 52 cb 02
 
-3.8.2.  Initiator Certificate
+2.8.2.  Initiator Certificate
 
            Version: 3 (0x2)
            Serial Number: 1647419040 (0x62319ea0)
@@ -1358,17 +1371,17 @@ Table of Contents
                Public Key Algorithm: ED25519
                    ED25519 Public-Key:
                    pub:
-                       ed:06:a8:ae:61:a8:29:ba:5f:a5:45:25:c9:d0:7f:
-                       48:dd:44:a3:02:f4:3e:0f:23:d8:cc:20:b7:30:85:
-                       14:1e
+                       ed 06 a8 ae 61 a8 29 ba 5f a5 45 25 c9 d0 7f
+                       48 dd 44 a3 02 f4 3e 0f 23 d8 cc 20 b7 30 85
+                       14 1e
            Signature Algorithm: ED25519
            Signature Value:
-               52:12:41:d8:b3:a7:70:99:6b:cf:c9:b9:ea:d4:e7:e0:a1:c0:
-               db:35:3a:3b:df:29:10:b3:92:75:ae:48:b7:56:01:59:81:85:
-               0d:27:db:67:34:e3:7f:67:21:22:67:dd:05:ee:ff:27:b9:e7:
-               a8:13:fa:57:4b:72:a0:0b:43:0b
+               52 12 41 d8 b3 a7 70 99 6b cf c9 b9 ea d4 e7 e0 a1 c0
+               db 35 3a 3b df 29 10 b3 92 75 ae 48 b7 56 01 59 81 85
+               0d 27 db 67 34 e3 7f 67 21 22 67 dd 05 ee ff 27 b9 e7
+               a8 13 fa 57 4b 72 a0 0b 43 0b
 
-3.8.3.  Common Root Certificate
+2.8.3.  Common Root Certificate
 
            Version: 3 (0x2)
            Serial Number: 1647418996 (0x62319e74)
@@ -1382,9 +1395,9 @@ Table of Contents
                Public Key Algorithm: ED25519
                    ED25519 Public-Key:
                    pub:
-                       2b:7b:3e:80:57:c8:64:29:44:d0:6a:fe:7a:71:d1:
-                       c9:bf:96:1b:62:92:ba:c4:b0:4f:91:66:9b:bb:71:
-                       3b:e4
+                       2b 7b 3e 80 57 c8 64 29 44 d0 6a fe 7a 71 d1
+                       c9 bf 96 1b 62 92 ba c4 b0 4f 91 66 9b bb 71
+                       3b e4
            X509v3 extensions:
                X509v3 Key Usage: critical
                    Certificate Sign
@@ -1392,12 +1405,12 @@ Table of Contents
                    CA:TRUE
            Signature Algorithm: ED25519
            Signature Value:
-               4b:b5:2b:bf:15:39:b7:1a:4a:af:42:97:78:f2:9e:da:7e:81:
-               46:80:69:8f:16:c4:8f:2a:6f:a4:db:e8:25:41:c5:82:07:ba:
-               1b:c9:cd:b0:c2:fa:94:7f:fb:f0:f0:ec:0e:e9:1a:7f:f3:7a:
-               94:d9:25:1f:a5:cd:f1:e6:7a:0f
+               4b b5 2b bf 15 39 b7 1a 4a af 42 97 78 f2 9e da 7e 81
+               46 80 69 8f 16 c4 8f 2a 6f a4 db e8 25 41 c5 82 07 ba
+               1b c9 cd b0 c2 fa 94 7f fb f0 f0 ec 0e e9 1a 7f f3 7a
+               94 d9 25 1f a5 cd f1 e6 7a 0f
 
-4.  Authentication with Static DH, CCS Identified by 'kid'
+3.  Authentication with Static DH, CCS Identified by 'kid'
 
    In this example the Initiator and the Responder are authenticated
    with ephemeral-static Diffie-Hellman (METHOD = 3).  The Initiator
@@ -1424,7 +1437,7 @@ Table of Contents
    a CWT Claims Set (CCS) and identified by the COSE header parameter
    'kid'.
 
-4.1.  message_1 (first time)
+3.1.  message_1 (first time)
 
    Both endpoints are authenticated with static DH, i.e., METHOD = 3:
 
@@ -1486,7 +1499,7 @@ Table of Contents
    03 06 58 20 74 1a 13 d7 ba 04 8f bb 61 5e 94 38 6a a3 b6 1b ea 5b 3d
    8f 65 f3 26 20 b7 49 be e8 d2 78 ef a9 0e
 
-4.2.  error
+3.2.  error
 
    The Responder does not support cipher suite 6 and sends an error with
    ERR_CODE 2 containing SUITES_R as ERR_INFO.  The Responder proposes
@@ -1498,10 +1511,10 @@ Table of Contents
    error (CBOR Sequence) (2 bytes)
    02 02
 
-4.3.  message_1 (second time)
+3.3.  message_1 (second time)
 
    Same steps are performed as for message_1 the first time,
-   Section 4.1, but with updated SUITES_I.
+   Section 3.1, but with updated SUITES_I.
 
    Both endpoints are authenticated with static DH, i.e., METHOD = 3:
 
@@ -1568,7 +1581,7 @@ Table of Contents
    03 82 06 02 58 20 8a f6 f4 30 eb e1 8d 34 18 40 17 a9 a1 1b f5 11 c8
    df f8 f8 34 73 0b 96 c1 b7 c8 db ca 2f c3 b6 37
 
-4.4.  message_2
+3.4.  message_2
 
    The Responder supports the selected cipher suite 2 and not the by the
    Initiator more preferred cipher suite(s) 6, so SUITES_I is
@@ -1910,7 +1923,7 @@ Table of Contents
    58 2b 41 97 01 d7 f0 0a 26 c2 dc 58 7a 36 dd 75 25 49 f3 37 63 c8 93
    42 2c 8e a0 f9 55 a1 3a 4f f5 d5 98 62 a1 1d e4 2a 95 d7 85 38 6a
 
-4.5.  message_3
+3.5.  message_3
 
    The transcript hash TH_3 is calculated using the EDHOC hash
    algorithm:
@@ -2241,7 +2254,7 @@ Table of Contents
    58 20 ba f6 0a db c5 00 fc e7 89 af 25 b1 08 ad a2 27 55 75 05 6c 52
    c1 c2 03 6a 2d a4 a6 43 89 1c b4
 
-4.6.  message_4
+3.6.  message_4
 
    No external authorization data:
 
@@ -2338,7 +2351,7 @@ Table of Contents
    message_4 (CBOR Sequence) (9 bytes)
    48 89 07 43 64 70 a6 e1 9f
 
-4.7.  PRK_out and PRK_exporter
+3.7.  PRK_out and PRK_exporter
 
    PRK_out is specified in Section 4.1.3 of [I-D.ietf-lake-edhoc].
 
@@ -2398,7 +2411,7 @@ Table of Contents
    4f 0a 5a 82 3d 06 d0 00 5e 1b ec da 8a 6e 61 f3 c8 c6 7a 8b 15 da 7d
    44 d3 58 5e c5 85 4e 91 e2
 
-4.8.  OSCORE Parameters
+3.8.  OSCORE Parameters
 
    The derivation of OSCORE parameters is specified in Appendix A.1 of
    [I-D.ietf-lake-edhoc].
@@ -2482,7 +2495,7 @@ Table of Contents
    OSCORE Master Salt (Raw Value) (8 bytes)
    61 63 f4 4b e8 62 ad fa
 
-4.9.  Key Update
+3.9.  Key Update
 
    Key update is defined in Appendix H of [I-D.ietf-lake-edhoc].
 
@@ -2517,7 +2530,7 @@ Table of Contents
     PRK_exporter = EDHOC_KDF( PRK_out, 10, h'', hash_length ) =
                  = HKDF-Expand( PRK_out, info,  hash_length )
 
-   where info and hash_length are unchanged as in Section 4.7.
+   where info and hash_length are unchanged as in Section 3.7.
 
    PRK_exporter (Raw Value) (32 bytes)
    bb b3 b7 72 6e 97 9c 1b b3 46 a3 f9 2b f4 e0 28 8d 52 62 7f b5 e7 9a
@@ -2528,7 +2541,7 @@ Table of Contents
    OSCORE Master Secret =
    = HKDF-Expand(PRK_exporter, info, oscore_key_length)
 
-   where info and key_length are unchanged as in Section 3.6.
+   where info and key_length are unchanged as in Section 2.6.
 
    OSCORE Master Secret after KeyUpdate (Raw Value) (16 bytes)
    c9 1b 16 4c 81 0b 29 a6 3f cb 73 e5 1b c4 55 f3
@@ -2537,16 +2550,177 @@ Table of Contents
 
    OSCORE Master Salt = HKDF-Expand(PRK_exporter, info, salt_length)
 
-   where info and salt_length are unchanged as in Section 3.6.
+   where info and salt_length are unchanged as in Section 2.6.
 
    OSCORE Master Salt after KeyUpdate (Raw Value) (8 bytes)
    73 ce 79 24 59 40 36 80
+
+4.  Invalid Traces
+
+   This section contains examples of invalid messages, which a compliant
+   implementation will not compose and must or may reject according to
+   [I-D.ietf-lake-edhoc], [RFC8949], [RFC9053], and [SP-800-56A].  This
+   is just a small set of examples of different reasons a message might
+   be invalid.  The same types of invalidities applies to other fields
+   and messages as well.  Implementations should make sure to check for
+   similar types of invalidities in all EHDOC fields and messages.
+
+4.1.  Encoding Errors
+
+4.1.1.  Surplus array encoding of message
+
+   Invalid encoding of message_1 as array.  Correct encoding is a CBOR
+   sequence according to Section 5.2.1 of [I-D.ietf-lake-edhoc].
+
+   Invalid message_1 (38 bytes)
+   84 03 02 58 20 74 1a 13 d7 ba 04 8f bb 61 5e 94 38 6a a3 b6 1b ea 5b
+   3d 8f 65 f3 26 20 b7 49 be e8 d2 78 ef a9 0e
+
+4.1.2.  Surplus bstr encoding of connection identifier
+
+   Invalid encoding 41 0e of C_I = 0x0e.  Correct encoding is 0e
+   according to Section 3.3.2 of [I-D.ietf-lake-edhoc].
+
+   Invalid message_1 (38 bytes)
+   03 02 58 20 74 1a 13 d7 ba 04 8f bb 61 5e 94 38 6a a3 b6 1b ea 5b 3d
+   8f 65 f3 26 20 b7 49 be e8 d2 78 ef a9 41 0e
+
+4.1.3.  Surplus array encoding of ciphersuite
+
+   Invalid array encoding 81 02 of SUITES_I = 2.  Correct encoding is 02
+   according to Section 5.2.2 of [I-D.ietf-lake-edhoc].
+
+   Invalid message_1 (38 bytes)
+   03 81 02 58 20 74 1a 13 d7 ba 04 8f bb 61 5e 94 38 6a a3 b6 1b ea 5b
+   3d 8f 65 f3 26 20 b7 49 be e8 d2 78 ef a9 0e
+
+4.1.4.  Text string encoding of ephemeral key
+
+   Invalid type of the third element (G_X).  Correct encoding is a byte
+   string according to Section 5.2.1 of [I-D.ietf-lake-edhoc].
+
+   Invalid message_1 (37 bytes)
+   03 02 78 20 20 61 69 72 20 73 70 65 65 64 20 6F 66 20 61 20 75 6E 6C
+   61 64 65 6E 20 73 77 61 6C 6C 6F 77 20 0e
+
+4.1.5.  Wrong number of CBOR sequence elements
+
+   Invalid number of elements in the CBOR sequence.  Correct number of
+   elements is 1 according to Section 5.3.1 of [I-D.ietf-lake-edhoc].
+
+   Invalid message_2 (46 bytes)
+   58 20 41 97 01 d7 f0 0a 26 c2 dc 58 7a 36 dd 75 25 49 f3 37 63 c8 93
+   42 2c 8e a0 f9 55 a1 3a 4f f5 d5 4B 98 62 a1 1d e4 2a 95 d7 85 38 6a
+
+4.1.6.  Surplus map encoding of ID_CRED field
+
+   Invalid encoding a1 04 42 32 10 of ID_CRED_R in PLAINTEXT_2.  Correct
+   encoding is 42 32 10 according to Section 3.5.3.2 of
+   [I-D.ietf-lake-edhoc].
+
+   Invalid PLAINTEXT_2 (15 bytes)
+   27 a1 04 42 32 10 48 fa 5e fa 2e bf 92 0b f3
+
+4.1.7.  Surplus bstr encoding of ID_CRED field
+
+   Invalid encoding 41 32 of ID_CRED_R in PLAINTEXT_2.  Correct encoding
+   is 32 according to Section 3.5.3.2 of [I-D.ietf-lake-edhoc].
+
+   Invalid PLAINTEXT_2 (12 bytes)
+   27 41 32 48 fa 5e fa 2e bf 92 0b f3
+
+4.2.  Crypto-related Errors
+
+4.2.1.  Error in length of ephemeral key
+
+   Invalid length of the third element (G_X).  Selected cipher suite is
+   cipher suite 24 with curve P-384 according to Sections 5.2.2, and
+   10.2 of [I-D.ietf-lake-edhoc].  Correct length of x-coordinate is 48
+   bytes according to Section 3.7 of [I-D.ietf-lake-edhoc] and
+   Section 7.1.1 of [RFC9053].
+
+   Invalid message_1 (40 bytes)
+   03 82 02 18 18 58 20 74 1a 13 d7 ba 04 8f bb 61 5e 94 38 6a a3 b6 1b
+   ea 5b 3d 8f 65 f3 26 20 b7 49 be e8 d2 78 ef a9 0e
+
+4.2.2.  Error in elliptic curve representation
+
+   Invalid x-coordinate in G_X as x ≥ p.  Requirement that x < p
+   according to Section 9.2 of [I-D.ietf-lake-edhoc] and Section 5.6.2.3
+   of [SP-800-56A].
+
+   Invalid message_1 (37 bytes)
+   03 02 58 20 ff ff ff ff 00 00 00 01 00 00 00 00 00 00 00 00 00 00 00
+   00 ff ff ff ff ff ff ff ff ff ff ff ff 0e
+
+4.2.3.  Error in elliptic curve point
+
+   Invalid x-coordinate in (G_X) not corresponding to a point on the
+   P-256 curve.  Requirement that y^2 ≡ x^3 + a ⋅ x + b (mod p)
+   according to Section 9.2 of [I-D.ietf-lake-edhoc] and Section 5.6.2.3
+   of [SP-800-56A].
+
+   Invalid message_1 (37 bytes)
+   03 02 58 20 a0 4e 73 60 1d f5 44 a7 0b a7 ea 1e 57 03 0f 7d 4b 4e b7
+   f6 73 92 4e 58 d5 4c a7 7a 5e 7d 4d 4a 0e
+
+4.2.4.  Curve point of low order
+
+   Curve25519 point of low order which fails the check for all-zero
+   output according to Section 9.2 of [I-D.ietf-lake-edhoc].
+
+   Invalid message_1 (37 bytes)
+   03 00 58 20 ed ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+   ff ff ff ff ff ff ff ff ff ff ff ff 7f 0e
+
+4.2.5.  Error in length of MAC
+
+   Invalid length of third element (Signature_or_MAC_2).  The length of
+   Signature_or_MAC_2 is given by the cipher suite and the MAC length is
+   at least 8 bytes according to Section 9.3 of [I-D.ietf-lake-edhoc].
+
+   Invalid PLAINTEXT_2 (7 bytes)
+   27 32 44 fa 5e fa 2e
+
+4.2.6.  Error in elliptic curve encoding
+
+   Invalid encoding of third element (G_X).  Correct encoding is with
+   leading zeros according to Section 3.7 of [I-D.ietf-lake-edhoc] and
+   Section 7.1.1 of [RFC9053].
+
+   Invalid message_1 (36 bytes)
+   03 02 58 1f d9 69 77 25 d2 3a 68 8b 12 d1 c7 e0 10 8a 08 c9 f7 1a 85
+   a0 9c 20 81 49 76 ab 21 12 22 48 fc 0e
+
+4.3.  Non-deterministic CBOR
+
+4.3.1.  Unnecessary long encoding
+
+   Invalid 16-bit encoding 19 00 03 of METHOD = 3.  Correct is the
+   deterministic encoding 03 according to Section 3.1 of
+   [I-D.ietf-lake-edhoc] and Section 4.2.1 of [RFC8949], which states
+   that the arguments for integers, lengths in major types 2 through 5,
+   and tags are required to be as short as possible.
+
+   Invalid message_1 (39 bytes)
+   19 00 03 02 58 20 74 1a 13 d7 ba 04 8f bb 61 5e 94 38 6a a3 b6 1b ea
+   5b 3d 8f 65 f3 26 20 b7 49 be e8 d2 78 ef a9 0e
+
+4.3.2.  Indefinite-length array encoding
+
+   Invalid indefinite-length array encoding 9F 06 02 FF of SUITES_I =
+   [6, 2].  Correct encoding is 82 06 02 according to Section 5.2.2 of
+   [I-D.ietf-lake-edhoc].
+
+   Invalid message_1 (40 bytes)
+   03 9F 06 02 FF 58 20 74 1a 13 d7 ba 04 8f bb 61 5e 94 38 6a a3 b6 1b
+   ea 5b 3d 8f 65 f3 26 20 b7 49 be e8 d2 78 ef a9 0e
 
 5.  Security Considerations
 
    This document contains examples of EDHOC [I-D.ietf-lake-edhoc] whose
    security considerations apply.  The keys printed in these examples
-   cannot be considered secret and must not be used.
+   cannot be considered secret and MUST NOT be used.
 
 6.  IANA Considerations
 
@@ -2562,6 +2736,15 @@ Table of Contents
               Progress, Internet-Draft, draft-ietf-lake-edhoc-22, 25
               August 2023, <https://datatracker.ietf.org/doc/html/draft-
               ietf-lake-edhoc-22>.
+
+   [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
+              Requirement Levels", BCP 14, RFC 2119,
+              DOI 10.17487/RFC2119, March 1997,
+              <https://www.rfc-editor.org/rfc/rfc2119>.
+
+   [RFC8174]  Leiba, B., "Ambiguity of Uppercase vs Lowercase in RFC
+              2119 Key Words", BCP 14, RFC 8174, DOI 10.17487/RFC8174,
+              May 2017, <https://www.rfc-editor.org/rfc/rfc8174>.
 
 7.2.  Informative References
 
@@ -2591,12 +2774,23 @@ Table of Contents
               DOI 10.17487/RFC8949, December 2020,
               <https://www.rfc-editor.org/rfc/rfc8949>.
 
+   [RFC9053]  Schaad, J., "CBOR Object Signing and Encryption (COSE):
+              Initial Algorithms", RFC 9053, DOI 10.17487/RFC9053,
+              August 2022, <https://www.rfc-editor.org/rfc/rfc9053>.
+
    [SP-800-186]
               Chen, L., Moody, D., Randall, K., Regenscheid, A., and A.
               Robinson, "Recommendations for Discrete Logarithm-based
               Cryptography: Elliptic Curve Domain Parameters",
               NIST Special Publication 800-186, February 2023,
               <https://doi.org/10.6028/NIST.SP.800-186>.
+
+   [SP-800-56A]
+              Barker, E., Chen, L., Roginsky, A., Vassilev, A., and R.
+              Davis, "Recommendation for Pair-Wise Key-Establishment
+              Schemes Using Discrete Logarithm Cryptography",
+              NIST Special Publication 800-56A Revision 3, April 2018,
+              <https://doi.org/10.6028/NIST.SP.800-56Ar3>.
 
 Acknowledgments
 
