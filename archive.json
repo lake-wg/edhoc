@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-01-09T01:16:00.573692+00:00",
+  "timestamp": "2024-01-11T01:15:56.457686+00:00",
   "repo": "lake-wg/edhoc",
   "labels": [
     {
@@ -25247,6 +25247,53 @@
         }
       ],
       "reviews": []
+    },
+    {
+      "number": 455,
+      "id": "PR_kwDOEItXAM5jrwFt",
+      "title": "Protect C_R within message_2",
+      "url": "https://github.com/lake-wg/edhoc/pull/455",
+      "state": "OPEN",
+      "author": "gselander",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "",
+      "createdAt": "2024-01-10T13:11:46Z",
+      "updatedAt": "2024-01-10T21:44:36Z",
+      "baseRepository": "lake-wg/edhoc",
+      "baseRefName": "master",
+      "baseRefOid": "a5b602ba9f212c1f2f1a88ccb945d77042df8735",
+      "headRepository": "lake-wg/edhoc",
+      "headRefName": "cr-in-mac2",
+      "headRefOid": "f301b68d3e64efe210f70f508835afe628a786c0",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOEItXAM5sIzNl",
+          "commit": {
+            "abbreviatedOid": "f301b68"
+          },
+          "author": "marco-tiloca-sics",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-01-10T21:44:36Z",
+          "updatedAt": "2024-01-10T21:44:36Z",
+          "comments": [
+            {
+              "originalPosition": 6,
+              "body": "Exactly like in the text below describing PLAINTEXT_2, this description of context_2 should also include here a bullet point about C_R, and especially with the warning about its special encoding. That is:\r\n\r\n> * C_R - variable length connection identifier. Note that connection identifiers are byte strings but certain values are represented as integers in the message, see {{bstr-repr}}.",
+              "createdAt": "2024-01-10T21:44:36Z",
+              "updatedAt": "2024-01-10T21:44:36Z"
+            }
+          ]
+        }
+      ]
     }
   ]
 }
