@@ -5,13 +5,13 @@
 LAKE Working Group                                           G. Selander
 Internet-Draft                                         J. Preuß Mattsson
 Intended status: Informational                                  Ericsson
-Expires: 13 July 2024                                         M. Serafin
+Expires: 15 July 2024                                         M. Serafin
                                                               ASSA ABLOY
                                                                M. Tiloca
                                                                     RISE
                                                               M. Vučinić
                                                                    Inria
-                                                         10 January 2024
+                                                         12 January 2024
 
 
                             Traces of EDHOC
@@ -49,7 +49,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 13 July 2024.
+   This Internet-Draft will expire on 15 July 2024.
 
 Copyright Notice
 

@@ -5,8 +5,8 @@
 LAKE Working Group                                           G. Selander
 Internet-Draft                                         J. Preuß Mattsson
 Intended status: Standards Track                            F. Palombini
-Expires: 13 July 2024                                           Ericsson
-                                                         10 January 2024
+Expires: 15 July 2024                                           Ericsson
+                                                         12 January 2024
 
 
                Ephemeral Diffie-Hellman Over COSE (EDHOC)
@@ -50,7 +50,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 13 July 2024.
+   This Internet-Draft will expire on 15 July 2024.
 
 Copyright Notice
 
@@ -1601,6 +1601,10 @@ Table of Contents
          length of the selected cipher suite.  If the Responder
          authenticates with a signature key (method equals 0 or 2), then
          mac_length_2 is equal to hash_length.
+
+      -  C_R - variable length connection identifier.  Note that
+         connection identifiers are byte strings but certain values are
+         represented as integers in the message, see Section 3.3.2.
 
       -  ID_CRED_R - identifier to facilitate the retrieval of CRED_R,
          see Section 3.5.3
