@@ -1971,26 +1971,26 @@ No external authorization data:
 EAD_2 (CBOR Sequence) (0 bytes)
 ~~~~~~~~
 
-context_2 = << ID_CRED_R, TH_2, CRED_R, ? EAD_2 >>
+context_2 = << C_R, ID_CRED_R, TH_2, CRED_R, ? EAD_2 >>
 
 ~~~~~~~~
-context_2 (CBOR Sequence) (133 bytes)
-a1 04 41 32 58 20 35 6e fd 53 77 14 25 e0 08 f3 fe 3a 86 c8 3f f4 c6
-b1 6e 57 02 8f f3 9d 52 36 c1 82 b2 02 08 4b a2 02 6b 65 78 61 6d 70
-6c 65 2e 65 64 75 08 a1 01 a5 01 02 02 41 32 20 01 21 58 20 bb c3 49
-60 52 6e a4 d3 2e 94 0c ad 2a 23 41 48 dd c2 17 91 a1 2a fb cb ac 93
-62 20 46 dd 44 f0 22 58 20 45 19 e2 57 23 6b 2a 0c e2 02 3f 09 31 f1
-f3 86 ca 7a fd a6 4f cd e0 10 8c 22 4c 51 ea bf 60 72
+context_2 (CBOR Sequence) (134 bytes)
+27 a1 04 41 32 58 20 35 6e fd 53 77 14 25 e0 08 f3 fe 3a 86 c8 3f f4
+c6 b1 6e 57 02 8f f3 9d 52 36 c1 82 b2 02 08 4b a2 02 6b 65 78 61 6d
+70 6c 65 2e 65 64 75 08 a1 01 a5 01 02 02 41 32 20 01 21 58 20 bb c3
+49 60 52 6e a4 d3 2e 94 0c ad 2a 23 41 48 dd c2 17 91 a1 2a fb cb ac
+93 62 20 46 dd 44 f0 22 58 20 45 19 e2 57 23 6b 2a 0c e2 02 3f 09 31
+f1 f3 86 ca 7a fd a6 4f cd e0 10 8c 22 4c 51 ea bf 60 72
 ~~~~~~~~
 
 ~~~~~~~~
-context_2 (CBOR byte string) (135 bytes)
-58 85 a1 04 41 32 58 20 35 6e fd 53 77 14 25 e0 08 f3 fe 3a 86 c8 3f
-f4 c6 b1 6e 57 02 8f f3 9d 52 36 c1 82 b2 02 08 4b a2 02 6b 65 78 61
-6d 70 6c 65 2e 65 64 75 08 a1 01 a5 01 02 02 41 32 20 01 21 58 20 bb
-c3 49 60 52 6e a4 d3 2e 94 0c ad 2a 23 41 48 dd c2 17 91 a1 2a fb cb
-ac 93 62 20 46 dd 44 f0 22 58 20 45 19 e2 57 23 6b 2a 0c e2 02 3f 09
-31 f1 f3 86 ca 7a fd a6 4f cd e0 10 8c 22 4c 51 ea bf 60 72
+context_2 (CBOR byte string) (136 bytes)
+58 86 27 a1 04 41 32 58 20 35 6e fd 53 77 14 25 e0 08 f3 fe 3a 86 c8
+3f f4 c6 b1 6e 57 02 8f f3 9d 52 36 c1 82 b2 02 08 4b a2 02 6b 65 78
+61 6d 70 6c 65 2e 65 64 75 08 a1 01 a5 01 02 02 41 32 20 01 21 58 20
+bb c3 49 60 52 6e a4 d3 2e 94 0c ad 2a 23 41 48 dd c2 17 91 a1 2a fb
+cb ac 93 62 20 46 dd 44 f0 22 58 20 45 19 e2 57 23 6b 2a 0c e2 02 3f
+09 31 f1 f3 86 ca 7a fd a6 4f cd e0 10 8c 22 4c 51 ea bf 60 72
 ~~~~~~~~
 
 
@@ -2008,47 +2008,47 @@ info for MAC_2 is:
     info =
     (
      2,
-     h'a10441325820356efd53771425e008f3fe3a86c83ff4c6b1
-       6e57028ff39d5236c182b202084ba2026b6578616d706c65
-       2e65647508a101a501020241322001215820bbc34960526e
-       a4d32e940cad2a234148ddc21791a12afbcbac93622046dd
-       44f02258204519e257236b2a0ce2023f0931f1f386ca7afd
-       a64fcde0108c224c51eabf6072',
+     h'27a10441325820356efd53771425e008f3fe3a86c83ff4c6
+       b16e57028ff39d5236c182b202084ba2026b6578616d706c
+       652e65647508a101a501020241322001215820bbc3496052
+       6ea4d32e940cad2a234148ddc21791a12afbcbac93622046
+       dd44f02258204519e257236b2a0ce2023f0931f1f386ca7a
+       fda64fcde0108c224c51eabf6072',
      8
     )
 
 where the last value is the EDHOC MAC length in bytes.
 
 ~~~~~~~~
-info for MAC_2 (CBOR Sequence) (137 bytes)
-02 58 85 a1 04 41 32 58 20 35 6e fd 53 77 14 25 e0 08 f3 fe 3a 86 c8
-3f f4 c6 b1 6e 57 02 8f f3 9d 52 36 c1 82 b2 02 08 4b a2 02 6b 65 78
-61 6d 70 6c 65 2e 65 64 75 08 a1 01 a5 01 02 02 41 32 20 01 21 58 20
-bb c3 49 60 52 6e a4 d3 2e 94 0c ad 2a 23 41 48 dd c2 17 91 a1 2a fb
-cb ac 93 62 20 46 dd 44 f0 22 58 20 45 19 e2 57 23 6b 2a 0c e2 02 3f
-09 31 f1 f3 86 ca 7a fd a6 4f cd e0 10 8c 22 4c 51 ea bf 60 72 08
+info for MAC_2 (CBOR Sequence) (138 bytes)
+02 58 86 27 a1 04 41 32 58 20 35 6e fd 53 77 14 25 e0 08 f3 fe 3a 86
+c8 3f f4 c6 b1 6e 57 02 8f f3 9d 52 36 c1 82 b2 02 08 4b a2 02 6b 65
+78 61 6d 70 6c 65 2e 65 64 75 08 a1 01 a5 01 02 02 41 32 20 01 21 58
+20 bb c3 49 60 52 6e a4 d3 2e 94 0c ad 2a 23 41 48 dd c2 17 91 a1 2a
+fb cb ac 93 62 20 46 dd 44 f0 22 58 20 45 19 e2 57 23 6b 2a 0c e2 02
+3f 09 31 f1 f3 86 ca 7a fd a6 4f cd e0 10 8c 22 4c 51 ea bf 60 72 08
 ~~~~~~~~
 
 ~~~~~~~~
 MAC_2 (Raw Value) (8 bytes)
-fa 5e fa 2e bf 92 0b f3
+09 43 30 5c 89 9f 5c 54
 ~~~~~~~~
 
 ~~~~~~~~
 MAC_2 (CBOR Data Item) (9 bytes)
-48 fa 5e fa 2e bf 92 0b f3
+48 09 43 30 5c 89 9f 5c 54
 ~~~~~~~~
 
 Since METHOD = 3, Signature_or_MAC_2 is MAC_2:
 
 ~~~~~~~~
 Signature_or_MAC_2 (Raw Value) (8 bytes)
-fa 5e fa 2e bf 92 0b f3
+09 43 30 5c 89 9f 5c 54
 ~~~~~~~~
 
 ~~~~~~~~
 Signature_or_MAC_2 (CBOR Data Item) (9 bytes)
-48 fa 5e fa 2e bf 92 0b f3
+48 09 43 30 5c 89 9f 5c 54
 ~~~~~~~~
 
 The Responder constructs PLAINTEXT_2:
@@ -2066,7 +2066,7 @@ Since ID_CRED_R contains a single 'kid' parameter, only the byte string value is
 
 ~~~~~~~~
 PLAINTEXT_2 (CBOR Sequence) (11 bytes)
-27 32 48 fa 5e fa 2e bf 92 0b f3
+27 32 48 09 43 30 5c 89 9f 5c 54
 ~~~~~~~~
 
 The input needed to calculate KEYSTREAM_2 is defined in {{Section 4.1.2 of I-D.ietf-lake-edhoc}}, using EDHOC_Expand() with the EDHOC hash algorithm:
@@ -2102,7 +2102,7 @@ The Responder calculates CIPHERTEXT_2 as XOR between PLAINTEXT_2 and KEYSTREAM_2
 
 ~~~~~~~~
 CIPHERTEXT_2 (Raw Value) (11 bytes)
-98 62 a1 1d e4 2a 95 d7 85 38 6a
+98 62 a1 ee f9 e0 e7 e1 88 6f cd
 ~~~~~~~~
 
 The Responder constructs message_2:
@@ -2118,7 +2118,7 @@ the raw values of G_Y and CIPHERTEXT_2.
 ~~~~~~~~
 message_2 (CBOR Sequence) (45 bytes)
 58 2b 41 97 01 d7 f0 0a 26 c2 dc 58 7a 36 dd 75 25 49 f3 37 63 c8 93
-42 2c 8e a0 f9 55 a1 3a 4f f5 d5 98 62 a1 1d e4 2a 95 d7 85 38 6a
+42 2c 8e a0 f9 55 a1 3a 4f f5 d5 98 62 a1 ee f9 e0 e7 e1 88 6f cd
 ~~~~~~~~
 
 
@@ -2132,7 +2132,7 @@ TH_3 = H( TH_2, PLAINTEXT_2, CRED_R )
 ~~~~~~~~
 Input to calculate TH_3 (CBOR Sequence) (140 bytes)
 58 20 35 6e fd 53 77 14 25 e0 08 f3 fe 3a 86 c8 3f f4 c6 b1 6e 57 02
-8f f3 9d 52 36 c1 82 b2 02 08 4b 27 32 48 fa 5e fa 2e bf 92 0b f3 a2
+8f f3 9d 52 36 c1 82 b2 02 08 4b 27 32 48 09 43 30 5c 89 9f 5c 54 a2
 02 6b 65 78 61 6d 70 6c 65 2e 65 64 75 08 a1 01 a5 01 02 02 41 32 20
 01 21 58 20 bb c3 49 60 52 6e a4 d3 2e 94 0c ad 2a 23 41 48 dd c2 17
 91 a1 2a fb cb ac 93 62 20 46 dd 44 f0 22 58 20 45 19 e2 57 23 6b 2a
@@ -2142,13 +2142,13 @@ Input to calculate TH_3 (CBOR Sequence) (140 bytes)
 
 ~~~~~~~~
 TH_3 (Raw Value) (32 bytes)
-df e5 b0 65 e6 4c 72 d2 26 d5 00 c1 2d 49 be e6 dc 48 81 de d0 96 5e
-9b df 89 d2 4a 54 f2 e5 9a
+ad af 67 a7 8a 4b cc 91 e0 18 f8 88 27 62 a7 22 00 0b 25 07 03 9d f0
+bc 1b bf 0c 16 1b b3 15 5c
 ~~~~~~~~
 ~~~~~~~~
 TH_3 (CBOR Data Item) (34 bytes)
-58 20 df e5 b0 65 e6 4c 72 d2 26 d5 00 c1 2d 49 be e6 dc 48 81 de d0
-96 5e 9b df 89 d2 4a 54 f2 e5 9a
+58 20 ad af 67 a7 8a 4b cc 91 e0 18 f8 88 27 62 a7 22 00 0b 25 07 03
+9d f0 bc 1b bf 0c 16 1b b3 15 5c
 ~~~~~~~~
 
 
@@ -2191,21 +2191,21 @@ where hash_length is the length in bytes of the output of the EDHOC hash algorit
     info =
     (
      5,
-     h'dfe5b065e64c72d226d500c12d49bee6dc4881ded0965e9b
-       df89d24a54f2e59a',
+     h'adaf67a78a4bcc91e018f8882762a722000b2507039df0bc
+       1bbf0c161bb3155c',
      32
     )
 
 
 ~~~~~~~~
 info for SALT_4e3m (CBOR Sequence) (37 bytes)
-05 58 20 df e5 b0 65 e6 4c 72 d2 26 d5 00 c1 2d 49 be e6 dc 48 81 de
-d0 96 5e 9b df 89 d2 4a 54 f2 e5 9a 18 20
+05 58 20 ad af 67 a7 8a 4b cc 91 e0 18 f8 88 27 62 a7 22 00 0b 25 07
+03 9d f0 bc 1b bf 0c 16 1b b3 15 5c 18 20
 ~~~~~~~~
 ~~~~~~~~
 SALT_4e3m (Raw Value) (32 bytes)
-84 f8 a2 a9 53 4d dd 78 dc c7 e7 6e 0d 4d f6 0b fa d7 cd 3a d6 e1 d5
-31 c7 f3 73 a7 ed a5 2d 1c
+cf dd f9 51 5a 7e 46 e7 b4 db ff 31 cb d5 6c d0 4b a3 32 25 0d e9 ea
+5d e1 ca f9 f6 d1 39 14 a7
 ~~~~~~~~
 
 
@@ -2226,8 +2226,8 @@ G_IY (Raw Value) (ECDH shared secret) (32 bytes)
 ~~~~~~~~
 ~~~~~~~~
 PRK_4e3m (Raw Value) (32 bytes)
-e9 cb 83 2a 24 00 95 d3 d0 64 3d be 12 e9 e2 e7 b1 8f 03 60 a3 17 2c
-ea 7a c0 01 3e e2 40 e0 72
+81 cc 8a 29 8e 35 70 44 e3 c4 66 bb 5c 0a 1e 50 7e 01 d4 92 38 ae ba
+13 8d f9 46 35 40 7c 0f f7
 ~~~~~~~~
 
 
@@ -2287,8 +2287,8 @@ context_3 = << ID_CRED_I, TH_3, CRED_I, ? EAD_3 >>
 
 ~~~~~~~~
 context_3 (CBOR Sequence) (145 bytes)
-a1 04 41 2b 58 20 df e5 b0 65 e6 4c 72 d2 26 d5 00 c1 2d 49 be e6 dc
-48 81 de d0 96 5e 9b df 89 d2 4a 54 f2 e5 9a a2 02 77 34 32 2d 35 30
+a1 04 41 2b 58 20 ad af 67 a7 8a 4b cc 91 e0 18 f8 88 27 62 a7 22 00
+0b 25 07 03 9d f0 bc 1b bf 0c 16 1b b3 15 5c a2 02 77 34 32 2d 35 30
 2d 33 31 2d 46 46 2d 45 46 2d 33 37 2d 33 32 2d 33 39 08 a1 01 a5 01
 02 02 41 2b 20 01 21 58 20 ac 75 e9 ec e3 e5 0b fc 8e d6 03 99 88 95
 22 40 5c 47 bf 16 df 96 66 0a 41 29 8c b4 30 7f 7e b6 22 58 20 6e 5d
@@ -2298,8 +2298,8 @@ e6 11 38 8a 4b 8a 82 11 33 4a c7 d3 7e cb 52 a3 87 d2 57 e6 db 3c 2a
 
 ~~~~~~~~
 context_3 (CBOR byte string) (147 bytes)
-58 91 a1 04 41 2b 58 20 df e5 b0 65 e6 4c 72 d2 26 d5 00 c1 2d 49 be
-e6 dc 48 81 de d0 96 5e 9b df 89 d2 4a 54 f2 e5 9a a2 02 77 34 32 2d
+58 91 a1 04 41 2b 58 20 ad af 67 a7 8a 4b cc 91 e0 18 f8 88 27 62 a7
+22 00 0b 25 07 03 9d f0 bc 1b bf 0c 16 1b b3 15 5c a2 02 77 34 32 2d
 35 30 2d 33 31 2d 46 46 2d 45 46 2d 33 37 2d 33 32 2d 33 39 08 a1 01
 a5 01 02 02 41 2b 20 01 21 58 20 ac 75 e9 ec e3 e5 0b fc 8e d6 03 99
 88 95 22 40 5c 47 bf 16 df 96 66 0a 41 29 8c b4 30 7f 7e b6 22 58 20
@@ -2323,8 +2323,8 @@ info for MAC_3 is:
     info =
     (
      6,
-     h'a104412b5820dfe5b065e64c72d226d500c12d49bee6dc48
-       81ded0965e9bdf89d24a54f2e59aa2027734322d35302d33
+     h'a104412b5820adaf67a78a4bcc91e018f8882762a722000b
+       2507039df0bc1bbf0c161bb3155ca2027734322d35302d33
        312d46462d45462d33372d33322d333908a101a501020241
        2b2001215820ac75e9ece3e50bfc8ed60399889522405c47
        bf16df96660a41298cb4307f7eb62258206e5de611388a4b
@@ -2337,8 +2337,8 @@ where the last value is the EDHOC MAC length in bytes.
 
 ~~~~~~~~
 info for MAC_3 (CBOR Sequence) (149 bytes)
-06 58 91 a1 04 41 2b 58 20 df e5 b0 65 e6 4c 72 d2 26 d5 00 c1 2d 49
-be e6 dc 48 81 de d0 96 5e 9b df 89 d2 4a 54 f2 e5 9a a2 02 77 34 32
+06 58 91 a1 04 41 2b 58 20 ad af 67 a7 8a 4b cc 91 e0 18 f8 88 27 62
+a7 22 00 0b 25 07 03 9d f0 bc 1b bf 0c 16 1b b3 15 5c a2 02 77 34 32
 2d 35 30 2d 33 31 2d 46 46 2d 45 46 2d 33 37 2d 33 32 2d 33 39 08 a1
 01 a5 01 02 02 41 2b 20 01 21 58 20 ac 75 e9 ec e3 e5 0b fc 8e d6 03
 99 88 95 22 40 5c 47 bf 16 df 96 66 0a 41 29 8c b4 30 7f 7e b6 22 58
@@ -2348,24 +2348,24 @@ db 3c 2a 93 df 21 ff 3a ff c8 08
 
 ~~~~~~~~
 MAC_3 (Raw Value) (8 bytes)
-a5 ee b9 ef fd ab fc 39
+62 3c 91 df 41 e3 4c 2f
 ~~~~~~~~
 
 ~~~~~~~~
 MAC_3 (CBOR Data Item) (9 bytes)
-48 a5 ee b9 ef fd ab fc 39
+48 62 3c 91 df 41 e3 4c 2f
 ~~~~~~~~
 
 Since METHOD = 3, Signature_or_MAC_3 is MAC_3:
 
 ~~~~~~~~
 Signature_or_MAC_3 (Raw Value) (8 bytes)
-a5 ee b9 ef fd ab fc 39
+62 3c 91 df 41 e3 4c 2f
 ~~~~~~~~
 
 ~~~~~~~~
 Signature_or_MAC_3 (CBOR Data Item) (9 bytes)
-48 a5 ee b9 ef fd ab fc 39
+48 62 3c 91 df 41 e3 4c 2f
 ~~~~~~~~
 
 
@@ -2383,7 +2383,7 @@ Since ID_CRED_I contains a single 'kid' parameter, only the byte string value is
 
 ~~~~~~~~
 PLAINTEXT_3 (CBOR Sequence) (10 bytes)
-2b 48 a5 ee b9 ef fd ab fc 39
+2b 48 62 3c 91 df 41 e3 4c 2f
 ~~~~~~~~
 
 The Initiator constructs the associated data for message_3:
@@ -2392,14 +2392,14 @@ The Initiator constructs the associated data for message_3:
     [
      "Encrypt0",
      h'',
-     h'dfe5b065e64c72d226d500c12d49bee6dc4881ded0965e9b
-       df89d24a54f2e59a'
+     h'adaf67a78a4bcc91e018f8882762a722000b2507039df0bc
+       1bbf0c161bb3155c'
     ]
 
 ~~~~~~~~
 A_3 (CBOR Data Item) (45 bytes)
-83 68 45 6e 63 72 79 70 74 30 40 58 20 df e5 b0 65 e6 4c 72 d2 26 d5
-00 c1 2d 49 be e6 dc 48 81 de d0 96 5e 9b df 89 d2 4a 54 f2 e5 9a
+83 68 45 6e 63 72 79 70 74 30 40 58 20 ad af 67 a7 8a 4b cc 91 e0 18
+f8 88 27 62 a7 22 00 0b 25 07 03 9d f0 bc 1b bf 0c 16 1b b3 15 5c
 ~~~~~~~~
 
 The Initiator constructs the input needed to derive the key K_3, see {{Section 4.1.2 of I-D.ietf-lake-edhoc}}, using the EDHOC hash algorithm:
@@ -2412,8 +2412,8 @@ where key_length is the key length in bytes for the EDHOC AEAD algorithm, and in
     info =
     (
      3,
-     h'dfe5b065e64c72d226d500c12d49bee6dc4881ded0965e9b
-       df89d24a54f2e59a',
+     h'adaf67a78a4bcc91e018f8882762a722000b2507039df0bc
+       1bbf0c161bb3155c',
      16
     )
 
@@ -2421,12 +2421,12 @@ where key_length is the key length in bytes for the EDHOC AEAD algorithm, and in
 
 ~~~~~~~~
 info for K_3 (CBOR Sequence) (36 bytes)
-03 58 20 df e5 b0 65 e6 4c 72 d2 26 d5 00 c1 2d 49 be e6 dc 48 81 de
-d0 96 5e 9b df 89 d2 4a 54 f2 e5 9a 10
+03 58 20 ad af 67 a7 8a 4b cc 91 e0 18 f8 88 27 62 a7 22 00 0b 25 07
+03 9d f0 bc 1b bf 0c 16 1b b3 15 5c 10
 ~~~~~~~~
 ~~~~~~~~
 K_3 (Raw Value) (16 bytes)
-ab 3b 2b 52 a0 4b 6a a3 2f 96 31 19 16 88 3a dd
+8e 7a 30 04 20 00 f7 90 0e 81 74 13 1f 75 f3 ed
 ~~~~~~~~
 
 The Initiator constructs the input needed to derive the nonce IV_3, see {{Section 4.1.2 of I-D.ietf-lake-edhoc}}, using the EDHOC hash algorithm:
@@ -2439,8 +2439,8 @@ where iv_length is the nonce length in bytes for the EDHOC AEAD algorithm, and i
     info =
     (
      4,
-     h'dfe5b065e64c72d226d500c12d49bee6dc4881ded0965e9b
-       df89d24a54f2e59a',
+     h'adaf67a78a4bcc91e018f8882762a722000b2507039df0bc
+       1bbf0c161bb3155c',
      13
     )
 
@@ -2448,13 +2448,13 @@ where the last value is the nonce length in bytes for the EDHOC AEAD algorithm.
 
 ~~~~~~~~
 info for IV_3 (CBOR Sequence) (36 bytes)
-04 58 20 df e5 b0 65 e6 4c 72 d2 26 d5 00 c1 2d 49 be e6 dc 48 81 de
-d0 96 5e 9b df 89 d2 4a 54 f2 e5 9a 0d
+04 58 20 ad af 67 a7 8a 4b cc 91 e0 18 f8 88 27 62 a7 22 00 0b 25 07
+03 9d f0 bc 1b bf 0c 16 1b b3 15 5c 0d
 ~~~~~~~~
 
 ~~~~~~~~
 IV_3 (Raw Value) (13 bytes)
-05 55 cf a1 6e 40 8d e5 e1 52 3d 04 7d
+6d 83 00 c1 e2 3b 56 15 3a e7 0e e4 57
 ~~~~~~~~
 
 The Initiator calculates CIPHERTEXT_3 as 'ciphertext' of COSE_Encrypt0 applied
@@ -2463,14 +2463,14 @@ A_3, key K_3 and nonce IV_3.
 
 ~~~~~~~~
 CIPHERTEXT_3 (Raw Value) (18 bytes)
-47 3d d1 60 77 dd 71 d6 5b 56 e6 bd 71 e7 a4 9d 60 12
+e5 62 09 7b c4 17 dd 59 19 48 5a c7 89 1f fd 90 a9 fc
 ~~~~~~~~
 
 message_3 is the CBOR bstr encoding of CIPHERTEXT_3:
 
 ~~~~~~~~
 message_3 (CBOR Sequence) (19 bytes)
-52 47 3d d1 60 77 dd 71 d6 5b 56 e6 bd 71 e7 a4 9d 60 12
+52 e5 62 09 7b c4 17 dd 59 19 48 5a c7 89 1f fd 90 a9 fc
 ~~~~~~~~
 
 The transcript hash TH_4 is calculated using the EDHOC hash algorithm:
@@ -2479,8 +2479,8 @@ TH_4 = H( TH_3, PLAINTEXT_3, CRED_I )
 
 ~~~~~~~~
 Input to calculate TH_4 (CBOR Sequence) (151 bytes)
-58 20 df e5 b0 65 e6 4c 72 d2 26 d5 00 c1 2d 49 be e6 dc 48 81 de d0
-96 5e 9b df 89 d2 4a 54 f2 e5 9a 2b 48 a5 ee b9 ef fd ab fc 39 a2 02
+58 20 ad af 67 a7 8a 4b cc 91 e0 18 f8 88 27 62 a7 22 00 0b 25 07 03
+9d f0 bc 1b bf 0c 16 1b b3 15 5c 2b 48 62 3c 91 df 41 e3 4c 2f a2 02
 77 34 32 2d 35 30 2d 33 31 2d 46 46 2d 45 46 2d 33 37 2d 33 32 2d 33
 39 08 a1 01 a5 01 02 02 41 2b 20 01 21 58 20 ac 75 e9 ec e3 e5 0b fc
 8e d6 03 99 88 95 22 40 5c 47 bf 16 df 96 66 0a 41 29 8c b4 30 7f 7e
@@ -2490,14 +2490,14 @@ d2 57 e6 db 3c 2a 93 df 21 ff 3a ff c8
 
 ~~~~~~~~
 TH_4 (Raw Value) (32 bytes)
-ba f6 0a db c5 00 fc e7 89 af 25 b1 08 ad a2 27 55 75 05 6c 52 c1 c2
-03 6a 2d a4 a6 43 89 1c b4
+c9 02 b1 e3 a4 32 6c 93 c5 55 1f 5f 3a a6 c5 ec c0 24 68 06 76 56 12
+e5 2b 5d 99 e6 05 9d 6b 6e
 ~~~~~~~~
 
 ~~~~~~~~
 TH_4 (CBOR Data Item) (34 bytes)
-58 20 ba f6 0a db c5 00 fc e7 89 af 25 b1 08 ad a2 27 55 75 05 6c 52
-c1 c2 03 6a 2d a4 a6 43 89 1c b4
+58 20 c9 02 b1 e3 a4 32 6c 93 c5 55 1f 5f 3a a6 c5 ec c0 24 68 06 76
+56 12 e5 2b 5d 99 e6 05 9d 6b 6e
 ~~~~~~~~
 
 
@@ -2522,14 +2522,14 @@ The Responder constructs the associated data for message_4:
     [
      "Encrypt0",
      h'',
-     h'baf60adbc500fce789af25b108ada2275575056c52c1c203
-       6a2da4a643891cb4'
+     h'c902b1e3a4326c93c5551f5f3aa6c5ecc0246806765612e5
+       2b5d99e6059d6b6e'
     ]
 
 ~~~~~~~~
 A_4 (CBOR Data Item) (45 bytes)
-83 68 45 6e 63 72 79 70 74 30 40 58 20 ba f6 0a db c5 00 fc e7 89 af
-25 b1 08 ad a2 27 55 75 05 6c 52 c1 c2 03 6a 2d a4 a6 43 89 1c b4
+83 68 45 6e 63 72 79 70 74 30 40 58 20 c9 02 b1 e3 a4 32 6c 93 c5 55
+1f 5f 3a a6 c5 ec c0 24 68 06 76 56 12 e5 2b 5d 99 e6 05 9d 6b 6e
 ~~~~~~~~
 
 The Responder constructs the input needed to derive the EDHOC message_4 key, see {{Section 4.1.2 of I-D.ietf-lake-edhoc}}, using the EDHOC hash algorithm:
@@ -2543,8 +2543,8 @@ and info for K_4 is:
     info =
     (
      8,
-     h'baf60adbc500fce789af25b108ada2275575056c52c1c203
-       6a2da4a643891cb4',
+     h'c902b1e3a4326c93c5551f5f3aa6c5ecc0246806765612e5
+       2b5d99e6059d6b6e',
      16
     )
 
@@ -2552,12 +2552,12 @@ where the last value is the key length in bytes for the EDHOC AEAD algorithm.
 
 ~~~~~~~~
 info for K_4 (CBOR Sequence) (36 bytes)
-08 58 20 ba f6 0a db c5 00 fc e7 89 af 25 b1 08 ad a2 27 55 75 05 6c
-52 c1 c2 03 6a 2d a4 a6 43 89 1c b4 10
+08 58 20 c9 02 b1 e3 a4 32 6c 93 c5 55 1f 5f 3a a6 c5 ec c0 24 68 06
+76 56 12 e5 2b 5d 99 e6 05 9d 6b 6e 10
 ~~~~~~~~
 ~~~~~~~~
 K_4 (Raw Value) (16 bytes)
-22 9d 4c 1d 6d 02 33 7b 1c e3 81 a2 bf a7 9b 2e
+d3 c7 78 72 b6 ee b5 08 91 1b db d3 08 b2 e6 a0
 ~~~~~~~~
 
 The Responder constructs the input needed to derive the EDHOC message_4 nonce, see {{Section 4.1.2 of I-D.ietf-lake-edhoc}}, using the EDHOC hash algorithm:
@@ -2571,8 +2571,8 @@ and info for IV_4 is:
     info =
     (
      9,
-     h'baf60adbc500fce789af25b108ada2275575056c52c1c203
-       6a2da4a643891cb4',
+     h'c902b1e3a4326c93c5551f5f3aa6c5ecc0246806765612e5
+       2b5d99e6059d6b6e',
      13
     )
 
@@ -2580,12 +2580,12 @@ where the last value is the nonce length in bytes for the EDHOC AEAD algorithm.
 
 ~~~~~~~~
 info for IV_4 (CBOR Sequence) (36 bytes)
-09 58 20 ba f6 0a db c5 00 fc e7 89 af 25 b1 08 ad a2 27 55 75 05 6c
-52 c1 c2 03 6a 2d a4 a6 43 89 1c b4 0d
+09 58 20 c9 02 b1 e3 a4 32 6c 93 c5 55 1f 5f 3a a6 c5 ec c0 24 68 06
+76 56 12 e5 2b 5d 99 e6 05 9d 6b 6e 0d
 ~~~~~~~~
 ~~~~~~~~
 IV_4 (Raw Value) (13 bytes)
-98 4d 59 ab 25 5e 3d c6 f8 e0 65 5c b6
+04 ff 0f 44 45 6e 96 e2 17 85 3c 36 01
 ~~~~~~~~
 
 The Responder calculates CIPHERTEXT_4 as 'ciphertext' of COSE_Encrypt0 applied
@@ -2594,14 +2594,14 @@ A_4, key K_4 and nonce IV_4.
 
 ~~~~~~~~
 CIPHERTEXT_4 (8 bytes)
-89 07 43 64 70 a6 e1 9f
+28 c9 66 b7 ca 30 4f 83
 ~~~~~~~~
 
 message_4 is the CBOR bstr encoding of CIPHERTEXT_4:
 
 ~~~~~~~~
 message_4 (CBOR Sequence) (9 bytes)
-48 89 07 43 64 70 a6 e1 9f
+48 28 c9 66 b7 ca 30 4f 83
 ~~~~~~~~
 
 
@@ -2618,8 +2618,8 @@ where hash_length is the length in bytes of the output of the EDHOC hash algorit
     info =
     (
      7,
-     h'baf60adbc500fce789af25b108ada2275575056c52c1c203
-       6a2da4a643891cb4',
+     h'c902b1e3a4326c93c5551f5f3aa6c5ecc0246806765612e5
+       2b5d99e6059d6b6e',
      32
     )
 
@@ -2627,14 +2627,14 @@ where the last value is the length in bytes of the output of the EDHOC hash algo
 
 ~~~~~~~~
 info for PRK_out (CBOR Sequence) (37 bytes)
-07 58 20 ba f6 0a db c5 00 fc e7 89 af 25 b1 08 ad a2 27 55 75 05 6c
-52 c1 c2 03 6a 2d a4 a6 43 89 1c b4 18 20
+07 58 20 c9 02 b1 e3 a4 32 6c 93 c5 55 1f 5f 3a a6 c5 ec c0 24 68 06
+76 56 12 e5 2b 5d 99 e6 05 9d 6b 6e 18 20
 ~~~~~~~~
 
 ~~~~~~~~
 PRK_out (Raw Value) (32 bytes)
-6b 2d ae 40 32 30 65 71 cf bc 2e 4f 94 a2 55 fb 9f 1f 3f b2 9c a6 f3
-79 fe c9 89 d4 fa 90 dc f0
+2c 71 af c1 a9 33 8a 94 0b b3 52 9c a7 34 b8 86 f3 0d 1a ba 0b 4d c5
+1b ee ae ab df ea 9e cb f8
 ~~~~~~~~
 
 
@@ -2666,8 +2666,8 @@ info for PRK_exporter (CBOR Sequence) (4 bytes)
 
 ~~~~~~~~
 PRK_exporter (Raw Value) (32 bytes)
-4f 0a 5a 82 3d 06 d0 00 5e 1b ec da 8a 6e 61 f3 c8 c6 7a 8b 15 da 7d
-44 d3 58 5e c5 85 4e 91 e2
+e1 4d 06 69 9c ee 24 8c 5a 04 bf 92 27 bb cd 4c e3 94 de 7d cb 56 db
+43 55 54 74 17 1e 64 46 db
 ~~~~~~~~
 
 
@@ -2735,7 +2735,7 @@ info for OSCORE Master Secret (CBOR Sequence) (3 bytes)
 
 ~~~~~~~~
 OSCORE Master Secret (Raw Value) (16 bytes)
-8c 40 9a 33 22 23 ad 90 0e 44 f3 43 4d 2d 2c e3
+f9 86 8f 6a 3a ca 78 a0 5d 14 85 b3 50 30 b1 62
 ~~~~~~~~
 
 The OSCORE Master Salt is computed through EDHOC_Expand() using the Application hash algorithm, see {{Section 4.2 of I-D.ietf-lake-edhoc}}:
@@ -2764,7 +2764,7 @@ info for OSCORE Master Salt (CBOR Sequence) (3 bytes)
 
 ~~~~~~~~
 OSCORE Master Salt (Raw Value) (8 bytes)
-61 63 f4 4b e8 62 ad fa
+ad a2 4c 7d bf c8 5e eb
 ~~~~~~~~
 
 
@@ -2799,8 +2799,8 @@ and where info for key update is:
 
 ~~~~~~~~
 PRK_out after KeyUpdate (Raw Value) (32 bytes)
-5e 5e fc ae dd a8 d1 85 bb 7e 26 1d f1 91 59 1c d9 f7 c9 20 49 e7 0c
-23 f6 b4 34 e3 6d fc 1d 1c
+f9 79 53 77 43 fe 0b d6 b9 b1 41 dd bd 79 65 6c 52 e6 dc 7c 50 ad 80
+77 54 d7 4d 07 e8 7d 0d 16
 ~~~~~~~~
 
 After key update the PRK_exporter needs to be derived anew:
@@ -2814,8 +2814,8 @@ where info and hash_length are unchanged as in {{out-and-exporter2}}.
 
 ~~~~~~~~
 PRK_exporter (Raw Value) (32 bytes)
-bb b3 b7 72 6e 97 9c 1b b3 46 a3 f9 2b f4 e0 28 8d 52 62 7f b5 e7 9a
-fd b3 b2 82 02 fd 2e 48 97
+00 fc f7 db 9b 2e ad 73 82 4e 7e 83 03 63 c8 05 c2 96 f9 02 83 0f ac
+23 d8 6c 35 9c 75 2f 0f 17
 ~~~~~~~~
 
 
@@ -2828,7 +2828,7 @@ where info and key_length are unchanged as in {{oscore-param}}.
 
 ~~~~~~~~
 OSCORE Master Secret after KeyUpdate (Raw Value) (16 bytes)
-c9 1b 16 4c 81 0b 29 a6 3f cb 73 e5 1b c4 55 f3
+49 f7 2f ac 02 b4 65 8b da 21 e2 da c6 6f c3 74
 ~~~~~~~~
 
 The OSCORE Master Salt is derived with the updated PRK_exporter:
@@ -2839,7 +2839,7 @@ where info and salt_length are unchanged as in {{oscore-param}}.
 
 ~~~~~~~~
 OSCORE Master Salt after KeyUpdate (Raw Value) (8 bytes)
-73 ce 79 24 59 40 36 80
+dd 8b 24 f2 aa 9b 01 1a
 ~~~~~~~~
 
 # Invalid Traces  {#sec-trace-invalid}
