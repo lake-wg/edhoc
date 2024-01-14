@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-01-11T01:15:56.457686+00:00",
+  "timestamp": "2024-01-14T01:21:12.193792+00:00",
   "repo": "lake-wg/edhoc",
   "labels": [
     {
@@ -25257,16 +25257,18 @@
       "author": "gselander",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
-      "labels": [],
+      "labels": [
+        "Ready to merge?"
+      ],
       "body": "",
       "createdAt": "2024-01-10T13:11:46Z",
-      "updatedAt": "2024-01-10T21:44:36Z",
+      "updatedAt": "2024-01-12T13:03:06Z",
       "baseRepository": "lake-wg/edhoc",
       "baseRefName": "master",
       "baseRefOid": "a5b602ba9f212c1f2f1a88ccb945d77042df8735",
       "headRepository": "lake-wg/edhoc",
       "headRefName": "cr-in-mac2",
-      "headRefOid": "f301b68d3e64efe210f70f508835afe628a786c0",
+      "headRefOid": "bf4acb5cff698285561e496ec35cad17e74f5254",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
