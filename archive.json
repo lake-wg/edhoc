@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-01-14T01:21:12.193792+00:00",
+  "timestamp": "2024-01-16T01:15:43.481180+00:00",
   "repo": "lake-wg/edhoc",
   "labels": [
     {
@@ -25294,6 +25294,46 @@
               "updatedAt": "2024-01-10T21:44:36Z"
             }
           ]
+        }
+      ]
+    },
+    {
+      "number": 456,
+      "id": "PR_kwDOEItXAM5kFRN8",
+      "title": "Traces v -09 (C_R authenticated in message_2)",
+      "url": "https://github.com/lake-wg/edhoc/pull/456",
+      "state": "OPEN",
+      "author": "marco-tiloca-sics",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "This PR updates the EDHOC traces according to https://github.com/lake-wg/edhoc/pull/455",
+      "createdAt": "2024-01-15T11:42:23Z",
+      "updatedAt": "2024-01-15T14:09:00Z",
+      "baseRepository": "lake-wg/edhoc",
+      "baseRefName": "master",
+      "baseRefOid": "a5b602ba9f212c1f2f1a88ccb945d77042df8735",
+      "headRepository": "lake-wg/edhoc",
+      "headRefName": "traces-09",
+      "headRefOid": "6a93a0779a753719b40bf3642a5efb675d8b297a",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOEItXAM5sldiA",
+          "commit": {
+            "abbreviatedOid": "6a93a07"
+          },
+          "author": "gselander",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "I haven't checked any values, but the things that were changes and the sizes looks right. Thanks for adding clarification in headings too at the end.",
+          "createdAt": "2024-01-15T14:09:00Z",
+          "updatedAt": "2024-01-15T14:09:00Z",
+          "comments": []
         }
       ]
     }
