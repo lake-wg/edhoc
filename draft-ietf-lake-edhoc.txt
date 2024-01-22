@@ -5,8 +5,8 @@
 LAKE Working Group                                           G. Selander
 Internet-Draft                                         J. Preuß Mattsson
 Intended status: Standards Track                            F. Palombini
-Expires: 25 March 2024                                          Ericsson
-                                                       22 September 2023
+Expires: 25 July 2024                                           Ericsson
+                                                         22 January 2024
 
 
                Ephemeral Diffie-Hellman Over COSE (EDHOC)
@@ -50,11 +50,11 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 25 March 2024.
+   This Internet-Draft will expire on 25 July 2024.
 
 Copyright Notice
 
-   Copyright (c) 2023 IETF Trust and the persons identified as the
+   Copyright (c) 2024 IETF Trust and the persons identified as the
    document authors.  All rights reserved.
 
    This document is subject to BCP 78 and the IETF Trust's Legal
@@ -403,7 +403,8 @@ Table of Contents
    messages.  The roles have slightly different security properties
    which should be considered when the roles are assigned, see
    Section 9.1.  All EDHOC messages are CBOR Sequences [RFC8742], and
-   are deterministically encoded.  Figure 3 illustrates an EDHOC message
+   are defined to be deterministically encoded CBOR as specified in
+   Section 4.2.1 of [RFC8949].  Figure 3 illustrates an EDHOC message
    flow with the optional fourth message as well as the content of each
    message.  The protocol elements in the figure are introduced in
    Section 3 and Section 5.  Message formatting and processing are
@@ -509,7 +510,9 @@ Table of Contents
 3.3.2.  Representation of Byte String Identifiers
 
    To allow identifiers with minimal overhead on the wire, certain byte
-   strings are defined to have integer representations.
+   strings used in connection identifiers and credential identifiers
+   (see Section Section 3.5.3) are defined to have integer
+   representations.
 
    The integers with one-byte CBOR encoding are -24, ..., 23, see
    Figure 5.
@@ -758,10 +761,11 @@ Table of Contents
    specific encoding of the authentication credential.  The Initiator
    and Responder SHOULD use an available authentication credential
    (transported in EDHOC or otherwise provisioned) without re-encoding.
-   If for some reason re-encoding of the authentication credential may
-   occur, then a potential common encoding for CBOR based credentials is
-   bytewise lexicographic order of their deterministic encodings as
-   specified in Section 4.2.1 of [RFC8949].
+   If for some reason re-encoding of an authentication credential passed
+   by reference may occur, then a potential common encoding for CBOR
+   based credentials is deterministically encoded CBOR as specified in
+   Sections 4.2.1 and 4.2.2 of [RFC8949].  Authentication credentials
+   passed by value are used as is without re-encoding.
 
    *  When the authentication credential is an X.509 certificate, CRED_x
       SHALL be the DER encoded certificate, encoded as a bstr [RFC9360].
@@ -832,9 +836,11 @@ Table of Contents
 
    ID_CRED_I and ID_CRED_R are of type COSE header_map, as defined in
    Section 3 of [RFC9052], and contains one or more COSE header
-   parameters.  ID_CRED_I and ID_CRED_R MAY contain different header
-   parameters.  The header parameters typically provide some information
-   about the format of the credential.
+   parameters.  If a map contains several header paramerers, the labels
+   do not need to be sorted in bytewise lexicographic order.  ID_CRED_I
+   and ID_CRED_R MAY contain different header parameters.  The header
+   parameters typically provide some information about the format of the
+   credential.
 
    Example: X.509 certificates can be identified by a hash value using
    the 'x5t' parameter, see Section 2 of [RFC9360]:
@@ -2402,11 +2408,12 @@ Table of Contents
    signature depending on method).
 
    Requirements for how to securely generate, validate, and process the
-   ephemeral public keys depend on the elliptic curve.  For X25519 and
-   X448, the requirements are defined in [RFC7748].  For secp256r1,
-   secp384r1, and secp521r1, the requirements are defined in Section 5
-   of [SP-800-56A].  For secp256r1, secp384r1, and secp521r1, at least
-   partial public-key validation MUST be done.
+   public keys depend on the elliptic curve.  For X25519 and X448, the
+   requirements are defined in [RFC7748].  For X25519 and X448, the
+   check for all-zero output as specified in Section 6 of [RFC7748] MUST
+   be done.  For secp256r1, secp384r1, and secp521r1, the requirements
+   are defined in Section 5 of [SP-800-56A].  For secp256r1, secp384r1,
+   and secp521r1, at least partial public-key validation MUST be done.
 
    The same authentication credential MAY be used for both the Initiator
    and Responder roles.  As noted in Section 12 of [RFC9052] the use of
@@ -2711,8 +2718,12 @@ Table of Contents
 
    When parsing a received EDHOC message, implementations MUST abort the
    EDHOC session if the message does not comply with the CDDL for that
-   message.  It is RECOMMENDED to abort the EDHOC session if the
+   message.  Implementations are not required to support non-
+   deterministic encodings and MAY abort the EDHOC session if the
    received EDHOC message is not encoded using deterministic CBOR.
+   Implementations MUST abort the EDHOC session if validation of a
+   received public key fails or if any cryptographic field has the wrong
+   length.
 
 10.  IANA Considerations
 
@@ -3299,33 +3310,36 @@ Table of Contents
 
    [I-D.ietf-core-oscore-edhoc]
               Palombini, F., Tiloca, M., Höglund, R., Hristozov, S., and
-              G. Selander, "Using EDHOC with CoAP and OSCORE", Work in
-              Progress, Internet-Draft, draft-ietf-core-oscore-edhoc-08,
-              8 August 2023, <https://datatracker.ietf.org/doc/html/
-              draft-ietf-core-oscore-edhoc-08>.
+              G. Selander, "Using Ephemeral Diffie-Hellman Over COSE
+              (EDHOC) with the Constrained Application Protocol (CoAP)
+              and Object Security for Constrained RESTful Environments
+              (OSCORE)", Work in Progress, Internet-Draft, draft-ietf-
+              core-oscore-edhoc-10, 29 November 2023,
+              <https://datatracker.ietf.org/doc/html/draft-ietf-core-
+              oscore-edhoc-10>.
 
    [I-D.ietf-core-oscore-key-update]
               Höglund, R. and M. Tiloca, "Key Update for OSCORE
               (KUDOS)", Work in Progress, Internet-Draft, draft-ietf-
-              core-oscore-key-update-05, 10 July 2023,
+              core-oscore-key-update-06, 23 October 2023,
               <https://datatracker.ietf.org/doc/html/draft-ietf-core-
-              oscore-key-update-05>.
+              oscore-key-update-06>.
 
    [I-D.ietf-cose-cbor-encoded-cert]
               Mattsson, J. P., Selander, G., Raza, S., Höglund, J., and
               M. Furuhed, "CBOR Encoded X.509 Certificates (C509
               Certificates)", Work in Progress, Internet-Draft, draft-
-              ietf-cose-cbor-encoded-cert-06, 7 July 2023,
+              ietf-cose-cbor-encoded-cert-07, 20 October 2023,
               <https://datatracker.ietf.org/doc/html/draft-ietf-cose-
-              cbor-encoded-cert-06>.
+              cbor-encoded-cert-07>.
 
    [I-D.ietf-iotops-security-protocol-comparison]
               Mattsson, J. P., Palombini, F., and M. Vučinić,
               "Comparison of CoAP Security Protocols", Work in Progress,
               Internet-Draft, draft-ietf-iotops-security-protocol-
-              comparison-02, 11 April 2023,
+              comparison-03, 23 October 2023,
               <https://datatracker.ietf.org/doc/html/draft-ietf-iotops-
-              security-protocol-comparison-02>.
+              security-protocol-comparison-03>.
 
    [I-D.ietf-lake-reqs]
               Vučinić, M., Selander, G., Mattsson, J. P., and D. Garcia-
@@ -3337,9 +3351,9 @@ Table of Contents
    [I-D.ietf-lake-traces]
               Selander, G., Mattsson, J. P., Serafin, M., Tiloca, M.,
               and M. Vučinić, "Traces of EDHOC", Work in Progress,
-              Internet-Draft, draft-ietf-lake-traces-07, 13 September
+              Internet-Draft, draft-ietf-lake-traces-08, 22 September
               2023, <https://datatracker.ietf.org/doc/html/draft-ietf-
-              lake-traces-07>.
+              lake-traces-08>.
 
    [I-D.ietf-lwig-curve-representations]
               Struik, R., "Alternative Elliptic Curve Representations",
@@ -3351,9 +3365,9 @@ Table of Contents
    [I-D.ietf-rats-eat]
               Lundblade, L., Mandyam, G., O'Donoghue, J., and C.
               Wallace, "The Entity Attestation Token (EAT)", Work in
-              Progress, Internet-Draft, draft-ietf-rats-eat-21, 30 June
-              2023, <https://datatracker.ietf.org/doc/html/draft-ietf-
-              rats-eat-21>.
+              Progress, Internet-Draft, draft-ietf-rats-eat-25, 15
+              January 2024, <https://datatracker.ietf.org/doc/html/
+              draft-ietf-rats-eat-25>.
 
    [I-D.irtf-cfrg-det-sigs-with-noise]
               Mattsson, J. P., Thormarker, E., and S. Ruohomaa,
@@ -3930,12 +3944,29 @@ C.2.  CDDL Definitions
      G_Y_CIPHERTEXT_2 : bstr,
    )
 
+   PLAINTEXT_2 = (
+     C_R,
+     ID_CRED_R : map / bstr / -24..23,
+     Signature_or_MAC_2 : bstr,
+     ? EAD_2,
+   )
+
    message_3 = (
      CIPHERTEXT_3 : bstr,
    )
 
+   PLAINTEXT_3 = (
+     ID_CRED_I : map / bstr / -24..23,
+     Signature_or_MAC_3 : bstr,
+     ? EAD_3,
+   )
+
    message_4 = (
      CIPHERTEXT_4 : bstr,
+   )
+
+   PLAINTEXT_4 = (
+     ? EAD_4,
    )
 
    error = (
