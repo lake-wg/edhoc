@@ -392,7 +392,7 @@ To simplify for implementors, the use of CBOR and COSE in EDHOC is summarized in
 
 The EDHOC protocol consists of three mandatory messages (message_1, message_2, message_3), an optional fourth message (message_4), and an error message, between an Initiator (I) and a Responder (R). The odd messages are sent by I, the even by R. Both I and R can send error messages.
 The roles have slightly different security properties which should be considered when the roles are assigned, see {{sec-prop}}.
-All EDHOC messages are CBOR Sequences {{RFC8742}}, and are deterministically encoded. {{fig-flow}} illustrates an EDHOC message flow with the optional fourth message as well as the content of each message. The protocol elements in the figure are introduced in {{overview}} and {{asym}}. Message formatting and processing are specified in {{asym}} and {{error}}.
+All EDHOC messages are CBOR Sequences {{RFC8742}}, and are defined to be deterministically encoded CBOR as specified in Section 4.2.1 of {{RFC8949}}. {{fig-flow}} illustrates an EDHOC message flow with the optional fourth message as well as the content of each message. The protocol elements in the figure are introduced in {{overview}} and {{asym}}. Message formatting and processing are specified in {{asym}} and {{error}}.
 
 Application data may be protected using the agreed application algorithms (AEAD, hash) in the selected cipher suite (see {{cs}}) and the application can make use of the established connection identifiers C_I and C_R (see {{ci}}). Media types that may be used for EDHOC are defined in {{media-type}}.
 
@@ -459,7 +459,7 @@ If connection identifiers are used by an application protocol for which EDHOC es
 
 ### Representation of Byte String Identifiers {#bstr-repr}
 
-To allow identifiers with minimal overhead on the wire, certain byte strings are defined to have integer representations.
+To allow identifiers with minimal overhead on the wire, certain byte strings used in connection identifiers and credential identifiers (see Section {{id_cred}}) are defined to have integer representations.
 
 The integers with one-byte CBOR encoding are -24, ..., 23, see {{fig-int-one-byte}}.
 
@@ -563,7 +563,7 @@ The authentication credential typically also contains other parameters that need
 
 EDHOC relies on COSE for identification of credentials (see {{id_cred}}), for example X.509 certificates {{RFC9360}}, C509 certificates {{I-D.ietf-cose-cbor-encoded-cert}}, CWTs {{RFC8392}} and CWT Claims Sets (CCS) {{RFC8392}}. When the identified credential is a chain or a bag, the authentication credential CRED_x is just the end entity X.509 or C509 certificate / CWT. In the choice between chain or bag it is RECOMMENDED to use a chain, since the certificates in a bag are unordered and may contain self-signed and extraneous certificates, which can add complexity to the process of extracting the end entity certificate. The Initiator and the Responder MAY use different types of authentication credentials, e.g., one uses an RPK and the other uses a public key certificate.
 
-Since CRED_R is used in the integrity verification, see {{asym-msg2-proc}}, it needs to be specified such that it is identical when used by Initiator or Responder. Similarly for CRED_I, see {{asym-msg3-proc}}. The Initiator and Responder are expected to agree on the specific encoding of the authentication credentials, see {{applicability}}. It is RECOMMENDED that the COSE 'kid' parameter, when used to identify the authentication credential, refers to a such a specific encoding of the authentication credential. The Initiator and Responder SHOULD use an available authentication credential (transported in EDHOC or otherwise provisioned) without re-encoding. If for some reason re-encoding of the authentication credential may occur, then a potential common encoding for CBOR based credentials is bytewise lexicographic order of their deterministic encodings as specified in Section 4.2.1 of {{RFC8949}}.
+Since CRED_R is used in the integrity verification, see {{asym-msg2-proc}}, it needs to be specified such that it is identical when used by Initiator or Responder. Similarly for CRED_I, see {{asym-msg3-proc}}. The Initiator and Responder are expected to agree on the specific encoding of the authentication credentials, see {{applicability}}. It is RECOMMENDED that the COSE 'kid' parameter, when used to identify the authentication credential, refers to a such a specific encoding of the authentication credential. The Initiator and Responder SHOULD use an available authentication credential (transported in EDHOC or otherwise provisioned) without re-encoding. If for some reason re-encoding of an authentication credential passed by reference may occur, then a potential common encoding for CBOR based credentials is deterministically encoded CBOR as specified in Sections 4.2.1 and 4.2.2 of {{RFC8949}}. Authentication credentials passed by value are used as is without re-encoding.
 
 * When the authentication credential is an X.509 certificate, CRED_x SHALL be the DER encoded certificate, encoded as a bstr {{RFC9360}}.
 * When the authentication credential is a C509 certificate, CRED_x SHALL be the C509Certificate {{I-D.ietf-cose-cbor-encoded-cert}}.
@@ -605,7 +605,7 @@ ID_CRED_x may contain the authentication credential CRED_x, for x = I or R, but 
 
 EDHOC relies on COSE for identification of credentials and supports all credential types for which COSE header parameters are defined including X.509 certificates ({{RFC9360}}), C509 certificates ({{I-D.ietf-cose-cbor-encoded-cert}}), CWT (see {{new-header-param}}) and CWT Claims Set (see {{new-header-param}}).
 
-ID_CRED_I and ID_CRED_R are of type COSE header_map, as defined in Section 3 of {{RFC9052}}, and contains one or more COSE header parameters. ID_CRED_I and ID_CRED_R MAY contain different header parameters. The header parameters typically provide some information about the format of the credential.
+ID_CRED_I and ID_CRED_R are of type COSE header_map, as defined in Section 3 of {{RFC9052}}, and contains one or more COSE header parameters. If a map contains several header paramerers, the labels do not need to be sorted in bytewise lexicographic order. ID_CRED_I and ID_CRED_R MAY contain different header parameters. The header parameters typically provide some information about the format of the credential.
 
 Example: X.509 certificates can be identified by a hash value using the 'x5t' parameter, see Section 2 of {{RFC9360}}:
 
@@ -628,7 +628,6 @@ This document registers two new COSE header parameters 'kcwt' and 'kccs' for use
 CWTs sent in 'kcwt' are protected using a MAC or a signature and are similar to a certificate (when with public key cryptography) or a Kerberos ticket (when used with symmetric key cryptography). CCSs sent in 'kccs' are not protected and are therefore similar to raw public keys or self-signed certificates.
 
 Security considerations for 'kcwt' and 'kccs' are made in {{impl-cons}}.
-
 
 #### Compact Encoding of ID_CRED Fields for 'kid' {#compact-kid}
 
@@ -1421,7 +1420,7 @@ To reduce message overhead EDHOC does not use explicit nonces and instead relies
 
 As discussed in {{SIGMA}}, the encryption of message_2 does only need to protect against passive attacker as active attackers can always get the Responder's identity by sending their own message_1. EDHOC uses the EDHOC_Expand function (typically HKDF-Expand) as a binary additive stream cipher which is proven secure as long as the expand function is a PRF.  HKDF-Expand is not often used as a stream cipher as it is slow on long messages, and most applications require both confidentiality with indistinguishability under chosen ciphertext (IND-CCA) as well as integrity protection. For the encryption of message_2, any speed difference is negligible, IND-CCA does not increase security, and integrity is provided by the inner MAC (and signature depending on method).
 
-Requirements for how to securely generate, validate, and process the ephemeral public keys depend on the elliptic curve. For X25519 and X448, the requirements are defined in {{RFC7748}}. For secp256r1, secp384r1, and secp521r1, the requirements are defined in Section 5 of {{SP-800-56A}}. For secp256r1, secp384r1, and secp521r1, at least partial public-key validation MUST be done.
+Requirements for how to securely generate, validate, and process the public keys depend on the elliptic curve. For X25519 and X448, the requirements are defined in {{RFC7748}}. For X25519 and X448, the check for all-zero output as specified in Section 6 of {{RFC7748}} MUST be done. For secp256r1, secp384r1, and secp521r1, the requirements are defined in Section 5 of {{SP-800-56A}}. For secp256r1, secp384r1, and secp521r1, at least partial public-key validation MUST be done.
 
 The same authentication credential MAY be used for both the Initiator and Responder roles. As noted in Section 12 of {{RFC9052}} the use of a single key for multiple algorithms is strongly discouraged unless proven secure by a dedicated cryptographic analysis. In particular this recommendation applies to using the same private key for static Diffie-Hellman authentication and digital signature authentication. A preliminary conjecture is that a minor change to EDHOC may be sufficient to fit the analysis of secure shared signature and ECDH key usage in {{Degabriele11}} and {{Thormarker21}}.
 
@@ -1491,8 +1490,7 @@ Note that HKDF-Expand has a relatively small maximum output length of 255 {{{⋅
 
 The sequence of transcript hashes in EDHOC (TH_2, TH_3, TH_4) does not make use of a so-called running hash. This is a design choice as running hashes are often not supported on constrained platforms.
 
-When parsing a received EDHOC message, implementations MUST abort the EDHOC session if the message does not comply with the CDDL for that message. It is RECOMMENDED to abort the EDHOC session if the received EDHOC message is not encoded using deterministic CBOR.
-
+When parsing a received EDHOC message, implementations MUST abort the EDHOC session if the message does not comply with the CDDL for that message. Implementations are not required to support non-deterministic encodings and MAY abort the EDHOC session if the received EDHOC message is not encoded using deterministic CBOR. Implementations MUST abort the EDHOC session if validation of a received public key fails or if any cryptographic field has the wrong length.
 
 # IANA Considerations {#iana}
 
@@ -2173,12 +2171,29 @@ message_2 = (
   G_Y_CIPHERTEXT_2 : bstr,
 )
 
+PLAINTEXT_2 = (
+  C_R,
+  ID_CRED_R : map / bstr / -24..23,
+  Signature_or_MAC_2 : bstr,
+  ? EAD_2,
+)
+
 message_3 = (
   CIPHERTEXT_3 : bstr,
 )
 
+PLAINTEXT_3 = (
+  ID_CRED_I : map / bstr / -24..23,
+  Signature_or_MAC_3 : bstr,
+  ? EAD_3,
+)
+
 message_4 = (
   CIPHERTEXT_4 : bstr,
+)
+
+PLAINTEXT_4 = (
+  ? EAD_4,
 )
 
 error = (
