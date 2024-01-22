@@ -764,8 +764,7 @@ Table of Contents
    If for some reason re-encoding of an authentication credential passed
    by reference may occur, then a potential common encoding for CBOR
    based credentials is deterministically encoded CBOR as specified in
-   Sections 4.2.1 and 4.2.2 of [RFC8949].  Authentication credentials
-   passed by value are used as is without re-encoding.
+   Sections 4.2.1 and 4.2.2 of [RFC8949].
 
    *  When the authentication credential is an X.509 certificate, CRED_x
       SHALL be the DER encoded certificate, encoded as a bstr [RFC9360].
