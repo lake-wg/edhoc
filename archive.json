@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-01-21T01:21:35.533384+00:00",
+  "timestamp": "2024-01-23T01:17:26.128649+00:00",
   "repo": "lake-wg/edhoc",
   "labels": [
     {
@@ -14006,7 +14006,7 @@
       "id": "I_kwDOEItXAM5v4JDW",
       "title": "EDHOC: be a bit more precise on encoding",
       "url": "https://github.com/lake-wg/edhoc/issues/443",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "emanjon",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
@@ -14015,8 +14015,8 @@
       ],
       "body": "Druing the discussion on invalid traces it has been suggested that the text on deterministic CBOR encoding and Representation of Byte String Identifiers could be improved. I.e. no technical changes and very much in scope for AUTH48 improvements.",
       "createdAt": "2023-09-01T08:28:40Z",
-      "updatedAt": "2023-10-17T16:49:30Z",
-      "closedAt": null,
+      "updatedAt": "2024-01-22T09:57:55Z",
+      "closedAt": "2024-01-22T09:57:55Z",
       "comments": [
         {
           "author": "emanjon",
@@ -14101,6 +14101,13 @@
           "body": "The PR #446 has been sent to the RFC editor.",
           "createdAt": "2023-10-17T16:49:29Z",
           "updatedAt": "2023-10-17T16:49:29Z"
+        },
+        {
+          "author": "gselander",
+          "authorAssociation": "COLLABORATOR",
+          "body": "PR merged, closing this as completed.",
+          "createdAt": "2024-01-22T09:57:55Z",
+          "updatedAt": "2024-01-22T09:57:55Z"
         }
       ]
     },
@@ -25064,7 +25071,7 @@
       "id": "PR_kwDOEItXAM5ZfoK1",
       "title": "EDHOC: Encoding clarifications",
       "url": "https://github.com/lake-wg/edhoc/pull/446",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "emanjon",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
@@ -25073,17 +25080,19 @@
       ],
       "body": "Intent is to provide clarifications regarding encoding. Suggested from implementors that this is needed.\r\n\r\nThe PR is not finished. There will be more commits.",
       "createdAt": "2023-09-04T14:53:05Z",
-      "updatedAt": "2023-10-17T16:49:46Z",
+      "updatedAt": "2024-01-22T09:21:24Z",
       "baseRepository": "lake-wg/edhoc",
       "baseRefName": "master",
       "baseRefOid": "a461918c643883e1f69d1f3ebe8b0083fa95e4c1",
       "headRepository": "lake-wg/edhoc",
       "headRefName": "Encoding-clarifications",
       "headRefOid": "4fb2fafcf4638a998fcb863818fdfa671f72add4",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "closedAt": "2024-01-22T09:21:24Z",
+      "mergedAt": "2024-01-22T09:21:24Z",
+      "mergedBy": "gselander",
+      "mergeCommit": {
+        "oid": "7dcec5628437b2c798e15e181cc4d52d16ea865c"
+      },
       "comments": [
         {
           "author": "gselander",
@@ -25147,6 +25156,13 @@
           "body": "This PR #446 has been sent to the RFC editor.",
           "createdAt": "2023-10-17T16:49:45Z",
           "updatedAt": "2023-10-17T16:49:45Z"
+        },
+        {
+          "author": "gselander",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Merging for submission of -23.\r\n",
+          "createdAt": "2024-01-22T09:21:17Z",
+          "updatedAt": "2024-01-22T09:21:17Z"
         }
       ],
       "reviews": [
@@ -25253,7 +25269,7 @@
       "id": "PR_kwDOEItXAM5jrwFt",
       "title": "Protect C_R within message_2",
       "url": "https://github.com/lake-wg/edhoc/pull/455",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "gselander",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
@@ -25262,18 +25278,28 @@
       ],
       "body": "",
       "createdAt": "2024-01-10T13:11:46Z",
-      "updatedAt": "2024-01-12T13:03:06Z",
+      "updatedAt": "2024-01-22T09:22:53Z",
       "baseRepository": "lake-wg/edhoc",
       "baseRefName": "master",
       "baseRefOid": "a5b602ba9f212c1f2f1a88ccb945d77042df8735",
       "headRepository": "lake-wg/edhoc",
       "headRefName": "cr-in-mac2",
       "headRefOid": "bf4acb5cff698285561e496ec35cad17e74f5254",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
-      "comments": [],
+      "closedAt": "2024-01-22T09:22:53Z",
+      "mergedAt": "2024-01-22T09:22:53Z",
+      "mergedBy": "gselander",
+      "mergeCommit": {
+        "oid": "1fe7db707b3c82e2fc0f8e80fc72ca7f6d7795ca"
+      },
+      "comments": [
+        {
+          "author": "gselander",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Merging as agreed in the WG.",
+          "createdAt": "2024-01-22T09:22:47Z",
+          "updatedAt": "2024-01-22T09:22:47Z"
+        }
+      ],
       "reviews": [
         {
           "id": "PRR_kwDOEItXAM5sIzNl",
