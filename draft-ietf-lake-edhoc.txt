@@ -5,8 +5,8 @@
 LAKE Working Group                                           G. Selander
 Internet-Draft                                         J. Preuß Mattsson
 Intended status: Standards Track                            F. Palombini
-Expires: 25 July 2024                                           Ericsson
-                                                         22 January 2024
+Expires: 30 July 2024                                           Ericsson
+                                                         27 January 2024
 
 
                Ephemeral Diffie-Hellman Over COSE (EDHOC)
@@ -50,7 +50,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 25 July 2024.
+   This Internet-Draft will expire on 30 July 2024.
 
 Copyright Notice
 
