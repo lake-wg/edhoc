@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-01-25T01:17:32.472382+00:00",
+  "timestamp": "2024-01-28T01:15:00.493386+00:00",
   "repo": "lake-wg/edhoc",
   "labels": [
     {
@@ -25328,25 +25328,35 @@
       "id": "PR_kwDOEItXAM5kFRN8",
       "title": "Traces v -09 (C_R authenticated in message_2)",
       "url": "https://github.com/lake-wg/edhoc/pull/456",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "marco-tiloca-sics",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "This PR updates the EDHOC traces according to https://github.com/lake-wg/edhoc/pull/455",
       "createdAt": "2024-01-15T11:42:23Z",
-      "updatedAt": "2024-01-15T14:09:00Z",
+      "updatedAt": "2024-01-27T14:11:28Z",
       "baseRepository": "lake-wg/edhoc",
       "baseRefName": "master",
       "baseRefOid": "a5b602ba9f212c1f2f1a88ccb945d77042df8735",
       "headRepository": "lake-wg/edhoc",
       "headRefName": "traces-09",
       "headRefOid": "6a93a0779a753719b40bf3642a5efb675d8b297a",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
-      "comments": [],
+      "closedAt": "2024-01-27T14:11:28Z",
+      "mergedAt": "2024-01-27T14:11:28Z",
+      "mergedBy": "gselander",
+      "mergeCommit": {
+        "oid": "3e09e9233188e56f77bd04a643ee08689b0f6b33"
+      },
+      "comments": [
+        {
+          "author": "gselander",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Marek confirmed too. Merging this for -09.",
+          "createdAt": "2024-01-27T14:11:21Z",
+          "updatedAt": "2024-01-27T14:11:21Z"
+        }
+      ],
       "reviews": [
         {
           "id": "PRR_kwDOEItXAM5sldiA",
@@ -25360,6 +25370,170 @@
           "createdAt": "2024-01-15T14:09:00Z",
           "updatedAt": "2024-01-15T14:09:00Z",
           "comments": []
+        },
+        {
+          "id": "PRR_kwDOEItXAM5uBxA-",
+          "commit": {
+            "abbreviatedOid": "6a93a07"
+          },
+          "author": "malishav",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "APPROVED",
+          "body": "Hi,\r\n\r\nI went through the second trace manually and I couldn't spot any error in what I could verify with our implementation. Thanks for providing the PR!",
+          "createdAt": "2024-01-26T15:13:26Z",
+          "updatedAt": "2024-01-26T16:06:36Z",
+          "comments": [
+            {
+              "originalPosition": 5,
+              "body": "OK",
+              "createdAt": "2024-01-26T15:13:27Z",
+              "updatedAt": "2024-01-26T16:06:37Z"
+            },
+            {
+              "originalPosition": 21,
+              "body": "OK",
+              "createdAt": "2024-01-26T15:17:39Z",
+              "updatedAt": "2024-01-26T16:06:37Z"
+            },
+            {
+              "originalPosition": 57,
+              "body": "OK",
+              "createdAt": "2024-01-26T15:26:31Z",
+              "updatedAt": "2024-01-26T16:06:37Z"
+            },
+            {
+              "originalPosition": 83,
+              "body": "OK",
+              "createdAt": "2024-01-26T15:27:23Z",
+              "updatedAt": "2024-01-26T16:06:37Z"
+            },
+            {
+              "originalPosition": 89,
+              "body": "OK",
+              "createdAt": "2024-01-26T15:28:10Z",
+              "updatedAt": "2024-01-26T16:06:37Z"
+            },
+            {
+              "originalPosition": 97,
+              "body": "OK",
+              "createdAt": "2024-01-26T15:28:22Z",
+              "updatedAt": "2024-01-26T16:06:37Z"
+            },
+            {
+              "originalPosition": 103,
+              "body": "OK",
+              "createdAt": "2024-01-26T15:28:37Z",
+              "updatedAt": "2024-01-26T16:06:37Z"
+            },
+            {
+              "originalPosition": 112,
+              "body": "OK",
+              "createdAt": "2024-01-26T15:29:42Z",
+              "updatedAt": "2024-01-26T16:06:37Z"
+            },
+            {
+              "originalPosition": 121,
+              "body": "OK",
+              "createdAt": "2024-01-26T15:30:55Z",
+              "updatedAt": "2024-01-26T16:06:37Z"
+            },
+            {
+              "originalPosition": 130,
+              "body": "OK",
+              "createdAt": "2024-01-26T15:32:57Z",
+              "updatedAt": "2024-01-26T16:06:37Z"
+            },
+            {
+              "originalPosition": 168,
+              "body": "OK",
+              "createdAt": "2024-01-26T15:35:21Z",
+              "updatedAt": "2024-01-26T16:06:37Z"
+            },
+            {
+              "originalPosition": 150,
+              "body": "OK",
+              "createdAt": "2024-01-26T15:37:13Z",
+              "updatedAt": "2024-01-26T16:06:37Z"
+            },
+            {
+              "originalPosition": 185,
+              "body": "OK",
+              "createdAt": "2024-01-26T15:39:36Z",
+              "updatedAt": "2024-01-26T16:06:37Z"
+            },
+            {
+              "originalPosition": 196,
+              "body": "OK",
+              "createdAt": "2024-01-26T15:41:33Z",
+              "updatedAt": "2024-01-26T16:06:37Z"
+            },
+            {
+              "originalPosition": 210,
+              "body": "OK",
+              "createdAt": "2024-01-26T15:46:44Z",
+              "updatedAt": "2024-01-26T16:06:37Z"
+            },
+            {
+              "originalPosition": 249,
+              "body": "OK",
+              "createdAt": "2024-01-26T15:51:08Z",
+              "updatedAt": "2024-01-26T16:06:37Z"
+            },
+            {
+              "originalPosition": 255,
+              "body": "OK",
+              "createdAt": "2024-01-26T15:51:18Z",
+              "updatedAt": "2024-01-26T16:06:37Z"
+            },
+            {
+              "originalPosition": 263,
+              "body": "OK",
+              "createdAt": "2024-01-26T15:51:33Z",
+              "updatedAt": "2024-01-26T16:06:37Z"
+            },
+            {
+              "originalPosition": 269,
+              "body": "OK",
+              "createdAt": "2024-01-26T15:51:54Z",
+              "updatedAt": "2024-01-26T16:06:37Z"
+            },
+            {
+              "originalPosition": 278,
+              "body": "OK",
+              "createdAt": "2024-01-26T15:53:09Z",
+              "updatedAt": "2024-01-26T16:06:37Z"
+            },
+            {
+              "originalPosition": 369,
+              "body": "OK",
+              "createdAt": "2024-01-26T15:58:22Z",
+              "updatedAt": "2024-01-26T16:06:37Z"
+            },
+            {
+              "originalPosition": 519,
+              "body": "OK",
+              "createdAt": "2024-01-26T16:00:21Z",
+              "updatedAt": "2024-01-26T16:06:37Z"
+            },
+            {
+              "originalPosition": 530,
+              "body": "OK",
+              "createdAt": "2024-01-26T16:03:58Z",
+              "updatedAt": "2024-01-26T16:06:37Z"
+            },
+            {
+              "originalPosition": 539,
+              "body": "OK",
+              "createdAt": "2024-01-26T16:04:45Z",
+              "updatedAt": "2024-01-26T16:06:37Z"
+            },
+            {
+              "originalPosition": 548,
+              "body": "OK",
+              "createdAt": "2024-01-26T16:05:13Z",
+              "updatedAt": "2024-01-26T16:06:37Z"
+            }
+          ]
         }
       ]
     }
