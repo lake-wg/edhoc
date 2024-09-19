@@ -1,2 +1,4 @@
-# Automatically generated CODEOWNERS file.
+# Automatically generated CODEOWNERS
+# Regenerate with `make update-codeowners`
 draft-ietf-lake-edhoc.md goran.selander@ericsson.com john.mattsson@ericsson.com francesca.palombini@ericsson.com
+draft-ietf-lake-traces.md goran.selander@ericsson.com john.mattsson@ericsson.com marek.serafin@assaabloy.com marco.tiloca@ri.se malisa.vucinic@inria.fr
