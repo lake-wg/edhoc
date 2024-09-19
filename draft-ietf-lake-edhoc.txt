@@ -5,8 +5,8 @@
 LAKE Working Group                                           G. Selander
 Internet-Draft                                         J. Preuß Mattsson
 Intended status: Standards Track                            F. Palombini
-Expires: 30 July 2024                                           Ericsson
-                                                         27 January 2024
+Expires: 23 March 2025                                          Ericsson
+                                                       19 September 2024
 
 
                Ephemeral Diffie-Hellman Over COSE (EDHOC)
@@ -50,7 +50,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 30 July 2024.
+   This Internet-Draft will expire on 23 March 2025.
 
 Copyright Notice
 
@@ -3318,32 +3318,32 @@ Table of Contents
               (EDHOC) with the Constrained Application Protocol (CoAP)
               and Object Security for Constrained RESTful Environments
               (OSCORE)", Work in Progress, Internet-Draft, draft-ietf-
-              core-oscore-edhoc-10, 29 November 2023,
+              core-oscore-edhoc-11, 9 April 2024,
               <https://datatracker.ietf.org/doc/html/draft-ietf-core-
-              oscore-edhoc-10>.
+              oscore-edhoc-11>.
 
    [I-D.ietf-core-oscore-key-update]
               Höglund, R. and M. Tiloca, "Key Update for OSCORE
               (KUDOS)", Work in Progress, Internet-Draft, draft-ietf-
-              core-oscore-key-update-06, 23 October 2023,
+              core-oscore-key-update-08, 8 July 2024,
               <https://datatracker.ietf.org/doc/html/draft-ietf-core-
-              oscore-key-update-06>.
+              oscore-key-update-08>.
 
    [I-D.ietf-cose-cbor-encoded-cert]
               Mattsson, J. P., Selander, G., Raza, S., Höglund, J., and
               M. Furuhed, "CBOR Encoded X.509 Certificates (C509
               Certificates)", Work in Progress, Internet-Draft, draft-
-              ietf-cose-cbor-encoded-cert-07, 20 October 2023,
+              ietf-cose-cbor-encoded-cert-11, 8 July 2024,
               <https://datatracker.ietf.org/doc/html/draft-ietf-cose-
-              cbor-encoded-cert-07>.
+              cbor-encoded-cert-11>.
 
    [I-D.ietf-iotops-security-protocol-comparison]
               Mattsson, J. P., Palombini, F., and M. Vučinić,
               "Comparison of CoAP Security Protocols", Work in Progress,
               Internet-Draft, draft-ietf-iotops-security-protocol-
-              comparison-03, 23 October 2023,
+              comparison-06, 20 March 2024,
               <https://datatracker.ietf.org/doc/html/draft-ietf-iotops-
-              security-protocol-comparison-03>.
+              security-protocol-comparison-06>.
 
    [I-D.ietf-lake-reqs]
               Vučinić, M., Selander, G., Mattsson, J. P., and D. Garcia-
@@ -3355,9 +3355,9 @@ Table of Contents
    [I-D.ietf-lake-traces]
               Selander, G., Mattsson, J. P., Serafin, M., Tiloca, M.,
               and M. Vučinić, "Traces of EDHOC", Work in Progress,
-              Internet-Draft, draft-ietf-lake-traces-08, 22 September
-              2023, <https://datatracker.ietf.org/doc/html/draft-ietf-
-              lake-traces-08>.
+              Internet-Draft, draft-ietf-lake-traces-09, 27 January
+              2024, <https://datatracker.ietf.org/doc/html/draft-ietf-
+              lake-traces-09>.
 
    [I-D.ietf-lwig-curve-representations]
               Struik, R., "Alternative Elliptic Curve Representations",
@@ -3369,17 +3369,16 @@ Table of Contents
    [I-D.ietf-rats-eat]
               Lundblade, L., Mandyam, G., O'Donoghue, J., and C.
               Wallace, "The Entity Attestation Token (EAT)", Work in
-              Progress, Internet-Draft, draft-ietf-rats-eat-25, 15
-              January 2024, <https://datatracker.ietf.org/doc/html/
-              draft-ietf-rats-eat-25>.
+              Progress, Internet-Draft, draft-ietf-rats-eat-31, 6
+              September 2024, <https://datatracker.ietf.org/doc/html/
+              draft-ietf-rats-eat-31>.
 
    [I-D.irtf-cfrg-det-sigs-with-noise]
-              Mattsson, J. P., Thormarker, E., and S. Ruohomaa,
-              "Deterministic ECDSA and EdDSA Signatures with Additional
-              Randomness", Work in Progress, Internet-Draft, draft-irtf-
-              cfrg-det-sigs-with-noise-00, 8 August 2022,
-              <https://datatracker.ietf.org/doc/html/draft-irtf-cfrg-
-              det-sigs-with-noise-00>.
+              Mattsson, J. P., Thormarker, E., and S. Ruohomaa, "Hedged
+              ECDSA and EdDSA Signatures", Work in Progress, Internet-
+              Draft, draft-irtf-cfrg-det-sigs-with-noise-03, 16 March
+              2024, <https://datatracker.ietf.org/doc/html/draft-irtf-
+              cfrg-det-sigs-with-noise-03>.
 
    [I-D.selander-lake-authz]
               Selander, G., Mattsson, J. P., Vučinić, M., Richardson,
